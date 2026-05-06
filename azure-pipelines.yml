@@ -1,0 +1,32 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger: none
+ 
+pr:
+  branches:
+    include:
+      - develop
+      - main
+ 
+pool:
+  vmImage: 'ubuntu-latest'
+ 
+steps:
+ 
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '20.x'
+    displayName: 'Install Node.js 20'
+ 
+  - script: npm install
+    displayName: 'Install dependencies'
+ 
+  - script: npx cds build
+    displayName: 'CDS Build'
+ 
+  - script: npm run lint --if-present
+    displayName: 'Lint check'
+    continueOnError: false
