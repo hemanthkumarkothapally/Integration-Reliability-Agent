@@ -1,75 +1,71 @@
 namespace com.integration.reliability.agent;
-using {
-    cuid,
-    managed
-} from '@sap/cds/common';
-
+using { cuid, managed } from '@sap/cds/common';
 entity Incidents : cuid, managed {
-    messageGuid    : String(50);
-    iFlowName      : String(250);
-    errorMessage   : LargeString;
-    errorSignature : String(500);
-    adapter        : String(100);
-    status         : String(50);
-    logStart       : Timestamp;
-    logEnd         : Timestamp;
+    messageGuid     : String(100);
+    iFlowName       : String(255);
+    errorMessage    : String(5000);
+    errorSignature  : String(500);
+    adapter         : String(100);
+    status          : String(50);
+    logStart        : Timestamp;
+    logEnd          : Timestamp;
 }
 
-entity IncidentCluster : cuid, managed {
-  errorSignature  : String;
-  iFlowName       : String;
-  severity        : String;
-  incidentCount   : Integer;
-  firstSeen       : Timestamp;
-  lastSeen        : Timestamp;
-  status          : String;
-  playbook        : Association to Playbook;
+entity IncidentClusters : cuid, managed {
+    errorSignature  : String(500);
+    iFlowName       : String(255);
+    severity        : String(50);
+    incidentCount   : Integer;
+    firstSeen       : Timestamp;
+    lastSeen        : Timestamp;
+    status          : String(50);
+    playbookId      : UUID;
 }
 
-entity ClusterRecommendation : cuid, managed {
-  cluster            : Association to IncidentCluster;
-  rootCause          : LargeString;
-  businessImpact     : LargeString;
-  remediationSteps   : LargeString;
-  affectedAdapter    : String;
-  confidenceScore    : Decimal(5,2);
-  generatedAt        : Timestamp;
+entity ClusterRecommendations : cuid, managed {
+    cluster             : Association to IncidentClusters;
+    rootCause           : String(2000);
+    businessImpact      : String(2000);
+    remediationSteps    : String(5000);
+    affectedAdapter     : String(100);
+    confidenceScore     : Decimal(5,2);
+    generatedAt         : Timestamp;
 }
 
-entity MonitoredArtifact : cuid, managed {
-  iFlowName          : String;
-  iFlowId            : String;
-  namespace          : String;
-  isActive           : Boolean;
-  lastPollTimestamp  : Timestamp;
+entity MonitoredArtifacts : cuid, managed {
+    iFlowName          : String(255);
+    iFlowId            : String(255);
+    namespace          : String(255);
+    isActive           : Boolean;
+    lastPollTimestamp  : Timestamp;
 }
 
-entity Playbook : cuid, managed {
-  errorType     : String;
-  title         : String;
-  description   : LargeString;
-  steps         : LargeString;
-  severity      : String;
+entity Playbooks : cuid, managed {
+    errorType     : String(255);
+    title         : String(255);
+    description   : String(2000);
+    steps         : String(5000);
+    severity      : String(50);
 }
 
-entity ChatSession : cuid, managed {
-  title       : String;
-  createdAt   : Timestamp;
-  createdBy   : String;
+entity ChatSessions : cuid, managed {
+    title       : String(255);
+    createdAt   : Timestamp;
+    createdBy   : String(255);
 }
 
-entity AccessLog : cuid, managed {
-  action      : String;
-  user        : String;
-  timestamp   : Timestamp;
-  details     : LargeString;
+entity AccessLogs : cuid, managed {
+    action     : String(255);
+    user       : String(255);
+    timestamp  : Timestamp;
+    details    : String(2000);
 }
 
-entity TokenUsage : cuid, managed {
-  model               : String;
-  inputTokens         : Integer;
-  outputTokens        : Integer;
-  estimatedCostUSD    : Decimal(10,4);
-  calledAt            : Timestamp;
-  purpose             : String;
+entity TokenUsages : cuid, managed {
+    model             : String(255);
+    inputTokens       : Integer;
+    outputTokens      : Integer;
+    estimatedCostUSD  : Decimal(10,4);
+    calledAt          : Timestamp;
+    purpose           : String(255);
 }
