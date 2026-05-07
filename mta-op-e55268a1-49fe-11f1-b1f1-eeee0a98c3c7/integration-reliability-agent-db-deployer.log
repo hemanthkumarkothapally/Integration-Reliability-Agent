@@ -1,0 +1,646 @@
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:24:34.146969] Added process: "web" (STDOUT, API)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:24:34.154749] Created app with guid 8ec3d4ea-f10b-418a-8265-e24192630a68 (STDOUT, API)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:24:34.243809] Updating process: "web" (STDOUT, API)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:24:34.299668] Scaling process: "web" (STDOUT, API)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:24:52.405095] Uploading app package for app with guid 8ec3d4ea-f10b-418a-8265-e24192630a68 (STDOUT, API)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:24:52.593780] Updated app with guid 8ec3d4ea-f10b-418a-8265-e24192630a68 ({"environment_variables"=>"[PRIVATE DATA HIDDEN]"}) (STDOUT, API)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:02.723034] Creating build for app with guid 8ec3d4ea-f10b-418a-8265-e24192630a68 (STDOUT, API)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:03.167159] Downloading nodejs_buildpack... (STDOUT, STG)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:03.212781] Downloaded nodejs_buildpack (STDOUT, STG)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:03.212860] Cell 77283d80-dfa7-40ba-ba4e-265aef112085 creating container for instance a5b9bc47-48a9-436c-9f76-c3fb8ab56cce (STDOUT, STG)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:03.613464] Security group rules were updated (STDOUT, STG)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:03.697234] Cell 77283d80-dfa7-40ba-ba4e-265aef112085 successfully created container for instance a5b9bc47-48a9-436c-9f76-c3fb8ab56cce (STDOUT, STG)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:03.975408] Downloading app package... (STDOUT, STG)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:04.243801] Downloaded app package (2.3M) (STDOUT, STG)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:04.305535] -----> Nodejs Buildpack version 1.8.44 (STDOUT, STG)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:04.414624] -----> Bootstrapping python (STDOUT, STG)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:04.414707] -----> Installing python 3.11.14 (STDOUT, STG)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:04.414722] Copy [/tmp/buildpacks/978cee5ec9c58000/dependencies/b5e0345ae0ae1932e7d56fffaa49a487/python_3.11.14_linux_x64_cflinuxfs4_66f53248.tgz] (STDOUT, STG)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:07.474670] -----> Installing binaries (STDOUT, STG)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:07.474713] engines.node (package.json): >=18 (STDOUT, STG)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:07.474718] engines.npm (package.json): unspecified (use default) (STDOUT, STG)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:07.474727] [31;1m**WARNING**[0m Dangerous semver range (>) in engines.node. See: http://docs.cloudfoundry.org/buildpacks/node/node-tips.html (STDOUT, STG)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:07.474861] -----> Installing node 24.13.0 (STDOUT, STG)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:07.474952] Copy [/tmp/buildpacks/978cee5ec9c58000/dependencies/2f5692219fecc3eee6e6d507a6bfe7b9/node_24.13.0_linux_x64_cflinuxfs4_a816dee1.tgz] (STDOUT, STG)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:10.052787] Using default npm version: 11.6.2 (STDOUT, STG)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:10.052809] -----> Installing yarn 1.22.22 (STDOUT, STG)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:10.052813] Copy [/tmp/buildpacks/978cee5ec9c58000/dependencies/e3a39aedd1236924d69cc2d0637a8ed2/yarn_1.22.22_linux_noarch_any-stack_4911d0a6.tgz] (STDOUT, STG)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:10.320199] Installed yarn 1.22.22 (STDOUT, STG)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:10.320227] -----> Creating runtime environment (STDOUT, STG)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:10.321659] NODE_ENV=production (STDOUT, STG)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:10.321677] NODE_HOME=/tmp/contents3752175685/deps/0/node (STDOUT, STG)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:10.321682] NODE_MODULES_CACHE=true (STDOUT, STG)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:10.321685] NODE_VERBOSE=false (STDOUT, STG)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:10.321687] NPM_CONFIG_LOGLEVEL=error (STDOUT, STG)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:10.321691] NPM_CONFIG_PRODUCTION=true (STDOUT, STG)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:10.321698] -----> Building dependencies (STDOUT, STG)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:10.321701] Prebuild detected (node_modules already exists) (STDOUT, STG)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:10.321771] Rebuilding any native modules (STDOUT, STG)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:10.721226] rebuilt dependencies successfully (STDOUT, STG)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:10.777358] Installing any new modules (package.json + package-lock.json) (STDOUT, STG)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:11.131429] up to date in 291ms (STDOUT, STG)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:11.131744] 4 packages are looking for funding (STDOUT, STG)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:11.131818] run `npm fund` for details (STDOUT, STG)#
+#2026 05 07 10:25:12.639#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7957#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:11.660020] Contrast Security no credentials found. Will not write environment files. (STDOUT, STG)#
+#2026 05 07 10:25:22.665#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7965#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:19.316492] Exit status 0 (STDOUT, STG)#
+#2026 05 07 10:25:22.665#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7965#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:19.316535] Uploading droplet, build artifacts cache... (STDOUT, STG)#
+#2026 05 07 10:25:22.665#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7965#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:19.316567] Uploading build artifacts cache... (STDOUT, STG)#
+#2026 05 07 10:25:22.665#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7965#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:19.316583] Uploading droplet... (STDOUT, STG)#
+#2026 05 07 10:25:22.665#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7965#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:19.342537] Uploaded build artifacts cache (214B) (STDOUT, STG)#
+#2026 05 07 10:25:22.665#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7965#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:19.920750] Creating droplet for app with guid 8ec3d4ea-f10b-418a-8265-e24192630a68 (STDOUT, API)#
+#2026 05 07 10:25:22.665#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7965#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:21.990111] Uploaded droplet (58.4M) (STDOUT, STG)#
+#2026 05 07 10:25:22.665#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7965#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:22.004908] Uploading complete (STDOUT, STG)#
+#2026 05 07 10:25:32.988#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7971#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:22.843895] Cell 77283d80-dfa7-40ba-ba4e-265aef112085 stopping instance a5b9bc47-48a9-436c-9f76-c3fb8ab56cce (STDOUT, STG)#
+#2026 05 07 10:25:32.988#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7971#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:22.843937] Cell 77283d80-dfa7-40ba-ba4e-265aef112085 destroying container for instance a5b9bc47-48a9-436c-9f76-c3fb8ab56cce (STDOUT, STG)#
+#2026 05 07 10:25:32.988#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7971#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:22.892468] Staging complete for build a5b9bc47-48a9-436c-9f76-c3fb8ab56cce (STDOUT, API)#
+#2026 05 07 10:25:32.988#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7971#
+[PollStageAppStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:28.657638] Cell 77283d80-dfa7-40ba-ba4e-265aef112085 successfully destroyed container for instance a5b9bc47-48a9-436c-9f76-c3fb8ab56cce (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:24:34.146969] Added process: "web" (STDOUT, API)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:24:34.154749] Created app with guid 8ec3d4ea-f10b-418a-8265-e24192630a68 (STDOUT, API)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:24:34.243809] Updating process: "web" (STDOUT, API)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:24:34.299668] Scaling process: "web" (STDOUT, API)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:24:52.405095] Uploading app package for app with guid 8ec3d4ea-f10b-418a-8265-e24192630a68 (STDOUT, API)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:24:52.593780] Updated app with guid 8ec3d4ea-f10b-418a-8265-e24192630a68 ({"environment_variables"=>"[PRIVATE DATA HIDDEN]"}) (STDOUT, API)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:02.723034] Creating build for app with guid 8ec3d4ea-f10b-418a-8265-e24192630a68 (STDOUT, API)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:03.167159] Downloading nodejs_buildpack... (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:03.212781] Downloaded nodejs_buildpack (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:03.212860] Cell 77283d80-dfa7-40ba-ba4e-265aef112085 creating container for instance a5b9bc47-48a9-436c-9f76-c3fb8ab56cce (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:03.613464] Security group rules were updated (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:03.697234] Cell 77283d80-dfa7-40ba-ba4e-265aef112085 successfully created container for instance a5b9bc47-48a9-436c-9f76-c3fb8ab56cce (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:03.975408] Downloading app package... (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:04.243801] Downloaded app package (2.3M) (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:04.305535] -----> Nodejs Buildpack version 1.8.44 (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:04.414624] -----> Bootstrapping python (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:04.414707] -----> Installing python 3.11.14 (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:04.414722] Copy [/tmp/buildpacks/978cee5ec9c58000/dependencies/b5e0345ae0ae1932e7d56fffaa49a487/python_3.11.14_linux_x64_cflinuxfs4_66f53248.tgz] (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:07.474670] -----> Installing binaries (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:07.474713] engines.node (package.json): >=18 (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:07.474718] engines.npm (package.json): unspecified (use default) (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:07.474727] [31;1m**WARNING**[0m Dangerous semver range (>) in engines.node. See: http://docs.cloudfoundry.org/buildpacks/node/node-tips.html (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:07.474861] -----> Installing node 24.13.0 (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:07.474952] Copy [/tmp/buildpacks/978cee5ec9c58000/dependencies/2f5692219fecc3eee6e6d507a6bfe7b9/node_24.13.0_linux_x64_cflinuxfs4_a816dee1.tgz] (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:10.052787] Using default npm version: 11.6.2 (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:10.052809] -----> Installing yarn 1.22.22 (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:10.052813] Copy [/tmp/buildpacks/978cee5ec9c58000/dependencies/e3a39aedd1236924d69cc2d0637a8ed2/yarn_1.22.22_linux_noarch_any-stack_4911d0a6.tgz] (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:10.320199] Installed yarn 1.22.22 (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:10.320227] -----> Creating runtime environment (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:10.321659] NODE_ENV=production (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:10.321677] NODE_HOME=/tmp/contents3752175685/deps/0/node (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:10.321682] NODE_MODULES_CACHE=true (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:10.321685] NODE_VERBOSE=false (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:10.321687] NPM_CONFIG_LOGLEVEL=error (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:10.321691] NPM_CONFIG_PRODUCTION=true (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:10.321698] -----> Building dependencies (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:10.321701] Prebuild detected (node_modules already exists) (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:10.321771] Rebuilding any native modules (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:10.721226] rebuilt dependencies successfully (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:10.777358] Installing any new modules (package.json + package-lock.json) (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:11.131429] up to date in 291ms (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:11.131744] 4 packages are looking for funding (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:11.131818] run `npm fund` for details (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:11.660020] Contrast Security no credentials found. Will not write environment files. (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:19.316492] Exit status 0 (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:19.316535] Uploading droplet, build artifacts cache... (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:19.316567] Uploading build artifacts cache... (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:19.316583] Uploading droplet... (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:19.342537] Uploaded build artifacts cache (214B) (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:19.920750] Creating droplet for app with guid 8ec3d4ea-f10b-418a-8265-e24192630a68 (STDOUT, API)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:21.990111] Uploaded droplet (58.4M) (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:22.004908] Uploading complete (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:22.843895] Cell 77283d80-dfa7-40ba-ba4e-265aef112085 stopping instance a5b9bc47-48a9-436c-9f76-c3fb8ab56cce (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:22.843937] Cell 77283d80-dfa7-40ba-ba4e-265aef112085 destroying container for instance a5b9bc47-48a9-436c-9f76-c3fb8ab56cce (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:22.892468] Staging complete for build a5b9bc47-48a9-436c-9f76-c3fb8ab56cce (STDOUT, API)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:28.657638] Cell 77283d80-dfa7-40ba-ba4e-265aef112085 successfully destroyed container for instance a5b9bc47-48a9-436c-9f76-c3fb8ab56cce (STDOUT, STG)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:33.060155] Updated app with guid 8ec3d4ea-f10b-418a-8265-e24192630a68 ({:droplet_guid=>"ee62a936-a219-41a0-9b25-9223b398b524"}) (STDOUT, API)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:33.722790] Cell c839c7b1-088e-41af-b9b7-66256aacd457 creating container for instance 132424e0-0014-4f63-94ee-9a2f37fe7dd1 (STDOUT, CELL)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:34.149575] Security group rules were updated (STDOUT, CELL)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:34.215609] Cell c839c7b1-088e-41af-b9b7-66256aacd457 successfully created container for instance 132424e0-0014-4f63-94ee-9a2f37fe7dd1 (STDOUT, CELL)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:37.531881] Invoking pre-start scripts. (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:37.679038] Invoking start command. (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:38.001370] > start (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:38.001397] > node node_modules/@sap/hdi-deploy/deploy.js --use-hdb --parameter com.sap.hana.di.table/try_fast_table_migration=true (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:38.114428] VCAP_SERVICES: (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:38.114611] { (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:38.114622] "hana": [ (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:38.114625] { (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:38.114627] "name": "integration-reliability-agent-db", (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:38.114630] "label": "hana", (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:38.114633] "plan": "hdi-shared", (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:38.114635] "credentials": { (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:38.114636] "schema": "5311BB9345DE498B84987213472ADC45", (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:38.114638] "database_id": "3839aca6-f13a-4420-a30e-6f0dfafec3f6", (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:38.114640] "user": "5311BB9345DE498B84987213472ADC45_AXSCMYY314TM2OM6RG58I58LA_RT", (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:38.114642] "hdi_user": "5311BB9345DE498B84987213472ADC45_AXSCMYY314TM2OM6RG58I58LA_DT" (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:38.114644] }, (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:38.114653] "tags": [ (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:38.114654] "hana", (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:38.114662] "database", (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:38.114664] "relational" (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:38.114666] ] (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:38.114667] } (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:38.114669] ] (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:25:43.596#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-7985#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:38.114671] } (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:25:53.198#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6589#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:44.228319] @sap/hdi-deploy, version 5.6.1 (mode default), server version unknown (0.0.0.0), cloud version , node version 24.13.0, HDI version -1, container API version -1 (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:25:53.198#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6589#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:44.228515] Deployment started at 2026-05-07 10:25:44 (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:25:53.198#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6589#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:44.228769] Using hdb@2.27.1 for connection (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:25:53.198#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6589#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:44.228792] Detection of server version failed; root cause: Could not connect to any host: [ 3839aca6-f13a-4420-a30e-6f0dfafec3f6.hna1.prod-us10.hanacloud.ondemand.com:443 -  ] (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:25:53.198#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6589#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:44.228795] Detection of cloud version failed; root cause: Could not connect to any host: [ 3839aca6-f13a-4420-a30e-6f0dfafec3f6.hna1.prod-us10.hanacloud.ondemand.com:443 -  ] (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:25:53.198#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6589#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:44.228797] Detection of container API version failed; root cause: Could not connect to any host: [ 3839aca6-f13a-4420-a30e-6f0dfafec3f6.hna1.prod-us10.hanacloud.ondemand.com:443 -  ] (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:25:53.198#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6589#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:44.228800] Detection of HDI version failed; root cause: Could not connect to any host: [ 3839aca6-f13a-4420-a30e-6f0dfafec3f6.hna1.prod-us10.hanacloud.ondemand.com:443 -  ] (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:25:53.198#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6589#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:44.229003] Deployment ended at 2026-05-07 10:25:44 (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:25:53.198#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6589#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:44.229236] Error: Option parameter is not supported by the server; based on detected server version unknown (STDERR, APP/TASK/deploy)#
+#2026 05 07 10:25:53.198#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6589#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:44.229450] (6s 198ms) (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:25:53.198#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6589#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:44.303156] Exit status 1 (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:25:53.198#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6589#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:44.671659] Cell c839c7b1-088e-41af-b9b7-66256aacd457 stopping instance 132424e0-0014-4f63-94ee-9a2f37fe7dd1 (STDOUT, CELL)#
+#2026 05 07 10:25:53.198#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6589#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:44.671729] Cell c839c7b1-088e-41af-b9b7-66256aacd457 destroying container for instance 132424e0-0014-4f63-94ee-9a2f37fe7dd1 (STDOUT, CELL)#
+#2026 05 07 10:25:53.198#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6589#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:46.440924] Cell c839c7b1-088e-41af-b9b7-66256aacd457 successfully destroyed container for instance 132424e0-0014-4f63-94ee-9a2f37fe7dd1 (STDOUT, CELL)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:44.228319] @sap/hdi-deploy, version 5.6.1 (mode default), server version unknown (0.0.0.0), cloud version , node version 24.13.0, HDI version -1, container API version -1 (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:44.228515] Deployment started at 2026-05-07 10:25:44 (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:44.228769] Using hdb@2.27.1 for connection (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:44.228792] Detection of server version failed; root cause: Could not connect to any host: [ 3839aca6-f13a-4420-a30e-6f0dfafec3f6.hna1.prod-us10.hanacloud.ondemand.com:443 -  ] (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:44.228795] Detection of cloud version failed; root cause: Could not connect to any host: [ 3839aca6-f13a-4420-a30e-6f0dfafec3f6.hna1.prod-us10.hanacloud.ondemand.com:443 -  ] (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:44.228797] Detection of container API version failed; root cause: Could not connect to any host: [ 3839aca6-f13a-4420-a30e-6f0dfafec3f6.hna1.prod-us10.hanacloud.ondemand.com:443 -  ] (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:44.228800] Detection of HDI version failed; root cause: Could not connect to any host: [ 3839aca6-f13a-4420-a30e-6f0dfafec3f6.hna1.prod-us10.hanacloud.ondemand.com:443 -  ] (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:44.229003] Deployment ended at 2026-05-07 10:25:44 (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:44.229236] Error: Option parameter is not supported by the server; based on detected server version unknown (STDERR, APP/TASK/deploy)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:44.229450] (6s 198ms) (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:44.303156] Exit status 1 (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:44.671659] Cell c839c7b1-088e-41af-b9b7-66256aacd457 stopping instance 132424e0-0014-4f63-94ee-9a2f37fe7dd1 (STDOUT, CELL)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:44.671729] Cell c839c7b1-088e-41af-b9b7-66256aacd457 destroying container for instance 132424e0-0014-4f63-94ee-9a2f37fe7dd1 (STDOUT, CELL)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:46.440924] Cell c839c7b1-088e-41af-b9b7-66256aacd457 successfully destroyed container for instance 132424e0-0014-4f63-94ee-9a2f37fe7dd1 (STDOUT, CELL)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:54.400515] Cell d1cc041a-d5a1-41d6-b9f6-6cda736ce3f0 creating container for instance 94a5573b-5791-48fa-ad3c-9ab974427e09 (STDOUT, CELL)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:54.932903] Security group rules were updated (STDOUT, CELL)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:55.055795] Cell d1cc041a-d5a1-41d6-b9f6-6cda736ce3f0 successfully created container for instance 94a5573b-5791-48fa-ad3c-9ab974427e09 (STDOUT, CELL)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:58.486921] Invoking pre-start scripts. (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:58.638197] Invoking start command. (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:58.972772] > start (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:58.972797] > node node_modules/@sap/hdi-deploy/deploy.js --use-hdb --parameter com.sap.hana.di.table/try_fast_table_migration=true (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:59.090178] VCAP_SERVICES: (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:59.090335] { (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:59.090345] "hana": [ (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:59.090348] { (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:59.090355] "name": "integration-reliability-agent-db", (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:59.090358] "label": "hana", (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:59.090360] "plan": "hdi-shared", (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:59.090363] "credentials": { (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:59.090366] "schema": "5311BB9345DE498B84987213472ADC45", (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:59.090368] "database_id": "3839aca6-f13a-4420-a30e-6f0dfafec3f6", (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:59.090374] "user": "5311BB9345DE498B84987213472ADC45_AXSCMYY314TM2OM6RG58I58LA_RT", (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:59.090379] "hdi_user": "5311BB9345DE498B84987213472ADC45_AXSCMYY314TM2OM6RG58I58LA_DT" (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:59.090381] }, (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:59.090383] "tags": [ (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:59.090385] "hana", (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:59.090388] "database", (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:59.090389] "relational" (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:59.090394] ] (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:59.090398] } (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:59.090400] ] (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:03.636#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6599#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:25:59.090401] } (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:13.689#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6608#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:05.993818] @sap/hdi-deploy, version 5.6.1 (mode default), server version unknown (0.0.0.0), cloud version , node version 24.13.0, HDI version -1, container API version -1 (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:13.689#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6608#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:05.994014] Deployment started at 2026-05-07 10:26:05 (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:13.689#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6608#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:05.994263] Using hdb@2.27.1 for connection (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:13.689#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6608#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:05.994284] Detection of server version failed; root cause: Could not connect to any host: [ 3839aca6-f13a-4420-a30e-6f0dfafec3f6.hna1.prod-us10.hanacloud.ondemand.com:443 -  ] (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:13.689#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6608#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:05.994289] Detection of cloud version failed; root cause: Could not connect to any host: [ 3839aca6-f13a-4420-a30e-6f0dfafec3f6.hna1.prod-us10.hanacloud.ondemand.com:443 -  ] (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:13.689#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6608#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:05.994412] Detection of container API version failed; root cause: Could not connect to any host: [ 3839aca6-f13a-4420-a30e-6f0dfafec3f6.hna1.prod-us10.hanacloud.ondemand.com:443 -  ] (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:13.689#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6608#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:05.994432] Detection of HDI version failed; root cause: Could not connect to any host: [ 3839aca6-f13a-4420-a30e-6f0dfafec3f6.hna1.prod-us10.hanacloud.ondemand.com:443 -  ] (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:13.689#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6608#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:05.994741] Deployment ended at 2026-05-07 10:26:05 (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:13.689#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6608#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:05.994876] Error: Option parameter is not supported by the server; based on detected server version unknown (STDERR, APP/TASK/deploy)#
+#2026 05 07 10:26:13.689#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6608#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:05.995206] (6s 989ms) (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:13.689#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6608#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:06.066798] Exit status 1 (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:13.689#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6608#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:06.411791] Cell d1cc041a-d5a1-41d6-b9f6-6cda736ce3f0 stopping instance 94a5573b-5791-48fa-ad3c-9ab974427e09 (STDOUT, CELL)#
+#2026 05 07 10:26:13.689#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6608#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:06.411828] Cell d1cc041a-d5a1-41d6-b9f6-6cda736ce3f0 destroying container for instance 94a5573b-5791-48fa-ad3c-9ab974427e09 (STDOUT, CELL)#
+#2026 05 07 10:26:13.689#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6608#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:08.605966] Cell d1cc041a-d5a1-41d6-b9f6-6cda736ce3f0 successfully destroyed container for instance 94a5573b-5791-48fa-ad3c-9ab974427e09 (STDOUT, CELL)#
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:05.993818] @sap/hdi-deploy, version 5.6.1 (mode default), server version unknown (0.0.0.0), cloud version , node version 24.13.0, HDI version -1, container API version -1 (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:05.994014] Deployment started at 2026-05-07 10:26:05 (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:05.994263] Using hdb@2.27.1 for connection (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:05.994284] Detection of server version failed; root cause: Could not connect to any host: [ 3839aca6-f13a-4420-a30e-6f0dfafec3f6.hna1.prod-us10.hanacloud.ondemand.com:443 -  ] (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:05.994289] Detection of cloud version failed; root cause: Could not connect to any host: [ 3839aca6-f13a-4420-a30e-6f0dfafec3f6.hna1.prod-us10.hanacloud.ondemand.com:443 -  ] (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:05.994412] Detection of container API version failed; root cause: Could not connect to any host: [ 3839aca6-f13a-4420-a30e-6f0dfafec3f6.hna1.prod-us10.hanacloud.ondemand.com:443 -  ] (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:05.994432] Detection of HDI version failed; root cause: Could not connect to any host: [ 3839aca6-f13a-4420-a30e-6f0dfafec3f6.hna1.prod-us10.hanacloud.ondemand.com:443 -  ] (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:05.994741] Deployment ended at 2026-05-07 10:26:05 (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:05.994876] Error: Option parameter is not supported by the server; based on detected server version unknown (STDERR, APP/TASK/deploy)#
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:05.995206] (6s 989ms) (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:06.066798] Exit status 1 (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:06.411791] Cell d1cc041a-d5a1-41d6-b9f6-6cda736ce3f0 stopping instance 94a5573b-5791-48fa-ad3c-9ab974427e09 (STDOUT, CELL)#
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:06.411828] Cell d1cc041a-d5a1-41d6-b9f6-6cda736ce3f0 destroying container for instance 94a5573b-5791-48fa-ad3c-9ab974427e09 (STDOUT, CELL)#
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:08.605966] Cell d1cc041a-d5a1-41d6-b9f6-6cda736ce3f0 successfully destroyed container for instance 94a5573b-5791-48fa-ad3c-9ab974427e09 (STDOUT, CELL)#
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:15.794848] Cell 77283d80-dfa7-40ba-ba4e-265aef112085 creating container for instance f0ac37e1-9353-44e2-b196-64b81fb8f120 (STDOUT, CELL)#
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:16.224087] Security group rules were updated (STDOUT, CELL)#
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:16.291820] Cell 77283d80-dfa7-40ba-ba4e-265aef112085 successfully created container for instance f0ac37e1-9353-44e2-b196-64b81fb8f120 (STDOUT, CELL)#
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:19.521882] Invoking pre-start scripts. (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:19.669985] Invoking start command. (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:19.993657] > start (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:19.993682] > node node_modules/@sap/hdi-deploy/deploy.js --use-hdb --parameter com.sap.hana.di.table/try_fast_table_migration=true (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:20.096261] VCAP_SERVICES: (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:20.096462] { (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:20.096475] "hana": [ (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:20.096478] { (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:20.096482] "name": "integration-reliability-agent-db", (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:20.096485] "label": "hana", (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:20.096488] "plan": "hdi-shared", (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:20.096493] "credentials": { (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:20.096495] "schema": "5311BB9345DE498B84987213472ADC45", (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:20.096500] "database_id": "3839aca6-f13a-4420-a30e-6f0dfafec3f6", (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:20.096506] "user": "5311BB9345DE498B84987213472ADC45_AXSCMYY314TM2OM6RG58I58LA_RT", (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:20.096509] "hdi_user": "5311BB9345DE498B84987213472ADC45_AXSCMYY314TM2OM6RG58I58LA_DT" (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:20.096511] }, (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:20.096513] "tags": [ (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:20.096514] "hana", (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:20.096516] "database", (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:20.096521] "relational" (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:20.096523] ] (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:20.096529] } (STDOUT, APP/TASK/deploy)#Error
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:20.096531] ] (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:23.824#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8011#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:20.096532] } (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:34.087#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8031#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:26.208944] @sap/hdi-deploy, version 5.6.1 (mode default), server version unknown (0.0.0.0), cloud version , node version 24.13.0, HDI version -1, container API version -1 (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:34.087#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8031#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:26.209100] Deployment started at 2026-05-07 10:26:26 (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:34.087#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8031#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:26.209324] Using hdb@2.27.1 for connection (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:34.087#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8031#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:26.209352] Detection of server version failed; root cause: Could not connect to any host: [ 3839aca6-f13a-4420-a30e-6f0dfafec3f6.hna1.prod-us10.hanacloud.ondemand.com:443 -  ] (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:34.087#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8031#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:26.209357] Detection of cloud version failed; root cause: Could not connect to any host: [ 3839aca6-f13a-4420-a30e-6f0dfafec3f6.hna1.prod-us10.hanacloud.ondemand.com:443 -  ] (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:34.087#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8031#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:26.209360] Detection of container API version failed; root cause: Could not connect to any host: [ 3839aca6-f13a-4420-a30e-6f0dfafec3f6.hna1.prod-us10.hanacloud.ondemand.com:443 -  ] (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:34.087#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8031#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:26.209365] Detection of HDI version failed; root cause: Could not connect to any host: [ 3839aca6-f13a-4420-a30e-6f0dfafec3f6.hna1.prod-us10.hanacloud.ondemand.com:443 -  ] (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:34.087#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8031#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:26.209628] Deployment ended at 2026-05-07 10:26:26 (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:34.087#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8031#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:26.209783] Error: Option parameter is not supported by the server; based on detected server version unknown (STDERR, APP/TASK/deploy)#
+#2026 05 07 10:26:34.087#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8031#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:26.210098] (6s 188ms) (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:34.087#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8031#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:26.282722] Exit status 1 (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:34.087#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8031#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:26.644593] Cell 77283d80-dfa7-40ba-ba4e-265aef112085 stopping instance f0ac37e1-9353-44e2-b196-64b81fb8f120 (STDOUT, CELL)#
+#2026 05 07 10:26:34.087#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8031#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:26.644630] Cell 77283d80-dfa7-40ba-ba4e-265aef112085 destroying container for instance f0ac37e1-9353-44e2-b196-64b81fb8f120 (STDOUT, CELL)#
+#2026 05 07 10:26:34.087#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8031#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:29.987008] Cell 77283d80-dfa7-40ba-ba4e-265aef112085 successfully destroyed container for instance f0ac37e1-9353-44e2-b196-64b81fb8f120 (STDOUT, CELL)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:26.208944] @sap/hdi-deploy, version 5.6.1 (mode default), server version unknown (0.0.0.0), cloud version , node version 24.13.0, HDI version -1, container API version -1 (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:26.209100] Deployment started at 2026-05-07 10:26:26 (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:26.209324] Using hdb@2.27.1 for connection (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:26.209352] Detection of server version failed; root cause: Could not connect to any host: [ 3839aca6-f13a-4420-a30e-6f0dfafec3f6.hna1.prod-us10.hanacloud.ondemand.com:443 -  ] (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:26.209357] Detection of cloud version failed; root cause: Could not connect to any host: [ 3839aca6-f13a-4420-a30e-6f0dfafec3f6.hna1.prod-us10.hanacloud.ondemand.com:443 -  ] (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:26.209360] Detection of container API version failed; root cause: Could not connect to any host: [ 3839aca6-f13a-4420-a30e-6f0dfafec3f6.hna1.prod-us10.hanacloud.ondemand.com:443 -  ] (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:26.209365] Detection of HDI version failed; root cause: Could not connect to any host: [ 3839aca6-f13a-4420-a30e-6f0dfafec3f6.hna1.prod-us10.hanacloud.ondemand.com:443 -  ] (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:26.209628] Deployment ended at 2026-05-07 10:26:26 (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:26.209783] : Option parameter is not supported by the server; based on detected server version unknown (STDERR, APP/TASK/deploy)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:26.210098] (6s 188ms) (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:26.282722] Exit status 1 (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:26.644593] Cell 77283d80-dfa7-40ba-ba4e-265aef112085 stopping instance f0ac37e1-9353-44e2-b196-64b81fb8f120 (STDOUT, CELL)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:26.644630] Cell 77283d80-dfa7-40ba-ba4e-265aef112085 destroying container for instance f0ac37e1-9353-44e2-b196-64b81fb8f120 (STDOUT, CELL)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:29.987008] Cell 77283d80-dfa7-40ba-ba4e-265aef112085 successfully destroyed container for instance f0ac37e1-9353-44e2-b196-64b81fb8f120 (STDOUT, CELL)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:37.150344] Cell d1cc041a-d5a1-41d6-b9f6-6cda736ce3f0 creating container for instance 9b309c67-5a08-418b-a595-a5731ff67cc1 (STDOUT, CELL)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:38.153799] Security group rules were updated (STDOUT, CELL)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:38.273572] Cell d1cc041a-d5a1-41d6-b9f6-6cda736ce3f0 successfully created container for instance 9b309c67-5a08-418b-a595-a5731ff67cc1 (STDOUT, CELL)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:42.148730] Invoking pre-start scripts. (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:42.305285] Invoking start command. (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:42.645863] > start (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:42.645892] > node node_modules/@sap/hdi-deploy/deploy.js --use-hdb --parameter com.sap.hana.di.table/try_fast_table_migration=true (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:42.761204] VCAP_SERVICES: (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:42.761434] { (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:42.761448] "hana": [ (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:42.761461] { (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:42.761463] "name": "integration-reliability-agent-db", (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:42.761466] "label": "hana", (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:42.761469] "plan": "hdi-shared", (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:42.761471] "credentials": { (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:42.761473] "schema": "5311BB9345DE498B84987213472ADC45", (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:42.761474] "database_id": "3839aca6-f13a-4420-a30e-6f0dfafec3f6", (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:42.761476] "user": "5311BB9345DE498B84987213472ADC45_AXSCMYY314TM2OM6RG58I58LA_RT", (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:42.761479] "hdi_user": "5311BB9345DE498B84987213472ADC45_AXSCMYY314TM2OM6RG58I58LA_DT" (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:42.761481] }, (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:42.761483] "tags": [ (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:42.761485] "hana", (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:42.761498] "database", (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:42.761501] "relational" (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:42.761510] ] (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:42.761513] } (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:42.761515] ] (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:44.227#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-6910#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:42.761518] } (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:54.834#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8058#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:48.871185] @sap/hdi-deploy, version 5.6.1 (mode default), server version unknown (0.0.0.0), cloud version , node version 24.13.0, HDI version -1, container API version -1 (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:54.834#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8058#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:48.871525] Deployment started at 2026-05-07 10:26:48 (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:54.834#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8058#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:48.871732] Using hdb@2.27.1 for connection (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:54.834#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8058#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:48.871750] Detection of server version failed; root cause: Could not connect to any host: [ 3839aca6-f13a-4420-a30e-6f0dfafec3f6.hna1.prod-us10.hanacloud.ondemand.com:443 -  ] (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:54.834#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8058#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:48.871755] Detection of cloud version failed; root cause: Could not connect to any host: [ 3839aca6-f13a-4420-a30e-6f0dfafec3f6.hna1.prod-us10.hanacloud.ondemand.com:443 -  ] (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:54.834#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8058#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:48.871763] Detection of container API version failed; root cause: Could not connect to any host: [ 3839aca6-f13a-4420-a30e-6f0dfafec3f6.hna1.prod-us10.hanacloud.ondemand.com:443 -  ] (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:54.834#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8058#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:48.871769] Detection of HDI version failed; root cause: Could not connect to any host: [ 3839aca6-f13a-4420-a30e-6f0dfafec3f6.hna1.prod-us10.hanacloud.ondemand.com:443 -  ] (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:54.834#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8058#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:48.872115] Deployment ended at 2026-05-07 10:26:48 (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:54.834#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8058#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:48.872262] Error: Option parameter is not supported by the server; based on detected server version unknown (STDERR, APP/TASK/deploy)#
+#2026 05 07 10:26:54.834#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8058#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:48.872562] (6s 195ms) (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:54.834#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8058#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:48.944108] Exit status 1 (STDOUT, APP/TASK/deploy)#
+#2026 05 07 10:26:54.834#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8058#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:49.338546] Cell d1cc041a-d5a1-41d6-b9f6-6cda736ce3f0 stopping instance 9b309c67-5a08-418b-a595-a5731ff67cc1 (STDOUT, CELL)#
+#2026 05 07 10:26:54.834#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8058#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:49.338580] Cell d1cc041a-d5a1-41d6-b9f6-6cda736ce3f0 destroying container for instance 9b309c67-5a08-418b-a595-a5731ff67cc1 (STDOUT, CELL)#
+#2026 05 07 10:26:54.834#Z#DEBUG#e55268a1-49fe-11f1-b1f1-eeee0a98c3c7.integration-reliability-agent-db-deployer#flowable-async-job-executor-thread-8058#
+[PollExecuteTaskStatusExecution] 8ec3d4ea-f10b-418a-8265-e24192630a68 [2026-05-07T10:26:51.161503] Cell d1cc041a-d5a1-41d6-b9f6-6cda736ce3f0 successfully destroyed container for instance 9b309c67-5a08-418b-a595-a5731ff67cc1 (STDOUT, CELL)#
