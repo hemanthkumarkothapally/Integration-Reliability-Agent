@@ -1,0 +1,35 @@
+trigger: none
+
+pr:
+  branches:
+    include:
+    - develop
+    - main
+
+stages:
+- stage: __default
+  jobs:
+  - job: Job
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '20.x'
+      displayName: 'Install Node.js 20'
+      
+    - task: CmdLine@2
+      displayName: 'Install dependencies'
+      inputs:
+        script: npm install
+        
+    - task: CmdLine@2
+      displayName: 'CDS Build'
+      inputs:
+        script: npx cds build
+        
+    - task: CmdLine@2
+      displayName: 'Lint check'
+      continueOnError: false
+      inputs:
+        script: npm run lint --if-present
