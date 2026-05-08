@@ -3,13 +3,13 @@ trigger:
     include:
       - develop
       - main
- 
+
 pr:
   branches:
     include:
       - develop
       - main
- 
+
 stages:
   - stage: Build
     displayName: Build CAP App
@@ -18,25 +18,23 @@ stages:
         displayName: Build and Validate
         pool:
           name: BTP-Self-Hosted
- 
-        steps:
-          - task: NodeTool@0
+          steps:
+          - task: NodeTool@1
+            displayName: 'Install Node.js 20'
             inputs:
-              versionSource: 'spec'
               versionSpec: '20.x'
               checkLatest: true
-            displayName: 'Install Node.js 20'
- 
+
           - task: CmdLine@2
             displayName: 'npm install'
             inputs:
               script: 'npm install'
- 
+
           - task: CmdLine@2
             displayName: 'cds build'
             inputs:
-              script: 'npx @sap/cds-dk build'
- 
+              script: 'npx cds build'
+
           - task: CmdLine@2
             displayName: 'Lint check'
             inputs:
