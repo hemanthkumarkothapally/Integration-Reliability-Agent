@@ -20,6 +20,8 @@ entity IncidentClusters : cuid, managed {
     lastSeen        : Timestamp;
     status          : String(50);
     playbookId      : UUID;
+    severityCriticality : Integer;
+    
 }
 
 entity ClusterRecommendations : cuid, managed {

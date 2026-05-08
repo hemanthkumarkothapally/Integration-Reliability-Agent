@@ -17,7 +17,7 @@
   "type": "module",
   "cds": {
     "requires": {
-      "auth": "mocked",
+      "auth": "dummy",
       "db": "sqlite",
       "[production]": {
         "auth": "xsuaa",
