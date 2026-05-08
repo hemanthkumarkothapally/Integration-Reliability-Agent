@@ -1,4 +1,4 @@
-namespace com.integration.reliability.agent;
+namespace com.cytechies.integration.reliability;
 using { cuid, managed } from '@sap/cds/common';
 entity Incidents : cuid, managed {
     messageGuid     : String(100);

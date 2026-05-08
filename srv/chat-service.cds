@@ -1,6 +1,6 @@
-using { com.integration.reliability.agent as IRA } from '../db/schema';
+using { com.cytechies.integration.reliability as IRA } from '../db/schema';
 
 @path: '/Chat'
-service ChatService{
+service ChatService @(requires:Viewer){
     entity ChatSessions as projection on IRA.ChatSessions;
 }
