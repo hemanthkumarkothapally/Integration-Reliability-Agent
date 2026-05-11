@@ -79,7 +79,7 @@ stages:
             C:\tools\cf\cf.exe login -u "$(CF-USER)" -p "$(CF-PASSWORD)" -a "$(CF-API)" -o "$(CF-ORG)" -s "$(CF-SPACE)"
             
             echo "Deploying Full-Stack App..."
-            C:\tools\cf\cf.exe deploy $(Pipeline.Workspace)/FullStackPackage/*.mtar -f
+            "C:\tools\cf\cf.exe" deploy "$(Pipeline.Workspace)\FullStackPackage\integration-reliability-agent_1.0.0.mtar" -f
           displayName: 'CF Deploy'
           env:
             CF-PASSWORD: $(CF-PASSWORD)
