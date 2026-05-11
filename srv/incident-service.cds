@@ -1,4 +1,4 @@
-using {com.integration.reliability.agent as IRA} from '../db/schema';
+using {com.cytechies.integration.reliability  as IRA} from '../db/schema';
 
 @path: '/Incident'
 service IncidentService {
