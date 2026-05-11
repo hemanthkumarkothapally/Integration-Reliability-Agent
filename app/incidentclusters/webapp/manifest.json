@@ -1,0 +1,163 @@
+{
+  "_version": "1.84.0",
+  "sap.app": {
+    "id": "com.cytechies.integration.reliability.incidentclusters",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.0.1"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:lrop",
+      "version": "1.23.0",
+      "toolsId": "9df7423d-3cea-4936-ad72-21ef166fad63"
+    },
+    "dataSources": {
+      "mainService": {
+        "uri": "/Incident/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "odataVersion": "4.01"
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": true,
+    "dependencies": {
+      "minUI5Version": "1.147.2",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {},
+        "sap.fe.templates": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "com.cytechies.integration.reliability.incidentclusters.i18n.i18n"
+        }
+      },
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true
+        }
+      },
+      "@i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "uri": "i18n/i18n.properties"
+      }
+    },
+    "extends": {
+      "extensions": {
+        "sap.ui.controllerExtensions": {
+          "sap.fe.templates.ListReport.ListReportController": {
+            "controllerName": "com.cytechies.integration.reliability.incidentclusters.ext.controller.ListReportExt"
+          }
+        }
+      }
+    },
+    "resources": {
+      "css": []
+    },
+    "routing": {
+      "config": {},
+      "routes": [
+        {
+          "pattern": ":?query:",
+          "name": "IncidentClustersList",
+          "target": "IncidentClustersList"
+        },
+        {
+          "pattern": "IncidentClusters({key}):?query:",
+          "name": "IncidentClustersObjectPage",
+          "target": "IncidentClustersObjectPage"
+        }
+      ],
+      "targets": {
+        "IncidentClustersList": {
+          "type": "Component",
+          "id": "IncidentClustersList",
+          "name": "sap.fe.templates.ListReport",
+          "options": {
+            "settings": {
+              "contextPath": "/IncidentClusters",
+              "variantManagement": "Page",
+              "navigation": {
+                "IncidentClusters": {
+                  "detail": {
+                    "route": "IncidentClustersObjectPage"
+                  }
+                }
+              },
+              "controlConfiguration": {
+                "@com.sap.vocabularies.UI.v1.LineItem": {
+                  "tableSettings": {
+                    "type": "ResponsiveTable"
+                  }
+                }
+              },
+              "keyPerformanceIndicators": {
+                "Critical": {
+                  "template": "com.cytechies.integration.reliability.incidentclusters.ext.fragment.Critical"
+                },
+                "ActiveClusters": {
+                  "template": "com.cytechies.integration.reliability.incidentclusters.ext.fragment.ActiveClusters"
+                }
+              }
+            }
+          }
+        },
+        "IncidentClustersObjectPage": {
+          "type": "Component",
+          "id": "IncidentClustersObjectPage",
+          "name": "sap.fe.templates.ObjectPage",
+          "options": {
+            "settings": {
+              "editableHeaderContent": false,
+              "contextPath": "/IncidentClusters"
+            }
+          }
+        }
+      }
+    }
+  },
+  "sap.fiori": {
+    "registrationIds": [],
+    "archeType": "transactional"
+  },
+  "sap.fe": {
+    "app": {
+      "enableLazyLoading": true
+    }
+  }
+}

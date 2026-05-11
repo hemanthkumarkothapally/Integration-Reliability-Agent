@@ -7,7 +7,7 @@ entity Incidents : cuid, managed {
     errorSignature  : String(500);
     adapter         : String(100);
     status          : String(50);
-    logStart        : Timestamp;
+    logStart        : Timestamp;    
     logEnd          : Timestamp;
 }
 

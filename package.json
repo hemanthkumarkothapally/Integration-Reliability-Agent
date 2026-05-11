@@ -8,10 +8,17 @@
   },
   "devDependencies": {
     "@cap-js/sqlite": "^2",
-    "@sap/cds-dk": "^9"
+    "@sap/cds-dk": "^9",
+    "cds-plugin-ui5": "^0.13.0",
+    "rimraf": "^5.0.5",
+    "mbt": "^1.2.29"
   },
   "scripts": {
-    "start": "cds-serve"
+    "start": "cds-serve",
+    "watch-incidentclusters": "cds watch --open com.cytechies.integration.reliability.incidentclusters/index.html?sap-ui-xx-viewCache=false --livereload false",
+    "undeploy": "cf undeploy integration-reliability-agent --delete-services --delete-service-keys --delete-service-brokers",
+    "build": "rimraf resources mta_archives && mbt build --mtar archive",
+    "deploy": "cf deploy mta_archives/archive.mtar --retries 1"
   },
   "private": true,
   "type": "module",
@@ -24,5 +31,11 @@
         "db": "hana"
       }
     }
-  }
+  },
+  "workspaces": [
+    "app/*"
+  ],
+  "sapux": [
+    "app/incidentclusters"
+  ]
 }
