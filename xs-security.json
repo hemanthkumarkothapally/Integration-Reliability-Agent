@@ -7,6 +7,10 @@
     {
       "name": "$XSAPPNAME.Admin",
       "description": "Admin role"
+    },
+    {
+      "name": "$XSAPPNAME.[object Object]",
+      "description": "[object Object]"
     }
   ],
   "role-templates": [

@@ -26,6 +26,7 @@ modules:
     requires:
       - name: integration-reliability-agent-auth
       - name: integration-reliability-agent-db
+      - name: integration-reliability-agent-destination
 
   - name: integration-reliability-agent-db-deployer
     type: hdb
@@ -49,6 +50,7 @@ modules:
           url: ~{srv-url}
           forwardAuthToken: true
       - name: integration-reliability-agent-auth
+      - name: integration-reliability-agent-destination
     provides:
       - name: app-api
         properties:
@@ -78,3 +80,8 @@ resources:
     parameters:
       service: hana
       service-plan: hdi-shared
+  - name: integration-reliability-agent-destination
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: destination
+      service-plan: lite

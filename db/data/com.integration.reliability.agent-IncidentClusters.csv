@@ -1,3 +1,0 @@
-ID,errorSignature,iFlowName,severity,incidentCount,firstSeen,lastSeen,status,playbookId,createdAt,createdBy,modifiedAt,modifiedBy
-550e8400-e29b-41d4-a716-446655440001,HTTP_401,OrderFlow,HIGH,5,2026-05-05T10:00:00Z,2026-05-06T10:00:00Z,OPEN,1,2026-05-06T10:00:00Z,system,2026-05-06T10:00:00Z,system
-550e8400-e29b-41d4-a716-446655440002,TIMEOUT_BACKEND,InvoiceFlow,CRITICAL,3,2026-05-05T11:00:00Z,2026-05-06T11:00:00Z,OPEN,2,2026-05-06T11:00:00Z,system,2026-05-06T11:00:00Z,system
