@@ -42,12 +42,12 @@ entity MonitoredArtifacts : cuid, managed {
     lastPollTimestamp  : Timestamp;
 }
 
-entity Playbooks : cuid, managed {
-    errorType     : String(255);
-    title         : String(255);
-    description   : String(2000);
-    steps         : String(5000);
-    severity      : String(50);
+entity Playbooks :cuid, managed {
+    errorType       : String(100);
+    title           : String(255);
+    description     : LargeString;
+    steps           : LargeString;
+    severity        : String(20);
 }
 
 entity ChatSessions : cuid, managed {
