@@ -27,6 +27,7 @@ stages:
           - script: |
               node -v
               npm -v
+              make -v
             displayName: 'Verify System Node Version'
 
           - script: npm install
