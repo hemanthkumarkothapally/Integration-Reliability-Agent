@@ -75,11 +75,11 @@ stages:
 
         - script: |
             echo "Logging into Cloud Foundry..."
-            cf login -u "$(CF-USER)" -p "$(CF-PASSWORD)" -a "$(CF-API)" -o "$(CF-ORG)" -s "$(CF-SPACE)"
+            # Using the full path ensures it works even if the Path variable is acting up
+            C:\Users\yasha\Downloads\cf8-cli_8.17.1_winx64\cf.exe login -u "$(CF-USER)" -p "$(CF-PASSWORD)" -a "$(CF-API)" -o "$(CF-ORG)" -s "$(CF-SPACE)"
             
-            echo "Deploying Full-Stack App to BTP..."
-            # UPDATE 3: Use wildcard here as well to find the file regardless of name
-            cf deploy $(Pipeline.Workspace)/FullStackPackage/*.mtar -f
+            echo "Deploying Full-Stack App..."
+            C:\Users\yasha\Downloads\cf8-cli_8.17.1_winx64\cf.exe deploy $(Pipeline.Workspace)/FullStackPackage/*.mtar -f
           displayName: 'CF Deploy'
           env:
             CF-PASSWORD: $(CF-PASSWORD)
