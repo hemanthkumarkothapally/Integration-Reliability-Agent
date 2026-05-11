@@ -24,8 +24,11 @@ stages:
           name: BTP-Self-Hosted
         steps:
           - task: NodeTool@1
+            displayName: 'Install Node.js 20'
             inputs:
               versionSpec: '20.x'
+              # This ensures it downloads it if not found on the agent
+              checkLatest: true
 
           - script: npm install
             displayName: 'npm install'
