@@ -10,6 +10,12 @@ pr:
       - develop
       - main
 
+variables:
+  - name: mtarFileName
+    value: 'integration-reliability-agent_1.0.0.mtar' 
+  # Reference your Variable Group here for CF credentials
+  - group: btp-vars
+
 stages:
   - stage: Build
     displayName: Build CAP App
@@ -39,3 +45,39 @@ stages:
             displayName: 'Lint check'
             inputs:
               script: 'npm run lint --if-present'
+          - task: CmdLine@2
+            displayName: 'Generate MTAR'
+            inputs:
+              script: 'npx mbt build -t'
+          - publish: $(System.DefaultWorkingDirectory)/$(mtarFileName)
+            artifact: WebApp
+            displayName: 'Publish MTAR Artifact'
+  
+  - stage: Deploy
+    displayName: 'Deploy to CF Dev'
+    dependsOn: Build
+    # Logic: Only run if Build passed AND it's the develop branch AND it's NOT a PR
+    condition: |
+      and(
+        succeeded(),
+        eq(variables['Build.SourceBranch'], 'refs/heads/develop'),
+        ne(variables['Build.Reason'], 'PullRequest')
+      )
+    jobs:
+    - job: DeployJob
+      pool:
+        name: BTP-Self-Hosted
+      steps:
+        - download: current
+          artifact: WebApp
+          displayName: 'Download MTAR'
+
+        - script: |
+            echo "Logging into Cloud Foundry..."
+            cf login -u "$(CF-USER)" -p "$(CF-PASSWORD)" -a "$(CF-API)" -o "$(CF-ORG)" -s "$(CF-SPACE)"
+            
+            echo "Deploying to BTP..."
+            cf deploy $(Pipeline.Workspace)/WebApp/$(mtarFileName) -f
+          displayName: 'CF Deploy'
+          env:
+            CF-PASSWORD: $(CF-PASSWORD) # Securely pass the secret
