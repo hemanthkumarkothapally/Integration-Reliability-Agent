@@ -49,9 +49,9 @@ stages:
             displayName: 'Generate MTAR'
             inputs:
               script: 'npx mbt build -t'
-          - publish: $(System.DefaultWorkingDirectory)/$(mtarFileName)
-            artifact: WebApp
-            displayName: 'Publish MTAR Artifact'
+          - publish: $(System.DefaultWorkingDirectory)/mta_archives
+            artifact: FullStackPackage
+            displayName: 'Publish Full-Stack Artifact'
   
   - stage: Deploy
     displayName: 'Deploy to CF Dev'
@@ -69,8 +69,8 @@ stages:
         name: BTP-Self-Hosted
       steps:
         - download: current
-          artifact: WebApp
-          displayName: 'Download MTAR'
+          artifact: FullStackPackage
+          displayName: 'Download Full-Stack Package'
 
         - script: |
             echo "Logging into Cloud Foundry..."
