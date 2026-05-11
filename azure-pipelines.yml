@@ -76,10 +76,10 @@ stages:
         - script: |
             echo "Logging into Cloud Foundry..."
             # Using the full path ensures it works even if the Path variable is acting up
-            C:\Users\yasha\Downloads\cf8-cli_8.17.1_winx64\cf.exe login -u "$(CF-USER)" -p "$(CF-PASSWORD)" -a "$(CF-API)" -o "$(CF-ORG)" -s "$(CF-SPACE)"
+            C:\tools\cf\cf.exe login -u "$(CF-USER)" -p "$(CF-PASSWORD)" -a "$(CF-API)" -o "$(CF-ORG)" -s "$(CF-SPACE)"
             
             echo "Deploying Full-Stack App..."
-            C:\Users\yasha\Downloads\cf8-cli_8.17.1_winx64\cf.exe deploy $(Pipeline.Workspace)/FullStackPackage/*.mtar -f
+            C:\tools\cf\cf.exe deploy $(Pipeline.Workspace)/FullStackPackage/*.mtar -f
           displayName: 'CF Deploy'
           env:
             CF-PASSWORD: $(CF-PASSWORD)
