@@ -19,4 +19,5 @@ mta_archives/
 @cds-models
 
 # error logs
-mta-op*
+mta-op-*/
+*.log
