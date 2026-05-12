@@ -1,0 +1,1 @@
+using IncidentService as service from '../../srv/incident-service';

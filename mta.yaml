@@ -65,9 +65,23 @@ modules:
       - comcytechiesintegrationreliabilityincidentclusters.zip
       name: comcytechiesintegrationreliabilityincidentclusters
       target-path: resources/
+    - artifacts:
+      - comcytechiesintegrationreliabilityincidentclustersui.zip
+      name: comcytechiesintegrationreliabilityincidentclustersui
+      target-path: resources/
 - name: comcytechiesintegrationreliabilityincidentclusters
   type: html5
   path: app/incidentclusters
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: comcytechiesintegrationreliabilityincidentclustersui
+  type: html5
+  path: app/incidentclustersui
   build-parameters:
     build-result: dist
     builder: custom
@@ -117,11 +131,20 @@ resources:
             ProxyType: Internet
             Type: HTTP
             URL: https://ui5.sap.com
+          - Authentication: NoAuthentication
+            HTML5.DynamicDestination: true
+            HTML5.ForwardAuthToken: true
+            Name: srv-api
+            ProxyType: Internet
+            Type: HTTP
+            URL: ~{srv-api/srv-url}
           existing_destinations_policy: update
       version: 1.0.0
     service: destination
     service-name: integration-reliability-agent-destination-service
     service-plan: lite
+  requires:
+  - name: srv-api
 parameters:
   deploy_mode: html5-repo
   enable-parallel-deployments: true

@@ -132,6 +132,12 @@
                 },
                 "ActiveClusters": {
                   "template": "com.cytechies.integration.reliability.incidentclusters.ext.fragment.ActiveClusters"
+                },
+                "TotalIncidents": {
+                  "template": "com.cytechies.integration.reliability.incidentclusters.ext.fragment.TotalIncidents"
+                },
+                "Resolved": {
+                  "template": "com.cytechies.integration.reliability.incidentclusters.ext.fragment.Resolved"
                 }
               }
             }

@@ -1,0 +1,10 @@
+<mvc:View controllerName="com.cytechies.integration.reliability.incidentclustersui.controller.App"
+    displayBlock="true"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m">
+    <App id="app1">
+
+    <Title text="Anil Keerthi"></Title>
+
+    </App>
+</mvc:View>

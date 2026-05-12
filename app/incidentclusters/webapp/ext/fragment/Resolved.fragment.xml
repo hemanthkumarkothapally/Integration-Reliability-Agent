@@ -1,0 +1,11 @@
+<core:FragmentDefinition
+  xmlns:core="sap.ui.core"
+  xmlns:macros="sap.fe.macros">
+
+ <macros:KPITag
+    number="{kpi>/resolved24h}"
+    unit="Resolved (24h)"
+    status="Success"
+    showIcon="true" />
+
+</core:FragmentDefinition>
