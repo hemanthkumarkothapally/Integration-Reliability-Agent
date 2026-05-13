@@ -2,11 +2,13 @@ sap.ui.define([
     "sap/ui/core/mvc/Controller",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
-    "sap/ui/model/json/JSONModel"
-], (Controller, Filter, FilterOperator, JSONModel) => {
+    "sap/ui/model/json/JSONModel",
+    "../model/formatter"
+], (Controller, Filter, FilterOperator, JSONModel, formatter) => {
     "use strict";
 
     return Controller.extend("com.cytechies.integration.reliability.incidentclustersui.controller.OrderList", {
+        formatter: formatter,
         onInit() {
 
             const oTable =
@@ -44,7 +46,7 @@ sap.ui.define([
             );
 
         },
-
+      
         onRowPress: function (oEvent) {
 
             console.log("event tRiggered")
@@ -57,7 +59,7 @@ sap.ui.define([
 
             this.getOwnerComponent()
                 .getRouter()
-                .navTo("RouteIncidentDetails", {
+                .navTo("RouteIC", {
                     ID: sID
                 });
 
@@ -138,6 +140,60 @@ sap.ui.define([
             // Apply Filter
             oBinding.filter(aFilters);
         },
+        // _loadDashboardKPIs: function () {
+
+        //     const oTable =
+        //         this.byId("idIncidentClustersTable");
+
+        //     const aItems =
+        //         oTable.getItems();
+
+        //     if (!aItems.length) {
+
+        //         console.log("No Table Data");
+
+        //         return;
+        //     }
+
+        //     // First Row Data
+        //     const oData =
+        //         aItems[0]
+        //             .getBindingContext()
+        //             .getObject();
+
+        //     console.log("KPI DATA:", oData);
+
+        //     // Dashboard Model
+        //     const oDashboardModel =
+        //         new JSONModel({
+
+        //             totalIncidents24h:
+        //                 oData.totalIncidents24h,
+
+        //             activeClusters:
+        //                 oData.activeClusters,
+
+        //             criticalCount:
+        //                 oData.criticalCount,
+
+        //             resolved24h:
+        //                 oData.resolved24h,
+
+        //             criticalCriticality:
+        //                 oData.criticalCriticality
+
+        //         });
+
+        //     this.getView().setModel(
+        //         oDashboardModel,
+        //         "dashboard"
+        //     );
+
+        //     console.log(
+        //         "Dashboard Model Set Successfully"
+        //     );
+
+        // }
         _loadDashboardKPIs: function () {
 
             const oTable =
@@ -149,15 +205,31 @@ sap.ui.define([
             if (!aItems.length) {
 
                 console.log("No Table Data");
-
                 return;
             }
 
-            // First Row Data
-            const oData =
-                aItems[0]
-                    .getBindingContext()
-                    .getObject();
+            // Find First Actual Data Row
+            let oData = null;
+
+            for (let i = 0; i < aItems.length; i++) {
+
+                const oContext =
+                    aItems[i].getBindingContext();
+
+                if (oContext) {
+
+                    oData =
+                        oContext.getObject();
+
+                    break;
+                }
+            }
+
+            if (!oData) {
+
+                console.log("No Binding Data Found");
+                return;
+            }
 
             console.log("KPI DATA:", oData);
 
@@ -192,7 +264,6 @@ sap.ui.define([
             );
 
         }
-
 
 
     });

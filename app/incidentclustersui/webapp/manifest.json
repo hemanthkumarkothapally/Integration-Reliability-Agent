@@ -105,6 +105,13 @@
           "target": [
             "TargetIncidentDetails"
           ]
+        },
+        {
+          "name": "RouteIC",
+          "pattern": "IC/{ID}",
+          "target": [
+            "TargetIC"
+          ]
         }
       ],
       "targets": {
@@ -112,12 +119,15 @@
           "id": "OrderList",
           "name": "OrderList"
         },
-         "TargetIncidentDetails": {
-        "id": "IncidentDetails",
-        "name": "IncidentDetails"
+        "TargetIncidentDetails": {
+          "id": "IncidentDetails",
+          "name": "IncidentDetails"
+        },
+        "TargetIC": {
+          "id": "IC",
+          "name": "IC"
+        }
       }
-      }
-     
     },
     "rootView": {
       "viewName": "com.cytechies.integration.reliability.incidentclustersui.view.App",

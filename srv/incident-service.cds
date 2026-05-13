@@ -43,6 +43,12 @@ service IncidentService {
     @readonly
     entity Playbook          as projection on IRA.Playbooks;
 
+    entity ChatSessions      as projection on IRA.ChatSessions;
+
+    entity Messages          as projection on IRA.Messages;
+
+     action chat(conversationId: UUID, userMessage: String) returns Messages;
+  action createConversation(title: String) returns ChatSessions;
     @requires: 'Admin'
     action triggerPoll();
 }

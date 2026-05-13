@@ -7,7 +7,7 @@
     xmlns:core="sap.ui.core"
     xmlns:layout="sap.ui.layout">
     <Page id="page" title="{i18n>title}">
-        <f:DynamicPage id="_IDGenDynamicPage1" headerExpanded="{/headerExpanded}">
+        <f:DynamicPage id="_IDGenDynamicPage1" headerExpanded="true">
             <f:header>
                 <f:DynamicPageHeader id="_IDGenDynamicPageHeader">
                     <f:content>
@@ -24,21 +24,27 @@
                                 </fb:FilterGroupItem>
                                 <fb:FilterGroupItem id="_IDGenFilterGroupItem1" name="Severity" label="Severity" groupName="Group1" visibleInFilterBar="true">
                                     <fb:control>
-                                        <MultiComboBox id="_IDGenMultiComboBox1" name="severity" selectionChange=".onSelectionChange" items="{
-												path: '/IncidentClusters',
-												templateShareable: true
-											}">
-                                            <core:Item id="_IDGenItem1" key="{severity}" text="{severity}" />
+                                        <MultiComboBox id="_IDGenMultiComboBox1" name="severity">
+ 
+                                            <core:Item key="CRITICAL" text="CRITICAL" />
+ 
+                                            <core:Item key="HIGH" text="HIGH" />
+ 
+                                            <core:Item key="MEDIUM" text="MEDIUM" />
+ 
+                                            <core:Item key="LOW" text="LOW" />
+ 
                                         </MultiComboBox>
                                     </fb:control>
                                 </fb:FilterGroupItem>
                                 <fb:FilterGroupItem id="_IDGenFilterGroupItem2" name="Status" label="Status" groupName="Group1" visibleInFilterBar="true">
                                     <fb:control>
-                                        <MultiComboBox id="_IDGenMultiComboBox2" name="Status" selectionChange=".onSelectionChange" items="{
-												path: '/IncidentClusters',
-												templateShareable: true
-											}">
-                                            <core:Item id="_IDGenItem2" key="{status}" text="{status}" />
+                                        <MultiComboBox id="_IDGenMultiComboBox2" name="status">
+ 
+                                            <core:Item key="OPEN" text="OPEN" />
+ 
+                                            <core:Item key="RESOLVED" text="RESOLVED" />
+ 
                                         </MultiComboBox>
                                     </fb:control>
                                 </fb:FilterGroupItem>
@@ -47,96 +53,103 @@
                     </f:content>
                 </f:DynamicPageHeader>
             </f:header>
-
+ 
             <f:content>
                 <layout:VerticalLayout id="_IDGenHorizontalLayout1">
-                    <layout:HorizontalLayout id="_IDGenHorizontalLayout2">
+                    <layout:HorizontalLayout id="_IDGenHorizontalLayout2" class="sapUiMediumMarginBottom">
                         <!-- Critical -->
                         <GenericTile id="_IDGenGenericTile" class="sapUiTinyMarginEnd" frameType="OneByHalf" header="Critical">
                             <TileContent>
-
-                                <NumericContent value="{dashboard>/criticalCount}" valueColor="{
-                = ${dashboard>/criticalCriticality} === 1
-                ? 'Error'
-                : 'Good'
-            }" icon="sap-icon://alert"/>
-
+ 
+                                <NumericContent value="{dashboard>/criticalCount}" valueColor="Error" icon="sap-icon://alert"/>
+ 
                             </TileContent>
                         </GenericTile>
-
-                        <!-- High -->
-                        <GenericTile id="_IDGenGenericTile1" class="sapUiTinyMarginEnd" frameType="OneByHalf" header="High">
+ 
+                        <!-- Active Clusters -->
+                        <GenericTile id="_IDGenGenericTile1" class="sapUiTinyMarginEnd" frameType="OneByHalf" header="Active Clusters">
                             <TileContent>
-
-                                <NumericContent value="{dashboard>/activeClusters}" valueColor="Critical" icon="sap-icon://warning"/>
-
+ 
+                                <NumericContent value="{dashboard>/activeClusters}" valueColor="Critical" icon="sap-icon://bbyd-active-sales"/>
+ 
                             </TileContent>
-
+ 
                         </GenericTile>
-
+ 
                         <!-- Total -->
                         <GenericTile id="_IDGenGenericTile2" class="sapUiTinyMarginEnd" frameType="OneByHalf" header="Total Incidents">
                             <TileContent>
-
+ 
                                 <NumericContent value="{dashboard>/totalIncidents24h}" valueColor="Neutral" icon="sap-icon://activity-items"/>
-
+ 
                             </TileContent>
                         </GenericTile>
-
+ 
                         <!-- Resolved -->
                         <GenericTile id="_IDGenGenericTile3" class="sapUiTinyMarginEnd" frameType="OneByHalf" header="Resolved Today">
                             <TileContent>
-
+ 
                                 <NumericContent value="{dashboard>/resolved24h}" valueColor="Good" icon="sap-icon://accept"/>
-
+ 
                             </TileContent>
                         </GenericTile>
                     </layout:HorizontalLayout>
-
-                    <Table id="idIncidentClustersTable" inset="false" items="{
-        path:'/IncidentClusters'
+                    <Panel >
+                        <Table id="idIncidentClustersTable" inset="false" items="{
+        path:'/IncidentClusters',
+        sorter :{
+         path: 'severity',
+            group: true
+        }
     }">
-                        <headerToolbar>
-                            <OverflowToolbar id="_IDGenOverflowToolbar">
-                                <content>
-                                    <Title id="_IDGenTitle" text="IncidentClusters ({table>/count})" level="H2" />
-                                    <ToolbarSpacer id="_IDGenToolbarSpacer" />
-                                </content>
-                            </OverflowToolbar>
-                        </headerToolbar>
-                        <columns>
-                            <Column id="_IDGenColumn" width="12em">
-                                <Text id="_IDGenText" text="Severity" />
-                            </Column>
-                            <Column id="_IDGenColumn1" minScreenWidth="Tablet" demandPopin="true">
-                                <Text id="_IDGenText1" text="iFlow Name" />
-                            </Column>
-                            <Column id="_IDGenColumn2" minScreenWidth="Desktop" demandPopin="true" hAlign="End">
-                                <Text id="_IDGenText2" text="Error Type" />
-                            </Column>
-                            <Column id="_IDGenColumn3" minScreenWidth="Desktop" demandPopin="true" hAlign="Center">
-                                <Text id="_IDGenText3" text="IncidentCount" />
-                            </Column>
-                            <Column id="_IDGenColumn4" hAlign="End">
-                                <Text id="_IDGenText4" text="Status" />
-                            </Column>
-                            <Column id="_IDGenColumn5" hAlign="End">
-                                <Text id="_IDGenText5" text="LastSeen" />
-                            </Column>
-                        </columns>
-                        <items>
-                            <ColumnListItem type="Navigation" press=".onRowPress" id="_IDGenColumnListItem" vAlign="Middle">
-                                <cells>
-                                    <Text id="_IDGenText6" text="{severity}" />
-                                    <Text id="_IDGenText7" text="{iFlowName}" />
-                                    <Text id="_IDGenText8" text="{errorSignature}" />
-                                    <Text id="_IDGenText9" text="{incidentCount}" />
-                                    <Text id="_IDGenText10" text="{status}" />
-                                    <Text id="_IDGenText11" text="{lastSeen}" />
-                                </cells>
-                            </ColumnListItem>
-                        </items>
-                    </Table>
+                            <headerToolbar>
+                                <OverflowToolbar id="_IDGenOverflowToolbar">
+                                    <content>
+                                        <Title id="_IDGenTitle" text="IncidentClusters ({table>/count})" level="H2" />
+                                        <ToolbarSpacer id="_IDGenToolbarSpacer" />
+                                    </content>
+                                </OverflowToolbar>
+                            </headerToolbar>
+                            <columns>
+                                <Column id="_IDGenColumn" width="12em">
+                                    <Text id="_IDGenText" text="Severity" />
+                                </Column>
+                                <Column id="_IDGenColumn1" minScreenWidth="Tablet" demandPopin="true">
+                                    <Text id="_IDGenText1" text="iFlow Name" />
+                                </Column>
+                                <Column id="_IDGenColumn2" minScreenWidth="Desktop" demandPopin="true" hAlign="Begin">
+                                    <Text id="_IDGenText2" text="Error Type" />
+                                </Column>
+                                <Column id="_IDGenColumn3" minScreenWidth="Desktop" demandPopin="true" hAlign="Center">
+                                    <Text id="_IDGenText3" text="IncidentCount" />
+                                </Column>
+                                <Column id="_IDGenColumn4" hAlign="End">
+                                    <Text id="_IDGenText4" text="Status" />
+                                </Column>
+                                <Column id="_IDGenColumn5" hAlign="End">
+                                    <Text id="_IDGenText5" text="LastSeen" />
+                                </Column>
+                            </columns>
+                            <items>
+                                <ColumnListItem type="Navigation" press=".onRowPress" id="_IDGenColumnListItem" highlight="{
+        path: 'severity',
+        formatter: '.formatter.formatRowHighlight'
+    }" vAlign="Middle">
+                                    <cells>
+                                        <ObjectStatus text="{severity}" inverted="false" state="{
+        path: 'severity',
+        formatter: '.formatter.formatSeverityState'
+    }"/>
+                                        <Text id="_IDGenText7" text="{iFlowName}" />
+                                        <Text id="_IDGenText8" wrapping="false" text="{errorSignature}" />
+                                        <Text id="_IDGenText9" text="{incidentCount}" />
+                                        <ObjectStatus text="{status}" state="{= ${status} === 'OPEN' ? 'Warning' : ${status} === 'RESOLVED' ? 'Success' :'None'}" />
+                                        <Text id="_IDGenText11" text="{lastSeen}" />
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+                    </Panel>
                 </layout:VerticalLayout>
             </f:content>
         </f:DynamicPage>

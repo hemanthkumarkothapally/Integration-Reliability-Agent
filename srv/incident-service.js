@@ -6,6 +6,101 @@ export default cds.service.impl(async function () {
 
     const { Incidents } =
         cds.entities('com.cytechies.integration.reliability');
+    this.on('createConversation', async (req) => {
+        const newId = cds.utils.uuid();
+        const { title } = req.data;
+        const newConv = { ID: newId, title: title || "New Chat" };
+        await INSERT.into('com.cytechies.integration.reliability.ChatSessions').entries(newConv);
+        return newConv;
+    });
+
+    this.on('chat', async (req) => {
+        const { conversationId, userMessage } = req.data;
+        if (!conversationId || !userMessage) return req.error(400, "Missing conversationId or userMessage");
+        await INSERT.into('com.candy.app.Messages').entries({
+            conversation_ID: conversationId,
+            role: 'user',
+            content: userMessage
+        });
+        const contextArticles = await this.send('search', { query: userMessage });
+        let contextText = "No relevant context found.";
+        let usedContextJSON = "[]";
+
+        if (typeof contextArticles !== 'string' && contextArticles.length > 0) {
+            const articles = typeof contextArticles === 'string' ? JSON.parse(contextArticles) : contextArticles;
+            contextText = articles.map(a => `Title: ${a.title}\nCategory: ${a.category}\nContent: ${a.content}`).join('\n\n---\n\n');
+            usedContextJSON = JSON.stringify(articles);
+        }
+        const systemPrompt = `You are a friendly and expert SAP BTP assistant. 
+
+CRITICAL FORMATTING RULES:
+You must format your ENTIRE response using standard HTML tags. DO NOT use Markdown under any circumstances (e.g., do not use **, *, #, or \`\`\`).
+- Use <strong> for emphasis/bolding.
+- Use <ul> and <li> for lists.
+- Use <br/> for line breaks and paragraph spacing.
+- Use <h3> or <h4> for headings.
+- Use <pre style="background-color:#f3f4f6; padding:0.5rem; border-radius:4px; font-family:monospace;"><code> for code blocks.
+- Use <a href="..." target="_blank"> for links.
+
+BEHAVIORAL RULES:
+1. If the user greets you, respond in a warm, friendly, and welcoming manner before addressing their query.
+2. Use ONLY the provided context to answer the user's question. 
+3. If the answer cannot be found within the provided context, you must explicitly and exactly state: "I cannot answer this based on the provided context." Do not hallucinate or rely on outside knowledge.
+
+Context:
+${contextText}`;
+        const history = await SELECT.from('com.candy.app.Message')
+            .where({ conversation_ID: conversationId })
+            .orderBy`createdAt DESC`
+            .limit(5);
+
+        history.reverse();
+
+        const apiMessages = history.map(msg => ({
+            role: msg.role === 'user' ? 'user' : 'assistant',
+            content: msg.content
+        }));
+
+        const groqMessagesPayload = [
+            { role: "system", content: systemPrompt },
+            ...apiMessages
+        ];
+
+        try {
+            const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+            const aiResponse = await groq.chat.completions.create({
+                messages: groqMessagesPayload,
+                model: "openai/gpt-oss-20b",
+            });
+
+            const aiContent = aiResponse.choices[0].message.content;
+            const tokensUsed = aiResponse.usage.total_tokens;
+
+            const newAiMessage = {
+                conversation_ID: conversationId,
+                role: 'assistant',
+                content: aiContent,
+                tokenCount: tokensUsed,
+                usedContext: usedContextJSON
+            };
+
+            await INSERT.into('com.candy.app.Message').entries(newAiMessage);
+            return newAiMessage;
+
+        } catch (err) {
+            const newAiMessage = {
+                conversation_ID: conversationId,
+                role: 'assistant',
+                content: "Failed to generate AI response.",
+                tokenCount: null,
+                usedContext: usedContextJSON
+            };
+
+            await INSERT.into('com.cytechies.integration.reliability.Messages').entries(newAiMessage);
+            return newAiMessage;
+        }
+    });
+
 
     this.after('READ', IncidentClusters, async (data) => {  // ← add async
 

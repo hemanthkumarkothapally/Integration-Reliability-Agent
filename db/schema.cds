@@ -54,6 +54,7 @@ entity ChatSessions : cuid, managed {
     title       : String(255);
     createdAt   : Timestamp;
     createdBy   : String(255);
+    messages : Composition of many Messages on messages.conversation = $self; 
 }
 
 entity AccessLogs : cuid, managed {
@@ -70,4 +71,12 @@ entity TokenUsages : cuid, managed {
     estimatedCostUSD  : Decimal(10,4);
     calledAt          : Timestamp;
     purpose           : String(255);
+}
+
+entity Messages : cuid{
+   conversation : Association to one ChatSessions;
+   role  :LargeString;
+   content  : LargeString;
+   createdAt : Timestamp @cds.on.insert : $now;
+   tokenCount : Integer;
 }
