@@ -1,7 +1,26 @@
 using { com.cytechies.integration.reliability as IRA } from '../db/schema';
 
 @path: '/Poller'
-service PollerService @(requires: Admin){
-    entity Incidents as projection on IRA.Incidents;
+service PollerService @(requires: 'Admin'){
+    type ClusterRecommendationResponse {
+        ID                   : UUID;
+        cluster_ID           : UUID;
+
+        rootCause            : LargeString;
+        businessImpact       : LargeString;
+
+        remediationSteps     : LargeString;
+
+        affectedAdapter      : String(120);
+
+        confidenceScore      : Integer;
+
+        recommendationSource : String(40);
+
+        modelName            : String(100);
+
+        generatedAt          : Timestamp;
+    }
+    function getClusterRecommendation(cluster_ID : UUID) returns ClusterRecommendationResponse;
     function getFailedLogs() returns array of Map;
 }
