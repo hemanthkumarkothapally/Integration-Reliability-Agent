@@ -1,1 +1,1 @@
-ID,messageGuid,iFlowName,errorMessage,errorSignature,adapter,status,logStart,logEnd,createdAt,createdBy,modifiedAt,modifiedBy
+ID,messageGuid,iFlowName,errorMessage,errorSignature,adapter,status,logStart,logEnd,cluster_ID,createdAt,createdBy,modifiedAt,modifiedBy

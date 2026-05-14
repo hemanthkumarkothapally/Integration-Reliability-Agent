@@ -1,6 +1,26 @@
 using { com.cytechies.integration.reliability as IRA } from '../db/schema';
 
 @path: '/Chat'
-service ChatService @(requires:Viewer){
-    entity ChatSessions as projection on IRA.ChatSessions;
+service ChatService @(requires: 'Viewer'){
+   entity ChatSessions      as projection on IRA.ChatSessions;
+
+    entity Messages          as projection on IRA.Messages;
+
+  action createConversation(
+        title     : String,
+        clusterId : UUID 
+    ) returns {
+        ID    : UUID;
+        title : String;
+    };
+
+    action chat(
+        conversationId : UUID,
+        userMessage    : String
+    ) returns {
+        conversation_ID : UUID;
+        role            : String;
+        content         : String;
+        tokenCount      : Integer;
+    };
 }

@@ -1,8 +1,9 @@
-using {com.cytechies.integration.reliability  as IRA} from '../db/schema';
+using {com.cytechies.integration.reliability as IRA} from '../db/schema';
 
 @path: '/Incident'
 service IncidentService {
-    //entity Incidents        as projection on IRA.Incidents;
+    entity Incidents         as projection on IRA.Incidents;
+
     @requires                                  : 'Viewer'
     @readonly
     @Capabilities.FilterRestrictions.Filterable: true
@@ -37,4 +38,6 @@ service IncidentService {
 
     @requires: 'Admin'
     action triggerPoll();
+
+    
 }

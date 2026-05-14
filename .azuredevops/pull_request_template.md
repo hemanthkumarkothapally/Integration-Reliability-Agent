@@ -1,5 +1,5 @@
 ## Summary
-Brief description of what this PR does
+Updated .gitignore to add mta-op-*/ and *.log
 
 ## Checklist
 - [ ] No secrets added

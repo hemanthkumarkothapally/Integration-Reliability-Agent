@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "dependencies": {
     "@cap-js/hana": "^2",
+    "@sap-ai-sdk/foundation-models": "^2.10.0",
     "@sap-cloud-sdk/http-client": "^4.6.0",
     "@sap-cloud-sdk/resilience": "^4.6.0",
     "@sap/cds": "^9.9.1",
@@ -21,6 +22,10 @@
     "requires": {
       "auth": "dummy",
       "db": "sqlite",
+      "[hybrid]": {
+        "auth": "dummy",
+        "db": "hana"
+      },
       "[production]": {
         "auth": "xsuaa",
         "db": "hana"
@@ -30,6 +35,13 @@
         "kind": "rest",
         "credentials": {
           "destination": "IS_RUNTIME_API"
+        }
+      },
+      "GenAIHubDestination": {
+        "kind": "rest",
+        "credentials": {
+          "destination": "GENERATIVE_AI_HUB",
+          "requestTimeout": "300000"
         }
       }
     }
