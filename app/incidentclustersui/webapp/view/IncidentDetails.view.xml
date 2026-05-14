@@ -5,191 +5,272 @@
     xmlns:layout="sap.ui.layout"
     xmlns:core="sap.ui.core"
     xmlns:m="sap.m" height="100%">
-
-    <ObjectPageLayout id="ObjectPageLayout" showTitleInHeaderContent="true" upperCaseAnchorBar="false">
+ 
+    <ObjectPageLayout id="ObjectPageLayout" showTitleInHeaderContent="true" showFooter="true" upperCaseAnchorBar="false">
         <headerTitle>
             <ObjectPageDynamicHeaderTitle id="_IDGenObjectPageDynamicHeaderTitle">
-
+ 
                 <!-- EXPANDED -->
                 <expandedHeading>
-
-                    <m:Title id="_IDGenTitle4" text="{headerDetails>/iFlowName}" wrapping="true" />
-
+ 
+ 
+                    <m:HBox id="_IDGenHBox2" alignItems="Center">
+ 
+                        <m:Button id="_IDGenButton9" icon="sap-icon://nav-back" type="Default" press=".onNavBack" class="sapUiTinyMarginEnd" />
+ 
+                        <m:Title id="_IDGenTitle4" text="{headerDetails>/iFlowName}" wrapping="true" />
+ 
+                    </m:HBox>
+ 
                 </expandedHeading>
+ 
                 <actions>
-                    <m:Button id="_IDGenButton10" icon="sap-icon://ai" press=".onAipress" tooltip="AI Assistant"></m:Button>
+                    <m:Button id="_IDGenButton10" icon="sap-icon://ai" type="Ghost" press=".onAipress" tooltip="AI Assistant"></m:Button>
                 </actions>
-
+ 
                 <!-- SNAPPED -->
                 <snappedHeading>
-
+ 
                     <m:FlexBox id="_IDGenFlexBox1" fitContainer="true" alignItems="Center">
-
-                        <m:Avatar id="_IDGenAvatar1" src="sap-icon://process" backgroundColor="Accent6" class="sapUiTinyMarginEnd" />
-
+ 
+                        <m:Button id="_IDGenButton11" icon="sap-icon://nav-back" type="Transparent" press=".onNavBack" class="sapUiTinyMarginEnd" />
+ 
                         <m:Title id="_IDGenTitle5" text="{headerDetails>/iFlowName}" wrapping="true" />
-
+ 
                     </m:FlexBox>
-
+ 
                 </snappedHeading>
-
+ 
                 <!-- EXPANDED CONTENT -->
-                <expandedContent>
-
+                <!-- <expandedContent>
+ 
                     <m:ObjectStatus id="_IDGenObjectStatus" text="{headerDetails>/status}" state="{= ${headerDetails>/status} === 'OPEN'? 'Warning': ${headerDetails>/status} === 'RESOLVED'? 'Success': 'None'}" />
-
-                </expandedContent>
-
+ 
+                </expandedContent> -->
+ 
                 <!-- SNAPPED CONTENT -->
-                <snappedContent>
-
+                <!-- <snappedContent>
+ 
                     <m:ObjectStatus id="_IDGenObjectStatus1" text="{headerDetails>/status}" state="{= ${headerDetails>/status} === 'OPEN'? 'Warning': ${headerDetails>/status} === 'RESOLVED'? 'Success': 'None'}" />
-
-                </snappedContent>
-
+ 
+                </snappedContent> -->
+ 
                 <!-- MOBILE -->
                 <snappedTitleOnMobile>
-
+ 
                     <m:Title id="_IDGenTitle6" text="{headerDetails>/status}" />
-
+ 
                 </snappedTitleOnMobile>
-
+ 
             </ObjectPageDynamicHeaderTitle>
         </headerTitle>
-
+ 
         <headerContent>
-
+ 
             <m:FlexBox id="_IDGenFlexBox2" wrap="Wrap">
-
+ 
                 <layout:VerticalLayout id="_IDGenVerticalLayout" class="sapUiSmallMarginBeginEnd">
-
+ 
                     <!-- <m:ObjectStatus title="iFlow Name" text="{headerDetails>/iFlowName}" /> -->
-
-                    <m:ObjectStatus id="_IDGenObjectStatus2" title="Severity" text="{headerDetails>/severity}" />
-
+ 
+                    <m:ObjectStatus id="_IDGenObjectStatus2" title="Severity" text="{headerDetails>/severity}" state="{= ${headerDetails>/severity} === 'CRITICAL' ? 'Error' : ${headerDetails>/severity} === 'HIGH' ? 'Warning' : ${headerDetails>/severity} === 'MEDIUM' ? 'Information' : ${headerDetails>/severity} === 'LOW' ? 'Success' : 'None' }" />
                     <!-- <m:ObjectStatus title="Status" text="{headerDetails>/status}" /> -->
-
+ 
                     <!-- <m:ObjectStatus title="Error Type" text="{headerDetails>/errorSignature}" /> -->
                     <m:ObjectStatus id="_IDGenObjectStatus3" title="Incident Count" text="{headerDetails>/incidentCount}" />
-
+ 
+                    <m:ObjectStatus id="_IDGenObjectStatus" title="Confidence Score" />
+                    <m:ProgressIndicator id="_IDGenProgressIndicator" percentValue="{details>/confidenceScore}" displayValue="{details>/confidenceScore}%" showValue="true" class="sapUiNoMarginTop" state="Success"/>
+ 
+ 
                 </layout:VerticalLayout>
-
+ 
                 <layout:VerticalLayout id="_IDGenVerticalLayout1" class="sapUiSmallMarginBeginEnd">
-
-
-
-                    <m:ObjectStatus id="_IDGenObjectStatus4" title="First Seen" text="{headerDetails>/firstSeen}" />
-
-                    <m:ObjectStatus id="_IDGenObjectStatus5" title="Last Seen" text="{headerDetails>/lastSeen}" />
-
-                </layout:VerticalLayout>
-
+<m:ObjectStatus id="_IDGenObjectStatus1" title="Status" text="{headerDetails>/status}" state="{= ${headerDetails>/status} === 'OPEN'? 'Warning': ${headerDetails>/status} === 'RESOLVED'? 'Success': 'None'}" />
+               
+                    <m:ObjectStatus id="_IDGenObjectStatus4" title="First Seen" text="{
+        path: 'headerDetails>/firstSeen',
+        formatter: '.formatter.formatDateTime'
+    }" />
+ 
+                    <m:ObjectStatus id="_IDGenObjectStatus5" title="Last Seen" text="{
+        path: 'headerDetails>/lastSeen',
+        formatter: '.formatter.formatDateTime'
+    }"/>
+                     </layout:VerticalLayout>
+ 
                 <layout:VerticalLayout id="_IDGenVerticalLayout2" class="sapUiSmallMarginBeginEnd">
-
+ 
                     <m:ObjectStatus id="_IDGenObjectStatus6" title="Created By" text="{headerDetails>/createdBy}" />
-
+ 
                     <m:ObjectStatus id="_IDGenObjectStatus7" title="Modified By" text="{headerDetails>/modifiedBy}" />
-
+ 
                     <!-- <m:ObjectStatus title="Playbook ID" text="{headerDetails>/playbookId}" /> -->
-
+ 
                 </layout:VerticalLayout>
-
+ 
+ 
+ 
+ 
             </m:FlexBox>
-
+ 
         </headerContent>
-
+ 
         <sections>
-
+ 
             <!-- ROOT CAUSE -->
             <ObjectPageSection id="_IDGenObjectPageSection" title="Root Cause Analysis" showTitle="false">
-
+ 
                 <subSections>
-
+ 
                     <ObjectPageSubSection id="_IDGenObjectPageSubSection">
-
+ 
                         <blocks>
-
+ 
                             <m:VBox id="_IDGenVBox1" class="sapUiSmallMargin">
-
+ 
                                 <m:HBox id="_IDGenHBox1" alignItems="Center" class="sapUiTinyMarginBottom">
-
-                                    <m:Avatar id="_IDGenAvatar2" initials="AI" displaySize="XS" class="sapUiTinyMarginEnd" />
-
+ 
+                                    <m:Avatar id="_IDGenAvatar2" src="sap-icon://inspection" displaySize="XS" class="sapUiTinyMarginEnd" />
+ 
                                     <m:Title id="_IDGenTitle7" text="Root Cause Analysis" level="H5" />
-
+ 
                                 </m:HBox>
-
+ 
                                 <m:Text id="_IDGenText6" wrapping="true" text="{details>/rootCause}" />
-
+ 
                             </m:VBox>
-
+ 
                         </blocks>
-
+ 
                     </ObjectPageSubSection>
-
+ 
                 </subSections>
-
+ 
             </ObjectPageSection>
-
+ 
             <!-- BUSINESS IMPACT -->
             <ObjectPageSection id="_IDGenObjectPageSection1" title="Business Impact" showTitle="false">
-
+ 
                 <subSections>
-
+ 
                     <ObjectPageSubSection id="_IDGenObjectPageSubSection1">
-
+ 
                         <blocks>
-
+ 
                             <m:VBox id="_IDGenVBox2" class="sapUiSmallMargin">
-
-                                <m:Title id="_IDGenTitle8" text="Business Impact" level="H5" class="sapUiTinyMarginBottom" />
-
+ 
+                                <m:HBox id="_IDGenHBox3" alignItems="Center" class="sapUiTinyMarginBottom">
+                                    <m:Avatar id="_IDGenAvatar1" src="sap-icon://line-chart-time-axis" displaySize="XS" class="sapUiTinyMarginEnd" />
+ 
+                                    <m:Title id="_IDGenTitle8" text="Business Impact" level="H5" />
+ 
+                                </m:HBox>
+ 
+ 
                                 <m:Text id="_IDGenText10" wrapping="true" text="{details>/businessImpact}" />
-
+ 
                             </m:VBox>
-
+ 
                         </blocks>
-
+ 
                     </ObjectPageSubSection>
-
+ 
                 </subSections>
-
+ 
             </ObjectPageSection>
-
+ 
             <ObjectPageSection id="_IDGenObjectPageSection2" title="Remediation Steps" showTitle="false">
-
+ 
                 <subSections>
-
+ 
                     <ObjectPageSubSection id="_IDGenObjectPageSubSection2">
-
+ 
                         <blocks>
-
+ 
                             <m:VBox id="_IDGenVBox3" class="sapUiSmallMargin">
-
-                                <m:Title id="_IDGenTitle9" text="Remediation Steps" level="H5" class="sapUiTinyMarginBottom" />
-
+ 
+                                <m:HBox id="_IDGenHBox4" alignItems="Center" class="sapUiTinyMarginBottom">
+                                    <m:Avatar id="_IDGenAvatar3" src="sap-icon://technical-object" displaySize="XS" class="sapUiTinyMarginEnd" />
+ 
+                                    <m:Title id="_IDGenTitle9" text="Remediation Steps" level="H5" />
+                                </m:HBox>
+ 
+ 
+ 
                                 <suite:Timeline id="idRemediationTimeline" showIcons="false" showHeaderBar="false" enableScroll="false" content="{remediationSteps>/steps}">
-
+ 
                                     <suite:content>
-
+ 
                                         <suite:TimelineItem id="_IDGenTimelineItem" title="{remediationSteps>title}" text="{remediationSteps>text}" userNameClickable="false" />
-
+ 
                                     </suite:content>
-
+ 
                                 </suite:Timeline>
-
+ 
                             </m:VBox>
-
+ 
                         </blocks>
-
+ 
                     </ObjectPageSubSection>
-
+ 
                 </subSections>
-
+ 
             </ObjectPageSection>
-
-
+ 
+            <ObjectPageSection id="_IDGenObjectPageSection3" title="Underlying Incidents" showTitle="false">
+ 
+                <subSections>
+ 
+                    <ObjectPageSubSection id="_IDGenObjectPageSubSection3">
+ 
+                        <blocks>
+ 
+                            <m:VBox id="_IDGenVBox4" class="sapUiSmallMargin">
+ 
+                                <m:HBox id="_IDGenHBox5" alignItems="Center" class="sapUiTinyMarginBottom">
+                                    <m:Avatar id="_IDGenAvatar4" src="sap-icon://incident" displaySize="XS" class="sapUiTinyMarginEnd" />
+                                    <m:Title id="_IDGenTitle10" text="Underlying Incidents" level="H5" />
+ 
+                                </m:HBox>
+                                <m:VBox id="_IDGenVBox5">
+    <m:Text id="_IDGenText12" text="{incidentsModel>/incidents/0/errorMessage}" wrapping="true" />
+    </m:VBox>
+ 
+                                <!-- <m:List id="idErrorMessageList"  items="{path: 'incidentsModel>/incidents'}" growing="true" growingScrollToLoad="true" noDataText="No incidents found">
+ 
+                                    <m:StandardListItem title="{incidentsModel>errorMessage}" description="{incidentsModel>messageGuid}"/>
+ 
+                                </m:List> -->
+ 
+                            </m:VBox>
+ 
+                        </blocks>
+ 
+                    </ObjectPageSubSection>
+ 
+                </subSections>
+ 
+            </ObjectPageSection>
+ 
+ 
         </sections>
+ 
+ 
+        <footer>
+ 
+            <m:OverflowToolbar id="_IDGenOverflowToolbar1">
+ 
+                <m:ToolbarSpacer id="_IDGenToolbarSpacer3" />
+ 
+                <m:Button id="_IDGenButton12" text="Re-diagnose" type="Attention" icon="sap-icon://ai" press=".Re-diagnose" />
+ 
+                <m:Button id="_IDGenButton13" text="Resolve" type="Accept" icon="sap-icon://complete" press=".onResolve" />
+ 
+            </m:OverflowToolbar>
+ 
+        </footer>
     </ObjectPageLayout>
 </mvc:View>
+ 
  

@@ -8,8 +8,9 @@ sap.ui.define([
     "sap/m/Label",
     "sap/m/Avatar",
     "sap/ui/model/json/JSONModel",
-    "sap/m/MessageBox"
-], function (Controller, FormattedText, VBox, HBox, Panel, Text, Label, Avatar, JSONModel, MessageBox) {
+    "sap/m/MessageBox",
+    "sap/f/library"
+], function (Controller, FormattedText, VBox, HBox, Panel, Text, Label, Avatar, JSONModel, MessageBox, fioriLibrary) {
     "use strict";
 
     return Controller.extend("com.cytechies.integration.reliability.incidentclustersui.controller.Chat", {
@@ -18,36 +19,33 @@ sap.ui.define([
             this.getView().setModel(new JSONModel({ currentConversationId: null }), "appView");
             this._resetToWelcomePage();
         },
-
+        onBackPress() {
+            var oFCL = this.oView.getParent().getParent();
+            oFCL.setLayout(sap.f.LayoutType.OneColumn);
+            console.log("Closing chat side panel");
+        },
         _resetToWelcomePage: function () {
-            var oAppViewModel = this.getView().getModel("appView");
-            if (oAppViewModel) {
-                oAppViewModel.setProperty("/currentConversationId", null);
-                oAppViewModel.setProperty("/currentConversationTitle", "");
-            }
-
-            var oHistoryList = this.byId("historyList");
-            if (oHistoryList) {
-                oHistoryList.removeSelections(true);
-            }
+            this.getView().getModel("appView").setProperty("/currentConversationId", null);
+            this.getView().getModel("appView").setProperty("/currentConversationTitle", "New Chat");
+            this.byId("historyList").removeSelections(true);;
+            this.byId("historyPopover").close();
+            this.byId("chatContainer").removeAllItems();
+            this.byId("welcomePage").setVisible(true);
 
         },
 
+        onNewChat() {
+            this._resetToWelcomePage();
+        },
+
         onConversationSelect: function (oEvent) {
-            var oItem = oEvent.getParameter("item");
-            var sKey = oItem.getKey();
-
-            if (sKey === "NEW_CHAT") {
-                this._resetToWelcomePage();
-            } else {
-                var sTitle = oItem.getText();
-                this.getView().getModel("appView").setProperty("/currentConversationTitle", sTitle);
-                this._loadConversationMessages(sKey);
-            }
-
-            if (sap.ui.Device.system.phone) {
-                this.byId("toolPage").setSideExpanded(false);
-            }
+            var oListItem = oEvent.getParameter("listItem");
+            var oCtx = oListItem.getBindingContext("chatModel");
+            var sKey = oCtx.getProperty("ID");
+            console.log("Selected conversation ID:", sKey);
+            var sTitle = oCtx.getProperty("title");
+            this.getView().getModel("appView").setProperty("/currentConversationTitle", sTitle);
+            this._loadConversationMessages(sKey);
         },
         onHistoryMenuPress(oEvent) {
             const oButton = oEvent.getSource();
@@ -67,25 +65,22 @@ sap.ui.define([
                 emphasizedAction: MessageBox.Action.DELETE,
                 onClose: (sAction) => {
                     if (sAction === MessageBox.Action.DELETE) {
-
-                        var oNavList = this.byId("_IDGenNavigationList1");
-                        var aItems = oNavList.getItems();
-
-                        var oTargetItem = aItems.find(function (item) {
-                            return item.getKey() === sConvId;
-                        });
-
-                        if (oTargetItem && oTargetItem.getBindingContext()) {
-                            oTargetItem.getBindingContext().delete().then(() => {
-                                sap.m.MessageToast.show("Chat deleted successfully.");
+                        console.log("Deleting conversation with ID:", sConvId);
+                        var oModel = this.getView().getModel("chatModel");
+                        var sPath = "/ChatSessions('" + sConvId + "')";
+                        var oContextBinding = oModel.bindContext(sPath);
+                        oContextBinding.requestObject().then(() => {
+                            var oBoundContext = oContextBinding.getBoundContext();
+                            oBoundContext.delete().then(() => {
+                                sap.m.MessageToast.show("Chat deleted");
                                 this._resetToWelcomePage();
+                                oModel.refresh();
                             }).catch((oError) => {
-                                console.error("Failed to delete", oError);
-                                MessageBox.error("An error occurred while deleting the chat.");
+                                sap.m.MessageToast.show("Deletion failed: " + oError.message);
                             });
-                        } else {
-                            MessageBox.error("Could not find the chat context to delete.");
-                        }
+                        }).catch((oError) => {
+                            sap.m.MessageToast.show("Could not locate entry: " + oError.message);
+                        });
                     }
                 }
             });
@@ -103,7 +98,7 @@ sap.ui.define([
             if (!sQuery) return;
 
             let sCurrentConvId = this.getView().getModel("appView").getProperty("/currentConversationId");
-            var oModel = this.getView().getModel();
+            var oModel = this.getView().getModel("chatModel");
 
             if (!sCurrentConvId) {
                 try {
@@ -138,40 +133,40 @@ sap.ui.define([
             }
         },
 
-        onSideNavButtonPress: function () {
-            var oToolPage = this.byId("toolPage");
-            oToolPage.setSideExpanded(!oToolPage.getSideExpanded());
-        },
-
         _executeCreateConversation: function (sTitle) {
             return new Promise((resolve, reject) => {
-                var oModel = this.getView().getModel();
+                // 1. Explicitly get the named model 'chatModel'
+                var oModel = this.getView().getModel("chatModel");
+
+                // 2. Bind the action. If it's a top-level action, the path starts with /
                 var oAction = oModel.bindContext("/createConversation(...)");
+
                 oAction.setParameter("title", sTitle || "New Chat");
 
                 oAction.execute().then(() => {
+                    // 3. Request the result object from the bound context
                     return oAction.getBoundContext().requestObject();
                 }).then((oResult) => {
+                    // 4. Extract the ID (OData V4 often wraps results in a 'value' property)
                     var sNewId = oResult.ID || (oResult.value && oResult.value.ID);
-                    oModel.refresh();
+
+                    // 5. Update UI state
                     this.getView().getModel("appView").setProperty("/currentConversationId", sNewId);
                     this.byId("chatContainer").removeAllItems();
+
+                    // 6. Refresh the model so the side list shows the new entry
+                    oModel.refresh();
+
                     resolve(sNewId);
-                }).catch(reject);
+                }).catch((oError) => {
+                    console.error("Conversation creation failed:", oError);
+                    reject(oError);
+                });
             });
         },
 
-        _selectConversationInNav: function (sId) {
-            var oNavList = this.byId("_IDGenNavigationList1");
-            var oBinding = oNavList.getBinding("item");
-            if (oBinding) {
-                oBinding.attachEventOnce("dataReceived", () => this.byId("sideNavigation").setSelectedKey(sId));
-            } else {
-                setTimeout(() => this.byId("sideNavigation").setSelectedKey(sId), 300);
-            }
-        },
-
         _loadConversationMessages: function (sConversationId) {
+            console.log("Loading conversation with ID:", sConversationId);
             this.getView().getModel("appView").setProperty("/currentConversationId", sConversationId);
             var oContainer = this.byId("chatContainer");
             oContainer.removeAllItems();
@@ -180,12 +175,14 @@ sap.ui.define([
                 this.byId("welcomePage").setVisible(false);
             }
 
-            var oModel = this.getView().getModel();
-            var oListBinding = oModel.bindList("/Message", null, [
+            var oModel = this.getView().getModel("chatModel");
+
+            var oListBinding = oModel.bindList("/Messages", null, [
                 new sap.ui.model.Sorter("createdAt", false)
             ], [
                 new sap.ui.model.Filter("conversation_ID", sap.ui.model.FilterOperator.EQ, sConversationId)
             ]);
+            console.log("Chat model:", oListBinding);
             oListBinding.requestContexts(0, 100).then(function (aContexts) {
                 var aMessages = aContexts.map(function (ctx) { return ctx.getObject(); });
 
@@ -221,36 +218,66 @@ sap.ui.define([
 
             let oMessageItem;
 
+
             if (!isAssistant) {
-                const oUserLabel = new Avatar({ src: "sap-icon://person-placeholder",displaySize: sap.m.AvatarSize.XS,backgroundColor : sap.m.AvatarColor.Random  })
-                const oUserText = new Text({ text: sText });
-                oMessageItem = new VBox({
-                    alignItems: "End",
+                // Standard User Avatar Layout Fallback
+                const oUserLabel = new sap.m.Avatar({
+                    src: "sap-icon://person",
+                    displaySize: sap.m.AvatarSize.XS,
+                    backgroundColor: sap.m.AvatarColor.Accent1
+                });
+
+                const oUserText = new sap.m.Text({ text: sText });
+
+                oMessageItem = new sap.m.VBox({
+                    alignItems: sap.m.FlexAlignItems.End,
                     width: "100%",
                     items: [
-                        new HBox({
-                            alignItems: sap.m.FlexAlignItems.End,
+                        new sap.m.HBox({
+                            width: "100%",
+                            justifyContent: sap.m.FlexJustifyContent.End,
+                            alignItems: sap.m.FlexAlignItems.Start,
+                            fitContainer: false,
                             items: [
-                               
-                                oUserText.addStyleClass("sapUiTinyMarginEnd"),
+                                // Wrapped Text inside layout panel container to retain structural width
+                                new sap.m.VBox({
+                                    items: [oUserText]
+                                }).addStyleClass("userChatBubbleNew sapUiSmallMarginEnd"),
                                 oUserLabel
-                            ],
-                        }).addStyleClass("sapUiContentPadding userChatBubbleNew sapUiTinyMarginEnd")
+                            ]
+                        }).addStyleClass("sapUiTinyMargin")
                     ]
                 });
             } else {
-                const oAiLabel = new Avatar({ src: "sap-icon://ai",displaySize: sap.m.AvatarSize.XS })
-                const oTextControl = new FormattedText({ htmlText: `<b>CandyAssist</b><br/>${bStream ? '' : sText}` });
+                // Balanced AI Message Layout Panel
+                const oAiLabel = new sap.m.Avatar({
+                    src: "sap-icon://ai",
+                    displaySize: sap.m.AvatarSize.XS
+                });
 
-                oMessageItem = new VBox({
-                    width: "98%",
-                    items: [new HBox({
-                            alignItems: sap.m.FlexAlignItems.End,
-                            items:[
-                        oAiLabel,
-                        oTextControl.addStyleClass("sapUiTinyMarginBegin"),
-                            ]})]
-                }).addStyleClass("sapUiTinyMarginBegin sapUiContentPadding aiChatBubbleNew");
+                const oTextControl = new sap.m.FormattedText({
+                    htmlText: `<b>CandyAssist</b><br/>${bStream ? '' : sText}`
+                });
+
+                oMessageItem = new sap.m.VBox({
+                    alignItems: sap.m.FlexAlignItems.Start,
+                    width: "100%",
+                    items: [
+                        new sap.m.HBox({
+                            width: "100%",
+                            justifyContent: sap.m.FlexJustifyContent.Start,
+                            alignItems: sap.m.FlexAlignItems.Start,
+                            fitContainer: false,
+                            items: [
+                                oAiLabel,
+                                new sap.m.VBox({
+                                    items: [oTextControl]
+                                }).addStyleClass("aiChatBubbleNew sapUiSmallMarginBegin")
+                            ]
+                        }).addStyleClass("sapUiTinyMarginBegin")
+                    ]
+                });
+
 
                 if (bStream) {
                     let i = 0;

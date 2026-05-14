@@ -45,8 +45,24 @@ sap.ui.define([], function () {
                     return "None";
             }
  
-        }
+        },
+        formatDateTime: function (sDate) {
  
+            if (!sDate) {
+                return "";
+            }
+ 
+            const oDate =
+                new Date(sDate);
+ 
+            return sap.ui.core.format.DateFormat
+                .getDateTimeInstance({
+                    pattern: "MMM dd, yyyy, h:mm:ss a"
+                })
+                .format(oDate);
+ 
+        }
     };
  
 });
+ 

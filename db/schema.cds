@@ -2,38 +2,42 @@ namespace com.cytechies.integration.reliability;
 using { cuid, managed } from '@sap/cds/common';
 entity Incidents : cuid, managed {
     messageGuid     : String(100);
-    iFlowName       : String(255);
-    errorMessage    : String(5000);
-    errorSignature  : String(500);
+    iFlowName       : String(300);
+    errorMessage    : LargeString;
+    errorSignature  : LargeString;
     adapter         : String(100);
     status          : String(50);
-    logStart        : Timestamp;    
+    logStart        : Timestamp;
     logEnd          : Timestamp;
+    cluster                : Association to IncidentClusters;
 }
-
+ 
 entity IncidentClusters : cuid, managed {
-    errorSignature  : String(500);
-    iFlowName       : String(255);
+    errorSignature  : String;
+    iFlowName       : String(300);
     severity        : String(50);
     incidentCount   : Integer;
     firstSeen       : Timestamp;
     lastSeen        : Timestamp;
     status          : String(50);
-    playbookId      : UUID;
+    playbook : Association to Playbooks;
     severityCriticality : Integer;
-    
+     
+    incidents              : Composition of many Incidents
+                           on incidents.cluster = $self;
+     chatSessions : Association to many ChatSessions on chatSessions.cluster = $self;
+ 
 }
-
 entity ClusterRecommendations : cuid, managed {
     cluster             : Association to IncidentClusters;
     rootCause           : String(2000);
     businessImpact      : String(2000);
-    remediationSteps    : String(5000);
+    remediationSteps    : LargeString;
     affectedAdapter     : String(100);
     confidenceScore     : Decimal(5,2);
     generatedAt         : Timestamp;
 }
-
+ 
 entity MonitoredArtifacts : cuid, managed {
     iFlowName          : String(255);
     iFlowId            : String(255);
@@ -41,29 +45,33 @@ entity MonitoredArtifacts : cuid, managed {
     isActive           : Boolean;
     lastPollTimestamp  : Timestamp;
 }
-
-entity Playbooks : cuid, managed {
-    errorType     : String(255);
-    title         : String(255);
-    description   : String(2000);
-    steps         : String(5000);
-    severity      : String(50);
+ 
+entity Playbooks :cuid, managed {
+    errorType       : String(100);
+    title           : String(255);
+    description     : LargeString;
+    steps           : LargeString;
+    severity        : String(20);
 }
-
 entity ChatSessions : cuid, managed {
     title       : String(255);
-    createdAt   : Timestamp;
-    createdBy   : String(255);
-    messages : Composition of many Messages on messages.conversation = $self; 
+    cluster  : Association to IncidentClusters;
+    messages : Composition of many Messages on messages.conversation = $self;
 }
-
+entity Messages : cuid{
+   conversation : Association to one ChatSessions;
+   role  :LargeString;
+   content  : LargeString;
+   createdAt : Timestamp @cds.on.insert : $now;
+   tokenCount : Integer;
+}
 entity AccessLogs : cuid, managed {
     action     : String(255);
     user       : String(255);
     timestamp  : Timestamp;
     details    : String(2000);
 }
-
+ 
 entity TokenUsages : cuid, managed {
     model             : String(255);
     inputTokens       : Integer;
@@ -72,11 +80,4 @@ entity TokenUsages : cuid, managed {
     calledAt          : Timestamp;
     purpose           : String(255);
 }
-
-entity Messages : cuid{
-   conversation : Association to one ChatSessions;
-   role  :LargeString;
-   content  : LargeString;
-   createdAt : Timestamp @cds.on.insert : $now;
-   tokenCount : Integer;
-}
+ 

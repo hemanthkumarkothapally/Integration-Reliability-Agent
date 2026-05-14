@@ -56,6 +56,7 @@ sap.ui.define([
             const oContext = oItem.getBindingContext();
 
             const sID = oContext.getProperty("ID");
+             
 
             this.getOwnerComponent()
                 .getRouter()

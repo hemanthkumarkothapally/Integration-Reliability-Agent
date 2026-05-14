@@ -23,6 +23,14 @@
           "annotations": [],
           "odataVersion": "4.01"
         }
+      },
+      "ChatService": {
+        "uri": "/Chat/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "odataVersion": "4.01"
+        }
       }
     }
   },
@@ -64,6 +72,15 @@
       },
       "": {
         "dataSource": "mainService",
+        "preload": true,
+        "settings": {
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true
+        }
+      },
+      "chatModel": {
+        "dataSource": "ChatService",
         "preload": true,
         "settings": {
           "operationMode": "Server",
