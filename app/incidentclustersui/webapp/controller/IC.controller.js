@@ -47,14 +47,14 @@ sap.ui.define([
             }
         },
         _onObjectMatched: async function (oEvent) {
-
+ 
             const sID =
                 oEvent.getParameter("arguments").ID;
-
+ 
             const oModel =
                 this.getView().getModel();
-
-
+ 
+ 
             const oHeaderBinding =
                 oModel.bindList(
                     "/IncidentClusters",
@@ -68,36 +68,36 @@ sap.ui.define([
                         )
                     ]
                 );
-
+ 
             const aHeaderContexts =
                 await oHeaderBinding.requestContexts();
-
+ 
             if (aHeaderContexts.length > 0) {
-
+ 
                 const oHeaderData =
                     aHeaderContexts[0].getObject();
-
+ 
                 console.log("Header Data:", oHeaderData);
-
+ 
                 const oHeaderModel =
                     new JSONModel(oHeaderData);
-
+ 
                 this.getView().setModel(
                     oHeaderModel,
                     "headerDetails"
                 );
-
+ 
             }
-
+ 
             // Details Model
             const oJSONModel =
                 new JSONModel();
-
+ 
             this.getView().setModel(
                 oJSONModel,
                 "details"
             );
-
+ 
             // Read Recommendation Data
             const oBinding =
                 oModel.bindList(
@@ -112,52 +112,53 @@ sap.ui.define([
                         )
                     ]
                 );
-
+ 
             const aContexts =
                 await oBinding.requestContexts();
-
+ 
             if (aContexts.length > 0) {
-
+ 
                 const oData =
                     aContexts[0].getObject();
-
+ 
                 console.log("Recommendation Data:", oData);
-
+ 
                 // Set Main Details
                 oJSONModel.setData(oData);
-
+ 
                 // Prepare Timeline Steps
+                const aStepsRaw =
+                    JSON.parse(oData.remediationSteps);
+ 
                 const aSteps =
-                    oData.remediationSteps
-                        .split(";")
-                        .map(function (sStep, iIndex) {
-
-                            return {
-
-                                id: iIndex + 1,
-                                text: sStep.trim()
-
-                            };
-
-                        });
-
+                    aStepsRaw.map(function (sStep, iIndex) {
+ 
+                        return {
+ 
+                            title: "STEP " + (iIndex + 1),
+                            text: sStep
+ 
+                        };
+ 
+                    });
+ 
                 // Timeline Model
                 const oStepsModel =
                     new JSONModel({
-
+ 
                         steps: aSteps
-
+ 
                     });
-
+ 
                 this.getView().setModel(
                     oStepsModel,
                     "remediationSteps"
                 );
-
+ 
                 console.log("Timeline Steps:", aSteps);
-
+ 
             }
-
+ 
         }
 
 

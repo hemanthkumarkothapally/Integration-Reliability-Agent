@@ -32,7 +32,7 @@
         <tnt:mainContents>
             <NavContainer id="navContainer">
                 <pages>
-                    <Page id="chatPage" showHeader="true" backgroundDesign="List">
+                    <Page id="chatPage" showHeader="true"  backgroundDesign="Transparent">
                         <customHeader>
                             <Toolbar id="_IDGenToolbar">
                                 <Title id="_IDGenTitle1" text="{= ${appView>/currentConversationTitle} || 'New Chat' }" class="sapUiSmallMarginBegin" wrapping="true" />

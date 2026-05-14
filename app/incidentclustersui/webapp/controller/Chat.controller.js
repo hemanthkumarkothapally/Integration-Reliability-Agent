@@ -96,11 +96,6 @@ sap.ui.define([
 
             const oInput = this.byId("chatInput");
             oInput.setValue(sText);
-
-            // Trigger FeedInput post event properly
-            oInput.firePost({
-                value: sText
-            });
         },
 
         onPost: async function (oEvent) {
@@ -113,7 +108,7 @@ sap.ui.define([
             if (!sCurrentConvId) {
                 try {
                     sCurrentConvId = await this._executeCreateConversation(sQuery.substring(0, 20).replace(/[\r\n]+/g, " ") + "...");
-                    this._selectConversationInNav(sCurrentConvId);
+                    // this._selectConversationInNav(sCurrentConvId);
                 } catch (e) {
                     sap.m.MessageToast.show("Failed to create conversation");
                     return;
@@ -236,10 +231,11 @@ sap.ui.define([
                         new HBox({
                             alignItems: sap.m.FlexAlignItems.End,
                             items: [
+                               
                                 oUserText.addStyleClass("sapUiTinyMarginEnd"),
                                 oUserLabel
                             ],
-                        }).addStyleClass("sapUiContentPadding userChatBubbleNew")
+                        }).addStyleClass("sapUiContentPadding userChatBubbleNew sapUiTinyMarginEnd")
                     ]
                 });
             } else {
@@ -254,24 +250,7 @@ sap.ui.define([
                         oAiLabel,
                         oTextControl.addStyleClass("sapUiTinyMarginBegin"),
                             ]})]
-                }).addStyleClass("sapUiTinyMarginBegin");
-
-                // if (oData && oData.usedContext) {
-                //     try {
-                //         const aArticles = typeof oData.usedContext === 'string' ? JSON.parse(oData.usedContext) : oData.usedContext;
-                //         if (aArticles.length > 0) {
-                //             const oPanel = new Panel({
-                //                 headerText: `Sources Used (${aArticles.length})`,
-                //                 expandable: true,
-                //                 expanded: false,
-                //                 content: aArticles.map(a => new Text({ text: ` • ${a.title || a.category}` }))
-                //             })//.addStyleClass("sapUiTinyMarginTop");
-                //             oMessageItem.addItem(oPanel);
-                //         }
-                //     } catch (e) {
-                //         console.warn("Could not parse usedContext", e);
-                //     }
-                // }
+                }).addStyleClass("sapUiTinyMarginBegin sapUiContentPadding aiChatBubbleNew");
 
                 if (bStream) {
                     let i = 0;

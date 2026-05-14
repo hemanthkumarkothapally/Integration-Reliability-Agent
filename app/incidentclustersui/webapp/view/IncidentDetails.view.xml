@@ -17,7 +17,7 @@
 
                 </expandedHeading>
                 <actions>
-                    <m:Button id="_IDGenButton10" icon="sap-icon://ai" press=".onAipress"></m:Button>
+                    <m:Button id="_IDGenButton10" icon="sap-icon://ai" press=".onAipress" tooltip="AI Assistant"></m:Button>
                 </actions>
 
                 <!-- SNAPPED -->
