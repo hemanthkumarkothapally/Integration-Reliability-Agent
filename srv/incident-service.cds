@@ -10,7 +10,15 @@ service IncidentService {
     @Capabilities.SortRestrictions.Sortable    : true
     @Capabilities.TopSupported                 : true
     @Capabilities.SkipSupported                : true
-    entity IncidentClusters  as projection on IRA.IncidentClusters;
+    entity IncidentClusters  as
+        projection on IRA.IncidentClusters {
+            *,
+            virtual null as totalIncidents24h   : Integer, // Incidents.logEnd > now-24h
+            virtual null as activeClusters      : Integer, // status != 'RESOLVED'
+            virtual null as criticalCount       : Integer, // active + severity = 'CRITICAL'
+            virtual null as resolved24h         : Integer, // status='RESOLVED' + modifiedAt > now-24h
+            virtual null as criticalCriticality : Integer
+        };
 
     @requires: 'Viewer'
     @readonly
@@ -36,6 +44,7 @@ service IncidentService {
     @readonly
     entity Playbook          as projection on IRA.Playbooks;
 
+    
     @requires: 'Admin'
     action triggerPoll();
 

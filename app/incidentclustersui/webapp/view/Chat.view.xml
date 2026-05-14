@@ -1,0 +1,89 @@
+<mvc:View controllerName="com.cytechies.integration.reliability.incidentclustersui.controller.Chat"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:tnt="sap.tnt"
+    xmlns:core="sap.ui.core" displayBlock="true">
+
+    <mvc:dependents>
+        <ResponsivePopover id="historyPopover" title="Chat History" placement="Bottom" contentWidth="auto">
+            <content>
+                <List id="historyList" items="{chatModel>/ChatSessions}" mode="SingleSelectMaster" selectionChange=".onConversationSelect">
+                    <headerToolbar>
+                        <Toolbar id="_IDGenToolbar2">
+                            <Button id="_IDGenButton1" text="New Chat" icon="sap-icon://add" width="100%" press=".onNewChat" type="Ghost"/>
+                        </Toolbar>
+                    </headerToolbar>
+                    <items>
+                        <StandardListItem id="_IDGenStandardListItem" title="{chatModel>title}" icon="sap-icon://discussion" type="Navigation" />
+                    </items>
+                </List>
+            </content>
+        </ResponsivePopover>
+    </mvc:dependents>
+    <tnt:ToolPage id="toolPage">
+        <tnt:header>
+            <tnt:ToolHeader id="_IDGenToolHeader">
+                <Button id="backbutton" type="Back" press=".onBackPress" tooltip="Chat History">
+                    <layoutData>
+                        <OverflowToolbarLayoutData id="_IDGenOverflowToolbarLayoutData" priority="NeverOverflow" />
+                    </layoutData>
+                </Button>
+                <Title id="_IDGenTitle3" text="AI Chat ✦ Grounded on live HANA data" wrapping="true"/>
+                <ToolbarSpacer id="_IDGenToolbarSpacer2" />
+                <Button id="historyMenuBtn" icon="sap-icon://overflow" type="Ghost" press=".onHistoryMenuPress" tooltip="Chat History" />
+            </tnt:ToolHeader>
+        </tnt:header>
+
+        <tnt:mainContents>
+            <NavContainer id="navContainer">
+                <pages>
+                    <Page id="chatPage" showHeader="true" backgroundDesign="Transparent" >
+                        <customHeader>
+                            <Toolbar id="_IDGenToolbar">
+                                <Title id="_IDGenTitle1" text="{= ${appView>/currentConversationTitle} || 'New Chat' }" class="sapUiSmallMarginBegin" wrapping="true" />
+                                <ToolbarSpacer id="_IDGenToolbarSpacer1" />
+                                <Button id="_IDGenButton" icon="sap-icon://delete" type="Reject" press=".onDeleteConversation" tooltip="Delete Chat" visible="{= ${appView>/currentConversationId} !== null }" />
+                            </Toolbar>
+                        </customHeader>
+
+                        <content>
+                            <VBox id="_IDGenVBox" renderType="Bare" height="100%" width="100%" justifyContent="SpaceBetween">
+                                <ScrollContainer id="chatScroll" vertical="true" horizontal="false" height="100%" width="100%">
+                                    <VBox id="welcomePage" width="90%" justifyContent="Center" alignItems="Center" class="sapUiMediumMargin">
+                                        <Avatar id="_IDGenAvatar" src="sap-icon://ai" displaySize="XL" backgroundColor="Accent6" class="sapUiMediumMarginBottom"/>
+                                        <Title id="_IDGenTitle2" text="Welcome to Integration Reliability Agent" level="H1" titleStyle="H2" wrapping="true" textAlign="Center" width="100%"/>
+
+                                        <Text id="_IDGenText13" text="Your intelligent assistant for live integration data in SAP HANA. Ask a question below to analyze errors, patterns, and remediation steps." class="sapUiSmallMarginTop" textAlign="Center" width="100%"/>
+                                        <VBox id="faqContainer" class="sapUiMediumMarginTop" width="100%" alignItems="Center">
+
+                                            <Label id="_IDGenLabel1" text="Try asking:" design="Bold" class="sapUiTinyMarginBottom"/>
+                                            <FlexBox id="_IDGenFlexBox" wrap="Wrap" justifyContent="Center" width="85%" renderType="Bare">
+                                                <Button id="_IDGenButton2" text="Failed integrations in last 24h" type="Ghost" class="sapUiTinyMargin" press=".onSuggestionPress"/>
+                                                <Button id="_IDGenButton4" text="Top recurring error signatures" type="Ghost" class="sapUiTinyMargin" press=".onSuggestionPress"/>
+                                                <Button id="_IDGenButton5" text="Which iFlows are failing most?" type="Ghost" class="sapUiTinyMargin" press=".onSuggestionPress"/>
+                                                <Button id="_IDGenButton6" text="Analyze MPL ID error" type="Ghost" class="sapUiTinyMargin" press=".onSuggestionPress"/>
+                                                <Button id="_IDGenButton7" text="Message size limit issues" type="Ghost" class="sapUiTinyMargin" press=".onSuggestionPress"/>
+                                                <Button id="_IDGenButton8" text="Suggest remediation for HTTP 500" type="Ghost" class="sapUiTinyMargin" press=".onSuggestionPress"/>
+                                            </FlexBox>
+                                        </VBox>
+                                    </VBox>
+                                    <VBox id="chatContainer" width="100%" class="sapUiResponsiveContentPadding" />
+                                    <HBox id="typingIndicator" visible="false" class="sapUiSmallMargin">
+                                        <BusyIndicator id="_IDGenBusyIndicator" size="1.6rem" class="sapUiMediumMarginBegin" />
+                                    </HBox>
+                                </ScrollContainer>
+                                <FlexBox id="_IDGenHBox" width="100%" alignItems="End" wrap="Wrap" class="sapUiSmallMargin">
+                                    <FeedInput id="chatInput" showIcon="false" post="onPost" placeholder="🔍 Ask about errors, clusters, flows, or remediation... 💡">
+                                        <layoutData>
+                                            <FlexItemData id="_IDGenFlexItemData1" growFactor="1" />
+                                        </layoutData>
+                                    </FeedInput>
+                                </FlexBox>
+                            </VBox>
+                        </content>
+                    </Page>
+                </pages>
+            </NavContainer>
+        </tnt:mainContents>
+    </tnt:ToolPage>
+</mvc:View>

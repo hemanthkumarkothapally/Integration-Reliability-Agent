@@ -1,0 +1,28 @@
+{
+  "generationParameters": {
+    "generationDate": "Mon May 11 2026 14:31:27 GMT+0000 (Coordinated Universal Time)",
+    "generatorPlatform": "SAP Business Application Studio",
+    "serviceType": "Local CAP",
+    "metadataFilename": "",
+    "serviceUrl": "http://localhost:4004/Incident/",
+    "appName": "incidentclusters",
+    "appTitle": "Integration Reliability Dashboard",
+    "appDescription": "SAP Fiori Elements application for monitoring integration incidents and reliability analytics.",
+    "appNamespace": "com.cytechies.integration.reliability",
+    "ui5Theme": "sap_horizon",
+    "ui5Version": "1.147.2",
+    "enableEslint": true,
+    "enableTypeScript": false,
+    "showMockDataInfo": false,
+    "generatorVersion": "1.23.0",
+    "template": "List Report Page V4",
+    "generatorName": "SAP Fiori Application Generator",
+    "entityRelatedConfig": [
+      {
+        "type": "Main Entity",
+        "value": "IncidentClusters"
+      }
+    ],
+    "launchText": "To launch the generated app, start your CAP project:  and navigate to the following location in your browser:\n\nhttp://localhost:4004/incidentclusters/webapp/index.html"
+  }
+}

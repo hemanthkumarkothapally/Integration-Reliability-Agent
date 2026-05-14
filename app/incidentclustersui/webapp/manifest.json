@@ -1,0 +1,156 @@
+{
+  "_version": "1.84.0",
+  "sap.app": {
+    "id": "com.cytechies.integration.reliability.incidentclustersui",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.0.1"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:basic",
+      "version": "1.24.0",
+      "toolsId": "de60956d-a935-4f31-8e3a-7a85ca072b06"
+    },
+    "dataSources": {
+      "mainService": {
+        "uri": "/Incident/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "odataVersion": "4.01"
+        }
+      },
+      "ChatService": {
+        "uri": "/Chat/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "odataVersion": "4.01"
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": true,
+    "dependencies": {
+      "minUI5Version": "1.147.2",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "com.cytechies.integration.reliability.incidentclustersui.i18n.i18n"
+        }
+      },
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true
+        }
+      },
+      "chatModel": {
+        "dataSource": "ChatService",
+        "preload": true,
+        "settings": {
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true
+        }
+      }
+    },
+    "resources": {
+      "css": [
+        {
+          "uri": "css/style.css"
+        }
+      ]
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "controlAggregation": "pages",
+        "controlId": "app",
+        "transition": "slide",
+        "type": "View",
+        "viewType": "XML",
+        "path": "com.cytechies.integration.reliability.incidentclustersui.view",
+        "async": true,
+        "viewPath": "com.cytechies.integration.reliability.incidentclustersui.view"
+      },
+      "routes": [
+        {
+          "name": "RouteOrderList",
+          "pattern": ":?query:",
+          "target": [
+            "TargetOrderList"
+          ]
+        },
+        {
+          "name": "RouteIncidentDetails",
+          "pattern": "IncidentDetails/{ID}",
+          "target": [
+            "TargetIncidentDetails"
+          ]
+        },
+        {
+          "name": "RouteIC",
+          "pattern": "IC/{ID}",
+          "target": [
+            "TargetIC"
+          ]
+        }
+      ],
+      "targets": {
+        "TargetOrderList": {
+          "id": "OrderList",
+          "name": "OrderList"
+        },
+        "TargetIncidentDetails": {
+          "id": "IncidentDetails",
+          "name": "IncidentDetails"
+        },
+        "TargetIC": {
+          "id": "IC",
+          "name": "IC"
+        }
+      }
+    },
+    "rootView": {
+      "viewName": "com.cytechies.integration.reliability.incidentclustersui.view.App",
+      "type": "XML",
+      "id": "App",
+      "async": true
+    }
+  }
+}
