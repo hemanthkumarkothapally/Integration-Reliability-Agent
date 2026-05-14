@@ -226,49 +226,119 @@ const STRIP_PATTERNS = [
 
 const SIGNATURE_RULES = [
 
-  // AUTH — most specific first
-  { code: 'HTTP_401_BAD_CREDENTIALS',        match: /401|invalid_client|bad.credent/i },
-  { code: 'HTTP_401_OAUTH_EXPIRED',          match: /oauth|token.*expir|expir.*token/i },
+  // ── AUTH ────────────────────────────────────────────────────────────────
+  { code: 'HTTP_401_BAD_CREDENTIALS',           match: /401|invalid_client|bad.credent/i },
+  { code: 'HTTP_401_OAUTH_EXPIRED',             match: /oauth|token.*expir|expir.*token|access.token.*invalid/i },
+  { code: 'HTTP_403_FORBIDDEN',                 match: /403|forbidden|insufficient.privileges|not.authorized/i },
 
-  // CONNECTIVITY
-  { code: 'CONNECTIVITY_TIMEOUT',            match: /timeout|read.timed.out|connection.timed.out/i },
-  { code: 'SSL_HANDSHAKE_FAILURE',           match: /sslhandshake|pkix|certificate/i },
+  // ── SFTP ─────────────────────────────────────────────────────────────────
+  { code: 'SFTP_CONNECTION_REFUSED',            match: /sftp.*refused|ssh.*connect.*refused|com\.jcraft\.jsch/i },
+  { code: 'SFTP_AUTH_FAILURE',                  match: /sftp.*auth|Auth fail|publickey.*denied|hostkey.*mismatch/i },
+  { code: 'SFTP_FILE_NOT_FOUND',                match: /sftp.*no such file|sftp.*file.*not.*found|No such file or directory/i },
+  { code: 'SFTP_PERMISSION_DENIED',             match: /sftp.*permission denied|sftp.*cannot.*write/i },
 
-  // GROOVY — before HTTP_500 so MissingPropertyException wins
-  { code: 'GROOVY_MISSING_PROPERTY',         match: /MissingPropertyException/i },
-  { code: 'GROOVY_COMPILE_ERROR',            match: /MultipleCompilationErrors|unable.to.resolve.class/i },
-  { code: 'GROOVY_SCRIPT_EXCEPTION',         match: /ScriptException|javax\.script/i },
+  // ── CONNECTIVITY ─────────────────────────────────────────────────────────
+  { code: 'HTTP_504_PARTNER_TIMEOUT',           match: /504|gateway.timeout/i },
+  { code: 'CONNECTIVITY_TIMEOUT',               match: /timeout|read.timed.out|connection.timed.out|SocketTimeoutException/i },
+  { code: 'CONNECTIVITY_REFUSED',               match: /connection.refused|ConnectException|ECONNREFUSED/i },
+  { code: 'CONNECTIVITY_RESET',                 match: /connection.reset|ConnectionReset|SocketException.*reset/i },
+  { code: 'CONNECTIVITY_DNS_FAILURE',           match: /UnknownHostException|failed to resolve|Name or service not known/i },
+  { code: 'CONNECTIVITY_NETWORK_UNREACHABLE',   match: /Network is unreachable|No route to host|ENETUNREACH/i },
 
-  // XML / XSD
-  { code: 'XML_VALIDATION_NON_XML_PAYLOAD',  match: /non-XML.payload|Validation.for.non-XML/i },
-  { code: 'XML_VALIDATION_SCHEMA_ERROR',     match: /XmlValidation|SAXParseException|validation.failed.*xsd/i },
+  // ── SSL / CERTIFICATES ───────────────────────────────────────────────────
+  { code: 'SSL_HANDSHAKE_CERTIFICATE_EXPIRED',  match: /certificate.*expir|expir.*certificate|CertificateExpiredException/i },
+  { code: 'SSL_HANDSHAKE_FAILURE',              match: /sslhandshake|SSLHandshakeException|pkix|PKIX.*path|unable.to.find.valid.cert/i },
+  { code: 'SSL_CERTIFICATE_UNTRUSTED',          match: /self.signed|untrusted.*cert|cert.*not.trusted|SunCertPathBuilderException/i },
+  { code: 'SSL_CERTIFICATE_HOSTNAME_MISMATCH',  match: /hostname.*mismatch|certificate.*hostname|No subject alternative/i },
 
-  // XSLT / JSON / SOAP / ODATA
-  { code: 'XSLT_TRANSFORMATION_ERROR',       match: /xslt|transformation.error/i },
-  { code: 'JSON_PARSE_ERROR',                match: /json.parse|unexpected.token/i },
-  { code: 'SOAP_FAULT',                      match: /soapfault|soap.fault/i },
-  { code: 'ODATA_BAD_REQUEST',               match: /odata.*bad.request|invalid.key.predicate/i },
+  // ── GROOVY ───────────────────────────────────────────────────────────────
+  { code: 'GROOVY_MISSING_PROPERTY',            match: /MissingPropertyException/i },
+  { code: 'GROOVY_MISSING_METHOD',              match: /MissingMethodException|No signature of method/i },
+  { code: 'GROOVY_NULL_POINTER',                match: /NullPointerException.*groovy|groovy.*NullPointer/i },
+  { code: 'GROOVY_COMPILE_ERROR',               match: /MultipleCompilationErrors|unable.to.resolve.class/i },
+  { code: 'GROOVY_SCRIPT_EXCEPTION',            match: /ScriptException|javax\.script/i },
+  { code: 'GROOVY_CLASS_NOT_FOUND',             match: /ClassNotFoundException|NoClassDefFoundError/i },
 
-  // MANDATORY FIELDS
-  { code: 'MANDATORY_FIELD_MISSING',         match: /MANDATORY_FIELD|field.*missing|missing.*payload/i },
-  { code: 'FIELD_MIN_LENGTH_VIOLATION',      match: /minLength|does.not.match.*required.simple.type/i },
+  // ── XML / XSD ────────────────────────────────────────────────────────────
+  { code: 'XML_VALIDATION_NON_XML_PAYLOAD',     match: /non-XML.payload|Validation.for.non-XML/i },
+  { code: 'XML_VALIDATION_SCHEMA_ERROR',        match: /XmlValidation|SAXParseException|validation.failed.*xsd/i },
+  { code: 'XML_PARSE_ERROR',                    match: /XMLStreamException|javax\.xml|unexpected.*element|Content is not allowed in prolog/i },
+  { code: 'XML_NAMESPACE_ERROR',                match: /namespace.*mismatch|unexpected.*namespace|undeclared.*namespace/i },
 
-  // CONVERSION
-  { code: 'TYPE_CONVERSION_ERROR',           match: /Cannot.convert|convert.*string.*double|NumberFormat/i },
+  // ── XSLT ─────────────────────────────────────────────────────────────────
+  { code: 'XSLT_NULL_REFERENCE',                match: /xslt.*null|null.*xslt|NullPointer.*xslt|xsl.*node.*null/i },
+  { code: 'XSLT_TRANSFORMATION_ERROR',          match: /xslt|TransformerException|transformation.error/i },
 
-  // DUPLICATE CHECK
-  { code: 'DUPLICATE_CHECK_NO_MESSAGE_ID',   match: /No.message.ID|could.not.be.found.*expression|exchangeProperty/i },
-  { code: 'DUPLICATE_CHECK_EVENT_EXCEPTION', match: /Error.Event.Exception/i },
+  // ── MESSAGE MAPPING ───────────────────────────────────────────────────────
+  { code: 'MESSAGE_MAPPING_FAILURE',            match: /message.mapping|mapping.*failed|MappingException|com\.sap\.it\.rt\.mapping/i },
+  { code: 'MESSAGE_MAPPING_LOOKUP_FAILURE',     match: /value.mapping.*failed|lookup.*failed|mapping.*table.*not.found/i },
 
-  // MESSAGE SIZE
-  { code: 'MSG_SIZE_LIMIT_EXCEEDED',         match: /size.limit|exceeds.*MB|body.size/i },
+  // ── JSON ─────────────────────────────────────────────────────────────────
+  { code: 'JSON_PARSE_ERROR',                   match: /json.parse|unexpected.token|JsonParseException|Unrecognized token/i },
+  { code: 'JSON_MAPPING_ERROR',                 match: /JsonMappingException|Cannot deserialize|No suitable constructor/i },
 
-  // HTTP generic — LAST resort before UNKNOWN
-  { code: 'HTTP_500_INTERNAL_SERVER_ERROR',  match: /500|internal.server.error/i },
-  { code: 'HTTP_404_NOT_FOUND',              match: /404|not.found/i },
+  // ── SOAP ─────────────────────────────────────────────────────────────────
+  { code: 'SOAP_FAULT',                         match: /soapfault|soap.fault|SOAPFaultException/i },
+  { code: 'SOAP_ACTION_MISMATCH',               match: /SOAPAction.*mismatch|action.*not.supported/i },
 
-  // FALLBACK
-  { code: 'UNKNOWN_ERROR',                   match: /.*/  }
+  // ── ODATA ────────────────────────────────────────────────────────────────
+  { code: 'ODATA_SERVICE_UNAVAILABLE',          match: /odata.*unavailable|odata.*503|service.*not.*available.*odata/i },
+  { code: 'ODATA_BAD_REQUEST',                  match: /odata.*bad.request|invalid.key.predicate|ODataException/i },
+  { code: 'ODATA_ENTITY_NOT_FOUND',             match: /odata.*404|entity.*not.*found.*odata/i },
+  { code: 'ODATA_METADATA_FAILURE',             match: /metadata.*fetch.*fail|unable.*load.*metadata/i },
+
+  // ── PAYLOAD / VALIDATION ──────────────────────────────────────────────────
+  { code: 'PAYLOAD_VALIDATION_ERROR',           match: /payload.*invalid|invalid.*payload|schema.*validation.*failed|does not conform/i },
+  { code: 'MANDATORY_FIELD_MISSING',            match: /MANDATORY_FIELD|field.*missing|missing.*payload|required.*field/i },
+  { code: 'FIELD_MIN_LENGTH_VIOLATION',         match: /minLength|does.not.match.*required.simple.type/i },
+  { code: 'FIELD_MAX_LENGTH_VIOLATION',         match: /maxLength|value.*too.long|exceeds.*maximum.*length/i },
+  { code: 'FIELD_FORMAT_VIOLATION',             match: /invalid.*format|format.*invalid|does not match.*pattern/i },
+
+  // ── CONVERSION ───────────────────────────────────────────────────────────
+  { code: 'TYPE_CONVERSION_ERROR',              match: /Cannot.convert|convert.*string.*double|NumberFormat|ClassCastException/i },
+  { code: 'DATE_PARSE_ERROR',                   match: /ParseException.*date|date.*parse.*fail|Unparseable date|invalid.*date.*format/i },
+
+  // ── RATE LIMITING ─────────────────────────────────────────────────────────
+  { code: 'RATE_LIMIT_EXCEEDED',                match: /429|rate.limit|quota.*exceed|throttl|too.many.requests/i },
+
+  // ── DUPLICATE CHECK ───────────────────────────────────────────────────────
+  { code: 'DUPLICATE_CHECK_NO_MESSAGE_ID',      match: /No.message.ID|could.not.be.found.*expression|exchangeProperty/i },
+  { code: 'DUPLICATE_CHECK_EVENT_EXCEPTION',    match: /Error.Event.Exception/i },
+  { code: 'DUPLICATE_MESSAGE_DETECTED',         match: /duplicate.*message|message.*already.*processed|idempotent.*duplicate/i },
+
+  // ── MESSAGE SIZE ──────────────────────────────────────────────────────────
+  { code: 'MSG_SIZE_LIMIT_EXCEEDED',            match: /size.limit|exceeds.*MB|body.size|message.*too.large|413/i },
+
+  // ── JDBC / DATABASE ───────────────────────────────────────────────────────
+  { code: 'JDBC_CONNECTION_FAILURE',            match: /jdbc.*connect|SQLException.*connect|datasource.*unavailable/i },
+  { code: 'JDBC_QUERY_ERROR',                   match: /SQLException|ORA-|SQL.*syntax.*error|invalid.*column.*name/i },
+  { code: 'JDBC_TIMEOUT',                       match: /jdbc.*timeout|query.*timeout|lock.*timeout.*sql/i },
+
+  // ── IDoc ──────────────────────────────────────────────────────────────────
+  { code: 'IDOC_SEND_FAILURE',                  match: /idoc.*send.*fail|IDoc.*error|IDOC_INBOUND_ASYNCHRONOUS/i },
+  { code: 'IDOC_PARTNER_NOT_FOUND',             match: /partner.*profile.*not.found|idoc.*no.*partner/i },
+
+  // ── RFC / BAPI ────────────────────────────────────────────────────────────
+  { code: 'RFC_CONNECTION_FAILURE',             match: /RfcException|RFC.*connect|JCoException|destination.*not.*available/i },
+  { code: 'RFC_FUNCTION_NOT_FOUND',             match: /function.*not.*found.*rfc|FunctionNotFoundException/i },
+  { code: 'RFC_AUTHORIZATION_ERROR',            match: /RFC.*not.authorized|JCo.*authorization|ABAP.*auth.*failed/i },
+
+  // ── AS2 / EDI ─────────────────────────────────────────────────────────────
+  { code: 'AS2_MDN_FAILURE',                    match: /MDN.*fail|AS2.*acknowledgement.*fail|AS2.*negative.MDN/i },
+  { code: 'EDI_PARSE_ERROR',                    match: /EDI.*parse|invalid.*EDI|ISA.*segment.*error|X12.*invalid/i },
+
+  // ── INTEGRATION ADVISOR / AGREEMENTS ──────────────────────────────────────
+  { code: 'IA_AGREEMENT_NOT_FOUND',             match: /agreement.*not.found|no.*active.*agreement|trading.*partner.*not/i },
+  { code: 'IA_MAPPING_RUNTIME_ERROR',           match: /IntegrationAdvisor.*error|MAG.*runtime.*fail/i },
+
+  // ── HTTP GENERIC ──────────────────────────────────────────────────────────
+  { code: 'HTTP_500_INTERNAL_SERVER_ERROR',     match: /500|internal.server.error/i },
+  { code: 'HTTP_503_SERVICE_UNAVAILABLE',       match: /503|service.unavailable/i },
+  { code: 'HTTP_404_NOT_FOUND',                 match: /404|not.found/i },
+  { code: 'HTTP_400_BAD_REQUEST',               match: /400|bad.request/i },
+
+  // ── FALLBACK ──────────────────────────────────────────────────────────────
+  { code: 'UNKNOWN_ERROR',                      match: /.*/  }
 ];
 
 /**

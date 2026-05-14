@@ -20,11 +20,13 @@ entity IncidentClusters : cuid, managed {
     firstSeen       : Timestamp;
     lastSeen        : Timestamp;
     status          : String(50);
-    playbookId      : UUID;
+    playbook : Association to Playbooks;
     severityCriticality : Integer;
      
     incidents              : Composition of many Incidents
                            on incidents.cluster = $self;
+     chatSessions : Association to many ChatSessions on chatSessions.cluster = $self;
+
 }
 entity ClusterRecommendations : cuid, managed {
     cluster             : Association to IncidentClusters;
@@ -53,6 +55,7 @@ entity Playbooks :cuid, managed {
 }
 entity ChatSessions : cuid, managed {
     title       : String(255);
+    cluster  : Association to IncidentClusters;
     messages : Composition of many Messages on messages.conversation = $self;
 }
 entity Messages : cuid{

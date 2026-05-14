@@ -39,10 +39,5 @@ service IncidentService {
     @requires: 'Admin'
     action triggerPoll();
 
-    entity ChatSessions      as projection on IRA.ChatSessions;
-
-    entity Messages          as projection on IRA.Messages;
-
-    action chat(conversationId: UUID, userMessage: String) returns Messages;
-    action createConversation(title: String)               returns ChatSessions;
+    
 }
