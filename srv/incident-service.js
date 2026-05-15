@@ -159,4 +159,5 @@ export default cds.service.impl(async function () {
             record.criticalCriticality = record.criticalCount > 0 ? 1 : 3;
         });
     });
+    
 });

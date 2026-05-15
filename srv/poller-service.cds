@@ -22,6 +22,8 @@ service PollerService {
 
         generatedAt          : Timestamp;
     }
+    entity IncidentClusters as projection on IRA.IncidentClusters;
     function getClusterRecommendation(cluster_ID : UUID) returns ClusterRecommendationResponse;
     function getFailedLogs() returns array of Map;
+    function test() returns String;
 }

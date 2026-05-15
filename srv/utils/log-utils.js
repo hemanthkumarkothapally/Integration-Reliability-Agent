@@ -6,60 +6,58 @@
  * -------------------------------------------------------
  */
 
-export function normalizeMessage(msg = '') {
+export function normalizeCpiError(errorMessage) {
+    if (!errorMessage) return '';
 
-  let m = msg || '';
+    let normalized = errorMessage;
 
-  /*
-   * GUIDs
-   */
+    // Remove URLs
+    normalized = normalized.replace(/https?:\/\/[^\s]+/gi, '');
 
-  m = m.replace(
-    /[0-9a-fA-F]{8}-[0-9a-fA-F-]{27}/g,
-    '<GUID>'
-  );
+    // Remove MPL IDs / GUID-like values
+    normalized = normalized.replace(
+      /\b[A-Za-z0-9_-]{20,}\b/g,
+      ''
+    );
 
-  /*
-   * ISO timestamps
-   */
+    // Remove timestamps
+    normalized = normalized.replace(
+      /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?/g,
+      ''
+    );
 
-  m = m.replace(
-    /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z?/g,
-    '<TIMESTAMP>'
-  );
+    // Remove file sizes
+    normalized = normalized.replace(
+      /\b\d+(\.\d+)?\s?(KB|MB|GB)\b/gi,
+      ''
+    );
 
-  /*
-   * Long numeric IDs
-   */
 
-  m = m.replace(
-    /\b\d{6,}\b/g,
-    '<ID>'
-  );
 
-  /*
-   * Hex transaction IDs
-   */
+    // Remove dates
+    normalized = normalized.replace(
+      /\b(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)\s(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s\d{1,2}\s\d{2}:\d{2}:\d{2}\sUTC\s\d{4}/gi,
+      ''
+    );
 
-  m = m.replace(
-    /\b[a-f0-9]{32}\b/g,
-    '<TXID>'
-  );
+    // Remove artifact/token names
+    // normalized = normalized.replace(
+    //   /artifactName\s+\S+/gi,
+    //   ''
+    // );
 
-  /*
-   * Cleanup whitespace
-   */
-
-  m = m.replace(/\s+/g, ' ').trim();
-
-  return m;
-}
-
-/**
- * -------------------------------------------------------
- * STRIP DYNAMIC VALUES
- * -------------------------------------------------------
- */
+    // Remove quoted values
+    normalized = normalized.replace(
+      /'[^']*'/g,
+      ''
+    );
+    normalized = normalized.replace(
+      /\s*The MPL ID for the failed message is\s*:.*$/gi,
+      ''
+    ).trim();
+    normalized = normalized.replace(/\s+/g, ' ').trim();
+    return normalized;
+  }
 
 const STRIP_PATTERNS = [
 
@@ -336,7 +334,7 @@ const SIGNATURE_RULES = [
   { code: 'HTTP_503_SERVICE_UNAVAILABLE',       match: /503|service.unavailable/i },
   { code: 'HTTP_404_NOT_FOUND',                 match: /404|not.found/i },
   { code: 'HTTP_400_BAD_REQUEST',               match: /400|bad.request/i },
-
+  { code: 'CREDENTIAL_ARTIFACT_NOT_FOUND', match: /No artifact descriptor found|artifactName|IllegalStateException.*artifact|artifact.*descriptor/i },
   // ── FALLBACK ──────────────────────────────────────────────────────────────
   { code: 'UNKNOWN_ERROR',                      match: /.*/  }
 ];

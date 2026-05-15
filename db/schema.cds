@@ -14,19 +14,19 @@ entity Incidents : cuid, managed {
 
 entity IncidentClusters : cuid, managed {
     errorSignature  : String;
-    iFlowName       : String(300);
+    errorType       : String(300);
     severity        : String(50);
     incidentCount   : Integer;
     firstSeen       : Timestamp;
     lastSeen        : Timestamp;
     status          : String(50);
-    playbook : Association to Playbooks;
+    playbook        : Association to Playbooks;
     severityCriticality : Integer;
-     
+    
     incidents              : Composition of many Incidents
                            on incidents.cluster = $self;
-     chatSessions : Association to many ChatSessions on chatSessions.cluster = $self;
-
+    chatSessions : Association to many ChatSessions on chatSessions.cluster = $self;
+    monitoredArtifacts   : Association to many ClusterArtifacts on monitoredArtifacts.cluster = $self;
 }
 entity ClusterRecommendations : cuid, managed {
     cluster             : Association to IncidentClusters;
@@ -44,8 +44,12 @@ entity MonitoredArtifacts : cuid, managed {
     namespace          : String(255);
     isActive           : Boolean;
     lastPollTimestamp  : Timestamp;
+    clusters            : Association to many ClusterArtifacts on clusters.artifact = $self;
 }
-
+entity ClusterArtifacts : cuid {
+    cluster             : Association to IncidentClusters;
+    artifact            : Association to MonitoredArtifacts;
+}
 entity Playbooks :cuid, managed {
     errorType       : String(100);
     title           : String(255);

@@ -13,11 +13,17 @@ service IncidentService {
     entity IncidentClusters  as
         projection on IRA.IncidentClusters {
             *,
+            monitoredArtifacts                  : redirected to ClusterArtifacts,
             virtual null as totalIncidents24h   : Integer, // Incidents.logEnd > now-24h
             virtual null as activeClusters      : Integer, // status != 'RESOLVED'
             virtual null as criticalCount       : Integer, // active + severity = 'CRITICAL'
             virtual null as resolved24h         : Integer, // status='RESOLVED' + modifiedAt > now-24h
             virtual null as criticalCriticality : Integer
+        };
+
+    entity ClusterArtifacts  as projection on IRA.ClusterArtifacts {
+            *,
+            artifact : redirected to MonitoredArtifacts
         };
 
     // @requires: 'Viewer'
@@ -38,15 +44,15 @@ service IncidentService {
             to   : 'Admin'
         }
     ]
-    entity MonitoredArtifact as projection on IRA.MonitoredArtifacts;
+    entity MonitoredArtifacts as projection on IRA.MonitoredArtifacts;
 
     // @requires: 'Viewer'
     @readonly
     entity Playbook          as projection on IRA.Playbooks;
 
-    
+
     // @requires: 'Admin'
     action triggerPoll();
 
-    
+
 }
