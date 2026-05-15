@@ -31,9 +31,18 @@
           "annotations": [],
           "odataVersion": "4.01"
         }
+      },
+       "PollerService": {
+        "uri": "/Poller/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "odataVersion": "4.01"
+        }
       }
     }
   },
+  "sap.cloud": {     "public": true,     "service": "iraservice"},
   "sap.ui": {
     "technology": "UI5",
     "icons": {
@@ -86,6 +95,21 @@
           "operationMode": "Server",
           "autoExpandSelect": true,
           "earlyRequests": true
+        }
+      },
+      "PollerModel": {
+        "dataSource": "PollerService",
+        "preload": true,
+        "settings": {
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true
+        }
+      },
+      "globalModel": {
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {
+          "data": "model/globalmodel.json"
         }
       }
     },

@@ -1,0 +1,11 @@
+<core:FragmentDefinition
+  xmlns:core="sap.ui.core"
+  xmlns:macros="sap.fe.macros">
+
+  <macros:KPITag
+    number="{kpi>/totalIncidents24h}"
+    unit="Incidents (24h)"
+    status="Information"
+    showIcon="true" />
+
+</core:FragmentDefinition>
