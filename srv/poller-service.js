@@ -124,7 +124,7 @@ export default cds.service.impl(async function () {
        */
 
       const filter =
-        `Status eq 'FAILED' and LogEnd gt datetime'2026-05-14T06:06:36'`;
+        `Status eq 'FAILED' and LogEnd gt datetime'${lastPollTimestamp}'`;
 
       console.log("Generated Filter:", filter);
 

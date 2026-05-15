@@ -1,0 +1,11 @@
+<core:FragmentDefinition
+  xmlns:core="sap.ui.core"
+  xmlns:macros="sap.fe.macros">
+
+  <macros:KPITag
+    number="{kpi>/activeClusters}"
+    unit="Active"
+    status="Warning"
+    showIcon="true" />
+
+</core:FragmentDefinition>

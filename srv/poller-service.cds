@@ -1,7 +1,8 @@
 using { com.cytechies.integration.reliability as IRA } from '../db/schema';
 
 @path: '/Poller'
-service PollerService @(requires: 'Admin'){
+// service PollerService @(requires: 'Admin'){
+service PollerService {
     type ClusterRecommendationResponse {
         ID                   : UUID;
         cluster_ID           : UUID;

@@ -1,6 +1,6 @@
 {
   "welcomeFile": "/index.html",
-  "authenticationMethod": "route",
+  "authenticationMethod": "none",
   "routes": [
     {
       "source": "^/Incident/(.*)$",
@@ -9,13 +9,21 @@
       "authenticationType": "xsuaa",
       "csrfProtection": false
     },
-        {
+    {
       "source": "^/Chat/(.*)$",
       "target": "/Chat/$1",
       "destination": "srv-api",
       "authenticationType": "xsuaa",
       "csrfProtection": false
     },
+    {
+      "source": "^/Poller/(.*)$",
+      "target": "/Poller/$1",
+      "destination": "srv-api",
+      "authenticationType": "xsuaa",
+      "csrfProtection": false
+    },
+
     {
       "source": "^/resources/(.*)$",
       "target": "/resources/$1",

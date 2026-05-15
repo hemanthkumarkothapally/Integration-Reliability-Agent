@@ -35,7 +35,7 @@
         "db": "hana"
       },
       "[production]": {
-        "auth": "xsuaa",
+        "auth": "dummy",
         "db": "hana"
       },
       "destinations": true,

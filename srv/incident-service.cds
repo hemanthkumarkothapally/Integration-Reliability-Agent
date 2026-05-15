@@ -4,7 +4,7 @@ using {com.cytechies.integration.reliability as IRA} from '../db/schema';
 service IncidentService {
     entity Incidents         as projection on IRA.Incidents;
 
-    @requires                                  : 'Viewer'
+    // @requires                                  : 'Viewer'
     @readonly
     @Capabilities.FilterRestrictions.Filterable: true
     @Capabilities.SortRestrictions.Sortable    : true
@@ -20,11 +20,11 @@ service IncidentService {
             virtual null as criticalCriticality : Integer
         };
 
-    @requires: 'Viewer'
+    // @requires: 'Viewer'
     @readonly
     entity Recommendations   as projection on IRA.ClusterRecommendations;
 
-    @requires: 'Viewer'
+    // @requires: 'Viewer'
     @restrict: [
         {
             grant: ['READ'],
@@ -40,12 +40,12 @@ service IncidentService {
     ]
     entity MonitoredArtifact as projection on IRA.MonitoredArtifacts;
 
-    @requires: 'Viewer'
+    // @requires: 'Viewer'
     @readonly
     entity Playbook          as projection on IRA.Playbooks;
 
     
-    @requires: 'Admin'
+    // @requires: 'Admin'
     action triggerPoll();
 
     

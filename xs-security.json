@@ -1,4 +1,7 @@
 {
+  "xsappname": "integration-reliability-agent",
+  "tenant-mode": "dedicated",
+  "description": "Security profile of called application",
   "scopes": [
     {
       "name": "$XSAPPNAME.Viewer",
@@ -7,10 +10,6 @@
     {
       "name": "$XSAPPNAME.Admin",
       "description": "Admin role"
-    },
-    {
-      "name": "$XSAPPNAME.[object Object]",
-      "description": "[object Object]"
     }
   ],
   "role-templates": [
@@ -48,3 +47,4 @@
   "attributes": [],
   "authorities-inheritance": false
 }
+

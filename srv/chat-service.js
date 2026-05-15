@@ -7,7 +7,7 @@ async function callAI(destination, messages, system = null, maxTokens = 256) {
         messages
     };
     if (system) payload.system = system;
-
+    console.log("Sending AI Request with payload:", JSON.stringify(payload, null, 2));
     const response = await destination.send({
         method: 'POST',
         path: '/inference/deployments/d2f31ccfd2765c35/invoke',
@@ -30,6 +30,7 @@ export default cds.service.impl(async function () {
         const { clusterId } = req.data;
         let UserQuery = req.data.title || "New Chat";
         let title = req.data.title || "New Chat";
+        console.log("Creating conversation with title:", title, "and clusterId:", clusterId);
         try {
             if (clusterId) {
                 // Load cluster to generate a meaningful title
@@ -104,7 +105,12 @@ export default cds.service.impl(async function () {
                     const cluster = await SELECT.one
                         .from('com.cytechies.integration.reliability.IncidentClusters')
                         .where({ ID: session.cluster_ID });
-
+                    console.log("Loaded Cluster for System Prompt:", {
+                        ID: cluster.ID,
+                        iFlowName: cluster.iFlowName,
+                        errorSignature: cluster.errorSignature,
+                        severity: cluster.severity
+                    });
                     if (cluster) {
                         const incidents =
                             await SELECT
@@ -138,16 +144,16 @@ export default cds.service.impl(async function () {
                         ${JSON.stringify(incidentSummary, null, 2)}
                         Answer questions specifically about this cluster. Be concise and technical.
                         Note: I need response in html format, so use <br> for line breaks and avoid markdown or plain text formatting.
-                        return text in html format, no markdown, no plain text, just html and tokenCount.`;
+                        return text in html format, no markdown, no plain text, just html.`;
                     }
                 }
             }
 
             // 5. Build messages array from history
-            const messages = {
+            const messages = [{
                 role: "user",
                 content: userMessage
-            };
+            }];
             const { text, tokenCount } = await callAI(destination, messages, systemPrompt, 1024);
             console.log("AI Response:", text);
             const aiText = text ?? 'Failed to generate AI response.';
