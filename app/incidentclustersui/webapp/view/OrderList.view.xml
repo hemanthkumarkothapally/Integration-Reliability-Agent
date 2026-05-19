@@ -10,39 +10,39 @@
     xmlns:viz.data="sap.viz.ui5.data"
     xmlns:viz.feeds="sap.viz.ui5.controls.common.feeds"
     xmlns:card="sap.f.cards">
-
+ 
     <tnt:ToolPage id="toolPage1">
-
+ 
         <!-- ===================================================== -->
         <!-- HEADER -->
         <!-- ===================================================== -->
-
+ 
         <tnt:header >
-
-            <tnt:ToolHeader id="_IDGenToolHeader1">
-
+ 
+            <tnt:ToolHeader>
+ 
                 <!-- MENU BUTTON -->
-
-                <Button id="_IDGenButton3" icon="sap-icon://menu2" type="Transparent" press=".onSideNavButtonPress">
-
+ 
+                <Button icon="sap-icon://menu2" type="Transparent" press=".onSideNavButtonPress">
+ 
                     <layoutData>
-                        <OverflowToolbarLayoutData id="_IDGenOverflowToolbarLayoutData" priority="NeverOverflow" />
+                        <OverflowToolbarLayoutData priority="NeverOverflow" />
                     </layoutData>
-
+ 
                 </Button>
-
+ 
                 <!-- SAP LOGO -->
-
+ 
                 <!-- <Image src="https://www.sap.com/dam/application/shared/logos/sap-logo-svg.svg" width="4rem" /> -->
-
+ 
                 <!-- TITLE -->
-
-                <Title id="_IDGenTitle" text="Integration Monitoring Overview" level="H1" />
-
-                <ToolbarSpacer id="_IDGenToolbarSpacer" />
-
+ 
+                <Title text="Integration Monitoring Overview" level="H1" />
+ 
+                <ToolbarSpacer />
+ 
                 <!-- HEADER ACTIONS -->
-
+ 
                 <!-- <Button icon="sap-icon://search" type="Transparent" />
  
                 <Button icon="sap-icon://bell" type="Transparent" />
@@ -50,79 +50,68 @@
                 <Button icon="sap-icon://question-mark" type="Transparent" />
  
                 <Avatar initials="JP" backgroundColor="Accent6" /> -->
-
+ 
             </tnt:ToolHeader>
-
+ 
         </tnt:header>
-
+ 
         <!-- ===================================================== -->
         <!-- SIDE NAVIGATION -->
         <!-- ===================================================== -->
-
+ 
         <tnt:sideContent>
-
+ 
             <tnt:SideNavigation id="sideNavigation">
-
-                <tnt:NavigationList id="_IDGenNavigationList">
-
-                    <tnt:NavigationListItem id="_IDGenNavigationListItem" text="Overview" icon="sap-icon://home" key="overview" />
-
-                    <tnt:NavigationListItem id="_IDGenNavigationListItem1" text="Incidents" icon="sap-icon://alert" key="incidents" />
-
-                    <tnt:NavigationListItem id="_IDGenNavigationListItem2" text="iFlows" icon="sap-icon://process" key="iflows" />
-
-                    <tnt:NavigationListItem id="_IDGenNavigationListItem3" text="Clusters" icon="sap-icon://share-2" key="clusters" />
-
-                    <tnt:NavigationListItem id="_IDGenNavigationListItem4" text="Alerts" icon="sap-icon://bell" key="alerts" />
-
-                    <tnt:NavigationListItem id="_IDGenNavigationListItem5" text="Reports" icon="sap-icon://document-text" key="reports" />
-
-                    <tnt:NavigationListItem id="_IDGenNavigationListItem6" text="Settings" icon="sap-icon://action-settings" key="settings" />
-
+ 
+                <tnt:NavigationList>
+ 
+                    <tnt:NavigationListItem text="Overview" icon="sap-icon://home" key="overview" />
+ 
+                    <tnt:NavigationListItem text="Incidents" icon="sap-icon://alert" key="incidents" />
+ 
+                    <tnt:NavigationListItem text="iFlows" icon="sap-icon://process" key="iflows" />
+ 
+                    <tnt:NavigationListItem text="Clusters" icon="sap-icon://share-2" key="clusters" />
+ 
+                    <tnt:NavigationListItem text="Alerts" icon="sap-icon://bell" key="alerts" />
+ 
+                    <tnt:NavigationListItem text="Reports" icon="sap-icon://document-text" key="reports" />
+ 
+                    <tnt:NavigationListItem text="Settings" icon="sap-icon://action-settings" key="settings" />
+ 
                 </tnt:NavigationList>
-
-                <!-- FIXED FOOTER -->
-
-                <tnt:fixedItem>
-
-                    <tnt:NavigationList id="_IDGenNavigationList1">
-
-                        <tnt:NavigationListItem id="_IDGenNavigationListItem7" text="Collapse" icon="sap-icon://collapse-group" select=".onSideNavButtonPress" />
-
-                    </tnt:NavigationList>
-
-                </tnt:fixedItem>
-
+ 
+ 
             </tnt:SideNavigation>
-
+ 
         </tnt:sideContent>
-
+ 
         <!-- ===================================================== -->
         <!-- MAIN CONTENT -->
         <!-- ===================================================== -->
-
+ 
         <tnt:mainContents>
-
+ 
             <f:DynamicPage id="dynamicPage" toggleHeaderOnTitleClick="false">
-
+ 
                 <!-- ===================================================== -->
                 <!-- FILTER SECTION -->
                 <!-- ===================================================== -->
-
+ 
                 <f:header>
-
-                    <f:DynamicPageHeader id="_IDGenDynamicPageHeader">
-
+ 
+                    <f:DynamicPageHeader>
+ 
                         <f:content>
-
+ 
                             <fb:FilterBar id="filterbar" persistencyKey="incidentMonitoring" useToolbar="false" search=".onSearchiFlowName" filterChange=".onFilterChange" afterVariantLoad=".onAfterVariantLoad" class="sapUiTinyMargin">
-
+ 
                                 <fb:filterGroupItems>
-
+ 
                                     <!-- ===================================================== -->
                                     <!-- IFLOW NAME -->
                                     <!-- ===================================================== -->
-
+ 
                                     <!-- <fb:FilterGroupItem name="iFlowName" label="iFlow Name" groupName="Group1" visibleInFilterBar="true">
  
                                         <fb:control>
@@ -138,55 +127,55 @@
                                         </fb:control>
  
                                     </fb:FilterGroupItem> -->
-
+ 
                                     <!-- ===================================================== -->
                                     <!-- SEVERITY -->
                                     <!-- ===================================================== -->
-
-                                    <fb:FilterGroupItem id="_IDGenFilterGroupItem" name="Severity" label="Severity" groupName="Group1" visibleInFilterBar="true">
-
+ 
+                                    <fb:FilterGroupItem name="Severity" label="Severity" groupName="Group1" visibleInFilterBar="true">
+ 
                                         <fb:control>
-
+ 
                                             <MultiComboBox id="idSeverityFilter" width="14rem">
-
-                                                <core:Item id="_IDGenItem" key="CRITICAL" text="CRITICAL" />
-
-                                                <core:Item id="_IDGenItem1" key="HIGH" text="HIGH" />
-
-                                                <core:Item id="_IDGenItem2" key="MEDIUM" text="MEDIUM" />
-
-                                                <core:Item id="_IDGenItem3" key="LOW" text="LOW" />
-
+ 
+                                                <core:Item key="CRITICAL" text="CRITICAL" />
+ 
+                                                <core:Item key="HIGH" text="HIGH" />
+ 
+                                                <core:Item key="MEDIUM" text="MEDIUM" />
+ 
+                                                <core:Item key="LOW" text="LOW" />
+ 
                                             </MultiComboBox>
-
+ 
                                         </fb:control>
-
+ 
                                     </fb:FilterGroupItem>
-
+ 
                                     <!-- ===================================================== -->
                                     <!-- STATUS -->
                                     <!-- ===================================================== -->
-
-                                    <fb:FilterGroupItem id="_IDGenFilterGroupItem1" name="Status" label="Status" groupName="Group1" visibleInFilterBar="true">
-
+ 
+                                    <fb:FilterGroupItem name="Status" label="Status" groupName="Group1" visibleInFilterBar="true">
+ 
                                         <fb:control>
-
+ 
                                             <MultiComboBox id="idStatusFilter" width="14rem">
-
-                                                <core:Item id="_IDGenItem4" key="OPEN" text="OPEN" />
-
-                                                <core:Item id="_IDGenItem5" key="RESOLVED" text="RESOLVED" />
-
+ 
+                                                <core:Item key="OPEN" text="OPEN" />
+ 
+                                                <core:Item key="RESOLVED" text="RESOLVED" />
+ 
                                             </MultiComboBox>
-
+ 
                                         </fb:control>
-
+ 
                                     </fb:FilterGroupItem>
-
+ 
                                     <!-- ===================================================== -->
                                     <!-- CLUSTER -->
                                     <!-- ===================================================== -->
-
+ 
                                     <!-- <fb:FilterGroupItem name="Cluster" label="Cluster" groupName="Group1" visibleInFilterBar="true">
  
                                         <fb:control>
@@ -204,365 +193,355 @@
                                         </fb:control>
  
                                     </fb:FilterGroupItem> -->
-
+ 
                                 </fb:filterGroupItems>
-
+ 
                             </fb:FilterBar>
-
+ 
                         </f:content>
-
+ 
                     </f:DynamicPageHeader>
-
+ 
                 </f:header>
-
+ 
                 <!-- ===================================================== -->
                 <!-- PAGE CONTENT -->
                 <!-- ===================================================== -->
-
+ 
                 <f:content>
-
+ 
                     <!-- ===================================================== -->
                     <!-- KPI CARDS -->
                     <!-- ===================================================== -->
-                    <VBox id="_IDGenVBox8">
-
-                        <layout:Grid id="_IDGenGrid" defaultSpan="XL3 L3 M6 S12" hSpacing="1" vSpacing="1" class="sapUiSmallMarginBottom">
-
+                    <VBox>
+ 
+                        <layout:Grid defaultSpan="XL3 L3 M6 S12" hSpacing="1" vSpacing="1" class="sapUiSmallMarginBottom">
+ 
                             <layout:content>
-
+ 
                                 <!-- ===================================================== -->
                                 <!-- TOTAL INCIDENTS -->
                                 <!-- ===================================================== -->
-
-                                <f:Card id="_IDGenCard" width="100%" semanticRole="ListItem" class="sapUiTinyMarginEnd">
-
+ 
+                                <f:Card width="100%" semanticRole="ListItem" class="sapUiTinyMarginEnd">
+ 
                                     <f:header>
-
-                                        <card:NumericHeader id="_IDGenNumericHeader" title="Total Incidents " number="{dashboard>/totalIncidents24h}" state="Neutral" iconSrc="sap-icon://activity-items" />
-
+ 
+                                        <card:NumericHeader title="Total Incidents " subtitle="Total incidents in last 24 hours" number="{dashboard>/totalIncidents24h}" state="Neutral" iconSrc="sap-icon://activity-items" />
+ 
                                     </f:header>
-
-
-
+ 
+ 
+ 
                                 </f:Card>
-
+ 
                                 <!-- ===================================================== -->
                                 <!-- ACTIVE CLUSTERS -->
                                 <!-- ===================================================== -->
-
-                                <f:Card id="_IDGenCard1" width="100%" semanticRole="ListItem" class="sapUiTinyMarginEnd">
-
+ 
+                                <f:Card width="100%" semanticRole="ListItem" class="sapUiTinyMarginEnd">
+ 
                                     <f:header>
-
-                                        <card:NumericHeader id="_IDGenNumericHeader1" title="Active Clusters" number="{dashboard>/activeClusters}" state="Critical" iconSrc="sap-icon://bbyd-active-sales" />
-
-
+ 
+                                        <card:NumericHeader title="Active Clusters" subtitle="Currently active" number="{dashboard>/activeClusters}" state="Critical" iconSrc="sap-icon://bbyd-active-sales" />
+ 
+ 
                                     </f:header>
-
-
+ 
+ 
                                 </f:Card>
-
+ 
                                 <!-- ===================================================== -->
                                 <!-- IFLOWS MONITORED -->
                                 <!-- ===================================================== -->
-
-                                <f:Card id="_IDGenCard2" width="100%" semanticRole="ListItem" class="sapUiTinyMarginEnd">
-
+ 
+                                <f:Card width="100%" semanticRole="ListItem" class="sapUiTinyMarginEnd">
+ 
                                     <f:header>
-
-                                        <card:NumericHeader id="_IDGenNumericHeader2" title="Critical" number="{dashboard>/criticalCount}" state="Error" iconSrc="sap-icon://alert" />
-
-
+ 
+                                        <card:NumericHeader title="Critical" subtitle="Critical clusters detected" number="{dashboard>/criticalCount}" state="Error" iconSrc="sap-icon://alert" />
+ 
+ 
                                     </f:header>
-
-
-
+ 
+ 
+ 
                                 </f:Card>
-
+ 
                                 <!-- ===================================================== -->
                                 <!-- RESOLVED TODAY -->
                                 <!-- ===================================================== -->
-
-                                <f:Card id="_IDGenCard3" width="100%" semanticRole="ListItem" class="sapUiTinyMarginEnd">
-
+ 
+                                <f:Card width="100%" semanticRole="ListItem" class="sapUiTinyMarginEnd">
+ 
                                     <f:header>
-
-                                        <card:NumericHeader id="_IDGenNumericHeader3" title="Resolved Today" number="{dashboard>/resolved24h}" state="Good" iconSrc="sap-icon://accept" />
-
+ 
+                                        <card:NumericHeader title="Resolved Today" subtitle="Incidents resolved in the last 24 hours" number="{dashboard>/resolved24h}" state="Good" iconSrc="sap-icon://accept" />
+ 
                                     </f:header>
-
-
-
+ 
+ 
+ 
                                 </f:Card>
-
+ 
                             </layout:content>
                         </layout:Grid>
-
-                        <HBox id="_IDGenHBox8" class="sapUiMediumMarginEnd sapUiSmallMarginBegin" wrap="true" justifyContent="SpaceBetween">
-
+ 
+                        <HBox class="sapUiMediumMarginEnd sapUiSmallMarginBegin" wrap="true" justifyContent="SpaceBetween">
+ 
                             <!-- ===================================================== -->
                             <!-- DONUT CHART CARD -->
                             <!-- ===================================================== -->
-
-                            <f:Card id="_IDGenCard4" width="100%">
+ 
+                            <f:Card width="100%">
                                 <f:layoutData>
-                                    <FlexItemData id="_IDGenFlexItemData" growFactor=".5" baseSize="0"></FlexItemData>
+                                    <FlexItemData growFactor=".5" baseSize="0"></FlexItemData>
                                 </f:layoutData>
-
+ 
                                 <f:header>
-
-                                    <card:Header id="_IDGenHeader" title="Incidents by Severity" subtitle="Current distribution" iconSrc="sap-icon://donut-chart" />
-
+ 
+                                    <card:Header title="Incidents by Severity" subtitle="Current distribution" iconSrc="sap-icon://donut-chart" />
+ 
                                 </f:header>
-
+ 
                                 <f:content>
-
+ 
                                     <viz:VizFrame id="idDonutChart" uiConfig="{applicationSet:'fiori'}" vizType="donut" width="100%" height="18rem">
-
+ 
                                         <viz:dataset>
-
-                                            <viz.data:FlattenedDataset id="_IDGenFlattenedDataset" data="{chart>/severityData}">
-
+ 
+                                            <viz.data:FlattenedDataset data="{chart>/severityData}">
+ 
                                                 <viz.data:dimensions>
-
-                                                    <viz.data:DimensionDefinition id="_IDGenDimensionDefinition" name="Severity" value="{severity}" />
-
+ 
+                                                    <viz.data:DimensionDefinition name="Severity" value="{severity}" />
+ 
                                                 </viz.data:dimensions>
-
+ 
                                                 <viz.data:measures>
-
-                                                    <viz.data:MeasureDefinition id="_IDGenMeasureDefinition" name="Count" value="{count}" />
-
+ 
+                                                    <viz.data:MeasureDefinition name="Count" value="{count}" />
+ 
                                                 </viz.data:measures>
-
+ 
                                             </viz.data:FlattenedDataset>
-
+ 
                                         </viz:dataset>
-
+ 
                                         <viz:feeds>
-
-                                            <viz.feeds:FeedItem id="_IDGenFeedItem" uid="size" type="Measure" values="Count" />
-
-                                            <viz.feeds:FeedItem id="_IDGenFeedItem1" uid="color" type="Dimension" values="Severity" />
-
+ 
+                                            <viz.feeds:FeedItem uid="size" type="Measure" values="Count" />
+ 
+                                            <viz.feeds:FeedItem uid="color" type="Dimension" values="Severity" />
+ 
                                         </viz:feeds>
-
+ 
                                     </viz:VizFrame>
-
+ 
                                 </f:content>
-
+ 
                             </f:Card>
-
-                            <!-- ===================================================== -->
-                            <!-- LINE CHART CARD -->
-                            <!-- ===================================================== -->
-
-                            <f:Card id="_IDGenCard5" width="100%" class="sapUiSmallMarginBegin">
+ 
+                            
+ 
+                            <f:Card width="100%" class="sapUiSmallMarginBegin">
                                 <f:layoutData>
-                                    <FlexItemData id="_IDGenFlexItemData2" growFactor=".5" baseSize="0"></FlexItemData>
+                                    <FlexItemData growFactor=".5" baseSize="0"></FlexItemData>
                                 </f:layoutData>
-
-
+ 
+ 
                                 <f:header>
-
-                                    <card:Header id="_IDGenHeader1" title="Incidents Trend" subtitle="Last 7 Days" iconSrc="sap-icon://line-chart" />
-
+                                   
+                                        <card:Header title="Incidents Trend" subtitle="Last 7 Days" iconSrc="sap-icon://line-chart" />
+                                       
+                                   
+ 
                                 </f:header>
-
+ 
                                 <f:content>
-
+ 
                                     <viz:VizFrame id="idLineChart" uiConfig="{applicationSet:'fiori'}" vizType="dual_line" width="100%" height="18rem">
-
+ 
                                         <viz:dataset>
-
-                                            <viz.data:FlattenedDataset id="_IDGenFlattenedDataset1" data="{chart>/trendData}">
-
+ 
+                                            <viz.data:FlattenedDataset data="{chart>/trendData}">
+ 
                                                 <viz.data:dimensions>
-
-                                                    <viz.data:DimensionDefinition id="_IDGenDimensionDefinition1" name="Day" value="{day}" />
-
+ 
+                                                    <viz.data:DimensionDefinition name="Day" value="{day}" />
+ 
                                                 </viz.data:dimensions>
-
+ 
                                                 <viz.data:measures>
-
-                                                    <viz.data:MeasureDefinition id="_IDGenMeasureDefinition1" name="Critical" value="{critical}" />
-
-                                                    <viz.data:MeasureDefinition id="_IDGenMeasureDefinition2" name="High" value="{high}" />
-
-                                                    <viz.data:MeasureDefinition id="_IDGenMeasureDefinition3" name="Medium" value="{medium}" />
-
-                                                    <viz.data:MeasureDefinition id="_IDGenMeasureDefinition4" name="Resolved" value="{resolved}" />
-
+ 
+                                                    <viz.data:MeasureDefinition name="Critical" value="{critical}" />
+ 
+                                                    <viz.data:MeasureDefinition name="High" value="{high}" />
+ 
+                                                    <viz.data:MeasureDefinition name="Medium" value="{medium}" />
+ 
+                                                    <viz.data:MeasureDefinition name="Low" value="{low}" />
+ 
+                                                    <viz.data:MeasureDefinition name="Resolved" value="{resolved}" />
+ 
                                                 </viz.data:measures>
-
+ 
                                             </viz.data:FlattenedDataset>
-
+ 
                                         </viz:dataset>
-
+ 
                                         <viz:feeds>
-
-                                            <viz.feeds:FeedItem id="_IDGenFeedItem2" uid="valueAxis" type="Measure" values="Critical" />
-
-                                            <viz.feeds:FeedItem id="_IDGenFeedItem3" uid="valueAxis2" type="Measure" values="High,Medium,Resolved" />
-
-                                            <viz.feeds:FeedItem id="_IDGenFeedItem4" uid="categoryAxis" type="Dimension" values="Day" />
-
+ 
+                                            <viz.feeds:FeedItem uid="valueAxis" type="Measure" values="Critical" />
+ 
+                                            <viz.feeds:FeedItem uid="valueAxis2" type="Measure" values="High,Medium,Low,Resolved" />
+ 
+                                            <viz.feeds:FeedItem uid="categoryAxis" type="Dimension" values="Day" />
+ 
                                         </viz:feeds>
-
+ 
                                     </viz:VizFrame>
-
-
-
+ 
+ 
+ 
                                 </f:content>
-
+ 
                             </f:Card>
                             <viz:Popover id="idPopOver" />
-
+ 
                         </HBox>
-
+ 
                         <!-- ===================================================== -->
                         <!-- INCIDENT TABLE SECTION -->
                         <!-- ===================================================== -->
-
-                        <Panel id="_IDGenPanel" width="100%" class="sapUiMediumMarginBottom sapUiMediumMarginTop">
-
-                            <!-- ===================================================== -->
-                            <!-- ICON TAB BAR -->
-                            <!-- ===================================================== -->
-
-                            <IconTabHeader id="idSeverityTabBar" expandable="false" select=".onSeverityTabSelect" class="sapUiResponsiveContentPadding">
-
+ 
+                        <Panel width="100%" class="sapUiMediumMarginBottom sapUiMediumMarginTop">
+ 
+                         
+ 
+                            <IconTabHeader id="idSeverityTabBar" select=".onSeverityTabSelect" class="sapUiResponsiveContentPadding">
+ 
                                 <items>
+ 
+                                    <IconTabFilter key="ALL" text="All" count="{/IncidentClusters/$count}" iconColor="Neutral" icon="sap-icon://list" />
+ 
 
-                                    <!-- ALL -->
-
-                                    <IconTabFilter id="_IDGenIconTabFilter" key="ALL" text="All" iconColor="Neutral" icon="sap-icon://list" />
-
-                                    <!-- CRITICAL -->
-
-                                    <IconTabFilter id="_IDGenIconTabFilter1" key="CRITICAL" text="Critical" icon="sap-icon://message-error" iconColor="Negative" />
-
-                                    <!-- HIGH -->
-
-                                    <IconTabFilter id="_IDGenIconTabFilter2" key="HIGH" text="High" icon="sap-icon://alert" iconColor="Critical" />
-
-                                    <!-- MEDIUM -->
-
-                                    <IconTabFilter id="_IDGenIconTabFilter3" key="MEDIUM" text="Medium" icon="sap-icon://information" iconColor="Default" />
-
-                                    <!-- LOW -->
-
-                                    <IconTabFilter id="_IDGenIconTabFilter4" key="LOW" text="Low" icon="sap-icon://accept" iconColor="Positive" />
-
+                                    <IconTabFilter key="CRITICAL" text="Critical" count="{path: '/IncidentClusters/$count', parameters: {$filter: 'severity eq \'CRITICAL\''}}" icon="sap-icon://message-error" iconColor="Negative" />
+ 
+ 
+                                    <IconTabFilter key="HIGH" text="High" count="{path: '/IncidentClusters/$count', parameters: {$filter: 'severity eq \'HIGH\''}}" icon="sap-icon://alert" iconColor="Critical" />
+ 
+ 
+ 
+                                    <IconTabFilter key="MEDIUM" text="Medium" count="{path: '/IncidentClusters/$count', parameters: {$filter: 'severity eq \'MEDIUM\''}}" icon="sap-icon://information" iconColor="Default" />
+ 
+ 
+ 
+                                    <IconTabFilter key="LOW" text="Low" count="{path: '/IncidentClusters/$count', parameters: {$filter: 'severity eq \'LOW\''}}" icon="sap-icon://accept" iconColor="Positive" />
+ 
                                 </items>
-
-
+ 
+ 
                             </IconTabHeader>
                             <!-- ===================================================== -->
                             <!-- TABLE -->
                             <!-- ===================================================== -->
-
-                            <Table id="idIncidentClustersTable" inset="false" width="100%" growing="true" growingScrollToLoad="true" mode="None" sticky="ColumnHeaders,HeaderToolbar" items="{
-            path:'/IncidentClusters'
+ 
+                            <Table id="idIncidentClustersTable" inset="false" width="100%" growing="true" growingScrollToLoad="false" growingThreshold="5" mode="None" sticky="ColumnHeaders,HeaderToolbar" items="{
+            path:'/IncidentClusters',
+             sorter:{
+            path:'modifiedAt',
+            descending:true
+        }
         }">
-
-                                <!-- HEADER TOOLBAR -->
-
-                                <headerToolbar>
-
-                                    <OverflowToolbar id="_IDGenOverflowToolbar">
-
-                                        <Title id="_IDGenTitle11" text="Incident Clusters" level="H3" />
-
-                                        <ToolbarSpacer id="_IDGenToolbarSpacer4" />
-
-                                    </OverflowToolbar>
-
-                                </headerToolbar>
-
+ 
+ 
+ 
                                 <!-- COLUMNS -->
-
+ 
                                 <columns>
-
-                                    <Column id="_IDGenColumn" width="6rem">
-                                        <Text id="_IDGenText1" text="Count" />
+ 
+                                    <Column width="6rem" hAlign="Center">
+                                        <Text text="Count" />
                                     </Column>
+ 
 
-                                    <Column id="_IDGenColumn1" minScreenWidth="Tablet" demandPopin="true">
-
-                                        <Text id="_IDGenText2" text="Message" />
+ 
+                                    <Column minScreenWidth="Tablet" demandPopin="true">
+ 
+                                        <Text text="Message" />
                                     </Column>
-
-                                    <Column id="_IDGenColumn2" width="10rem">
-                                        <Text id="_IDGenText3" text="Severity" />
+ 
+                                    <Column width="10rem">
+                                        <Text text="Severity" />
                                     </Column>
-
-                                    <Column id="_IDGenColumn3" width="8rem">
-                                        <Text id="_IDGenText4" text="Status" />
+ 
+                                    <Column width="8rem">
+                                        <Text text="Status" />
                                     </Column>
-
-                                    <Column id="_IDGenColumn4" width="14rem">
-                                        <Text id="_IDGenText5" text="Last Seen" />
+ 
+                                    <Column width="14rem">
+                                        <Text text="Last Seen" />
                                     </Column>
-
+ 
                                 </columns>
-
+ 
                                 <!-- ITEMS -->
-
+ 
                                 <items>
-
-                                    <ColumnListItem id="_IDGenColumnListItem" type="Navigation" press=".onRowPress">
-
+ 
+                                    <ColumnListItem type="Navigation" press=".onRowPress" highlight="{
+        path: 'severity',
+        formatter: '.formatter.formatRowHighlight'
+    }">
+ 
                                         <cells>
-
+ 
                                             <!-- COUNT -->
-
-                                            <ObjectNumber id="_IDGenObjectNumber" number="{incidentCount}" emphasized="true" state="{
-                            path:'severity',
-                            formatter:'.formatter.formatNumberState'
-                        }" />
-
+ 
+                                            <ObjectNumber number="{incidentCount}" emphasized="true" />
+ 
                                             <!-- MESSAGE -->
-
-                                            <Text id="_IDGenText7" text="{errorType}" wrapping="false" />
-
+ 
+                                            <Text text="{errorType}" wrapping="false" />
+ 
                                             <!-- SEVERITY -->
-
-                                            <ObjectStatus id="_IDGenObjectStatus8" text="{severity}" state="{
+ 
+                                            <ObjectStatus text="{severity}" state="{
                             path:'severity',
                             formatter:'.formatter.formatSeverityState'
                         }" />
-
+ 
                                             <!-- STATUS -->
-
-                                            <ObjectStatus id="_IDGenObjectStatus9" text="{status}" state="{
+ 
+                                            <ObjectStatus text="{status}" state="{
                             path:'status',
                             formatter:'.formatter.formatStatusState'
                         }" />
-
+ 
                                             <!-- LAST SEEN -->
-
-                                            <Text id="_IDGenText8" text="{lastSeen}" />
-
+ 
+                                            <Text text="{lastSeen}" />
+ 
                                         </cells>
-
+ 
                                     </ColumnListItem>
-
+ 
                                 </items>
-
+ 
                             </Table>
-
+ 
                         </Panel>
                     </VBox>
-
-
-
+ 
+ 
+ 
                 </f:content>
-
+ 
             </f:DynamicPage>
-
+ 
         </tnt:mainContents>
-
+ 
     </tnt:ToolPage>
 </mvc:View>
  
