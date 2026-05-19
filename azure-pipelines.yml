@@ -11,47 +11,41 @@ pr:
       - main
 
 variables:
-  # Linking your library secrets
+  - name: mtarFileName
+    value: 'integration-reliability-agent_1.0.0.mtar' 
   - group: btp-vars
 
 stages:
   - stage: Build
-    displayName: 'Build Full-Stack App'
+    displayName: Build CAP App
     jobs:
       - job: BuildJob
         pool:
-          vmImage: 'ubuntu-latest'
+          name: BTP-Self-Hosted
         steps:
-          # Explicitly set Node version to ensure consistency on hosted VMs
-          - task: NodeTool@0
+          - task: NodeTool@1
+            displayName: 'Install Node.js 20'
             inputs:
-              versionSpec: '18.x'
-            displayName: 'Install Node.js'
-
-          # Install MBT globally so npx/mbt commands work natively
-          - script: npm install -g mbt
-            displayName: 'Install Cloud MTA Build Tool (mbt)'
-
-          - script: |
-              node -v
-              npm -v
-              make -v
-            displayName: 'Verify System Tools'
+              versionSpec: '20.x'
+              # This ensures it downloads it if not found on the agent
+              checkLatest: true
 
           - script: npm install
             displayName: 'npm install'
 
           - script: npx cds build
-            displayName: 'CAP CDS Build'
+            displayName: 'cds build'
 
+          # Fix 1: Removed the trailing -t to use default mta_archives folder
           - script: npx mbt build
             displayName: 'Generate MTAR'
 
+          # Fix 2: Use CopyFiles to VERIFY the file exists before publishing
           - task: CopyFiles@2
             displayName: 'Collect MTAR'
             inputs:
               SourceFolder: '$(System.DefaultWorkingDirectory)/mta_archives'
-              Contents: '*.mtar' 
+              Contents: '$(mtarFileName)'
               TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
           - task: PublishPipelineArtifact@1
@@ -61,34 +55,25 @@ stages:
               artifact: 'FullStackPackage'
 
   - stage: Deploy
-    displayName: 'Deploy to BTP'
+    displayName: 'Deploy to CF Dev'
     dependsOn: Build
-    # Only deploy on a real merge to develop
-    condition: |
-      and(
-        succeeded(), 
-        eq(variables['Build.SourceBranch'], 'refs/heads/develop'), 
-        ne(variables['Build.Reason'], 'PullRequest')
-      )
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), ne(variables['Build.Reason'], 'PullRequest'))
     jobs:
     - job: DeployJob
       pool:
-        vmImage: 'ubuntu-latest'
+        name: BTP-Self-Hosted
       steps:
         - download: current
           artifact: FullStackPackage
           displayName: 'Download MTAR'
 
         - script: |
-            echo "Installing CF MultiApps plugin..."
-            cf install-plugin multiapps -f
-
             echo "Logging into Cloud Foundry..."
             cf login -u "$(CF-USER)" -p "$(CF-PASSWORD)" -a "$(CF-API)" -o "$(CF-ORG)" -s "$(CF-SPACE)"
             
-            echo "Deploying Full-Stack App..."
-            # Using wildcard ensures version bumps don't break the pipeline
-            cf deploy $(Pipeline.Workspace)/FullStackPackage/*.mtar -f
+            echo "Deploying to BTP..."
+            # Fix 3: Path now matches the artifact name 'FullStackPackage'
+            cf deploy $(Pipeline.Workspace)/FullStackPackage/$(mtarFileName) -f
           displayName: 'CF Deploy'
           env:
             CF-PASSWORD: $(CF-PASSWORD)
