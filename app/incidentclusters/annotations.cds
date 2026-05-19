@@ -8,10 +8,7 @@ annotate service.IncidentClusters with @(
                 Label : 'errorSignature',
                 Value : errorSignature,
             },
-            {
-                $Type : 'UI.DataField',
-                Value : iFlowName,
-            },
+            
             {
                 $Type : 'UI.DataField',
                 Value : severity,

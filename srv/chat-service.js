@@ -57,7 +57,6 @@ export default cds.service.impl(async function () {
             }
         } catch (err) {
             console.error("Title generation failed, using default:", err.message);
-            // Falls back to "New Chat" or provided title
         }
         console.log("Final Chat Title:", title);
         const newConv = {
@@ -71,7 +70,7 @@ export default cds.service.impl(async function () {
     });
 
     this.on('chat', async (req) => {
-        const { conversationId, userMessage } = req.data;
+        const { conversationId, referenceID, userMessage } = req.data;
 
         if (!conversationId || !userMessage) {
             return req.error(400, "Missing conversationId or userMessage");
@@ -86,67 +85,51 @@ export default cds.service.impl(async function () {
 
         try {
             // 2. Load full history (includes the message we just inserted)
-            const history = await SELECT
-                .from('com.cytechies.integration.reliability.Messages')
-                .where({ conversation_ID: conversationId })
-                .orderBy('createdAt asc');
+            // const history = await SELECT
+            //     .from('com.cytechies.integration.reliability.Messages')
+            //     .where({ conversation_ID: conversationId })
+            //     .orderBy('createdAt asc');
 
-            const isFirstMessage = history.length === 1;
+            let systemPrompt = `You are an AI assistant for SAP Integration Suite incident management.
 
-            // 4. Only build system prompt on first message
-            let systemPrompt = null;
+                            [TASK]
+                            Answer questions specifically about this cluster. Be concise and technical.
 
-            if (isFirstMessage) {
-                const session = await SELECT.one
-                    .from('com.cytechies.integration.reliability.ChatSessions')
-                    .where({ ID: conversationId });
+                            [STRICT OUTPUT RULES]
+                            1. You MUST output RAW, VALID HTML ONLY. 
+                            2. DO NOT use any Markdown formatting whatsoever (no **, no ##, no * for bullets).
+                            3. DO NOT wrap your response in \`\`\`html or \`\`\` code blocks. The response must be injected directly into the DOM.
+                            4. Use standard HTML tags for structure: <p> for paragraphs, <ul>/<li> for lists, <strong> for emphasis, and <br> for line breaks.
+                            5. You must wrap your entire response within a single root <div> tag.`;
 
-                if (session?.cluster_ID) {
-                    const cluster = await SELECT.one
-                        .from('com.cytechies.integration.reliability.IncidentClusters')
-                        .where({ ID: session.cluster_ID });
-                    console.log("Loaded Cluster for System Prompt:", {
-                        ID: cluster.ID,
-                        iFlowName: cluster.iFlowName,
-                        errorSignature: cluster.errorSignature,
-                        severity: cluster.severity
-                    });
-                    if (cluster) {
-                        const incidents =
-                            await SELECT
-                                .from('com.cytechies.integration.reliability.Incidents')
-                                .where({
-                                    cluster_ID: session.cluster_ID
-                                })
-                                .orderBy({
-                                    logEnd: 'desc'
-                                })
-                                .limit(10);
-                        const incidentSummary =
-                            incidents.map((i, index) => ({
+            if (referenceID) {
+                // Fetch recent incidents for the cluster
+                const incidents = await SELECT
+                    .from('com.cytechies.integration.reliability.Incidents')
+                    .where({
+                        cluster_ID: referenceID
+                    })
+                    .orderBy({
+                        logEnd: 'desc'
+                    })
+                    .limit(10);
 
-                                index: index + 1,
+                // Clean up the payload to save tokens and keep the LLM focused
+                const incidentSummary = incidents.map((i, index) => ({
+                    index: index + 1,
+                    errorMessage: i.errorMessage,
+                    adapter: i.adapter,
+                    logEnd: i.logEnd
+                }));
 
-                                errorMessage:
-                                    i.errorMessage,
+                // Append the dynamic context to the system prompt
+                systemPrompt += `
+                    [CONTEXT]
+                    Cluster ID: ${referenceID}
 
-                                adapter:
-                                    i.adapter,
-
-                                logEnd:
-                                    i.logEnd
-                            }));
-                        systemPrompt = `You are an AI assistant for SAP Integration Suite incident management.
-                        You are analyzing a specific incident cluster:
-                        Cluster:
-                        ${JSON.stringify(cluster, null, 2)}
-                        Recent Incidents:
-                        ${JSON.stringify(incidentSummary, null, 2)}
-                        Answer questions specifically about this cluster. Be concise and technical.
-                        Note: I need response in html format, so use <br> for line breaks and avoid markdown or plain text formatting.
-                        return text in html format, no markdown, no plain text, just html.`;
-                    }
-                }
+                    Recent Incidents (Latest 10):
+                    ${JSON.stringify(incidentSummary, null, 2)}
+                    `;
             }
 
             // 5. Build messages array from history
