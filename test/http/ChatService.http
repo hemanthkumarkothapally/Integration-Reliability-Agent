@@ -1,0 +1,140 @@
+@server=http://localhost:4004
+
+
+### ChatSessions
+# @name ChatSessions_GET
+GET {{server}}/Chat/ChatSessions
+
+
+
+### ChatSessions
+# @name ChatSessions_POST
+POST {{server}}/Chat/ChatSessions
+Content-Type: application/json
+
+{
+  "ID": "10664213-54a2-45b2-b423-edba219f6556",
+  "title": "title-106642",
+  "messages": [
+    {
+      "ID": "28636603-7cd3-45fc-8400-1501daaae5b7",
+      "role": "role-28636603",
+      "content": "content-28636603",
+      "createdAt": "2012-11-20T00:00:00.000Z",
+      "tokenCount": 8
+    },
+    {
+      "ID": "28636604-30c7-47c2-aad2-3d053ac6f220",
+      "role": "role-28636604",
+      "content": "content-28636604",
+      "createdAt": "2015-08-15T00:00:00.000Z",
+      "tokenCount": 28
+    }
+  ],
+  "totalSessionTokenUsage": 48,
+  "createdAt": "2001-07-03T00:00:00.000Z",
+  "createdBy": "createdBy.2aaa@example.net",
+  "modifiedAt": "2018-06-18T00:00:00.000Z",
+  "modifiedBy": "modifiedBy.2aaa@example.com"
+}
+
+
+### ChatSessions
+# @name ChatSessions_PATCH
+PATCH {{server}}/Chat/ChatSessions/10664213-54a2-45b2-b423-edba219f6556
+Content-Type: application/json
+
+{
+  "ID": "10664213-54a2-45b2-b423-edba219f6556",
+  "title": "title-106642",
+  "messages": [
+    {
+      "ID": "28636603-7cd3-45fc-8400-1501daaae5b7",
+      "role": "role-28636603",
+      "content": "content-28636603",
+      "createdAt": "2012-11-20T00:00:00.000Z",
+      "tokenCount": 8
+    },
+    {
+      "ID": "28636604-30c7-47c2-aad2-3d053ac6f220",
+      "role": "role-28636604",
+      "content": "content-28636604",
+      "createdAt": "2015-08-15T00:00:00.000Z",
+      "tokenCount": 28
+    }
+  ],
+  "totalSessionTokenUsage": 48,
+  "createdAt": "2001-07-03T00:00:00.000Z",
+  "createdBy": "createdBy.2aaa@example.net",
+  "modifiedAt": "2018-06-18T00:00:00.000Z",
+  "modifiedBy": "modifiedBy.2aaa@example.com"
+}
+
+
+### ChatSessions
+# @name ChatSessions_DELETE
+DELETE {{server}}/Chat/ChatSessions/10664213-54a2-45b2-b423-edba219f6556
+Content-Type: application/json
+
+
+### Messages
+# @name Messages_GET
+GET {{server}}/Chat/Messages
+
+
+
+### Messages
+# @name Messages_POST
+POST {{server}}/Chat/Messages
+Content-Type: application/json
+
+{
+  "ID": "28636603-7cd3-45fc-8400-1501daaae5b7",
+  "role": "role-28636603",
+  "content": "content-28636603",
+  "createdAt": "2012-11-20T00:00:00.000Z",
+  "tokenCount": 8
+}
+
+
+### Messages
+# @name Messages_PATCH
+PATCH {{server}}/Chat/Messages/28636603-7cd3-45fc-8400-1501daaae5b7
+Content-Type: application/json
+
+{
+  "ID": "28636603-7cd3-45fc-8400-1501daaae5b7",
+  "role": "role-28636603",
+  "content": "content-28636603",
+  "createdAt": "2012-11-20T00:00:00.000Z",
+  "tokenCount": 8
+}
+
+
+### Messages
+# @name Messages_DELETE
+DELETE {{server}}/Chat/Messages/28636603-7cd3-45fc-8400-1501daaae5b7
+Content-Type: application/json
+
+
+### createConversation
+# @name createConversation_POST
+POST {{server}}/Chat/createConversation
+Content-Type: application/json
+
+{
+  "title": "title-1974060",
+  "clusterId": "1974060c-553e-496d-bca4-32796649aef3"
+}
+
+
+### chat
+# @name chat_POST
+POST {{server}}/Chat/chat
+Content-Type: application/json
+
+{
+  "conversationId": "20162026-4bc7-4b8f-9d8a-a7284ebb0762",
+  "referenceID": "20162026-4738-4e26-b4ed-ad81e6801159",
+  "userMessage": "userMessage-20162026"
+}

@@ -1,0 +1,177 @@
+@server=http://localhost:4004
+
+
+### Incidents
+# @name Incidents_GET
+GET {{server}}/Incident/Incidents
+
+
+
+### Incidents
+# @name Incidents_POST
+POST {{server}}/Incident/Incidents
+Content-Type: application/json
+
+{
+  "ID": "18808855-3dde-4af4-9593-0b11449214fa",
+  "messageGuid": "messageGuid-18808855",
+  "iFlowName": "iFlowName-18808855",
+  "errorMessage": "errorMessage-18808855",
+  "errorSignature": "errorSignature-18808855",
+  "adapter": "adapter-18808855",
+  "status": "status-18808855",
+  "logStart": "2016-07-28T00:00:00.000Z",
+  "logEnd": "2003-12-31T00:00:00.000Z",
+  "createdAt": "2018-04-22T00:00:00.000Z",
+  "createdBy": "createdBy.b7507@example.org",
+  "modifiedAt": "2001-03-13T00:00:00.000Z",
+  "modifiedBy": "modifiedBy.b7507@example.net"
+}
+
+
+### Incidents
+# @name Incidents_PATCH
+PATCH {{server}}/Incident/Incidents/18808855-3dde-4af4-9593-0b11449214fa
+Content-Type: application/json
+
+{
+  "ID": "18808855-3dde-4af4-9593-0b11449214fa",
+  "messageGuid": "messageGuid-18808855",
+  "iFlowName": "iFlowName-18808855",
+  "errorMessage": "errorMessage-18808855",
+  "errorSignature": "errorSignature-18808855",
+  "adapter": "adapter-18808855",
+  "status": "status-18808855",
+  "logStart": "2016-07-28T00:00:00.000Z",
+  "logEnd": "2003-12-31T00:00:00.000Z",
+  "createdAt": "2018-04-22T00:00:00.000Z",
+  "createdBy": "createdBy.b7507@example.org",
+  "modifiedAt": "2001-03-13T00:00:00.000Z",
+  "modifiedBy": "modifiedBy.b7507@example.net"
+}
+
+
+### Incidents
+# @name Incidents_DELETE
+DELETE {{server}}/Incident/Incidents/18808855-3dde-4af4-9593-0b11449214fa
+Content-Type: application/json
+
+
+### IncidentClusters
+# @name IncidentClusters_GET
+GET {{server}}/Incident/IncidentClusters
+
+
+
+### Playbook
+# @name Playbook_GET
+GET {{server}}/Incident/Playbook
+
+
+
+### ClusterArtifacts
+# @name ClusterArtifacts_GET
+GET {{server}}/Incident/ClusterArtifacts
+
+
+
+### ClusterArtifacts
+# @name ClusterArtifacts_POST
+POST {{server}}/Incident/ClusterArtifacts
+Content-Type: application/json
+
+{
+  "ID": "3867701b-71cb-4684-99dd-cb1708c24ecc",
+  "cluster": {
+    "ID": "2909566b-35e0-4dca-bbbb-c6c50b9a9c62"
+  },
+  "artifact": {
+    "ID": "29197472-0d7d-448c-b8c9-8f0d2d88d251"
+  }
+}
+
+
+### ClusterArtifacts
+# @name ClusterArtifacts_PATCH
+PATCH {{server}}/Incident/ClusterArtifacts/3867701b-71cb-4684-99dd-cb1708c24ecc
+Content-Type: application/json
+
+{
+  "ID": "3867701b-71cb-4684-99dd-cb1708c24ecc",
+  "cluster": {
+    "ID": "2909566b-35e0-4dca-bbbb-c6c50b9a9c62"
+  },
+  "artifact": {
+    "ID": "29197472-0d7d-448c-b8c9-8f0d2d88d251"
+  }
+}
+
+
+### ClusterArtifacts
+# @name ClusterArtifacts_DELETE
+DELETE {{server}}/Incident/ClusterArtifacts/3867701b-71cb-4684-99dd-cb1708c24ecc
+Content-Type: application/json
+
+
+### MonitoredArtifacts
+# @name MonitoredArtifacts_GET
+GET {{server}}/Incident/MonitoredArtifacts
+
+
+
+### MonitoredArtifacts
+# @name MonitoredArtifacts_POST
+POST {{server}}/Incident/MonitoredArtifacts
+Content-Type: application/json
+
+{
+  "ID": "29197472-0d7d-448c-b8c9-8f0d2d88d251",
+  "iFlowName": "iFlowName-29197472",
+  "iFlowId": "iFlowId-29197472",
+  "namespace": "namespace-29197472",
+  "isActive": true,
+  "lastPollTimestamp": "2004-07-06T00:00:00.000Z",
+  "createdAt": "2007-12-06T00:00:00.000Z",
+  "createdBy": "createdBy.hdsww@example.net",
+  "modifiedAt": "2001-10-06T00:00:00.000Z",
+  "modifiedBy": "modifiedBy.hdsww@example.org"
+}
+
+
+### MonitoredArtifacts
+# @name MonitoredArtifacts_PATCH
+PATCH {{server}}/Incident/MonitoredArtifacts/29197472-0d7d-448c-b8c9-8f0d2d88d251
+Content-Type: application/json
+
+{
+  "ID": "29197472-0d7d-448c-b8c9-8f0d2d88d251",
+  "iFlowName": "iFlowName-29197472",
+  "iFlowId": "iFlowId-29197472",
+  "namespace": "namespace-29197472",
+  "isActive": true,
+  "lastPollTimestamp": "2004-07-06T00:00:00.000Z",
+  "createdAt": "2007-12-06T00:00:00.000Z",
+  "createdBy": "createdBy.hdsww@example.net",
+  "modifiedAt": "2001-10-06T00:00:00.000Z",
+  "modifiedBy": "modifiedBy.hdsww@example.org"
+}
+
+
+### MonitoredArtifacts
+# @name MonitoredArtifacts_DELETE
+DELETE {{server}}/Incident/MonitoredArtifacts/29197472-0d7d-448c-b8c9-8f0d2d88d251
+Content-Type: application/json
+
+
+### Recommendations
+# @name Recommendations_GET
+GET {{server}}/Incident/Recommendations
+
+
+
+### triggerPoll
+# @name triggerPoll_POST
+POST {{server}}/Incident/triggerPoll
+Content-Type: application/json
+
+{}

@@ -70,4 +70,10 @@ service IncidentService {
             resolved : Integer;
         };
     };
+// srv/incident-service.cds
+function GetTopErrorTypes() returns array of {
+    errorType    : String;
+    count        : Integer;
+    severity     : String;
+};
 }

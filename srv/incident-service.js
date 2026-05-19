@@ -204,45 +204,43 @@ export default cds.service.impl(async function () {
      * TREND DATA
      * --------------------------------------------------
      */
-    const trendData = [];
+const trendData = [];
 
-    for (let i = 6; i >= 0; i--) {
+for (let i = 6; i >= 0; i--) {
 
-        const dayStart = new Date();
-        dayStart.setDate(today.getDate() - i);
-        dayStart.setHours(0, 0, 0, 0);
+    const dayStart = new Date();
 
-        const dayEnd = new Date(dayStart);
-        dayEnd.setHours(23, 59, 59, 999);
+    dayStart.setDate(today.getDate() - i);
+    dayStart.setHours(0, 0, 0, 0);
 
-        const label = i === 0 ? 'Today'
+    const dayEnd = new Date(dayStart);
+
+    dayEnd.setHours(23, 59, 59, 999);
+
+    const incidents = await SELECT
+        .from('com.cytechies.integration.reliability.Incidents')
+        .columns('ID', 'cluster_ID')
+        .where`
+            logEnd >= ${dayStart.toISOString()}
+            and logEnd <= ${dayEnd.toISOString()}
+        `;
+
+    const clusters = await SELECT
+        .from('com.cytechies.integration.reliability.IncidentClusters')
+        .columns('ID')
+        .where`
+            createdAt >= ${dayStart.toISOString()}
+            and createdAt <= ${dayEnd.toISOString()}
+        `;
+    const label = i === 0 ? 'Today'
                     : i === 1 ? 'Yesterday'
                     : `${i} Days Ago`;
-
-        const incidents = await SELECT
-            .from('com.cytechies.integration.reliability.Incidents')
-            .columns('cluster_ID')
-            .where`logEnd >= ${dayStart.toISOString()} and logEnd <= ${dayEnd.toISOString()}`;
-
-        const day = { day: label, critical: 0, high: 0, medium: 0, low: 0, resolved: 0 };
-
-        for (const incident of incidents) {
-            if (!incident.cluster_ID) continue;
-
-            const cluster = clusterMap[incident.cluster_ID];
-            if (!cluster) continue;
-
-            // 👇 uppercase comparison to match DB values
-            if (cluster.status === 'RESOLVED')         day.resolved++;
-            else if (cluster.severity === 'CRITICAL')  day.critical++;
-            else if (cluster.severity === 'HIGH')       day.high++;
-            else if (cluster.severity === 'MEDIUM')     day.medium++;
-            else if (cluster.severity === 'LOW')        day.low++;
-        }
-
-        trendData.push(day);
-    }
-
+    trendData.push({
+        DAY: label,
+        INCIDENTCOUNT: incidents.length,
+        CLUSTERCOUNT: clusters.length
+    });
+}
     return { severityData, trendData };
 });
 
@@ -258,4 +256,77 @@ function sevenDaysAgo() {
     d.setHours(0, 0, 0, 0);
     return d.toISOString();
 }
+this.on('getPlatformOverview', async (req) => {
+
+    const [
+        incidents,
+        clusters,
+        artifacts,
+        recommendations,
+        playbooks,
+        chatSessions
+    ] = await Promise.all([
+
+        SELECT.one.from('com.cytechies.integration.reliability.Incidents')
+            .columns`count(ID) as count`,
+
+        SELECT.one.from('com.cytechies.integration.reliability.IncidentClusters')
+            .columns`count(ID) as count`,
+
+        SELECT.one.from('com.cytechies.integration.reliability.MonitoredArtifacts')
+            .columns`count(ID) as count`,
+
+        SELECT.one.from('com.cytechies.integration.reliability.ClusterRecommendations')
+            .columns`count(ID) as count`,
+
+        SELECT.one.from('com.cytechies.integration.reliability.Playbooks')
+            .columns`count(ID) as count`,
+
+        SELECT.one.from('com.cytechies.integration.reliability.ChatSessions')
+            .columns`count(ID) as count`
+    ]);
+
+    return [
+        {
+            category: 'Incidents',
+            count: incidents.count
+        },
+        {
+            category: 'Clusters',
+            count: clusters.count
+        },
+        {
+            category: 'Artifacts',
+            count: artifacts.count
+        },
+        {
+            category: 'Recommendations',
+            count: recommendations.count
+        },
+        {
+            category: 'Playbooks',
+            count: playbooks.count
+        },
+        {
+            category: 'Chat Sessions',
+            count: chatSessions.count
+        }
+    ];
+
+});
+this.on('GetTopErrorTypes', async (req) => {
+
+    const clusters = await SELECT
+        .from('com.cytechies.integration.reliability.IncidentClusters')
+        .columns('errorType', 'severity', 'incidentCount')
+        .where({ status: { '!=': 'RESOLVED' } })
+        .orderBy('incidentCount desc')
+        .limit(5);
+
+    return clusters.map(c => ({
+        errorType : c.errorType || 'UNKNOWN',
+        count     : c.incidentCount || 0,
+        severity  : c.severity || 'LOW'
+    }));
+});
 });

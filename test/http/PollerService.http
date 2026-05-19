@@ -1,0 +1,78 @@
+@server=http://localhost:4004
+
+
+### IncidentClusters
+# @name IncidentClusters_GET
+GET {{server}}/Poller/IncidentClusters
+
+
+
+### IncidentClusters
+# @name IncidentClusters_POST
+POST {{server}}/Poller/IncidentClusters
+Content-Type: application/json
+
+{
+  "ID": "28297784-3f82-47d9-b19e-a69f25755836",
+  "errorSignature": "errorSignature-28297784",
+  "errorType": "errorType-28297784",
+  "severity": "severity-28297784",
+  "incidentCount": 81,
+  "firstSeen": "2018-05-09T00:00:00.000Z",
+  "lastSeen": "2007-11-26T00:00:00.000Z",
+  "status": "status-28297784",
+  "severityCriticality": 37,
+  "incidents": [
+    {
+      "ID": "20953133-41d8-46dc-8cea-52741c24968a",
+      "messageGuid": "messageGuid-20953133",
+      "iFlowName": "iFlowName-20953133",
+      "errorMessage": "errorMessage-20953133",
+      "errorSignature": "errorSignature-20953133",
+      "adapter": "adapter-20953133",
+      "status": "status-20953133",
+      "logStart": "2010-11-02T00:00:00.000Z",
+      "logEnd": "2017-08-06T00:00:00.000Z",
+      "createdAt": "2002-05-26T00:00:00.000Z",
+      "createdBy": "createdBy.ch3jh@example.net",
+      "modifiedAt": "2005-01-23T00:00:00.000Z",
+      "modifiedBy": "modifiedBy.ch3jh@example.org"
+    },
+    {
+      "ID": "20953134-d075-4cee-9a1d-b5a17dee333a",
+      "messageGuid": "messageGuid-20953134",
+      "iFlowName": "iFlowName-20953134",
+      "errorMessage": "errorMessage-20953134",
+      "errorSignature": "errorSignature-20953134",
+      "adapter": "adapter-20953134",
+      "status": "status-20953134",
+      "logStart": "2006-05-06T00:00:00.000Z",
+      "logEnd": "2018-07-05T00:00:00.000Z",
+      "createdAt": "2015-08-24T00:00:00.000Z",
+      "createdBy": "createdBy.ch3ji@example.com",
+      "modifiedAt": "2017-10-08T00:00:00.000Z",
+      "modifiedBy": "modifiedBy.ch3ji@example.org"
+    }
+  ],
+  "totalTokenUsage": 16,
+  "createdAt": "2021-05-14T00:00:00.000Z",
+  "createdBy": "createdBy.guipk@example.net",
+  "modifiedAt": "2004-05-21T00:00:00.000Z",
+  "modifiedBy": "modifiedBy.guipk@example.net"
+}
+
+
+### IncidentClusters
+# @name IncidentClusters_PATCH
+PATCH {{server}}/Poller/IncidentClusters/449e2ec0-2f0d-4ee6-a399-949d011576e1
+Content-Type: application/json
+
+{
+  "playbook_ID": "HTTP_401_OAUTH_EXPIRED"
+}
+
+
+### IncidentClusters
+# @name IncidentClusters_DELETE
+DELETE {{server}}/Poller/IncidentClusters/28297784-3f82-47d9-b19e-a69f25755836
+Content-Type: application/json
