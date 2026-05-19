@@ -8,11 +8,7 @@
         <ResponsivePopover id="historyPopover" title="Chat History" placement="Bottom" contentWidth="auto">
             <content>
                 <List id="historyList" items="{chatModel>/ChatSessions}" mode="SingleSelectMaster" selectionChange=".onConversationSelect">
-                    <!-- <headerToolbar>
-                        <Toolbar id="_IDGenToolbar2">
-                            <Button id="_IDGenButton1" text="New Chat" icon="sap-icon://add" width="100%" press=".onNewChat" type="Ghost"/>
-                        </Toolbar>
-                    </headerToolbar> -->
+                   
                     <items>
                         <StandardListItem id="_IDGenStandardListItem" title="{chatModel>title}" icon="sap-icon://discussion" />
                     </items>
