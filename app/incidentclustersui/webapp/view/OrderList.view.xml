@@ -59,11 +59,11 @@
         <!-- SIDE NAVIGATION -->
         <!-- ===================================================== -->
 
-        <tnt:sideContent>
+        <tnt:sideContent >
 
-            <tnt:SideNavigation id="sideNavigation">
+            <tnt:SideNavigation id="sideNavigation" >
 
-                <tnt:NavigationList id="_IDGenNavigationList">
+                <tnt:NavigationList id="_IDGenNavigationList" >
 
                     <tnt:NavigationListItem id="_IDGenNavigationListItem" text="Overview" icon="sap-icon://home" key="overview" />
 
@@ -317,7 +317,7 @@
 
                                 <f:content>
 
-                                    <viz:VizFrame id="idDonutChart" uiConfig="{applicationSet:'fiori'}" vizType="donut" width="100%" height="18rem">
+                                    <!-- <viz:VizFrame id="idDonutChart" uiConfig="{applicationSet:'fiori'}" vizType="donut" width="100%" height="18rem">
 
                                         <viz:dataset>
 
@@ -347,8 +347,56 @@
 
                                         </viz:feeds>
 
-                                    </viz:VizFrame>
+                                    </viz:VizFrame> -->
+<viz:VizFrame
+    id="topErrorTypesChart"
+    vizType="bar"
+    width="100%"
+    height="18rem"
+    vizProperties="{
+        'plotArea': {
+            'dataLabel': { 'visible': true },
+            'gap': 0.5
+        },
+        'legend': { 'visible': false },
+        'title':  { 'visible': false },
+        'categoryAxis': {
+            'title': { 'visible': false },
+            'label': { 'angle': 30 }
+        },
+        'valueAxis': {
+            'title': { 'visible': true, 'text': 'Incident count' }
+        }
+    }">
 
+        <viz:dataset>
+            <viz.data:FlattenedDataset
+                data="{topErrors>/data}">
+                <viz.data:dimensions>
+                    <viz.data:DimensionDefinition
+                        name="Error Type"
+                        value="{topErrors>errorType}" />
+                </viz.data:dimensions>
+                <viz.data:measures>
+                    <viz.data:MeasureDefinition
+                        name="Incidents"
+                        value="{topErrors>count}" />
+                </viz.data:measures>
+            </viz.data:FlattenedDataset>
+        </viz:dataset>
+
+        <viz:feeds>
+            <viz.feeds:FeedItem
+                uid="valueAxis"
+                type="Measure"
+                values="Incidents" />
+            <viz.feeds:FeedItem
+                uid="categoryAxis"
+                type="Dimension"
+                values="Error Type" />
+        </viz:feeds>
+
+    </viz:VizFrame>
                                 </f:content>
 
                             </f:Card>
@@ -371,45 +419,62 @@
 
                                 <f:content>
 
-                                    <viz:VizFrame id="idLineChart" uiConfig="{applicationSet:'fiori'}" vizType="dual_line" width="100%" height="18rem">
+                                  <viz:VizFrame
+    id="idLineChart"
+    uiConfig="{applicationSet:'fiori'}"
+    vizType="dual_line"
+    width="100%"
+    height="18rem">
 
-                                        <viz:dataset>
+    <viz:dataset>
 
-                                            <viz.data:FlattenedDataset id="_IDGenFlattenedDataset1" data="{chart>/trendData}">
+        <viz.data:FlattenedDataset
+            data="{chart>/trendData}">
 
-                                                <viz.data:dimensions>
+            <viz.data:dimensions>
 
-                                                    <viz.data:DimensionDefinition id="_IDGenDimensionDefinition1" name="Day" value="{day}" />
+                <viz.data:DimensionDefinition
+                    name="Day"
+                    value="{chart>DAY}" />
 
-                                                </viz.data:dimensions>
+            </viz.data:dimensions>
 
-                                                <viz.data:measures>
+            <viz.data:measures>
 
-                                                    <viz.data:MeasureDefinition id="_IDGenMeasureDefinition1" name="Critical" value="{critical}" />
+                <viz.data:MeasureDefinition
+                    name="Incidents"
+                    value="{chart>INCIDENTCOUNT}" />
 
-                                                    <viz.data:MeasureDefinition id="_IDGenMeasureDefinition2" name="High" value="{high}" />
+                <viz.data:MeasureDefinition
+                    name="Clusters"
+                    value="{chart>CLUSTERCOUNT}" />
 
-                                                    <viz.data:MeasureDefinition id="_IDGenMeasureDefinition3" name="Medium" value="{medium}" />
+            </viz.data:measures>
 
-                                                    <viz.data:MeasureDefinition id="_IDGenMeasureDefinition4" name="Resolved" value="{resolved}" />
+        </viz.data:FlattenedDataset>
 
-                                                </viz.data:measures>
+    </viz:dataset>
 
-                                            </viz.data:FlattenedDataset>
+    <viz:feeds>
 
-                                        </viz:dataset>
+        <viz.feeds:FeedItem
+            uid="valueAxis"
+            type="Measure"
+            values="Incidents" />
 
-                                        <viz:feeds>
+        <viz.feeds:FeedItem
+            uid="valueAxis2"
+            type="Measure"
+            values="Clusters" />
 
-                                            <viz.feeds:FeedItem id="_IDGenFeedItem2" uid="valueAxis" type="Measure" values="Critical" />
+        <viz.feeds:FeedItem
+            uid="categoryAxis"
+            type="Dimension"
+            values="Day" />
 
-                                            <viz.feeds:FeedItem id="_IDGenFeedItem3" uid="valueAxis2" type="Measure" values="High,Medium,Resolved" />
+    </viz:feeds>
 
-                                            <viz.feeds:FeedItem id="_IDGenFeedItem4" uid="categoryAxis" type="Dimension" values="Day" />
-
-                                        </viz:feeds>
-
-                                    </viz:VizFrame>
+</viz:VizFrame>
 
 
 

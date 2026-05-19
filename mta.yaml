@@ -9,7 +9,6 @@ version: 1.0.0
 modules:
 
   - name: integration-reliability-agent-srv
-
     type: nodejs
 
     path: gen/srv

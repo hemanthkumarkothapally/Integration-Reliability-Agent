@@ -149,7 +149,7 @@ sap.ui.define([
 
             if (bClusterEnabled) {
                 // Automatically reset the model state; the UI text, tooltip, and color switch instantly
-                oAppModel.setProperty("/clusterDataEnabled", false);
+                this.getView().getModel("appView").setProperty("/clusterDataEnabled", false);
 
                 // Fetch your global reference ID
                 referenceID = this.getOwnerComponent().getModel("globalModel").getProperty("/cluster_id");

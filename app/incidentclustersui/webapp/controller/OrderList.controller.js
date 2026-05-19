@@ -110,9 +110,27 @@ sap.ui.define([
                 console.error(error);
  
             }
+
+            this._loadTopErrorTypes();
  
         },
+ _loadTopErrorTypes: async function () {
+  const oModel =
+                    this.getOwnerComponent().getModel();
  
+                // Call CAP Function
+                const oResponse =
+                    await oModel.bindContext(
+                        "/GetTopErrorTypes()"
+                    ).requestObject();
+ 
+                console.log("CAP Function Response");
+                console.log(oResponse);
+            const aResults = oResponse.value || oResponse.results || [];
+            this.getView().setModel(new JSONModel({ data: aResults }), "topErrors");
+       
+    
+},
         onSideNavButtonPress: function () {
  
             let oToolPage = this.byId("toolPage1");

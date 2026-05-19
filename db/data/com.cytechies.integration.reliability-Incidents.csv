@@ -1,3 +1,0 @@
-ID,messageGuid,iFlowName,errorMessage,errorSignature,adapter,status,logStart,logEnd,cluster_ID,createdAt,createdBy,modifiedAt,modifiedBy
-e91b22c1-8899-4cc1-a832-7df310c4382b,MSG-001,ERP_to_CRM_Sync,Backend failed to respond within 30s,HTTP_504_GATEWAY_TIMEOUT,HTTP,Failed,2026-05-10T07:59:00Z,2026-05-10T08:00:00Z,c01a88b2-1337-4bca-9081-6bf210c4381a,2026-05-10T08:00:00Z,system,2026-05-10T08:05:00Z,system
-fa2c33d2-9900-4dd2-b943-8ea410c4383c,MSG-002,ERP_to_CRM_Sync,Backend failed to respond within 30s,HTTP_504_GATEWAY_TIMEOUT,HTTP,Failed,2026-05-18T12:29:00Z,2026-05-18T12:30:00Z,c01a88b2-1337-4bca-9081-6bf210c4381a,2026-05-18T12:30:00Z,system,2026-05-18T12:32:00Z,system

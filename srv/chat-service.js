@@ -6,6 +6,7 @@ async function callAI(destination, messages, system = null, maxTokens = 256) {
         max_tokens: maxTokens,
         messages
     };
+    console.log("chat system prompt:", system);
     if (system) payload.system = system;
     console.log("Sending AI Request with payload:", JSON.stringify(payload, null, 2));
     const response = await destination.send({
@@ -27,6 +28,8 @@ async function callAI(destination, messages, system = null, maxTokens = 256) {
 }
 
 export default cds.service.impl(async function () {
+    
+    let srv= this;
     const { ChatSessions, Messages } = this.entities;
     const destination = await cds.connect.to('GenAIHubDestination');
     this.on('createConversation', async (req) => {
@@ -74,7 +77,7 @@ export default cds.service.impl(async function () {
 
     this.on('chat', async (req) => {
         const { conversationId, referenceID, userMessage } = req.data;
-
+        const tx = cds.transaction(req);
         if (!conversationId || !userMessage) {
             return req.error(400, "Missing conversationId or userMessage");
         }
@@ -86,7 +89,15 @@ export default cds.service.impl(async function () {
             role: 'user',
             content: userMessage
         });
-
+//  const newAiMessage = {
+//                 conversation_ID: conversationId,
+//                 role: 'assistant',
+//                 content: "Generating AI response... TEST",
+//                 tokenCount: 5678,
+//                 inputTokens: 1234,
+//                 outputTokens: 4444
+//             };
+// return newAiMessage; // for testing
         try {
             // 2. Load full history (includes the message we just inserted)
             // const history = await SELECT
@@ -116,7 +127,7 @@ export default cds.service.impl(async function () {
                     .orderBy({
                         logEnd: 'desc'
                     })
-                    .limit(10);
+                    .limit(2);
 
                 // Clean up the payload to save tokens and keep the LLM focused
                 const incidentSummary = incidents.map((i, index) => ({
@@ -141,7 +152,7 @@ export default cds.service.impl(async function () {
                 role: "user",
                 content: userMessage
             }];
-            const { text, tokenCount, inputTokens, outputTokens } = await callAI(destination, messages, systemPrompt, 1024);
+            const { text, tokenCount, inputTokens, outputTokens } = await callAI(destination, messages, systemPrompt, 1524);
             console.log("AI Response:", text);
             const aiText = text ?? 'Failed to generate AI response.';
 
@@ -152,10 +163,12 @@ export default cds.service.impl(async function () {
                 content: aiText,
                 tokenCount: outputTokens
             };
-            await UPDATE('com.cytechies.integration.reliability.Messages')
+            await srv.run(UPDATE(Messages)
                 .set({ tokenCount: inputTokens })
-                .where({ ID: uid });
-            await INSERT.into('com.cytechies.integration.reliability.Messages').entries(newAiMessage);
+                .where({ ID: uid }));
+            await srv.run(INSERT.into(Messages).entries(newAiMessage));
+            newAiMessage.inputTokens = inputTokens;
+            newAiMessage.outputTokens = outputTokens;
             return newAiMessage;
 
         } catch (err) {
@@ -172,15 +185,37 @@ export default cds.service.impl(async function () {
             return fallback;
         }
     });
-    this.after('UPSERT', 'Messages', async (data) => {
-        console.log("New chat message created, ID:", data.ID);
-        let conversationId = data.conversation_ID;
-        let tokenCount = data.tokenCount || 0;
-        if (tokenCount > 0) {
-            // Update total token usage for the conversation
-            await UPDATE('com.cytechies.integration.reliability.ChatSessions')
-                .set('totalSessionTokenUsage', { '+=': tokenCount })
-                .where({ ID: conversationId });
-        }
-    });
+   this.after(['CREATE', 'UPDATE'], Messages, async (data,req) => {
+
+    try {
+
+        const conversationId = data.conversation_ID;
+
+        if (!conversationId) return;
+
+        // Get all messages for this conversation
+        const messages = await SELECT
+            .from('com.cytechies.integration.reliability.Messages')
+            .columns('tokenCount')
+            .where({ conversation_ID: conversationId });
+
+        // Calculate total tokens
+        const totalTokens = messages.reduce((sum, msg) => {
+            return sum + (msg.tokenCount || 0);
+        }, 0);
+
+        // Update session token usage
+        await UPDATE('com.cytechies.integration.reliability.ChatSessions')
+            .set({
+                totalSessionTokenUsage: totalTokens
+            })
+            .where({ ID: conversationId });
+
+        console.log("Updated total token usage:", totalTokens);
+
+    } catch (err) {
+        console.error("Token aggregation failed:", err);
+    }
+
+});
 });
