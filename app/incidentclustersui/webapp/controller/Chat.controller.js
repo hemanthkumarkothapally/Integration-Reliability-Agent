@@ -16,17 +16,45 @@ sap.ui.define([
     return Controller.extend("com.cytechies.integration.reliability.incidentclustersui.controller.Chat", {
 
         onInit: function () {
+            // let sNewClusterId = this.getOwnerComponent().getModel("globalModel").getProperty("/cluster_id");
+            // console.log("Chat controller cluster IDs:", sNewClusterId, this._sCurrentClusterId);
+            // if (sNewClusterId !== this._sCurrentClusterId) {
+            //     this._sCurrentClusterId = sNewClusterId;
+            //     this._resetToWelcomePage();
+            // }
+            const oRouter =
+                this.getOwnerComponent().getRouter();
+
+            oRouter.getRoute("RouteIC")
+                .attachPatternMatched(
+                    this._resetToWelcomePage,
+                    this
+                );
             this.getView().setModel(new JSONModel({ currentConversationId: null }), "appView");
             this._resetToWelcomePage();
         },
         onBackPress() {
-            var oFCL = this.oView.getParent().getParent();
+            let oFCL = this.oView.getParent().getParent();
             oFCL.setLayout(sap.f.LayoutType.OneColumn);
             console.log("Closing chat side panel");
         },
+        onToggleClusterData: function (oEvent) {
+            var oAppModel = this.getView().getModel("appView");
+
+            // Read the current state directly from the model
+            var bCurrentState = oAppModel.getProperty("/clusterDataEnabled");
+
+            // Toggle the value (true becomes false, false becomes true)
+            oAppModel.setProperty("/clusterDataEnabled", !bCurrentState);
+
+            console.log("Cluster data active:", !bCurrentState);
+        },
+
+
         _resetToWelcomePage: function () {
             this.getView().getModel("appView").setProperty("/currentConversationId", null);
             this.getView().getModel("appView").setProperty("/currentConversationTitle", "New Chat");
+            this.getView().getModel("appView").setProperty("/clusterDataEnabled", true);
             this.byId("historyList").removeSelections(true);;
             this.byId("historyPopover").close();
             this.byId("chatContainer").removeAllItems();
@@ -39,12 +67,15 @@ sap.ui.define([
         },
 
         onConversationSelect: function (oEvent) {
-            var oListItem = oEvent.getParameter("listItem");
-            var oCtx = oListItem.getBindingContext("chatModel");
-            var sKey = oCtx.getProperty("ID");
+            let oListItem = oEvent.getParameter("listItem");
+            let oCtx = oListItem.getBindingContext("chatModel");
+            let sKey = oCtx.getProperty("ID");
             console.log("Selected conversation ID:", sKey);
-            var sTitle = oCtx.getProperty("title");
+            let sTitle = oCtx.getProperty("title");
             this.getView().getModel("appView").setProperty("/currentConversationTitle", sTitle);
+            var oAppModel = this.getView().getModel("appView");
+            oAppModel.setProperty("/currentConversationTitle", sTitle);
+            oAppModel.setProperty("/clusterDataEnabled", false);
             this._loadConversationMessages(sKey);
         },
         onHistoryMenuPress(oEvent) {
@@ -55,7 +86,7 @@ sap.ui.define([
         },
 
         onDeleteConversation: function () {
-            var sConvId = this.getView().getModel("appView").getProperty("/currentConversationId");
+            let sConvId = this.getView().getModel("appView").getProperty("/currentConversationId");
             if (!sConvId) return;
 
             MessageBox.confirm("Are you sure you want to delete this chat? This action cannot be undone.", {
@@ -66,11 +97,11 @@ sap.ui.define([
                 onClose: (sAction) => {
                     if (sAction === MessageBox.Action.DELETE) {
                         console.log("Deleting conversation with ID:", sConvId);
-                        var oModel = this.getView().getModel("chatModel");
-                        var sPath = "/ChatSessions('" + sConvId + "')";
-                        var oContextBinding = oModel.bindContext(sPath);
+                        let oModel = this.getView().getModel("chatModel");
+                        let sPath = "/ChatSessions('" + sConvId + "')";
+                        let oContextBinding = oModel.bindContext(sPath);
                         oContextBinding.requestObject().then(() => {
-                            var oBoundContext = oContextBinding.getBoundContext();
+                            let oBoundContext = oContextBinding.getBoundContext();
                             oBoundContext.delete().then(() => {
                                 sap.m.MessageToast.show("Chat deleted");
                                 this._resetToWelcomePage();
@@ -93,12 +124,14 @@ sap.ui.define([
             oInput.setValue(sText);
         },
 
+
+
         onPost: async function (oEvent) {
             const sQuery = oEvent.getParameter("value").trim();
             if (!sQuery) return;
 
             let sCurrentConvId = this.getView().getModel("appView").getProperty("/currentConversationId");
-            var oModel = this.getView().getModel("chatModel");
+            let oModel = this.getView().getModel("chatModel");
 
             if (!sCurrentConvId) {
                 try {
@@ -109,6 +142,18 @@ sap.ui.define([
                     return;
                 }
             }
+            let referenceID = null;
+
+            // Unified approach: Check the state using your model property
+            var bClusterEnabled = this.getView().getModel("appView").getProperty("/clusterDataEnabled");
+
+            if (bClusterEnabled) {
+                // Automatically reset the model state; the UI text, tooltip, and color switch instantly
+                oAppModel.setProperty("/clusterDataEnabled", false);
+
+                // Fetch your global reference ID
+                referenceID = this.getOwnerComponent().getModel("globalModel").getProperty("/cluster_id");
+            }
 
             this._appendMessage(sQuery, "user");
             this.byId("typingIndicator").setVisible(true);
@@ -117,6 +162,7 @@ sap.ui.define([
             try {
                 const oAction = oModel.bindContext("/chat(...)");
                 oAction.setParameter("conversationId", sCurrentConvId);
+                oAction.setParameter("referenceID", referenceID);
                 oAction.setParameter("userMessage", sQuery);
 
                 await oAction.execute();
@@ -137,12 +183,12 @@ sap.ui.define([
             sap.ui.core.BusyIndicator.show(100);
             return new Promise((resolve, reject) => {
                 debugger
-                
+
                 // 1. Explicitly get the named model 'chatModel'
-                var oModel = this.getView().getModel("chatModel");
+                let oModel = this.getView().getModel("chatModel");
 
                 // 2. Bind the action. If it's a top-level action, the path starts with /
-                var oAction = oModel.bindContext("/createConversation(...)");
+                let oAction = oModel.bindContext("/createConversation(...)");
 
 
                 let clusterId = this.getOwnerComponent().getModel("globalModel").getProperty("/cluster_id");
@@ -156,7 +202,7 @@ sap.ui.define([
                     return oAction.getBoundContext().requestObject();
                 }).then((oResult) => {
                     // 4. Extract the ID (OData V4 often wraps results in a 'value' property)
-                    var sNewId = oResult.ID || (oResult.value && oResult.value.ID);
+                    let sNewId = oResult.ID || (oResult.value && oResult.value.ID);
 
                     // 5. Update UI state
                     this.getView().getModel("appView").setProperty("/currentConversationId", sNewId)
@@ -165,16 +211,16 @@ sap.ui.define([
 
                     // 6. Refresh the model so the side list shows the new entry
                     oModel.refresh();
-                    
+
                     resolve(sNewId);
                 }).catch((oError) => {
-                    
+
                     console.error("Conversation creation failed:", oError);
                     reject(oError);
                 }).finally(() => {
-                // Hide only after the async work is done
-                sap.ui.core.BusyIndicator.hide();
-            });
+                    // Hide only after the async work is done
+                    sap.ui.core.BusyIndicator.hide();
+                });
             });
 
 
@@ -183,27 +229,27 @@ sap.ui.define([
         _loadConversationMessages: function (sConversationId) {
             console.log("Loading conversation with ID:", sConversationId);
             this.getView().getModel("appView").setProperty("/currentConversationId", sConversationId);
-            var oContainer = this.byId("chatContainer");
+            let oContainer = this.byId("chatContainer");
             oContainer.removeAllItems();
 
             if (this.byId("welcomePage")) {
                 this.byId("welcomePage").setVisible(false);
             }
 
-            var oModel = this.getView().getModel("chatModel");
+            let oModel = this.getView().getModel("chatModel");
 
-            var oListBinding = oModel.bindList("/Messages", null, [
+            let oListBinding = oModel.bindList("/Messages", null, [
                 new sap.ui.model.Sorter("createdAt", false)
             ], [
                 new sap.ui.model.Filter("conversation_ID", sap.ui.model.FilterOperator.EQ, sConversationId)
             ]);
             console.log("Chat model:", oListBinding);
             oListBinding.requestContexts(0, 100).then(function (aContexts) {
-                var aMessages = aContexts.map(function (ctx) { return ctx.getObject(); });
+                let aMessages = aContexts.map(function (ctx) { return ctx.getObject(); });
                 console.log("Loaded messages:", aMessages);
                 aMessages.sort(function (a, b) {
-                    var timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-                    var timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+                    let timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+                    let timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
 
                     if (timeA === timeB) {
                         if (a.role === "user" && b.role !== "user") return -1;

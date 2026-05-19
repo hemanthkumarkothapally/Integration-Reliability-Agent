@@ -1,0 +1,2 @@
+ID,cluster_ID,rootCause,businessImpact,remediationSteps,affectedAdapter,confidenceScore,generatedAt,createdAt,createdBy,modifiedAt,modifiedBy
+r55b22c1-4444-4cc1-a832-7df310c4382b,c01a88b2-1337-4bca-9081-6bf210c4381a,The downstream CRM system is experiencing heavy database lock contention preventing quick API replies.,Sales orders are failing to sync in real-time causing fulfillment delays.,Scale out CRM API resources or schedule large batch runs during off-peak hours.,HTTP,92.50,2026-05-18T13:00:00Z,2026-05-18T13:00:00Z,ai-agent,2026-05-18T13:00:00Z,ai-agent
