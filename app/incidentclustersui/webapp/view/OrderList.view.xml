@@ -465,7 +465,6 @@
                                         <Text text="Count" />
                                     </Column>
  
-
  
                                     <Column minScreenWidth="Tablet" demandPopin="true">
  

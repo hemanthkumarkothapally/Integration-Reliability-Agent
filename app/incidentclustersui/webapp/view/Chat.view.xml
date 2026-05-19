@@ -8,9 +8,9 @@
         <ResponsivePopover id="historyPopover" title="Chat History" placement="Bottom" contentWidth="auto">
             <content>
                 <List id="historyList" items="{chatModel>/ChatSessions}" mode="SingleSelectMaster" selectionChange=".onConversationSelect">
-                   
+
                     <items>
-                        <StandardListItem id="_IDGenStandardListItem" title="{chatModel>title}" icon="sap-icon://discussion" />
+                        <StandardListItem id="_IDGenStandardListItem" title="{chatModel>title}" description ="{chatModel>modifiedAt}" info="{chatModel>totalSessionTokenUsage}" icon="sap-icon://discussion" />
                     </items>
                 </List>
             </content>
@@ -20,9 +20,9 @@
         <tnt:header>
             <tnt:ToolHeader id="_IDGenToolHeader">
                 <Button id="backbutton" icon="sap-icon://nav-back" press=".onBackPress" tooltip="Navigate back" type="Ghost">
-                    <!-- <layoutData>
-                        <OverflowToolbarLayoutData id="_IDGenOverflowToolbarLayoutData" priority="NeverOverflow" />
-                    </layoutData> -->
+                    <layoutData>
+                        <OverflowToolbarLayoutData id="_IDGenOverflowToolbarLayoutData3" priority="NeverOverflow" />
+                    </layoutData>
                 </Button>
                 <Title id="_IDGenTitle3" text="AI Chat ✦ Grounded on live HANA data" wrapping="true"/>
                 <ToolbarSpacer id="_IDGenToolbarSpacer2" />
@@ -46,9 +46,14 @@
                     <Page id="chatPage" showHeader="true" backgroundDesign="Transparent">
                         <customHeader>
                             <Toolbar id="_IDGenToolbar">
-                                <Title id="_IDGenTitle1" text="{= ${appView>/currentConversationTitle} || 'New Chat' }" class="sapUiSmallMarginBegin" wrapping="true" />
+                                <Title id="_IDGenTitle1" text="{= ${appView>/currentConversationTitle} || 'New Chat' }" class="sapUiSmallMarginBegin" wrapping="false" />
                                 <ToolbarSpacer id="_IDGenToolbarSpacer1" />
-                                <Button id="_IDGenButton" icon="sap-icon://delete" type="Reject" press=".onDeleteConversation" tooltip="Delete Chat" visible="{= ${appView>/currentConversationId} !== null }" />
+
+                                <!-- Token Display: Only visible if a conversation is selected -->
+                                <!-- <HBox alignItems="Center" visible="{= ${appView>/currentConversationId} !== null }"> -->
+                                <ObjectStatus id="_IDGenObjectStatus10" text="{= (${appView>/currentConversationTokens} || 'No') + ' Tokens' }" state="Success" class="sapUiSmallMarginEnd" visible="{= ${appView>/currentConversationId} !== null }" />
+                                <Button id="_IDGenButton" icon="sap-icon://delete" type="Reject" press=".onDeleteConversation" tooltip="Delete Chat" />
+                                <!-- </HBox> -->
                             </Toolbar>
                         </customHeader>
 
@@ -83,16 +88,16 @@
                                     <HBox id="_IDGenHBox7" alignItems="Center">
                                         <Button id="processButton" press=".onToggleClusterData" icon="sap-icon://process" type="Accept" tooltip="Incident Cluster Data is active. Click to deactivate." visible="{appView>/clusterDataEnabled}" class="sapUiTinyMarginEnd" />
                                         <FlexBox id="_IDGenHBox" width="100%" alignItems="End" wrap="Wrap">
-                                            <FeedInput id="chatInput" showIcon="false" post="onPost" placeholder="Ask about errors, clusters, flows, or remediation... 💡">
+                                           
+                                            <TextArea id="chatInput1" growing="true" growingMaxLines="6" width="100%" placeholder="Ask about errors, clusters, flows, or remediation... (Shift+Enter for new line)">
                                                 <layoutData>
-                                                    <FlexItemData id="_IDGenFlexItemData1" growFactor="1" />
+                                                    <FlexItemData id="_IDGenFlexItemData" growFactor="1" />
                                                 </layoutData>
-                                            </FeedInput>
+                                            </TextArea>
                                         </FlexBox>
-
+                                        <Button id="_IDGenButton3" icon="sap-icon://paper-plane" press=".onPost" class="sapUiTinyMarginBegin" />
                                     </HBox>
                                 </VBox>
-
                             </VBox>
                         </content>
                     </Page>
