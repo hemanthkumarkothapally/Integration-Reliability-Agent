@@ -5,7 +5,7 @@ ID: integration-reliability-agent
 description: An Integration Reliability Agent Application (Managed).
 
 version: 1.0.0
- 
+
 modules:
 
   - name: integration-reliability-agent-srv
@@ -39,7 +39,7 @@ modules:
     build-parameters:
 
       builder: npm-ci
- 
+
   - name: integration-reliability-agent-db-deployer
 
     type: hdb
@@ -53,7 +53,7 @@ modules:
     parameters:
 
       buildpack: nodejs_buildpack
- 
+
   - name: integration-reliability-agent-destination-content
 
     type: com.sap.application.content
@@ -113,7 +113,7 @@ modules:
     build-parameters:
 
       no-source: true
- 
+
   - name: integration-reliability-agent-app-content
 
     type: com.sap.application.content
@@ -149,7 +149,7 @@ modules:
           name: comcytechiesintegrationreliabilityincidentclustersui
 
           target-path: resources/
- 
+
   - name: comcytechiesintegrationreliabilityincidentclusters
 
     type: html5
@@ -168,8 +168,9 @@ modules:
 
         - npm run build:cf
 
-      supported-platforms: []
- 
+      supported-platforms:
+        []
+
   - name: comcytechiesintegrationreliabilityincidentclustersui
 
     type: html5
@@ -188,8 +189,9 @@ modules:
 
         - npm run build:cf
 
-      supported-platforms: []
- 
+      supported-platforms:
+        []
+
 resources:
 
   - name: integration-reliability-agent-auth
@@ -217,7 +219,7 @@ resources:
       service: xsuaa
 
       service-plan: application
- 
+
   - name: integration-reliability-agent-db
 
     type: com.sap.xs.hdi-container
@@ -227,7 +229,7 @@ resources:
       service: hana
 
       service-plan: hdi-shared
- 
+
   - name: integration-reliability-agent-repo-host
 
     type: org.cloudfoundry.managed-service
@@ -239,7 +241,7 @@ resources:
       service-name: integration-reliability-agent-html5-service
 
       service-plan: app-host
- 
+
   - name: integration-reliability-agent-destination-service
 
     type: org.cloudfoundry.managed-service
@@ -293,13 +295,13 @@ resources:
     requires:
 
       - name: srv-api
- 
+
 parameters:
 
   deploy_mode: html5-repo
 
   enable-parallel-deployments: true
- 
+
 build-parameters:
 
   before-all:
@@ -311,4 +313,3 @@ build-parameters:
         - npm ci
 
         - npx cds build --production
- 

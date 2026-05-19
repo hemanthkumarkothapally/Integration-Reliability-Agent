@@ -2,7 +2,7 @@ using {com.cytechies.integration.reliability as IRA} from '../db/schema';
 
 @path: '/Incident'
 service IncidentService {
-    entity Incidents         as projection on IRA.Incidents;
+    entity Incidents          as projection on IRA.Incidents;
 
     // @requires                                  : 'Viewer'
     @readonly
@@ -10,7 +10,7 @@ service IncidentService {
     @Capabilities.SortRestrictions.Sortable    : true
     @Capabilities.TopSupported                 : true
     @Capabilities.SkipSupported                : true
-    entity IncidentClusters  as
+    entity IncidentClusters   as
         projection on IRA.IncidentClusters {
             *,
             monitoredArtifacts                  : redirected to ClusterArtifacts,
@@ -21,14 +21,15 @@ service IncidentService {
             virtual null as criticalCriticality : Integer
         };
 
-    entity ClusterArtifacts  as projection on IRA.ClusterArtifacts {
+    entity ClusterArtifacts   as
+        projection on IRA.ClusterArtifacts {
             *,
             artifact : redirected to MonitoredArtifacts
         };
 
     // @requires: 'Viewer'
     @readonly
-    entity Recommendations   as projection on IRA.ClusterRecommendations;
+    entity Recommendations    as projection on IRA.ClusterRecommendations;
 
     // @requires: 'Viewer'
     @restrict: [
@@ -48,11 +49,25 @@ service IncidentService {
 
     // @requires: 'Viewer'
     @readonly
-    entity Playbook          as projection on IRA.Playbooks;
+    entity Playbook           as projection on IRA.Playbooks;
 
 
     // @requires: 'Admin'
-    action triggerPoll();
+    action   triggerPoll();
 
+    // srv/incident-service.cds
 
+    function GetIncidentChartData() returns {
+        severityData : array of {
+            severity : String;
+            count    : Integer;
+        };
+        trendData    : array of {
+            day      : String;
+            critical : Integer;
+            high     : Integer;
+            medium   : Integer;
+            resolved : Integer;
+        };
+    };
 }

@@ -16,8 +16,9 @@ service ChatService {
         title : String;
     };
 
-    action chat(
+   action chat(
         conversationId : UUID,
+        referenceID   : UUID,
         userMessage    : String
     ) returns {
         conversation_ID : UUID;

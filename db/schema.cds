@@ -26,6 +26,7 @@ entity IncidentClusters : cuid, managed {
     incidents              : Composition of many Incidents
                            on incidents.cluster = $self;
     chatSessions : Association to many ChatSessions on chatSessions.cluster = $self;
+    totalTokenUsage : Integer;
     monitoredArtifacts   : Association to many ClusterArtifacts on monitoredArtifacts.cluster = $self;
 }
 entity ClusterRecommendations : cuid, managed {
@@ -61,6 +62,7 @@ entity ChatSessions : cuid, managed {
     title       : String(255);
     cluster  : Association to IncidentClusters;
     messages : Composition of many Messages on messages.conversation = $self;
+    totalSessionTokenUsage : Integer;
 }
 entity Messages : cuid{
    conversation : Association to one ChatSessions;

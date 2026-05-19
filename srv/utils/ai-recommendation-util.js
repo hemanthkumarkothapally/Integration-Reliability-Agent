@@ -41,7 +41,7 @@ export async function generateClusterRecommendation(
      * --------------------------------------------------
      */
 
-    const prompt = `
+    let prompt = `
 You are an SAP Integration Suite reliability expert.
 
 Analyze this SAP CPI incident cluster.
@@ -55,7 +55,8 @@ Required JSON structure:
   "businessImpact": "",
   "remediationSteps": ["", "", "",...],
   "affectedAdapter": "",
-  "confidenceScore": 0
+  "confidenceScore": 0,
+  "playbookId": "" // optional, can be null if no relevant playbook found
 }
 
 Cluster:
@@ -69,9 +70,21 @@ Rules:
 - try to give max 3 remediation steps
 - If there is no adapter, try to analyse the adapter from error and send.
 - Confidence score must be 0-100
+- if playbook is not there in cluster, try to go throgh the playbooks entity and find the relevant playbook based on the error signature and iflow name and use that to give more accurate recommendation.
+- if not able to find relevant playbook, then give null in playbook id field in the response.
 - Output JSON only
 `;
+    if (!cluster.playbook_ID) {
+        const playbooks = await SELECT.from('Playbooks');
 
+        prompt = prompt + `
+
+Available Playbooks:
+${JSON.stringify(playbooks, null, 2)}
+
+- Match the most relevant playbook by errorType or errorSignature and return its ID in playbookId field.
+`;
+    }
     try {
 
         /*
@@ -91,7 +104,7 @@ Rules:
                 },
                 data: {
                     anthropic_version: "bedrock-2023-05-31",
-                    max_tokens: 512,
+                    max_tokens: 1024,
                     system: `You are an SAP CPI incident diagnosis assistant. Always return STRICT valid JSON only.`,
                     messages: [
                         {
@@ -148,7 +161,14 @@ ${JSON.stringify(response)}`
 
         const parsed =
             JSON.parse(cleaned);
-
+        console.log(
+            "Parsed AI response:",
+            JSON.stringify(
+                parsed,
+                null,
+                2
+            )
+        );
         const usage =
             response?.usage || {};
 
@@ -217,7 +237,8 @@ ${JSON.stringify(response)}`
 
                 purpose:
                     'CLUSTER_RCA'
-            }
+            },
+            playbook_ID: parsed.playbookId || null
         };
 
     } catch (err) {
@@ -244,46 +265,46 @@ ${JSON.stringify(response)}`
 
         return {
 
-    recommendation: {
+            recommendation: {
 
-        rootCause:
-            `Repeated ${cluster.errorSignature} failures detected in ${cluster.iFlowName}.`,
+                rootCause:
+                    `Repeated ${cluster.errorSignature} failures detected in ${cluster.iFlowName}.`,
 
-        businessImpact:
-            'Potential message processing disruption.',
+                businessImpact:
+                    'Potential message processing disruption.',
 
-        remediationSteps: [
+                remediationSteps: [
 
-            'Inspect integration flow logs',
+                    'Inspect integration flow logs',
 
-            'Validate endpoint connectivity',
+                    'Validate endpoint connectivity',
 
-            'Review payload structure and credentials'
-        ],
+                    'Review payload structure and credentials'
+                ],
 
-        affectedAdapter:
-            'UNKNOWN',
+                affectedAdapter:
+                    'UNKNOWN',
 
-        confidenceScore: 40
-    },
+                confidenceScore: 40
+            },
 
-    audit: {
+            audit: {
 
-        model:
-            'claude-sonnet',
+                model:
+                    'claude-sonnet',
 
-        inputTokens: 0,
+                inputTokens: 0,
 
-        outputTokens: 0,
+                outputTokens: 0,
 
-        estimatedCostUSD: 0,
+                estimatedCostUSD: 0,
 
-        calledAt:
-            new Date(),
+                calledAt:
+                    new Date(),
 
-        purpose:
-            'CLUSTER_RCA'
-    }
-};
+                purpose:
+                    'CLUSTER_RCA'
+            }
+        };
     }
 }
