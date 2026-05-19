@@ -16,12 +16,21 @@ sap.ui.define([
     return Controller.extend("com.cytechies.integration.reliability.incidentclustersui.controller.Chat", {
 
         onInit: function () {
-            // let sNewClusterId = this.getOwnerComponent().getModel("globalModel").getProperty("/cluster_id");
-            // console.log("Chat controller cluster IDs:", sNewClusterId, this._sCurrentClusterId);
-            // if (sNewClusterId !== this._sCurrentClusterId) {
-            //     this._sCurrentClusterId = sNewClusterId;
-            //     this._resetToWelcomePage();
-            // }
+
+
+            var oChatInput = this.byId("chatInput1");
+            if (oChatInput) {
+                oChatInput.attachBrowserEvent("keydown", function (oEvent) {
+                    if (oEvent.key === "Enter" && !oEvent.shiftKey) {
+                        oEvent.preventDefault();
+                        var sValue = oChatInput.getValue().trim();
+                        if (sValue) {
+                            this.onPost(sValue); // Pass the string
+                            oChatInput.setValue("");
+                        }
+                    }
+                }.bind(this));
+            };
             const oRouter =
                 this.getOwnerComponent().getRouter();
 
@@ -33,11 +42,13 @@ sap.ui.define([
             this.getView().setModel(new JSONModel({ currentConversationId: null }), "appView");
             this._resetToWelcomePage();
         },
+
         onBackPress() {
             let oFCL = this.oView.getParent().getParent();
             oFCL.setLayout(sap.f.LayoutType.OneColumn);
             console.log("Closing chat side panel");
         },
+
         onToggleClusterData: function (oEvent) {
             var oAppModel = this.getView().getModel("appView");
 
@@ -49,7 +60,6 @@ sap.ui.define([
 
             console.log("Cluster data active:", !bCurrentState);
         },
-
 
         _resetToWelcomePage: function () {
             this.getView().getModel("appView").setProperty("/currentConversationId", null);
@@ -78,6 +88,7 @@ sap.ui.define([
             oAppModel.setProperty("/clusterDataEnabled", false);
             this._loadConversationMessages(sKey);
         },
+
         onHistoryMenuPress(oEvent) {
             const oButton = oEvent.getSource();
             const oPopover = this.byId("historyPopover");
@@ -124,10 +135,18 @@ sap.ui.define([
             oInput.setValue(sText);
         },
 
-
-
         onPost: async function (oEvent) {
-            const sQuery = oEvent.getParameter("value").trim();
+            let sQuery;
+            var oSource = oEvent.getSource ? oEvent.getSource() : null;
+
+            if (oSource && typeof oSource.getValue === "function") {
+                sQuery = oSource.getValue().trim();
+            } else {   
+                var oInput = this.byId("chatInput1");
+                sQuery = oInput ? oInput.getValue().trim() : "";
+                if (oInput) oInput.setValue("");
+            }
+
             if (!sQuery) return;
 
             let sCurrentConvId = this.getView().getModel("appView").getProperty("/currentConversationId");
@@ -149,13 +168,13 @@ sap.ui.define([
 
             if (bClusterEnabled) {
                 // Automatically reset the model state; the UI text, tooltip, and color switch instantly
-                oAppModel.setProperty("/clusterDataEnabled", false);
+                this.getView().getModel("appView").setProperty("/clusterDataEnabled", false);
 
                 // Fetch your global reference ID
                 referenceID = this.getOwnerComponent().getModel("globalModel").getProperty("/cluster_id");
             }
 
-            this._appendMessage(sQuery, "user");
+            this._appendMessage(sQuery, "user", { tokenCount: "Calculating" });
             this.byId("typingIndicator").setVisible(true);
             this._scrollToBottom();
 
@@ -167,9 +186,9 @@ sap.ui.define([
 
                 await oAction.execute();
                 const oResult = oAction.getBoundContext().getObject();
-
+                this._updateUserTokenCount(oResult.inputTokens);
                 this._appendMessage(oResult.content, "assistant", oResult, true);
-
+                this._updateTotalSessionTokens();
             } catch (oError) {
                 console.error("Chat action failed", oError);
                 this._appendMessage("Sorry, I encountered an error processing your request.", "assistant");
@@ -182,7 +201,6 @@ sap.ui.define([
         _executeCreateConversation: function (sTitle) {
             sap.ui.core.BusyIndicator.show(100);
             return new Promise((resolve, reject) => {
-                debugger
 
                 // 1. Explicitly get the named model 'chatModel'
                 let oModel = this.getView().getModel("chatModel");
@@ -207,6 +225,7 @@ sap.ui.define([
                     // 5. Update UI state
                     this.getView().getModel("appView").setProperty("/currentConversationId", sNewId)
                     this.getView().getModel("appView").setProperty("/currentConversationTitle", oResult.title);
+
                     this.byId("chatContainer").removeAllItems();
 
                     // 6. Refresh the model so the side list shows the new entry
@@ -226,9 +245,33 @@ sap.ui.define([
 
         },
 
+        _updateTotalSessionTokens: function () {
+            // This function can be called after each message to update the total session tokens
+            let oAppViewModel = this.getView().getModel("appView");
+            let oModel = this.getView().getModel("chatModel");
+            let sConversationId = oAppViewModel.getProperty("/currentConversationId");
+
+            let sPath = "/ChatSessions(" + sConversationId + ")";
+            let oSessionContextBinding = oModel.bindContext(sPath);
+
+            oSessionContextBinding.requestObject().then(function (oSession) {
+                if (oSession) {
+                    oAppViewModel.setProperty("/currentConversationTokens", oSession.totalSessionTokenUsage);
+                    console.log("Tokens loaded:", oSession.totalSessionTokenUsage);
+                }
+            }).catch(function (oError) {
+                console.error("Failed to load session details:", oError);
+            });
+        },
+
         _loadConversationMessages: function (sConversationId) {
             console.log("Loading conversation with ID:", sConversationId);
+
+            let oModel = this.getView().getModel("chatModel");
+
             this.getView().getModel("appView").setProperty("/currentConversationId", sConversationId);
+            this._updateTotalSessionTokens();
+            // 2. Clear container and setup view
             let oContainer = this.byId("chatContainer");
             oContainer.removeAllItems();
 
@@ -236,17 +279,16 @@ sap.ui.define([
                 this.byId("welcomePage").setVisible(false);
             }
 
-            let oModel = this.getView().getModel("chatModel");
-
+            // 3. Fetch Messages (Your existing code)
             let oListBinding = oModel.bindList("/Messages", null, [
                 new sap.ui.model.Sorter("createdAt", false)
             ], [
                 new sap.ui.model.Filter("conversation_ID", sap.ui.model.FilterOperator.EQ, sConversationId)
             ]);
-            console.log("Chat model:", oListBinding);
+
             oListBinding.requestContexts(0, 100).then(function (aContexts) {
                 let aMessages = aContexts.map(function (ctx) { return ctx.getObject(); });
-                console.log("Loaded messages:", aMessages);
+
                 aMessages.sort(function (a, b) {
                     let timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
                     let timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
@@ -264,14 +306,25 @@ sap.ui.define([
                 }.bind(this));
 
                 this._scrollToBottom();
+                console.log("Loaded messages:", aMessages);
             }.bind(this)).catch(function (oError) {
                 console.error("Failed to load V4 messages", oError);
                 sap.m.MessageToast.show("Error loading conversation history.");
             });
         },
 
+        _updateUserTokenCount: function (iCount) {
+            // Check if the reference exists and the control is still alive
+            if (this._lastUserTokenStatus && !this._lastUserTokenStatus.bIsDestroyed) {
+                this._lastUserTokenStatus.setText(iCount + " tokens");
+            } else {
+                console.warn("Could not find the last user token status control.");
+            }
+        },
+
         _appendMessage: function (sText, sSender, oData, bStream = false) {
             const oContainer = this.byId("chatContainer");
+
             const isAssistant = sSender === "assistant";
             if (this.byId("welcomePage")) {
                 this.byId("welcomePage").setVisible(false);
@@ -281,8 +334,25 @@ sap.ui.define([
 
 
             if (!isAssistant) {
-                // Standard User Avatar Layout Fallback
-                const oUserLabel = new sap.m.Avatar({
+                let sTokenDisplay;
+
+                if (oData?.tokenCount === "Calculating") {
+                    // Condition 2: Still fetching
+                    sTokenDisplay = "Calculating...";
+                } else if (typeof oData?.tokenCount === 'number') {
+                    // Condition 1: Success
+                    sTokenDisplay = oData.tokenCount + " Tokens";
+                } else {
+                    // Condition 3: Failure or no data
+                    sTokenDisplay = "No Tokens";
+                }
+
+                const oUserTokenInfo = new sap.m.ObjectStatus({
+                    state: "Error",
+                    text: sTokenDisplay
+                });
+                this._lastUserTokenStatus = oUserTokenInfo; // Store reference for later updates
+                const oUserAvatar = new sap.m.Avatar({
                     src: "sap-icon://person",
                     displaySize: sap.m.AvatarSize.XS,
                     backgroundColor: sap.m.AvatarColor.Accent1
@@ -302,20 +372,24 @@ sap.ui.define([
                             items: [
                                 // Wrapped Text inside layout panel container to retain structural width
                                 new sap.m.VBox({
-                                    items: [oUserText]
+                                    items: [oUserText, oUserTokenInfo]
                                 }).addStyleClass("userChatBubbleNew sapUiSmallMarginEnd"),
-                                oUserLabel
+                                oUserAvatar
                             ]
                         }).addStyleClass("sapUiTinyMargin")
                     ]
                 });
             } else {
-                // Balanced AI Message Layout Panel
-                // const totalTokens =
-                //     oData?.usage.input_tokens || 0 + oData?.usage.output_tokens || 0;
-                // console.log("Total tokens used in this response:", totalTokens);
+
                 console.log("AI response data for message item:", oData);
-                const oAiLabel = new sap.m.Avatar({
+
+                const oAiTokenInfo =
+                    new sap.m.ObjectStatus({
+                        state: "Information",
+                        text: (oData.tokenCount || "No") + " Tokens"
+                    });
+
+                const oAiAvatar = new sap.m.Avatar({
                     src: "sap-icon://ai",
                     displaySize: sap.m.AvatarSize.XS
                 });
@@ -334,12 +408,14 @@ sap.ui.define([
                             alignItems: sap.m.FlexAlignItems.Start,
                             fitContainer: false,
                             items: [
-                                oAiLabel,
+                                oAiAvatar,
                                 new sap.m.VBox({
-                                    items: [oTextControl]
+                                    items: [oTextControl,
+                                        oAiTokenInfo]
                                 }).addStyleClass("aiChatBubbleNew sapUiSmallMarginBegin")
                             ]
-                        }).addStyleClass("sapUiTinyMarginBegin")
+                        }).addStyleClass("sapUiTinyMarginBegin"),
+
                     ]
                 });
 
