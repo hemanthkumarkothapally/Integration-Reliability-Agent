@@ -1,9 +1,9 @@
 import cds from '@sap/cds';
 import { generateClusterRecommendation } from './utils/ai-recommendation-util.js';
-import { getFailedLogs } from './poller-service.js';
+import { runPoll } from './utils/log-helper.js';
 export default cds.service.impl(async function () {
 
-    const { IncidentClusters, ClusterRecommendations } = this.entities;
+    const { IncidentClusters, ClusterRecommendations ,Playbooks, MonitoredArtifacts, ClusterArtifacts} = this.entities;
 
     const { Incidents } = cds.entities('com.cytechies.integration.reliability');
     this.after('READ', IncidentClusters, async (data) => {  // ← add async
@@ -433,7 +433,13 @@ this.on('onReDiagnoseIncidentCluster', async (req) => {
 
         console.log("Manual poll triggered");
 
-        let failedLogs = await getFailedLogs();
+        let failedLogs = await runPoll({srv:this,
+                            Incidents,
+                            IncidentClusters,
+                            Playbooks,
+                            MonitoredArtifacts,
+                            ClusterArtifacts
+                        });
 
         console.log("Manual poll completed");
         return failedLogs;

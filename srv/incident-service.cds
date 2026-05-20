@@ -53,7 +53,7 @@ service IncidentService {
 
 
     // @requires: 'Admin'
-    action   triggerPoll();
+    function triggerPoll() returns array of Map;
 
     function GetIncidentChartData() returns {
         severityData : array of {
