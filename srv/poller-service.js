@@ -275,307 +275,307 @@ export default cds.service.impl(async function () {
       throw err;
     }
   }
-  // this.after('CREATE', IncidentClusters, async (data) => {
-  //   console.log("CREATE Event Triggered for IncidentClusters");
-  //   const record = data;
-  //   const cluster_ID = record.ID;
-  //   try {
-
-  //     /* EXISTING RECOMMENDATION */
-
-  //     let recommendation =
-  //       await SELECT.one
-  //         .from(ClusterRecommendations)
-  //         .where({
-  //           cluster_ID
-  //         });
-
-  //     /* RETURN EXISTING */
-
-  //     if (recommendation) {
-  //       console.log(
-  //         "Returning cached recommendation"
-  //       );
-  //       return recommendation;
-  //     }
-
-  //     /* FETCH CLUSTER */
-
-  //     const cluster =
-  //       await SELECT.one
-  //         .from(IncidentClusters)
-  //         .where({
-  //           ID: cluster_ID
-  //         });
-
-  //     if (!cluster) {
-  //       return req.error(
-  //         404,
-  //         'Cluster not found'
-  //       );
-  //     }
-
-  //     /*
-  //      * FETCH SAMPLE INCIDENTS
-  //      */
-
-  //     const incidents =
-  //       await SELECT
-  //         .from(Incidents)
-  //         .where({
-  //           cluster_ID
-  //         })
-  //         .orderBy({
-  //           logEnd: 'desc'
-  //         })
-  //         .limit(10);
-
-  //     /*
-  //      * GENERATE AI RECOMMENDATION
-  //      */
-
-  //     const aiResult =
-  //       await generateClusterRecommendation({
-
-  //         cluster,
-
-  //         incidents
-  //       });
-
-  //     console.log(
-  //       "AI Recommendation:",
-  //       aiResult
-  //     );
-
-  //     /*
-  //      * STORE RECOMMENDATION
-  //      */
-
-  //     await INSERT.into(
-  //       ClusterRecommendations
-  //     ).entries({
-
-  //       cluster_ID,
-
-  //       rootCause:
-  //         aiResult.recommendation.rootCause,
-
-  //       businessImpact:
-  //         aiResult.recommendation.businessImpact,
-
-  //       remediationSteps:
-  //         JSON.stringify(
-  //           aiResult.recommendation.remediationSteps
-  //         ),
-
-  //       affectedAdapter:
-  //         aiResult.recommendation.affectedAdapter,
-
-  //       confidenceScore:
-  //         aiResult.recommendation.confidenceScore,
-
-  //       generatedAt:
-  //         new Date()
-  //     });
-
-  //     await INSERT.into(
-  //       TokenUsages
-  //     ).entries({
-
-  //       cluster_ID,
-
-  //       ...aiResult.audit
-  //     });
-
-  //     if (aiResult.playbook_ID) {
-  //       await UPDATE(IncidentClusters)
-  //         .set({
-  //           playbook_ID:
-  //             aiResult.playbook_ID
-  //         })
-  //         .where({
-  //           ID: cluster_ID
-  //         });
-  //     }
-  //     /*
-  //      * RETURN SAVED RECORD
-  //      */
-
-  //     return await SELECT.one
-  //       .from(ClusterRecommendations)
-  //       .where({
-  //         cluster_ID
-  //       });
-
-  //   } catch (error) {
-
-  //     console.error(
-  //       'AI recommendation generation failed:',
-  //       error
-  //     );
-
-  //     req.error(
-  //       500,
-  //       'Recommendation generation failed'
-  //     );
-  //   }
-  // });
-
-
-  // this.on('getClusterRecommendation', async (req) => {
-  //   try {
-
-  //     const { cluster_ID } = req.data;
-
-  //     /*
-  // 
-  //      * EXISTING RECOMMENDATION
-  // 
-  //      */
-
-  //     let recommendation =
-  //       await SELECT.one
-  //         .from(ClusterRecommendations)
-  //         .where({
-  //           cluster_ID
-  //         });
-
-  //     /*
-  //      * RETURN EXISTING
-  //      */
-
-  //     if (recommendation) {
-
-  //       console.log(
-  //         "Returning cached recommendation"
-  //       );
-
-  //       return recommendation;
-  //     }
-
-  //     /*
-  // 
-  //      * FETCH CLUSTER
-  // 
-  //      */
-
-  //     const cluster =
-  //       await SELECT.one
-  //         .from(IncidentClusters)
-  //         .where({
-  //           ID: cluster_ID
-  //         });
-
-  //     if (!cluster) {
-
-  //       return req.error(
-  //         404,
-  //         'Cluster not found'
-  //       );
-  //     }
-
-  //     /*
-  // 
-  //      * FETCH SAMPLE INCIDENTS
-  // 
-  //      */
-
-  //     const incidents =
-  //       await SELECT
-  //         .from(Incidents)
-  //         .where({
-  //           cluster_ID
-  //         })
-  //         .orderBy({
-  //           logEnd: 'desc'
-  //         })
-  //         .limit(10);
-
-  //     /*
-  // 
-  //      * GENERATE AI RECOMMENDATION
-  // 
-  //      */
-
-  //     const aiResult =
-  //       await generateClusterRecommendation({
-
-  //         cluster,
-
-  //         incidents
-  //       });
-
-  //     console.log(
-  //       "AI Recommendation:",
-  //       aiResult
-  //     );
-
-  //     /*
-  // 
-  //      * STORE RECOMMENDATION
-  // 
-  //      */
-
-  //     await INSERT.into(
-  //       ClusterRecommendations
-  //     ).entries({
-
-  //       cluster_ID,
-
-  //       rootCause:
-  //         aiResult.recommendation.rootCause,
-
-  //       businessImpact:
-  //         aiResult.recommendation.businessImpact,
-
-  //       remediationSteps:
-  //         JSON.stringify(
-  //           aiResult.recommendation.remediationSteps
-  //         ),
-
-  //       affectedAdapter:
-  //         aiResult.recommendation.affectedAdapter,
-
-  //       confidenceScore:
-  //         aiResult.recommendation.confidenceScore,
-
-  //       generatedAt:
-  //         new Date()
-  //     });
-
-  //     await INSERT.into(
-  //       TokenUsages
-  //     ).entries({
-
-  //       cluster_ID,
-
-  //       ...aiResult.audit
-  //     });
-
-  //     /*
-  // 
-  //      * RETURN SAVED RECORD
-  // 
-  //      */
-
-  //     return await SELECT.one
-  //       .from(ClusterRecommendations)
-  //       .where({
-  //         cluster_ID
-  //       });
-
-  //   } catch (error) {
-
-  //     console.error(
-  //       'AI recommendation generation failed:',
-  //       error
-  //     );
-
-  //     req.error(
-  //       500,
-  //       'Recommendation generation failed'
-  //     );
-  //   }
-  // });
+  this.after('CREATE', IncidentClusters, async (data) => {
+    console.log("CREATE Event Triggered for IncidentClusters");
+    const record = data;
+    const cluster_ID = record.ID;
+    try {
+
+      /* EXISTING RECOMMENDATION */
+
+      let recommendation =
+        await SELECT.one
+          .from(ClusterRecommendations)
+          .where({
+            cluster_ID
+          });
+
+      /* RETURN EXISTING */
+
+      if (recommendation) {
+        console.log(
+          "Returning cached recommendation"
+        );
+        return recommendation;
+      }
+
+      /* FETCH CLUSTER */
+
+      const cluster =
+        await SELECT.one
+          .from(IncidentClusters)
+          .where({
+            ID: cluster_ID
+          });
+
+      if (!cluster) {
+        return req.error(
+          404,
+          'Cluster not found'
+        );
+      }
+
+      /*
+       * FETCH SAMPLE INCIDENTS
+       */
+
+      const incidents =
+        await SELECT
+          .from(Incidents)
+          .where({
+            cluster_ID
+          })
+          .orderBy({
+            logEnd: 'desc'
+          })
+          .limit(10);
+
+      /*
+       * GENERATE AI RECOMMENDATION
+       */
+
+      const aiResult =
+        await generateClusterRecommendation({
+
+          cluster,
+
+          incidents
+        });
+
+      console.log(
+        "AI Recommendation:",
+        aiResult
+      );
+
+      /*
+       * STORE RECOMMENDATION
+       */
+
+      await INSERT.into(
+        ClusterRecommendations
+      ).entries({
+
+        cluster_ID,
+
+        rootCause:
+          aiResult.recommendation.rootCause,
+
+        businessImpact:
+          aiResult.recommendation.businessImpact,
+
+        remediationSteps:
+          JSON.stringify(
+            aiResult.recommendation.remediationSteps
+          ),
+
+        affectedAdapter:
+          aiResult.recommendation.affectedAdapter,
+
+        confidenceScore:
+          aiResult.recommendation.confidenceScore,
+
+        generatedAt:
+          new Date()
+      });
+
+      await INSERT.into(
+        TokenUsages
+      ).entries({
+
+        cluster_ID,
+
+        ...aiResult.audit
+      });
+
+      if (aiResult.playbook_ID) {
+        await UPDATE(IncidentClusters)
+          .set({
+            playbook_ID:
+              aiResult.playbook_ID
+          })
+          .where({
+            ID: cluster_ID
+          });
+      }
+      /*
+       * RETURN SAVED RECORD
+       */
+
+      return await SELECT.one
+        .from(ClusterRecommendations)
+        .where({
+          cluster_ID
+        });
+
+    } catch (error) {
+
+      console.error(
+        'AI recommendation generation failed:',
+        error
+      );
+
+      req.error(
+        500,
+        'Recommendation generation failed'
+      );
+    }
+  });
+
+
+  this.on('getClusterRecommendation', async (req) => {
+    try {
+
+      const { cluster_ID } = req.data;
+
+      /*
+  
+       * EXISTING RECOMMENDATION
+  
+       */
+
+      let recommendation =
+        await SELECT.one
+          .from(ClusterRecommendations)
+          .where({
+            cluster_ID
+          });
+
+      /*
+       * RETURN EXISTING
+       */
+
+      if (recommendation) {
+
+        console.log(
+          "Returning cached recommendation"
+        );
+
+        return recommendation;
+      }
+
+      /*
+  
+       * FETCH CLUSTER
+  
+       */
+
+      const cluster =
+        await SELECT.one
+          .from(IncidentClusters)
+          .where({
+            ID: cluster_ID
+          });
+
+      if (!cluster) {
+
+        return req.error(
+          404,
+          'Cluster not found'
+        );
+      }
+
+      /*
+  
+       * FETCH SAMPLE INCIDENTS
+  
+       */
+
+      const incidents =
+        await SELECT
+          .from(Incidents)
+          .where({
+            cluster_ID
+          })
+          .orderBy({
+            logEnd: 'desc'
+          })
+          .limit(10);
+
+      /*
+  
+       * GENERATE AI RECOMMENDATION
+  
+       */
+
+      const aiResult =
+        await generateClusterRecommendation({
+
+          cluster,
+
+          incidents
+        });
+
+      console.log(
+        "AI Recommendation:",
+        aiResult
+      );
+
+      /*
+  
+       * STORE RECOMMENDATION
+  
+       */
+
+      await INSERT.into(
+        ClusterRecommendations
+      ).entries({
+
+        cluster_ID,
+
+        rootCause:
+          aiResult.recommendation.rootCause,
+
+        businessImpact:
+          aiResult.recommendation.businessImpact,
+
+        remediationSteps:
+          JSON.stringify(
+            aiResult.recommendation.remediationSteps
+          ),
+
+        affectedAdapter:
+          aiResult.recommendation.affectedAdapter,
+
+        confidenceScore:
+          aiResult.recommendation.confidenceScore,
+
+        generatedAt:
+          new Date()
+      });
+
+      await INSERT.into(
+        TokenUsages
+      ).entries({
+
+        cluster_ID,
+
+        ...aiResult.audit
+      });
+
+      /*
+  
+       * RETURN SAVED RECORD
+  
+       */
+
+      return await SELECT.one
+        .from(ClusterRecommendations)
+        .where({
+          cluster_ID
+        });
+
+    } catch (error) {
+
+      console.error(
+        'AI recommendation generation failed:',
+        error
+      );
+
+      req.error(
+        500,
+        'Recommendation generation failed'
+      );
+    }
+  });
 
 });

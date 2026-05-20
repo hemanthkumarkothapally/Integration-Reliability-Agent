@@ -131,6 +131,7 @@ sap.ui.define([
        
     
 },
+
         onSideNavButtonPress: function () {
  
             let oToolPage = this.byId("toolPage1");
