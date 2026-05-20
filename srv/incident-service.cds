@@ -55,8 +55,6 @@ service IncidentService {
     // @requires: 'Admin'
     action   triggerPoll();
 
-    // srv/incident-service.cds
-
     function GetIncidentChartData() returns {
         severityData : array of {
             severity : String;
@@ -70,10 +68,24 @@ service IncidentService {
             resolved : Integer;
         };
     };
-// srv/incident-service.cds
-function GetTopErrorTypes() returns array of {
-    errorType    : String;
-    count        : Integer;
-    severity     : String;
-};
+    function GetTopErrorTypes()     returns array of {
+        errorType : String;
+        count     : Integer;
+        severity  : String;
+    };
+
+    function onReDiagnoseIncidentCluster(
+    cluster_ID : UUID
+    ) returns {
+        ID                   : UUID;
+        cluster_ID           : UUID;
+        rootCause            : LargeString;
+        businessImpact       : LargeString;
+        remediationSteps     : LargeString;
+        affectedAdapter      : String(120);
+        confidenceScore      : Integer;
+        recommendationSource : String(40);
+        modelName            : String(100);
+        generatedAt          : Timestamp;
+    };
 }
