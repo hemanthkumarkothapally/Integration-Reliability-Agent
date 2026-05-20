@@ -3,6 +3,7 @@
     xmlns="sap.uxap"
     xmlns:suite="sap.suite.ui.commons"
     xmlns:layout="sap.ui.layout"
+    xmlns:form="sap.ui.layout.form"
     xmlns:core="sap.ui.core"
     xmlns:m="sap.m" height="100%">
 
@@ -71,7 +72,7 @@
 
                 <layout:VerticalLayout id="_IDGenVerticalLayout" class="sapUiSmallMarginBeginEnd">
 
-                    <!-- <m:ObjectStatus title="iFlow Name" text="{headerDetails>/iFlowName}" /> -->
+                    <!-- <m:ObjectStatus title="iFlow Name" text="{headerDetails>/errorType}" /> -->
 
                     <m:ObjectStatus id="_IDGenObjectStatus2" title="Severity" text="{headerDetails>/severity}" state="{= ${headerDetails>/severity} === 'CRITICAL' ? 'Error' : ${headerDetails>/severity} === 'HIGH' ? 'Warning' : ${headerDetails>/severity} === 'MEDIUM' ? 'Information' : ${headerDetails>/severity} === 'LOW' ? 'Success' : 'None' }" />
                     <!-- <m:ObjectStatus title="Status" text="{headerDetails>/status}" /> -->
@@ -199,7 +200,7 @@
 
 
                                 <suite:Timeline width = "100%" id="idRemediationTimeline" showIcons="false" showHeaderBar="false" enableScroll="false" content="{remediationSteps>/steps}">
-                                    
+
                                     <suite:content>
 
                                         <suite:TimelineItem id="_IDGenTimelineItem" status="Information" userName="{remediationSteps>title}" text="{remediationSteps>text}" userNameClickable="false" />
@@ -263,19 +264,35 @@
 
                             <m:VBox id="_IDGenVBox6" class="sapUiSmallMargin">
 
-                                <m:HBox id="_IDGenHBox6" alignItems="Center" class="sapUiTinyMarginBottom">
-                                    <m:Avatar id="_IDGenAvatar5" src="sap-icon://education" displaySize="XS" class="sapUiTinyMarginEnd" />
-                                    <m:Title id="_IDGenTitle12" text="Playbook" level="H5" />
-
+                                <!-- Section Header: Clean spacing and bold title styling -->
+                                <m:HBox id="_IDGenHBox6" alignItems="Center" class="sapUiSmallMarginBottom">
+                                    <m:Avatar id="_IDGenAvatar5" src="sap-icon://education" displaySize="XS" displayShape="Square" class="sapUiTinyMarginEnd" />
+                                    <m:Title id="_IDGenTitle12" text="Playbook" level="H4" titleStyle="H4" />
                                 </m:HBox>
+
+                                <!-- Main Title Card: Prominent, distinct header for the playbook name -->
+                                <m:VBox id="_IDGenVBox9" >
+                                    <m:Title id="_IDGenTitle" text="{headerDetails>/playbook/title}" level="H2" titleStyle="H2" />
+                                    <m:Text id="_IDGenText" text="{headerDetails>/playbook/description}" class="sapUiColorTextSecondary" />
+                                </m:VBox>
+
+                                <!-- Metadata Section: Replaced heavy Form with a modern, clean Grid -->
+                                <layout:Grid id="_IDGenGrid" defaultSpan="XL4 L4 M6 S12" vSpacing="0" hSpacing="1" >
+                                    <m:VBox id="_IDGenVBox10">
+                                        <m:Label id="_IDGenLabel" text="Severity" class="sapUiColorTextSecondary sapUiTinyMarginBottom" />
+                                        <m:ObjectStatus id="_IDGenObjectStatus8" text="{headerDetails>/playbook/severity}" inverted="true" state="{= ${headerDetails>/playbook/severity} === 'CRITICAL' ? 'Error' : 'Warning' }" />
+                                    </m:VBox>
+
+                                    <!-- You can easily add more layout:Grid VBoxes here for other metadata fields like 'Created By' or 'Date' -->
+                                </layout:Grid>
+
+                                <!-- Timeline Section: Minimalist timeline view -->
                                 <suite:Timeline id="idRemediationTimelie" showIcons="false" showHeaderBar="false" enableScroll="false" content="{playbookSteps>/steps}">
-
-                                    <!-- FIX: Put the template item directly here without the wrapper tags -->
                                     <suite:TimelineItem id="_IDGenTimelineIem" userName="{playbookSteps>title}" text="{playbookSteps>text}" userNameClickable="false" />
-
                                 </suite:Timeline>
 
                             </m:VBox>
+
 
                         </blocks>
 
