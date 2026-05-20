@@ -71,13 +71,13 @@ export default cds.service.impl(async function () {
             cluster_ID: clusterId || null
         };
 
-        await INSERT.into('com.cytechies.integration.reliability.ChatSessions').entries(newConv);
+        await srv.run(INSERT.into(ChatSessions).entries(newConv));
         return newConv;
     });
 
     this.on('chat', async (req) => {
         const { conversationId, referenceID, userMessage } = req.data;
-        const tx = cds.transaction(req);
+      
         if (!conversationId || !userMessage) {
             return req.error(400, "Missing conversationId or userMessage");
         }
@@ -205,16 +205,49 @@ export default cds.service.impl(async function () {
         }, 0);
 
         // Update session token usage
-        await UPDATE('com.cytechies.integration.reliability.ChatSessions')
+        await srv.run(UPDATE(ChatSessions)
             .set({
                 totalSessionTokenUsage: totalTokens
             })
-            .where({ ID: conversationId });
+            .where({ ID: conversationId }));
 
         console.log("Updated total token usage:", totalTokens);
 
     } catch (err) {
         console.error("Token aggregation failed:", err);
+    }
+
+});
+this.after(['CREATE', 'UPDATE'], ChatSessions, async (data,req) => {
+
+    try {
+
+        const clusterId = data.cluster_ID;
+
+        if (!clusterId) return;
+
+        // Get all messages for this conversation
+        const chatSessions = await SELECT
+            .from('com.cytechies.integration.reliability.ChatSessions')
+            .columns('totalSessionTokenUsage')
+            .where({ cluster_ID: clusterId });
+
+        // Calculate total tokens
+        const totalTokens = chatSessions.reduce((sum, session) => {
+            return sum + (session.totalSessionTokenUsage || 0);
+        }, 0);
+
+        // Update session token usage
+        await UPDATE('com.cytechies.integration.reliability.IncidentClusters')
+            .set({
+                totalTokenUsage: totalTokens
+            })
+            .where({ ID: clusterId });
+
+        console.log("Updated total token usage of cluster", clusterId, ":", totalTokens);
+
+    } catch (err) {
+        console.error("Cluster token aggregation failed:", err);
     }
 
 });
