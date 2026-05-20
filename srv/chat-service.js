@@ -28,8 +28,8 @@ async function callAI(destination, messages, system = null, maxTokens = 256) {
 }
 
 export default cds.service.impl(async function () {
-    
-    let srv= this;
+
+    let srv = this;
     const { ChatSessions, Messages } = this.entities;
     const destination = await cds.connect.to('GenAIHubDestination');
     this.on('createConversation', async (req) => {
@@ -77,7 +77,7 @@ export default cds.service.impl(async function () {
 
     this.on('chat', async (req) => {
         const { conversationId, referenceID, userMessage } = req.data;
-      
+
         if (!conversationId || !userMessage) {
             return req.error(400, "Missing conversationId or userMessage");
         }
@@ -89,15 +89,20 @@ export default cds.service.impl(async function () {
             role: 'user',
             content: userMessage
         });
-//  const newAiMessage = {
-//                 conversation_ID: conversationId,
-//                 role: 'assistant',
-//                 content: "Generating AI response... TEST",
-//                 tokenCount: 5678,
-//                 inputTokens: 1234,
-//                 outputTokens: 4444
-//             };
-// return newAiMessage; // for testing
+        // const newAiMessage = {
+        //     conversation_ID: conversationId,
+        //     role: 'assistant',
+        //     content: "Generating AI response... TEST",
+        //     tokenCount: 5678,
+
+        // };
+        // await srv.run(UPDATE(Messages)
+        //     .set({ tokenCount: 1234 })
+        //     .where({ ID: uid }));
+        // await srv.run(INSERT.into(Messages).entries(newAiMessage));
+        // newAiMessage.inputTokens = 1234;
+        // newAiMessage.outputTokens = 5678;
+        // return newAiMessage; // for testing
         try {
             // 2. Load full history (includes the message we just inserted)
             // const history = await SELECT
@@ -185,70 +190,70 @@ export default cds.service.impl(async function () {
             return fallback;
         }
     });
-   this.after(['CREATE', 'UPDATE'], Messages, async (data,req) => {
+    this.after(['CREATE', 'UPDATE'], Messages, async (data, req) => {
 
-    try {
+        try {
 
-        const conversationId = data.conversation_ID;
+            const conversationId = data.conversation_ID;
 
-        if (!conversationId) return;
+            if (!conversationId) return;
 
-        // Get all messages for this conversation
-        const messages = await SELECT
-            .from('com.cytechies.integration.reliability.Messages')
-            .columns('tokenCount')
-            .where({ conversation_ID: conversationId });
+            // Get all messages for this conversation
+            const messages = await SELECT
+                .from('com.cytechies.integration.reliability.Messages')
+                .columns('tokenCount')
+                .where({ conversation_ID: conversationId });
 
-        // Calculate total tokens
-        const totalTokens = messages.reduce((sum, msg) => {
-            return sum + (msg.tokenCount || 0);
-        }, 0);
+            // Calculate total tokens
+            const totalTokens = messages.reduce((sum, msg) => {
+                return sum + (msg.tokenCount || 0);
+            }, 0);
 
-        // Update session token usage
-        await srv.run(UPDATE(ChatSessions)
-            .set({
-                totalSessionTokenUsage: totalTokens
-            })
-            .where({ ID: conversationId }));
+            // Update session token usage
+            await srv.run(UPDATE(ChatSessions)
+                .set({
+                    totalSessionTokenUsage: totalTokens
+                })
+                .where({ ID: conversationId }));
 
-        console.log("Updated total token usage:", totalTokens);
+            console.log("Updated total token usage:", totalTokens);
 
-    } catch (err) {
-        console.error("Token aggregation failed:", err);
-    }
+        } catch (err) {
+            console.error("Token aggregation failed:", err);
+        }
 
-});
-this.after(['CREATE', 'UPDATE'], ChatSessions, async (data,req) => {
+    });
+    this.after(['CREATE', 'UPDATE'], ChatSessions, async (data, req) => {
 
-    try {
+        try {
 
-        const clusterId = data.cluster_ID;
+            const clusterId = data.cluster_ID;
 
-        if (!clusterId) return;
+            if (!clusterId) return;
 
-        // Get all messages for this conversation
-        const chatSessions = await SELECT
-            .from('com.cytechies.integration.reliability.ChatSessions')
-            .columns('totalSessionTokenUsage')
-            .where({ cluster_ID: clusterId });
+            // Get all messages for this conversation
+            const chatSessions = await SELECT
+                .from('com.cytechies.integration.reliability.ChatSessions')
+                .columns('totalSessionTokenUsage')
+                .where({ cluster_ID: clusterId });
 
-        // Calculate total tokens
-        const totalTokens = chatSessions.reduce((sum, session) => {
-            return sum + (session.totalSessionTokenUsage || 0);
-        }, 0);
+            // Calculate total tokens
+            const totalTokens = chatSessions.reduce((sum, session) => {
+                return sum + (session.totalSessionTokenUsage || 0);
+            }, 0);
 
-        // Update session token usage
-        await UPDATE('com.cytechies.integration.reliability.IncidentClusters')
-            .set({
-                totalTokenUsage: totalTokens
-            })
-            .where({ ID: clusterId });
+            // Update session token usage
+            await UPDATE('com.cytechies.integration.reliability.IncidentClusters')
+                .set({
+                    totalTokenUsage: totalTokens
+                })
+                .where({ ID: clusterId });
 
-        console.log("Updated total token usage of cluster", clusterId, ":", totalTokens);
+            console.log("Updated total token usage of cluster", clusterId, ":", totalTokens);
 
-    } catch (err) {
-        console.error("Cluster token aggregation failed:", err);
-    }
+        } catch (err) {
+            console.error("Cluster token aggregation failed:", err);
+        }
 
-});
+    });
 });

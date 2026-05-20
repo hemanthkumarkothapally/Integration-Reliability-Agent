@@ -35,17 +35,19 @@ sap.ui.define([
                 this.getOwnerComponent().getRouter();
 
             oRouter.getRoute("RouteIC")
-                .attachPatternMatched(
-                    this._resetToWelcomePage,
-                    this
-                );
+                .attachPatternMatched(function () {
+                    this._resetToWelcomePage();
+                    this.onBackPress();
+                }, this);
             this.getView().setModel(new JSONModel({ currentConversationId: null }), "appView");
             this._resetToWelcomePage();
         },
 
-        onBackPress() {
-            let oFCL = this.oView.getParent().getParent();
-            oFCL.setLayout(sap.f.LayoutType.OneColumn);
+        onBackPress: function () {
+            let oFCL = this.getView().getParent().getParent();
+            if (oFCL) {
+                oFCL.setLayout(sap.f.LayoutType.OneColumn);
+            }
             console.log("Closing chat side panel");
         },
 
@@ -81,6 +83,10 @@ sap.ui.define([
             let oCtx = oListItem.getBindingContext("chatModel");
             let sKey = oCtx.getProperty("ID");
             console.log("Selected conversation ID:", sKey);
+            let oPopover = this.byId("historyPopover"); // Ensure this ID matches your view/fragment
+            if (oPopover) {
+                oPopover.close();
+            }
             let sTitle = oCtx.getProperty("title");
             this.getView().getModel("appView").setProperty("/currentConversationTitle", sTitle);
             var oAppModel = this.getView().getModel("appView");
@@ -141,14 +147,13 @@ sap.ui.define([
 
             if (oSource && typeof oSource.getValue === "function") {
                 sQuery = oSource.getValue().trim();
-            } else {   
+            } else {
                 var oInput = this.byId("chatInput1");
                 sQuery = oInput ? oInput.getValue().trim() : "";
                 if (oInput) oInput.setValue("");
             }
 
             if (!sQuery) return;
-
             let sCurrentConvId = this.getView().getModel("appView").getProperty("/currentConversationId");
             let oModel = this.getView().getModel("chatModel");
 
@@ -170,8 +175,9 @@ sap.ui.define([
                 // Automatically reset the model state; the UI text, tooltip, and color switch instantly
                 this.getView().getModel("appView").setProperty("/clusterDataEnabled", false);
 
-                // Fetch your global reference ID
-                referenceID = this.getOwnerComponent().getModel("globalModel").getProperty("/cluster_id");
+                referenceID = this.getView().getModel("headerDetails").getProperty("/ID");
+                let referenceName = this.getView().getModel("headerDetails").getProperty("/errorType");
+                sQuery = `<span style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px 4px 8px;border:0.5px solid #f97316;border-radius:999px;color:#c05407;">🔗 ${referenceName}</span><br /><br/>${sQuery}`;
             }
 
             this._appendMessage(sQuery, "user", { tokenCount: "Calculating" });
@@ -209,7 +215,8 @@ sap.ui.define([
                 let oAction = oModel.bindContext("/createConversation(...)");
 
 
-                let clusterId = this.getOwnerComponent().getModel("globalModel").getProperty("/cluster_id");
+                let clusterId =  this.getView().getModel("headerDetails").getProperty("/ID");
+
                 // 3. Set parameters
                 oAction.setParameter("title", sTitle);
                 if (clusterId) {
@@ -358,7 +365,9 @@ sap.ui.define([
                     backgroundColor: sap.m.AvatarColor.Accent1
                 });
 
-                const oUserText = new sap.m.Text({ text: sText });
+                const oUserText = new sap.m.FormattedText({
+                    htmlText: `${bStream ? '' : sText}`
+                });
 
                 oMessageItem = new sap.m.VBox({
                     alignItems: sap.m.FlexAlignItems.End,
@@ -372,7 +381,7 @@ sap.ui.define([
                             items: [
                                 // Wrapped Text inside layout panel container to retain structural width
                                 new sap.m.VBox({
-                                    items: [oUserText, oUserTokenInfo]
+                                    items: [oUserText, oUserTokenInfo.addStyleClass("sapUiTinyMarginTop")]
                                 }).addStyleClass("userChatBubbleNew sapUiSmallMarginEnd"),
                                 oUserAvatar
                             ]
@@ -395,7 +404,7 @@ sap.ui.define([
                 });
 
                 const oTextControl = new sap.m.FormattedText({
-                    htmlText: `<b>CandyAssist</b><br/>${bStream ? '' : sText}`
+                    htmlText: `${bStream ? '' : sText}`
                 });
 
                 oMessageItem = new sap.m.VBox({
@@ -411,7 +420,7 @@ sap.ui.define([
                                 oAiAvatar,
                                 new sap.m.VBox({
                                     items: [oTextControl,
-                                        oAiTokenInfo]
+                                        oAiTokenInfo.addStyleClass("sapUiTinyMarginTop")]
                                 }).addStyleClass("aiChatBubbleNew sapUiSmallMarginBegin")
                             ]
                         }).addStyleClass("sapUiTinyMarginBegin"),

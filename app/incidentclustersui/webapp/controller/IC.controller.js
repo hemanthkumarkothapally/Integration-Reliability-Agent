@@ -226,13 +226,12 @@ sap.ui.define([
             this.getOwnerComponent().getModel("globalModel").setProperty("/cluster_id", sID);
             console.log("Cluster ID set in global model:", sID);
             try {
-                // ✅ Fetch BOTH in parallel — cluster+incidents AND recommendation
                 const [oClusterData, oRecommendationData] = await Promise.all([
 
                     // 1️⃣ Cluster with incidents expanded
                     oModel
                         .bindContext("/IncidentClusters('" + sID + "')", undefined, {
-                            $expand: "incidents,playbook"
+                            $expand: "incidents,playbook,monitoredArtifacts($expand=artifact)"
                         })
                         .requestObject(),
 

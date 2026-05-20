@@ -39,6 +39,25 @@ sap.ui.define([
                 console.log("Closing chat side panel");
             }
         },
+
+        onResolve(){
+            var oModel = this.getView().getModel();
+            var sID = this.getView().getBindingContext().getProperty("id");
+            oModel.callFunction("/resolveIncidentCluster", {
+                method: "POST",
+                urlParameters: {
+                    id: sID
+                },
+                success: function (oData) {
+                    console.log("Incident cluster resolved successfully");
+                    // Optionally, refresh the model or navigate back to the list view
+                    oModel.refresh();
+                },
+                error: function (oError) {
+                    console.error("Error resolving incident cluster:", oError);
+                }
+            });
+        }
  
         // onAipress() {
         //     // Safely get the FCL directly by the ID you gave it in the XML view
