@@ -89,14 +89,19 @@ export default cds.service.impl(async function () {
             role: 'user',
             content: userMessage
         });
-        //  const newAiMessage = {
-        //                 conversation_ID: conversationId,
-        //                 role: 'assistant',
-        //                 content: "Generating AI response... TEST",
-        //                 tokenCount: 5678,
-        //                 inputTokens: 1234,
-        //                 outputTokens: 4444
-        //             };
+        // const newAiMessage = {
+        //     conversation_ID: conversationId,
+        //     role: 'assistant',
+        //     content: "Generating AI response... TEST",
+        //     tokenCount: 5678,
+
+        // };
+        // await srv.run(UPDATE(Messages)
+        //     .set({ tokenCount: 1234 })
+        //     .where({ ID: uid }));
+        // await srv.run(INSERT.into(Messages).entries(newAiMessage));
+        // newAiMessage.inputTokens = 1234;
+        // newAiMessage.outputTokens = 5678;
         // return newAiMessage; // for testing
         try {
             // 2. Load full history (includes the message we just inserted)
@@ -105,13 +110,17 @@ export default cds.service.impl(async function () {
             //     .where({ conversation_ID: conversationId })
             //     .orderBy('createdAt asc');
 
-            let systemPrompt = `You are an SAP Integration Suite incident assistant.
-            Rules:
-            - Answer only about the given cluster
-            - Be concise and technical
-            - Return valid HTML only
-            - No markdown or code blocks
-            - Use <div>, <p>, <ul>, <li>, <strong>, <br> etc for formatting`;
+            let systemPrompt = `You are an AI assistant for SAP Integration Suite incident management.
+ 
+                            [TASK]
+                            Answer questions specifically about this cluster. Be concise and technical.
+ 
+                            [STRICT OUTPUT RULES]
+                            1. You MUST output RAW, VALID HTML ONLY.
+                            2. DO NOT use any Markdown formatting whatsoever (no **, no ##, no * for bullets).
+                            3. DO NOT wrap your response in \`\`\`html or \`\`\` code blocks. The response must be injected directly into the DOM.
+                            4. Use standard HTML tags for structure: <p> for paragraphs, <ul>/<li> for lists, <strong> for emphasis, and <br> for line breaks.
+                            5. You must wrap your entire response within a single root <div> tag.`;
 
             if (referenceID) {
                 // Fetch recent incidents for the cluster
