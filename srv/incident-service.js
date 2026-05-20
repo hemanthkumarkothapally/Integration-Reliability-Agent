@@ -1,8 +1,9 @@
 import cds from '@sap/cds';
-
+import { generateClusterRecommendation } from './utils/ai-recommendation-util.js';
+import { runPoll } from './utils/log-helper.js';
 export default cds.service.impl(async function () {
 
-    const { IncidentClusters } = this.entities;
+    const { IncidentClusters, ClusterRecommendations ,Playbooks, MonitoredArtifacts, ClusterArtifacts} = this.entities;
 
     const { Incidents } = cds.entities('com.cytechies.integration.reliability');
     this.after('READ', IncidentClusters, async (data) => {  // ← add async
@@ -329,4 +330,125 @@ this.on('GetTopErrorTypes', async (req) => {
         severity  : c.severity || 'LOW'
     }));
 });
+this.on('onReDiagnoseIncidentCluster', async (req) => {
+    try {
+      const { cluster_ID } = req.data;
+      const cluster =
+        await SELECT.one
+          .from(IncidentClusters)
+          .where({
+            ID: cluster_ID
+          });
+
+      if (!cluster) {
+        return req.error(
+          404,
+          'Cluster not found'
+        );
+      }
+      /*
+       * FETCH SAMPLE INCIDENTS
+       */
+
+      const incidents =
+        await SELECT
+          .from(Incidents)
+          .where({
+            cluster_ID
+          })
+          .orderBy({
+            logEnd: 'desc'
+          })
+          .limit(2);
+
+      /*
+       * GENERATE AI RECOMMENDATION
+       */
+
+      const aiResult =
+        await generateClusterRecommendation({
+          cluster,
+          incidents
+        });
+
+      console.log(
+        "AI Recommendation:",
+        aiResult
+      );
+
+      /*
+       * STORE RECOMMENDATION
+       */
+      await UPDATE(ClusterRecommendations).where({ cluster_ID }
+      ).set({ 
+        rootCause:
+          aiResult.recommendation.rootCause,
+
+        businessImpact:
+          aiResult.recommendation.businessImpact,
+
+        remediationSteps:
+          JSON.stringify(
+            aiResult.recommendation.remediationSteps
+          ),
+
+        affectedAdapter:
+          aiResult.recommendation.affectedAdapter,
+
+        confidenceScore:
+          aiResult.recommendation.confidenceScore,
+
+        generatedAt:
+          new Date()
+       });
+      
+
+      await INSERT.into(
+        TokenUsages
+      ).entries({
+        cluster_ID,
+        ...aiResult.audit
+      });
+      return await SELECT.one
+        .from(ClusterRecommendations)
+        .where({
+          cluster_ID
+        });
+
+    } catch (error) {
+
+      console.error(
+        'AI recommendation generation failed:',
+        error
+      );
+
+      req.error(
+        500,
+        'Recommendation generation failed'
+      );
+    }
+  });
+  this.on('triggerPoll', async () => {
+    try {
+
+        console.log("Manual poll triggered");
+
+        let failedLogs = await runPoll({srv:this,
+                            Incidents,
+                            IncidentClusters,
+                            Playbooks,
+                            MonitoredArtifacts,
+                            ClusterArtifacts
+                        });
+
+        console.log("Manual poll completed");
+        return failedLogs;
+    } catch (error) {
+
+        console.error(
+            "Manual poll failed:",
+            error
+        );
+    }
+  });
 });

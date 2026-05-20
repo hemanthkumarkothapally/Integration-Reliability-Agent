@@ -515,9 +515,10 @@ export async function ApiCall(
 
 export async function upsertMonitoredArtifacts(
   entity,
-  logs
+  logs,
+  IS_API
 ) {
-
+  
   if (!logs.length)
     return;
 
@@ -555,7 +556,12 @@ export async function upsertMonitoredArtifacts(
     iFlowName,
     latestTimestamp
   ] of Object.entries(latestMap)) {
-
+    const iflowDetails = await ApiCall(IS_API, {
+            method: 'GET',
+            path: `/api/v1/IntegrationRuntimeArtifacts('${iFlowName}')`
+          });
+    const results = iflowDetails?.d || [];
+    console.log("Fetched iFlow details for:", iFlowName, results);
     const existing =
       existingMap.get(iFlowName);
 
@@ -567,7 +573,7 @@ export async function upsertMonitoredArtifacts(
           lastPollTimestamp:
             latestTimestamp,
 
-          isActive: true
+          isActive: results.Status === 'STARTED'
         })
         .where({
           ID: existing.ID
@@ -588,10 +594,9 @@ export async function upsertMonitoredArtifacts(
           iFlowId:
             iFlowName,
 
-          namespace:
-            'DEFAULT',
+          namespace: results.Type || 'UNKNOWN',
 
-          isActive: true,
+          isActive: results.Status === 'STARTED',
 
           lastPollTimestamp:
             latestTimestamp

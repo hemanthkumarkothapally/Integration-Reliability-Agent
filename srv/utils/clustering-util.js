@@ -1,7 +1,7 @@
 import {
   normaliseLog
 } from './log-utils.js';
-export async function upsertClusters(Incidents,IncidentClusters,Playbooks,MonitoredArtifacts,ClusterArtifacts, newLogs) {
+export async function upsertClusters(Incidents,IncidentClusters,Playbooks,MonitoredArtifacts,ClusterArtifacts, newLogs,srv) {
 
   const clusterMap = {};
   

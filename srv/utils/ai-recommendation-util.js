@@ -308,3 +308,31 @@ ${JSON.stringify(response)}`
         };
     }
 }
+const GREETING_PATTERNS = [
+    /^(hi|hello|hey|howdy|hiya|good\s*(morning|afternoon|evening|day))\b/i,
+    /^(thanks?|thank\s*you|thx|ty)\b/i,
+    /^(bye|goodbye|see\s*you|cya|take\s*care)\b/i,
+    /^(how\s*are\s*you|what'?s\s*up|wassup)\b/i,
+    /^(ok|okay|got\s*it|sure|alright|sounds\s*good)\b/i,
+    /^(yes|no|maybe|nope|yep|yeah)\b/i
+];
+
+const CLUSTER_PATTERNS = [
+    /error|exception|fail|incident|cluster|iflow|adapter|log|timeout|retry/i,
+    /root\s*cause|remediat|fix|resolv|diagnos|impact|status/i,
+    /why|what\s*is|how\s*to|when\s*did|what\s*happen/i
+];
+
+export async function classifyIntent(message) {
+    const trimmed = message.trim();
+
+    // Short messages are likely greetings
+    if (trimmed.split(' ').length <= 3) {
+        if (GREETING_PATTERNS.some(p => p.test(trimmed))) return 'GREETING';
+    }
+
+    if (CLUSTER_PATTERNS.some(p => p.test(trimmed))) return 'CLUSTER';
+
+    // Default to CLUSTER so technical questions always get full context
+    return 'CLUSTER';
+}
