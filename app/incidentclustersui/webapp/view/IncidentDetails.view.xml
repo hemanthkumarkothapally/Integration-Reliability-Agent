@@ -18,7 +18,7 @@
 
                         <m:Button id="_IDGenButton9" icon="sap-icon://nav-back" type="Default" press=".onNavBack" class="sapUiTinyMarginEnd" />
 
-                        <m:Title id="_IDGenTitle4" text="{headerDetails>/iFlowName}" wrapping="true" />
+                        <m:Title id="_IDGenTitle4" text="{headerDetails>/errorType}" wrapping="true" />
 
                     </m:HBox>
 
@@ -35,7 +35,7 @@
 
                         <m:Button id="_IDGenButton11" icon="sap-icon://nav-back" type="Transparent" press=".onNavBack" class="sapUiTinyMarginEnd" />
 
-                        <m:Title id="_IDGenTitle5" text="{headerDetails>/iFlowName}" wrapping="true" />
+                        <m:Title id="_IDGenTitle5" text="{headerDetails>/errorType}" wrapping="true" />
 
                     </m:FlexBox>
 
@@ -58,7 +58,7 @@
                 <!-- MOBILE -->
                 <snappedTitleOnMobile>
 
-                    <m:Title id="_IDGenTitle6" text="{headerDetails>/status}" />
+                    <m:Title id="_IDGenTitle6" text="{headerDetails>/errorType}" />
 
                 </snappedTitleOnMobile>
 
