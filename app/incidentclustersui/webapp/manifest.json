@@ -32,7 +32,7 @@
           "odataVersion": "4.01"
         }
       },
-       "PollerService": {
+      "PollerService": {
         "uri": "/Poller/",
         "type": "OData",
         "settings": {
@@ -42,7 +42,10 @@
       }
     }
   },
-  "sap.cloud": {     "public": true,     "service": "iraservice"},
+  "sap.cloud": {
+    "public": true,
+    "service": "iraservice"
+  },
   "sap.ui": {
     "technology": "UI5",
     "icons": {
@@ -60,7 +63,7 @@
     }
   },
   "sap.ui5": {
-    "flexEnabled": true,
+    "flexEnabled": false,
     "dependencies": {
       "minUI5Version": "1.147.2",
       "libs": {
@@ -105,6 +108,21 @@
           "autoExpandSelect": true,
           "earlyRequests": true
         }
+      },
+      "chart": {
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {},
+        "preload": false
+      },
+      "topErrors": {
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {},
+        "preload": false
+      },
+      "dashboard": {
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {},
+        "preload": false
       },
       "globalModel": {
         "type": "sap.ui.model.json.JSONModel",

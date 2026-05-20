@@ -50,173 +50,6 @@ sap.ui.define([
                 console.log("Opening chat");
             }
         },
-        // _onObjectMatched: async function (oEvent) {
-
-        //     const sID =
-        //         oEvent.getParameter("arguments").ID;
-
-        //     const oModel =
-        //         this.getView().getModel();
-
-
-
-        //     const oHeaderBinding =
-        //         oModel.bindList(
-        //             "/IncidentClusters",
-        //             undefined,
-        //             undefined,
-        //             [
-        //                 new Filter(
-        //                     "ID",
-        //                     FilterOperator.EQ,
-        //                     sID
-        //                 )
-        //             ]
-        //         );
-
-        //     const aHeaderContexts =
-        //         await oHeaderBinding.requestContexts();
-
-        //     if (aHeaderContexts.length > 0) {
-
-        //         const oHeaderData =
-        //             aHeaderContexts[0].getObject();
-
-        //         console.log("Header Data:", oHeaderData);
-
-        //         const oHeaderModel =
-        //             new JSONModel(oHeaderData);
-
-        //         this.getView().setModel(
-        //             oHeaderModel,
-        //             "headerDetails"
-        //         );
-
-        //     }
-
-        //     // Details Model
-        //     const oJSONModel =
-        //         new JSONModel();
-
-        //     this.getView().setModel(
-        //         oJSONModel,
-        //         "details"
-        //     );
-
-        //     // Read Recommendation Data
-        //     const oBinding =
-        //         oModel.bindList(
-        //             "/Recommendations",
-        //             undefined,
-        //             undefined,
-        //             [
-        //                 new Filter(
-        //                     "cluster_ID",
-        //                     FilterOperator.EQ,
-        //                     sID
-        //                 )
-        //             ]
-        //         );
-
-        //     const aContexts =
-        //         await oBinding.requestContexts();
-
-        //     if (aContexts.length > 0) {
-
-        //         const oData =
-        //             aContexts[0].getObject();
-
-        //         console.log("Recommendation Data:", oData);
-
-        //         // Set Main Details
-        //         oJSONModel.setData(oData);
-
-        //         // Prepare Timeline Steps
-        //         const aStepsRaw =
-        //             JSON.parse(oData.remediationSteps);
-
-        //         const aSteps =
-        //             aStepsRaw.map(function (sStep, iIndex) {
-
-        //                 return {
-
-        //                     title: "STEP " + (iIndex + 1),
-        //                     text: sStep
-
-        //                 };
-
-        //             });
-
-        //         // Timeline Model
-        //         const oStepsModel =
-        //             new JSONModel({
-
-        //                 steps: aSteps
-
-        //             });
-
-        //         this.getView().setModel(
-        //             oStepsModel,
-        //             "remediationSteps"
-        //         );
-
-        //         console.log("Timeline Steps:", aSteps);
-
-        //     }
-
-        // }
-
-        // _onObjectMatched: async function (oEvent) {
-
-        //     const sID = oEvent.getParameter("arguments").ID;
-        //     const oModel = this.getView().getModel();
-
-        //     // ✅ Fetch cluster WITH incidents expanded
-        //     const oContext = oModel.bindContext(
-        //         "/IncidentClusters('" + sID + "')",
-        //         undefined,
-        //         { $expand: "incidents" }
-        //     );
-
-        //     const oClusterData = await oContext.requestObject();
-        //     console.log("Cluster + Incidents:", oClusterData);
-
-        //     // ✅ Header model (iFlowName, severity, status, etc.)
-        //     const oHeaderModel = new JSONModel(oClusterData);
-        //     this.getView().setModel(oHeaderModel, "headerDetails");
-
-        //     // ✅ Incidents model → drives the list
-        //     const oIncidentsModel = new JSONModel({
-        //         incidents: oClusterData.incidents || []
-        //     });
-        //     this.getView().setModel(oIncidentsModel, "incidentsModel");
-
-        //     // --- Recommendations / Details (keep your existing code below) ---
-        //     const oJSONModel = new JSONModel();
-        //     this.getView().setModel(oJSONModel, "details");
-
-        //     const oBinding = oModel.bindList(
-        //         "/Recommendations",
-        //         undefined,
-        //         undefined,
-        //         [new Filter("cluster_ID", FilterOperator.EQ, sID)]
-        //     );
-
-        //     const aContexts = await oBinding.requestContexts();
-
-        //     if (aContexts.length > 0) {
-        //         const oData = aContexts[0].getObject();
-        //         oJSONModel.setData(oData);
-
-        //         const aStepsRaw = JSON.parse(oData.remediationSteps);
-        //         const aSteps = aStepsRaw.map((sStep, iIndex) => ({
-        //             title: "STEP " + (iIndex + 1),
-        //             text: sStep
-        //         }));
-
-        //         this.getView().setModel(new JSONModel({ steps: aSteps }), "remediationSteps");
-        //     }
-        // }
 
 
         _onObjectMatched: async function (oEvent) {
@@ -312,13 +145,14 @@ sap.ui.define([
                         pSteps = pParsed.map((sStep, iIndex) => ({
                             title: "STEP " + (iIndex + 1),
                             text: sStep
-                        }));} catch (e) {
-                            pSteps = [{ title: "STEP 1", text: oClusterData.playbook.steps }];
-                        }
+                        }));
+                    } catch (e) {
+                        pSteps = [{ title: "STEP 1", text: oClusterData.playbook.steps }];
+                    }
 
                     oStepsModel.setData({ steps: aSteps });
                     console.log("Timeline Steps:", aSteps);
-                    oPlaybookStepsModel.setData({steps:pSteps});
+                    oPlaybookStepsModel.setData({ steps: pSteps });
                     console.log("Timeline Steps from playbook:", oPlaybookStepsModel.getData());
                 } else {
                     console.warn("No recommendation found for cluster:", sID);
@@ -331,9 +165,8 @@ sap.ui.define([
                 console.error("Failed to load incident details:", oError);
             }
             sap.ui.core.BusyIndicator.hide();
-        }
-
-
+        },
+       
     });
 
 });
