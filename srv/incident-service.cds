@@ -5,7 +5,6 @@ service IncidentService {
     entity Incidents          as projection on IRA.Incidents;
 
     // @requires                                  : 'Viewer'
-    @readonly
     @Capabilities.FilterRestrictions.Filterable: true
     @Capabilities.SortRestrictions.Sortable    : true
     @Capabilities.TopSupported                 : true

@@ -312,9 +312,9 @@
 
                 <m:ToolbarSpacer id="_IDGenToolbarSpacer3" />
 
-                <m:Button id="_IDGenButton12" text="Re-diagnose" type="Attention" icon="sap-icon://ai" press=".Re-diagnose" />
+                <m:Button id="_IDGenButton12" text="Re-diagnose" type="Attention" icon="sap-icon://ai" press="Re-diagnose" />
 
-                <m:Button id="_IDGenButton13" text="Resolve" type="Accept" icon="sap-icon://complete" press=".onResolve" />
+                <m:Button id="_IDGenButton13" text="Resolve" type="Accept" icon="sap-icon://complete" press="onResolve"     enabled="{= ${headerDetails>/status} === 'OPEN' }" />
 
             </m:OverflowToolbar>
 

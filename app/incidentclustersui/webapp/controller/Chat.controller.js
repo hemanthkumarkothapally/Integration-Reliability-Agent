@@ -445,6 +445,7 @@ sap.ui.define([
         _scrollToBottom: function () {
             const oScroll = this.byId("chatScroll");
             setTimeout(() => oScroll.scrollTo(0, 10000), 100);
-        }
+        },
+        
     });
 });
