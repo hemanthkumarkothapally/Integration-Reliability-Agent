@@ -95,7 +95,7 @@
                                                 </layoutData>
                                             </TextArea>
                                         </FlexBox>
-                                        <Button id="_IDGenButton3" icon="sap-icon://paper-plane" press=".onPost" class="sapUiTinyMarginBegin" />
+                                        <Button id="_IDGenButton3" icon="sap-icon://paper-plane" press=".onPost" tooltip="Send Message" class="sapUiTinyMarginBegin" />
                                     </HBox>
                                 </VBox>
                             </VBox>

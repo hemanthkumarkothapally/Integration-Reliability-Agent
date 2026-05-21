@@ -11,7 +11,7 @@ sap.ui.define([
     "sap/m/FlexJustifyContent",
     "sap/m/FlexAlignItems",
     "sap/f/library"
-], function (BaseController, FormattedText, VBox, HBox, ObjectStatus, Avatar, AvatarSize, AvatarColor, MessageBox,FlexJustifyContent, FlexAlignItems, fioriLibrary) {
+], function (BaseController, FormattedText, VBox, HBox, ObjectStatus, Avatar, AvatarSize, AvatarColor, MessageBox, FlexJustifyContent, FlexAlignItems, fioriLibrary) {
     "use strict";
 
     return BaseController.extend("com.cytechies.integration.reliability.incidentclustersui.controller.Chat", {
@@ -61,14 +61,19 @@ sap.ui.define([
 
         _resetToWelcomePage: function () {
             var oJsonModel = this.getModel("chatJSONModel");
+            console.log("oJsonModel before reset:", oJsonModel.getData());
 
             oJsonModel.setProperty("/currentConversationId", null);
             oJsonModel.setProperty("/currentConversationTitle", "New Chat");
             oJsonModel.setProperty("/clusterDataEnabled", true);
+            oJsonModel.setProperty("/allMessagesLoaded", false);
+            oJsonModel.setProperty("/messageSkip", 0);
             this.byId("historyList").removeSelections(true);;
             this.byId("historyPopover").close();
             this.byId("chatContainer").removeAllItems();
             this.byId("welcomePage").setVisible(true);
+            console.log("oJsonModel after reset:", oJsonModel.getData());
+            // this.onAfterRendering();
 
         },
 
@@ -172,7 +177,7 @@ sap.ui.define([
                 oJsonModel.setProperty("/clusterDataEnabled", false);
                 referenceID = this.getView().getModel("headerDetails").getProperty("/ID");
                 let referenceName = this.getView().getModel("headerDetails").getProperty("/errorType");
-                sQuery = `<span style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px 4px 8px;border:0.5px solid #f97316;border-radius:999px;color:#c05407;">🔗 ${referenceName}</span><br /><br/>${sQuery}`;
+                sQuery = `<span style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px 4px 8px;border:0.5px solid #f97316;border-radius:999px;color:#c05407;">🔗${referenceName}</span><br /><br/>${sQuery}`;
             }
 
             this._appendMessage(sQuery, "user", { tokenCount: "Calculating" });
@@ -255,11 +260,14 @@ sap.ui.define([
             console.log("Loading conversation with ID:", sConversationId);
             this.showBusy();
 
-            let oModel = this.getView().getModel("chatModel");
             let oJsonModel = this.getModel("chatJSONModel");
-
             oJsonModel.setProperty("/currentConversationId", sConversationId);
+            oJsonModel.setProperty("/allMessagesLoaded", false);
+            oJsonModel.setProperty("/messageSkip", 0); // tracks how many old messages loaded
+            this._sCurrentConversationId = sConversationId; // store for pagination
+
             this._updateTotalSessionTokens();
+
             let oContainer = this.byId("chatContainer");
             oContainer.removeAllItems();
 
@@ -267,49 +275,108 @@ sap.ui.define([
                 this.byId("welcomePage").setVisible(false);
             }
 
-            let oListBinding = oModel.bindList("/Messages", null, [
-                new sap.ui.model.Sorter("createdAt", false)
-            ], [
-                new sap.ui.model.Filter("conversation_ID", sap.ui.model.FilterOperator.EQ, sConversationId)
-            ]);
-
-            oListBinding.requestContexts(0, 100).then(function (aContexts) {
-                let aMessages = aContexts.map(function (ctx) { return ctx.getObject(); });
-
-                aMessages.sort(function (a, b) {
-                    let timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-                    let timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-
-                    if (timeA === timeB) {
-                        if (a.role === "user" && b.role !== "user") return -1;
-                        if (a.role !== "user" && b.role === "user") return 1;
-                        return 0;
-                    }
-                    return timeA - timeB;
-                });
-
-                aMessages.forEach(function (msg) {
-                    this._appendMessage(msg.content, msg.role, msg);
-                }.bind(this));
-
-                this._scrollToBottom();
-                console.log("Loaded messages:", aMessages);
-            }.bind(this)).catch(function (oError) {
-                this.showToast("Error loading conversation history.");
-            });
+            this._loadMessageBatch(sConversationId, false); // false = append (normal, bottom-up)
             this.hideBusy();
         },
+        _loadMessageBatch: function (sConversationId, bPrepend) {
+    if (this._bLoadingMessages) return;
+    this._bLoadingMessages = true;
 
-        _updateUserTokenCount: function (iCount) {
-            if (this._lastUserTokenStatus && !this._lastUserTokenStatus.bIsDestroyed) {
-                this._lastUserTokenStatus.setText(iCount + " tokens");
-            } else {
-                console.warn("Could not find the last user token status control.");
+    const PAGE_SIZE = 10;
+    let oModel = this.getView().getModel("chatModel");
+    let oJsonModel = this.getModel("chatJSONModel");
+    let nSkip = oJsonModel.getProperty("/messageSkip") || 0;
+
+    let oListBinding = oModel.bindList("/Messages", null, [
+        new sap.ui.model.Sorter("createdAt", true)
+    ], [
+        new sap.ui.model.Filter("conversation_ID", sap.ui.model.FilterOperator.EQ, sConversationId)
+    ]);
+
+    oListBinding.requestContexts(nSkip, PAGE_SIZE).then(function (aContexts) {
+
+        // ✅ Stale check: if conversation changed or reset happened, discard results
+        let sActiveId = oJsonModel.getProperty("/currentConversationId");
+        if (sActiveId !== sConversationId) {
+            console.log("Discarding stale batch for:", sConversationId);
+            return;
+        }
+
+        if (aContexts.length < PAGE_SIZE) {
+            oJsonModel.setProperty("/allMessagesLoaded", true);
+        }
+
+        if (aContexts.length === 0) return;
+
+        oJsonModel.setProperty("/messageSkip", nSkip + aContexts.length);
+
+        let aMessages = aContexts.map(ctx => ctx.getObject());
+
+        aMessages.sort((a, b) => {
+            let tA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+            let tB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+            if (tA === tB) {
+                if (a.role === "user" && b.role !== "user") return -1;
+                if (a.role !== "user" && b.role === "user") return 1;
+                return 0;
+            }
+            return tA - tB;
+        });
+
+        let oContainer = this.byId("chatContainer");
+        let oScroll = this.byId("chatScroll");
+
+        if (bPrepend) {
+            let nOldScrollHeight = oScroll.getDomRef()?.scrollHeight || 0;
+
+            aMessages.forEach((msg, i) => {
+                let oItem = this._buildMessageItem(msg.content, msg.role, msg);
+                oContainer.insertItem(oItem, i);
+            });
+
+            setTimeout(() => {
+                let oDom = oScroll.getDomRef();
+                if (oDom) {
+                    oScroll.scrollTo(0, oDom.scrollHeight - nOldScrollHeight);
+                }
+            }, 50);
+
+        } else {
+            aMessages.forEach(msg => {
+                this._appendMessage(msg.content, msg.role, msg);
+            });
+            this._scrollToBottom();
+        }
+
+    }.bind(this)).catch(() => {
+        this.showToast("Error loading conversation history.");
+    }).finally(() => {
+        this._bLoadingMessages = false;
+    });
+},
+
+        onAfterRendering: function () {
+            // Prevent attaching multiple listeners
+            if (this._scrollListenerAttached) return;
+            this._scrollListenerAttached = true;
+
+            let oScroll = this.byId("chatScroll");
+            let oDom = oScroll?.getDomRef();
+            if (oDom) {
+                oDom.addEventListener("scroll", () => {
+                    if (oDom.scrollTop < 50) {
+                        let oJsonModel = this.getModel("chatJSONModel");
+                        let bAllLoaded = oJsonModel.getProperty("/allMessagesLoaded");
+                        // ✅ Guard: only load if a real conversation is active
+                        if (!bAllLoaded && this._sCurrentConversationId && !this._bLoadingMessages) {
+                            this._loadMessageBatch(this._sCurrentConversationId, true);
+                        }
+                    }
+                });
             }
         },
 
-        _appendMessage: function (sText, sSender, oData, bStream = false) {
-            const oContainer = this.byId("chatContainer");
+        _buildMessageItem: function (sText, sSender, oData, bStream = false) {
 
             const isAssistant = sSender === "assistant";
             if (this.byId("welcomePage")) {
@@ -422,13 +489,200 @@ sap.ui.define([
                     }, 5);
                 }
             }
-
-            oContainer.addItem(oMessageItem);
-
+            return oMessageItem;
+        },
+        _appendMessage: function (sText, sSender, oData, bStream = false) {
+            const oContainer = this.byId("chatContainer");
+            if (this.byId("welcomePage")) {
+                this.byId("welcomePage").setVisible(false);
+            }
+            let oItem = this._buildMessageItem(sText, sSender, oData, bStream);
+            oContainer.addItem(oItem);
             if (!bStream) {
                 this._scrollToBottom();
             }
         },
+
+
+        // _loadConversationMessages: function (sConversationId) {
+        //     console.log("Loading conversation with ID:", sConversationId);
+        //     this.showBusy();
+
+        //     let oModel = this.getView().getModel("chatModel");
+        //     let oJsonModel = this.getModel("chatJSONModel");
+
+        //     oJsonModel.setProperty("/currentConversationId", sConversationId);
+        //     this._updateTotalSessionTokens();
+        //     let oContainer = this.byId("chatContainer");
+        //     oContainer.removeAllItems();
+
+        //     if (this.byId("welcomePage")) {
+        //         this.byId("welcomePage").setVisible(false);
+        //     }
+
+        //     let oListBinding = oModel.bindList("/Messages", null, [
+        //         new sap.ui.model.Sorter("createdAt", false)
+        //     ], [
+        //         new sap.ui.model.Filter("conversation_ID", sap.ui.model.FilterOperator.EQ, sConversationId)
+        //     ]);
+
+        //     oListBinding.requestContexts(0, 100).then(function (aContexts) {
+        //         let aMessages = aContexts.map(function (ctx) { return ctx.getObject(); });
+
+        //         aMessages.sort(function (a, b) {
+        //             let timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        //             let timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+
+        //             if (timeA === timeB) {
+        //                 if (a.role === "user" && b.role !== "user") return -1;
+        //                 if (a.role !== "user" && b.role === "user") return 1;
+        //                 return 0;
+        //             }
+        //             return timeA - timeB;
+        //         });
+
+        //         aMessages.forEach(function (msg) {
+        //             this._appendMessage(msg.content, msg.role, msg);
+        //         }.bind(this));
+
+        //         this._scrollToBottom();
+        //         console.log("Loaded messages:", aMessages);
+        //     }.bind(this)).catch(function (oError) {
+        //         this.showToast("Error loading conversation history.");
+        //     });
+        //     this.hideBusy();
+        // },
+
+        _updateUserTokenCount: function (iCount) {
+            if (this._lastUserTokenStatus && !this._lastUserTokenStatus.bIsDestroyed) {
+                this._lastUserTokenStatus.setText(iCount + " tokens");
+            } else {
+                console.warn("Could not find the last user token status control.");
+            }
+        },
+
+        // _appendMessage: function (sText, sSender, oData, bStream = false) {
+        //     const oContainer = this.byId("chatContainer");
+
+        //     const isAssistant = sSender === "assistant";
+        //     if (this.byId("welcomePage")) {
+        //         this.byId("welcomePage").setVisible(false);
+        //     }
+
+        //     let oMessageItem;
+
+
+        //     if (!isAssistant) {
+        //         let sTokenDisplay;
+
+        //         if (oData?.tokenCount === "Calculating") {
+        //             // Condition 2: Still fetching
+        //             sTokenDisplay = "Calculating...";
+        //         } else if (typeof oData?.tokenCount === 'number') {
+        //             // Condition 1: Success
+        //             sTokenDisplay = oData.tokenCount + " Tokens";
+        //         } else {
+        //             // Condition 3: Failure or no data
+        //             sTokenDisplay = "No Tokens";
+        //         }
+
+        //         const oUserTokenInfo = new ObjectStatus({
+        //             state: "Error",
+        //             text: sTokenDisplay
+        //         });
+        //         this._lastUserTokenStatus = oUserTokenInfo; // Store reference for later updates
+        //         const oUserAvatar = new Avatar({
+        //             src: "sap-icon://person",
+        //             displaySize: AvatarSize.XS,
+        //             backgroundColor: AvatarColor.Accent1
+        //         });
+
+        //         const oUserText = new FormattedText({
+        //             htmlText: `${bStream ? '' : sText}`
+        //         });
+
+        //         oMessageItem = new VBox({
+        //             alignItems: FlexAlignItems.End,
+        //             width: "100%",
+        //             items: [
+        //                 new HBox({
+        //                     width: "100%",
+        //                     justifyContent: FlexJustifyContent.End,
+        //                     alignItems: FlexAlignItems.Start,
+        //                     fitContainer: false,
+        //                     items: [
+        //                         // Wrapped Text inside layout panel container to retain structural width
+        //                         new VBox({
+        //                             items: [oUserText, oUserTokenInfo.addStyleClass("sapUiTinyMarginTop")]
+        //                         }).addStyleClass("userChatBubbleNew sapUiSmallMarginEnd"),
+        //                         oUserAvatar
+        //                     ]
+        //                 }).addStyleClass("sapUiTinyMargin")
+        //             ]
+        //         });
+        //     } else {
+
+        //         console.log("AI response data for message item:", oData);
+
+        //         const oAiTokenInfo =
+        //             new ObjectStatus({
+        //                 state: "Information",
+        //                 text: (oData.tokenCount || "No") + " Tokens"
+        //             });
+
+        //         const oAiAvatar = new Avatar({
+        //             src: "sap-icon://ai",
+        //             displaySize: AvatarSize.XS
+        //         });
+
+        //         const oTextControl = new FormattedText({
+        //             htmlText: `${bStream ? '' : sText}`
+        //         });
+
+        //         oMessageItem = new VBox({
+        //             alignItems: FlexAlignItems.Start,
+        //             width: "100%",
+        //             items: [
+        //                 new HBox({
+        //                     width: "100%",
+        //                     justifyContent: FlexJustifyContent.Start,
+        //                     alignItems: FlexAlignItems.Start,
+        //                     fitContainer: false,
+        //                     items: [
+        //                         oAiAvatar,
+        //                         new VBox({
+        //                             items: [oTextControl,
+        //                                 oAiTokenInfo.addStyleClass("sapUiTinyMarginTop")]
+        //                         }).addStyleClass("aiChatBubbleNew sapUiSmallMarginBegin")
+        //                     ]
+        //                 }).addStyleClass("sapUiTinyMarginBegin"),
+
+        //             ]
+        //         });
+
+
+        //         if (bStream) {
+        //             let i = 0;
+        //             let sCurrentText = "";
+        //             const streamInterval = setInterval(() => {
+        //                 sCurrentText += sText.charAt(i);
+        //                 oTextControl.setHtmlText(`<b>CandyAssist</b><br/>${sCurrentText}`);
+        //                 this._scrollToBottom();
+        //                 i++;
+        //                 if (i >= sText.length) {
+        //                     clearInterval(streamInterval);
+        //                 }
+        //             }, 5);
+        //         }
+        //     }
+
+        //     oContainer.addItem(oMessageItem);
+
+        //     if (!bStream) {
+        //         this._scrollToBottom();
+        //     }
+        // },
+
 
         _scrollToBottom: function () {
             const oScroll = this.byId("chatScroll");
