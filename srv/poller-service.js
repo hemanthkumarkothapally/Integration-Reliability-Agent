@@ -278,151 +278,151 @@ export default cds.service.impl(async function () {
   }
 
 
-  // this.after('CREATE', IncidentClusters, async (data) => {
-  //   console.log("CREATE Event Triggered for IncidentClusters");
-  //   const record = data;
-  //   const cluster_ID = record.ID;
-  //   try {
+  this.after('CREATE', IncidentClusters, async (data) => {
+    console.log("CREATE Event Triggered for IncidentClusters");
+    const record = data;
+    const cluster_ID = record.ID;
+    try {
 
-  //     /* EXISTING RECOMMENDATION */
+      /* EXISTING RECOMMENDATION */
 
-  //     let recommendation =
-  //       await SELECT.one
-  //         .from(ClusterRecommendations)
-  //         .where({
-  //           cluster_ID
-  //         });
+      let recommendation =
+        await SELECT.one
+          .from(ClusterRecommendations)
+          .where({
+            cluster_ID
+          });
 
-  //     /* RETURN EXISTING */
+      /* RETURN EXISTING */
 
-  //     if (recommendation) {
-  //       console.log(
-  //         "Returning cached recommendation"
-  //       );
-  //       return recommendation;
-  //     }
+      if (recommendation) {
+        console.log(
+          "Returning cached recommendation"
+        );
+        return recommendation;
+      }
 
-  //     /* FETCH CLUSTER */
+      /* FETCH CLUSTER */
 
-  //     const cluster =
-  //       await SELECT.one
-  //         .from(IncidentClusters)
-  //         .where({
-  //           ID: cluster_ID
-  //         });
+      const cluster =
+        await SELECT.one
+          .from(IncidentClusters)
+          .where({
+            ID: cluster_ID
+          });
 
-  //     if (!cluster) {
-  //       return req.error(
-  //         404,
-  //         'Cluster not found'
-  //       );
-  //     }
+      if (!cluster) {
+        return req.error(
+          404,
+          'Cluster not found'
+        );
+      }
 
-  //     /*
-  //      * FETCH SAMPLE INCIDENTS
-  //      */
+      /*
+       * FETCH SAMPLE INCIDENTS
+       */
 
-  //     const incidents =
-  //       await SELECT
-  //         .from(Incidents)
-  //         .where({
-  //           cluster_ID
-  //         })
-  //         .orderBy({
-  //           logEnd: 'desc'
-  //         })
-  //         .limit(10);
+      const incidents =
+        await SELECT
+          .from(Incidents)
+          .where({
+            cluster_ID
+          })
+          .orderBy({
+            logEnd: 'desc'
+          })
+          .limit(10);
 
-  //     /*
-  //      * GENERATE AI RECOMMENDATION
-  //      */
+      /*
+       * GENERATE AI RECOMMENDATION
+       */
 
-  //     const aiResult =
-  //       await generateClusterRecommendation({
+      const aiResult =
+        await generateClusterRecommendation({
 
-  //         cluster,
+          cluster,
 
-  //         incidents
-  //       });
+          incidents
+        });
 
-  //     console.log(
-  //       "AI Recommendation:",
-  //       aiResult
-  //     );
+      console.log(
+        "AI Recommendation:",
+        aiResult
+      );
 
-  //     /*
-  //      * STORE RECOMMENDATION
-  //      */
+      /*
+       * STORE RECOMMENDATION
+       */
 
-  //     await INSERT.into(
-  //       ClusterRecommendations
-  //     ).entries({
+      await INSERT.into(
+        ClusterRecommendations
+      ).entries({
 
-  //       cluster_ID,
+        cluster_ID,
 
-  //       rootCause:
-  //         aiResult.recommendation.rootCause,
+        rootCause:
+          aiResult.recommendation.rootCause,
 
-  //       businessImpact:
-  //         aiResult.recommendation.businessImpact,
+        businessImpact:
+          aiResult.recommendation.businessImpact,
 
-  //       remediationSteps:
-  //         JSON.stringify(
-  //           aiResult.recommendation.remediationSteps
-  //         ),
+        remediationSteps:
+          JSON.stringify(
+            aiResult.recommendation.remediationSteps
+          ),
 
-  //       affectedAdapter:
-  //         aiResult.recommendation.affectedAdapter,
+        affectedAdapter:
+          aiResult.recommendation.affectedAdapter,
 
-  //       confidenceScore:
-  //         aiResult.recommendation.confidenceScore,
+        confidenceScore:
+          aiResult.recommendation.confidenceScore,
 
-  //       generatedAt:
-  //         new Date()
-  //     });
+        generatedAt:
+          new Date()
+      });
 
-  //     await INSERT.into(
-  //       TokenUsages
-  //     ).entries({
+      await INSERT.into(
+        TokenUsages
+      ).entries({
 
-  //       cluster_ID,
+        cluster_ID,
 
-  //       ...aiResult.audit
-  //     });
+        ...aiResult.audit
+      });
 
-  //     if (aiResult.playbook_ID) {
-  //       await UPDATE(IncidentClusters)
-  //         .set({
-  //           playbook_ID:
-  //             aiResult.playbook_ID
-  //         })
-  //         .where({
-  //           ID: cluster_ID
-  //         });
-  //     }
-  //     /*
-  //      * RETURN SAVED RECORD
-  //      */
+      if (aiResult.playbook_ID) {
+        await UPDATE(IncidentClusters)
+          .set({
+            playbook_ID:
+              aiResult.playbook_ID
+          })
+          .where({
+            ID: cluster_ID
+          });
+      }
+      /*
+       * RETURN SAVED RECORD
+       */
 
-  //     return await SELECT.one
-  //       .from(ClusterRecommendations)
-  //       .where({
-  //         cluster_ID
-  //       });
+      return await SELECT.one
+        .from(ClusterRecommendations)
+        .where({
+          cluster_ID
+        });
 
-  //   } catch (error) {
+    } catch (error) {
 
-  //     console.error(
-  //       'AI recommendation generation failed:',
-  //       error
-  //     );
+      console.error(
+        'AI recommendation generation failed:',
+        error
+      );
 
-  //     req.error(
-  //       500,
-  //       'Recommendation generation failed'
-  //     );
-  //   }
-  // });
+      req.error(
+        500,
+        'Recommendation generation failed'
+      );
+    }
+  });
 
 
   this.on('getClusterRecommendation', async (req) => {

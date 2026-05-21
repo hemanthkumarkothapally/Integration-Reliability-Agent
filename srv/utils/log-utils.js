@@ -507,10 +507,7 @@ export async function ApiCall(
   }
 }
 
-/**
- * -------------------------------------------------------
- * UPSERT MONITORED ARTIFACTS
- * -------------------------------------------------------
+/* UPSERT MONITORED ARTIFACTS
  */
 
 export async function upsertMonitoredArtifacts(

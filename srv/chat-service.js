@@ -74,7 +74,6 @@ export default cds.service.impl(async function () {
         await srv.run(INSERT.into(ChatSessions).entries(newConv));
         return newConv;
     });
-
     this.on('chat', async (req) => {
         const { conversationId, referenceID, userMessage } = req.data;
 
@@ -190,7 +189,7 @@ export default cds.service.impl(async function () {
             return fallback;
         }
     });
-    this.after(['CREATE', 'UPDATE'], Messages, async (data, req) => {
+    this.after(['CREATE', 'UPDATE','DELETE'], Messages, async (data, req) => {
 
         try {
 
@@ -223,7 +222,7 @@ export default cds.service.impl(async function () {
         }
 
     });
-    this.after(['CREATE', 'UPDATE'], ChatSessions, async (data, req) => {
+    this.after(['CREATE', 'UPDATE','DELETE'], ChatSessions, async (data, req) => {
 
         try {
 
