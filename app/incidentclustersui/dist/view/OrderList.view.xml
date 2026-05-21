@@ -177,7 +177,7 @@
                                 <!-- TOTAL INCIDENTS -->
                                 <!-- ===================================================== -->
 
-                                <f:Card width="100%" semanticRole="ListItem" class="sapUiTinyMarginEnd">
+                                <f:Card width="100%"  semanticRole="ListItem" class="sapUiTinyMarginEnd">
 
                                     <f:header>
 
@@ -213,7 +213,7 @@
 
                                     <f:header>
 
-                                        <card:NumericHeader title="Critical" subtitle="Critical clusters detected" number="{dashboard>/criticalCount}" state="Error" iconSrc="sap-icon://alert" />
+                                        <card:NumericHeader title="Critical" subtitle="Open Critical clusters detected" number="{dashboard>/criticalCount}" state="Error" iconSrc="sap-icon://alert" />
 
 
                                     </f:header>
@@ -226,7 +226,7 @@
                                 <!-- RESOLVED TODAY -->
                                 <!-- ===================================================== -->
 
-                                <f:Card width="100%" semanticRole="ListItem" class="sapUiTinyMarginEnd">
+                                <f:Card width="100%"  semanticRole="ListItem" class="sapUiTinyMarginEnd">
 
                                     <f:header>
 
@@ -241,20 +241,20 @@
                             </layout:content>
                         </layout:Grid>
 
-                        <HBox class="sapUiMediumMarginEnd sapUiSmallMarginBegin" wrap="true" justifyContent="SpaceBetween">
+                        <HBox class="sapUiSmallMarginEnd" justifyContent="SpaceBetween">
 
                             <!-- ===================================================== -->
                             <!-- DONUT CHART CARD -->
                             <!-- ===================================================== -->
 
-                            <f:Card width="100%">
+                            <f:Card width="100%" semanticRole="ListItem" class="sapUiTinyMarginEnd">
                                 <f:layoutData>
                                     <FlexItemData growFactor=".5" baseSize="0"></FlexItemData>
                                 </f:layoutData>
 
                                 <f:header>
 
-                                    <card:Header title="Incidents by ErrorType" subtitle="Current distribution" iconSrc="sap-icon://donut-chart" />
+                                    <card:Header title="Incidents by ErrorType" subtitle="Top 5 Clusters in the last 24 hours" iconSrc="sap-icon://donut-chart" />
 
                                 </f:header>
 
@@ -300,7 +300,7 @@
 
 
 
-                            <f:Card width="100%" class="sapUiSmallMarginBegin">
+                            <f:Card width="100%" semanticRole="ListItem" class="sapUiSmallMarginBegin">
                                 <f:layoutData>
                                     <FlexItemData growFactor=".5" baseSize="0"></FlexItemData>
                                 </f:layoutData>
@@ -376,7 +376,7 @@
                                     <IconTabFilter key="ALL" text="All" count="{/IncidentClusters/$count}" iconColor="Neutral" icon="sap-icon://list" />
 
 
-                                    <IconTabFilter key="CRITICAL" text="Critical" count="{path: '/IncidentClusters/$count', parameters: {$filter: 'severity eq \'CRITICAL\''}}" icon="sap-icon://message-error" iconColor="Negative" />
+                                    <IconTabFilter key="CRITICAL" text="Critical" count="{path: '/IncidentClusters/$count', parameters: {$filter: 'severity eq \'CRITICAL\''}}" icon="sap-icon://error" iconColor="Negative" />
 
 
                                     <IconTabFilter key="HIGH" text="High" count="{path: '/IncidentClusters/$count', parameters: {$filter: 'severity eq \'HIGH\''}}" icon="sap-icon://alert" iconColor="Critical" />
@@ -387,7 +387,7 @@
 
 
 
-                                    <IconTabFilter key="LOW" text="Low" count="{path: '/IncidentClusters/$count', parameters: {$filter: 'severity eq \'LOW\''}}" icon="sap-icon://accept" iconColor="Positive" />
+                                    <IconTabFilter key="LOW" text="Low" count="{path: '/IncidentClusters/$count', parameters: {$filter: 'severity eq \'LOW\''}}" icon="sap-icon://sys-help-2" iconColor="Positive" />
 
                                 </items>
 

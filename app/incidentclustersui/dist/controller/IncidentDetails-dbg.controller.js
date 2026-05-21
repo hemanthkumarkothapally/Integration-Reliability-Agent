@@ -1,34 +1,35 @@
 sap.ui.define([
-    "sap/ui/core/mvc/Controller",
+    "./BaseController",
     "sap/ui/model/json/JSONModel",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
     "sap/f/library",
-    "../model/formatter"
-], (Controller, JSONModel, Filter, FilterOperator, fioriLibrary, formatter) => {
+    "../model/formatter",
+    "sap/m/MessageBox",
+], (BaseController, JSONModel, Filter, FilterOperator, fioriLibrary, formatter, MessageBox) => {
     "use strict";
- 
- 
-    return Controller.extend("com.cytechies.integration.reliability.incidentclustersui.controller.IncidentDetails", {
+
+
+    return BaseController.extend("com.cytechies.integration.reliability.incidentclustersui.controller.IncidentDetails", {
         formatter: formatter,
         onInit() {
- 
+
         },
         onNavBack: function () {
- 
+
             this.getOwnerComponent()
                 .getRouter()
                 .navTo("RouteOrderList");
- 
+
         },
         onAipress: function () {
             // Navigate up to the FlexibleColumnLayout instance
             var oFCL = this.oView.getParent().getParent();
- 
+
             // Ensure sap.f.LayoutType is available in your controller scope
             // (Usually imported as fioriLibrary or sap.f.LayoutType)
             var sCurrentLayout = oFCL.getLayout();
- 
+
             if (sCurrentLayout === sap.f.LayoutType.OneColumn) {
                 // If it is closed, expand to two columns
                 oFCL.setLayout(sap.f.LayoutType.TwoColumnsBeginExpanded);
@@ -39,38 +40,102 @@ sap.ui.define([
                 console.log("Closing chat side panel");
             }
         },
- 
-        // onAipress() {
-        //     // Safely get the FCL directly by the ID you gave it in the XML view
-        //     var oFCL = this.getView().byId("flexibleColumnLayout");
- 
-        //     if (!oFCL) {
-        //         console.error("Could not find FlexibleColumnLayout. Check the ID in your XML view.");
-        //         return;
-        //     }
- 
-        //     var sCurrentLayout = oFCL.getLayout();
- 
-        //     // Check if the FCL is currently showing two columns
-        //     if (sCurrentLayout === fioriLibrary.LayoutType.TwoColumnsMidExpanded ||
-        //         sCurrentLayout === fioriLibrary.LayoutType.TwoColumnsBeginExpanded) {
- 
-        //         // 1. It is already open -> Close it
-        //         // oFCL.setLayout(fioriLibrary.LayoutType.OneColumn);
- 
-        //         oFCL.setLayout(fioriLibrary.LayoutType.OneColumn);
-        //         console.log("Closing chat");
- 
-        //     } else {
- 
-        //         // 2. It is closed -> Open it
-        //         oFCL.setLayout(fioriLibrary.LayoutType.TwoColumnsBeginExpanded);
-        //         console.log("Opening chat");
-        //     }
-        // },
- 
- 
- 
+        onResolve: async function () {
+
+            this.showBusy();
+
+            try {
+
+                const sID =
+                    this.getModel("globalModel")
+                        .getProperty("/cluster_id");
+
+                const oModel =
+                    this.getModel();
+
+                const oContext =
+                    oModel.bindContext(
+                        `/IncidentClusters('${sID}')`
+                    );
+
+                await oContext.requestObject();
+
+                const oBoundContext =
+                    oContext.getBoundContext();
+
+                oBoundContext.setProperty(
+                    "status",
+                    "RESOLVED"
+                );
+
+                await oModel.submitBatch(
+                    "$auto"
+                );
+
+                // Update JSON Model
+                this.getView().getModel("headerDetails")
+                    .setProperty(
+                        "/status",
+                        "RESOLVED"
+                    );
+
+                MessageBox.success(
+                    "Incident resolved successfully"
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "Resolve Failed",
+                    error
+                );
+
+                MessageBox.error(
+                    "Failed to resolve incident"
+                );
+
+            } finally {
+
+                this.hideBusy();
+
+            }
+
+        },
+
+        async Rediagnose() {
+            this.showBusy();
+            try {
+
+                const oModel = this.getModel();
+                const sID =
+                    this.getModel("globalModel")
+                        .getProperty("/cluster_id");
+
+                const oResponse =
+                    await oModel.bindContext(
+                        `/onReDiagnoseIncidentCluster(cluster_ID='${sID}')`
+                    ).requestObject();
+console.log("Re-diagnose response:", oResponse);
+                this.showToast(
+                    "Re-diagnose successful"
+                );
+
+            }
+            catch (error) {
+
+                this.showToast(
+                    "Failed to re-diagnose incident"
+                );
+
+            } finally {
+                this.hideBusy();
+                this.resetDetailsPage(sID);
+
+            }
+        },
+
+
+
+
     });
 });
- 
