@@ -102,6 +102,38 @@ sap.ui.define([
 
         },
 
+        async Rediagnose() {
+            this.showBusy();
+            try {
+
+                const oModel = this.getModel();
+                const sID =
+                    this.getModel("globalModel")
+                        .getProperty("/cluster_id");
+
+                const oResponse =
+                    await oModel.bindContext(
+                        `/onReDiagnoseIncidentCluster(cluster_ID='${sID}')`
+                    ).requestObject();
+console.log("Re-diagnose response:", oResponse);
+                this.showToast(
+                    "Re-diagnose successful"
+                );
+
+            }
+            catch (error) {
+
+                this.showToast(
+                    "Failed to re-diagnose incident"
+                );
+
+            } finally {
+                this.hideBusy();
+                this.resetDetailsPage(sID);
+
+            }
+        },
+
 
 
 

@@ -46,12 +46,12 @@
                     <Page id="chatPage" showHeader="true" backgroundDesign="Transparent">
                         <customHeader>
                             <Toolbar id="_IDGenToolbar">
-                                <Title id="_IDGenTitle1" text="{= ${appView>/currentConversationTitle} || 'New Chat' }" class="sapUiSmallMarginBegin" wrapping="false" />
+                                <Title id="_IDGenTitle1" text="{= ${chatJSONModel>/currentConversationTitle} || 'New Chat' }" class="sapUiSmallMarginBegin" wrapping="false" />
                                 <ToolbarSpacer id="_IDGenToolbarSpacer1" />
 
                                 <!-- Token Display: Only visible if a conversation is selected -->
-                                <!-- <HBox alignItems="Center" visible="{= ${appView>/currentConversationId} !== null }"> -->
-                                <ObjectStatus id="_IDGenObjectStatus10" text="{= (${appView>/currentConversationTokens} || 'No') + ' Tokens' }" state="Success" class="sapUiSmallMarginEnd" visible="{= ${appView>/currentConversationId} !== null }" />
+                                <!-- <HBox alignItems="Center" visible="{= ${chatJSONModel>/currentConversationId} !== null }"> -->
+                                <ObjectStatus id="_IDGenObjectStatus10" text="{= (${chatJSONModel>/currentConversationTokens} || 'No') + ' Tokens' }" state="Success" class="sapUiSmallMarginEnd" visible="{= ${chatJSONModel>/currentConversationId} !== null }" />
                                 <Button id="_IDGenButton" icon="sap-icon://delete" type="Reject" press=".onDeleteConversation" tooltip="Delete Chat" />
                                 <!-- </HBox> -->
                             </Toolbar>
@@ -84,9 +84,9 @@
                                     </HBox>
                                 </ScrollContainer>
                                 <VBox id="_IDGenVBox7" class="sapUiSmallMargin" backgroundDesign="Transparent">
-                                    <Button id="_IDGenToggleButton" type="Ghost" icon="sap-icon://add-process" tooltip="Click to add Incident Cluster Data." visible="{= !${appView>/clusterDataEnabled} }" press=".onToggleClusterData" class="sapUiTinyMarginEnd" />
+                                    <Button id="_IDGenToggleButton" type="Ghost" icon="sap-icon://add-process" tooltip="Click to add Incident Cluster Data." visible="{= !${chatJSONModel>/clusterDataEnabled} }" press=".onToggleClusterData" class="sapUiTinyMarginEnd" />
                                     <HBox id="_IDGenHBox7" alignItems="Center">
-                                        <Button id="processButton" press=".onToggleClusterData" icon="sap-icon://process" type="Accept" tooltip="Incident Cluster Data is active. Click to deactivate." visible="{appView>/clusterDataEnabled}" class="sapUiTinyMarginEnd" />
+                                        <Button id="processButton" press=".onToggleClusterData" icon="sap-icon://process" type="Accept" tooltip="Incident Cluster Data is active. Click to deactivate." visible="{chatJSONModel>/clusterDataEnabled}" class="sapUiTinyMarginEnd" />
                                         <FlexBox id="_IDGenHBox" width="100%" alignItems="End" wrap="Wrap">
                                            
                                             <TextArea id="chatInput1" growing="true" growingMaxLines="6" width="100%" placeholder="Ask about errors, clusters, flows, or remediation... (Shift+Enter for new line)">

@@ -129,6 +129,12 @@
         "settings": {
           "data": "model/globalmodel.json"
         }
+      },
+       "chatJSONModel": {
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {
+          "data": "model/globalmodel.json"
+        }
       }
     },
     "resources": {

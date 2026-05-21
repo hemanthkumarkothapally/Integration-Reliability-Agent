@@ -387,7 +387,7 @@
 
 
 
-                                    <IconTabFilter key="LOW" text="Low" count="{path: '/IncidentClusters/$count', parameters: {$filter: 'severity eq \'LOW\''}}" icon="sap-icon://settings" iconColor="Positive" />
+                                    <IconTabFilter key="LOW" text="Low" count="{path: '/IncidentClusters/$count', parameters: {$filter: 'severity eq \'LOW\''}}" icon="sap-icon://sys-help-2" iconColor="Positive" />
 
                                 </items>
 
