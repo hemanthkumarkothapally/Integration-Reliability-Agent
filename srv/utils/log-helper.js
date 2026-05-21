@@ -186,35 +186,24 @@ export async function runPoll({
       });
 
       console.log("Enriched Records Count:", enriched.length);
-
       /* EXISTING INCIDENTS */
-
       console.log("Fetching existing incidents...");
-
       const existing =
         await SELECT.from(Incidents)
           .columns('messageGuid');
-
       console.log("Existing Incidents Count:", existing.length);
-
       const existingSet =
         new Set(existing.map(e => e.messageGuid));
-
       const newLogs =
         enriched.filter(l => !existingSet.has(l.messageGuid));
-
       console.log("New Logs Count:", newLogs.length);
-
       /* INSERT INCIDENTS */
-
       if (newLogs.length) {
         console.log("Inserting incidents...");
         await INSERT.into(Incidents).entries(newLogs);
         console.log(`✅ Inserted ${newLogs.length} incidents`);
       }
-
       /* UPDATE MONITORED ARTIFACTS */
-
       console.log("Updating MonitoredArtifacts...");
       await upsertMonitoredArtifacts(
         MonitoredArtifacts,
