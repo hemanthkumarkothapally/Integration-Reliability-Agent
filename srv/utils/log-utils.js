@@ -516,6 +516,9 @@ export async function upsertMonitoredArtifacts(
   IS_API
 ) {
   
+  IS_API = await cds.connect.to('IS_RUNTIME_API');
+      console.log("Connected to IS_RUNTIME_API");
+      
   if (!logs.length)
     return;
 
