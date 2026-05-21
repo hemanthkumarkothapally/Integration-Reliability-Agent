@@ -99,15 +99,13 @@
                         }"/>
                     </layout:VerticalLayout>
 
-                    <layout:VerticalLayout id="_IDGenVerticalLayout2" class="sapUiSmallMarginBeginEnd">
+                    <!-- <layout:VerticalLayout id="_IDGenVerticalLayout2" class="sapUiSmallMarginBeginEnd">
 
                         <m:ObjectStatus id="_IDGenObjectStatus6" title="Created By" text="{headerDetails>/createdBy}" />
 
                         <m:ObjectStatus id="_IDGenObjectStatus7" title="Modified By" text="{headerDetails>/modifiedBy}" />
 
-                        <!-- <m:ObjectStatus title="Playbook ID" text="{headerDetails>/playbookId}" /> -->
-
-                    </layout:VerticalLayout>
+                    </layout:VerticalLayout> -->
                 </layout:HorizontalLayout>
                 <layout:VerticalLayout id="_IDGenVerticalLayout3" class="sapUiSmallMarginBeginEnd">
                     <m:ObjectNumber id="_IDGenObjectNumber" number="{= ${headerDetails>/totalTokenUsage} ? ${headerDetails>/totalTokenUsage} : 0 }" unit="Tokens used" emphasized="true" state="Information" class="sapMObjectNumberLarge"/>
@@ -220,7 +218,9 @@
 
             </ObjectPageSection>
 
-            <ObjectPageSection id="_IDGenObjectPageSection3" title="Underlying Incidents" showTitle="false">
+
+
+            <ObjectPageSection title="Associated IFlows" showTitle="false">
 
                 <subSections>
 
@@ -231,20 +231,20 @@
                             <m:VBox id="_IDGenVBox4" class="sapUiSmallMargin">
 
                                 <m:HBox id="_IDGenHBox5" alignItems="Center" class="sapUiTinyMarginBottom">
-                                    <m:Avatar id="_IDGenAvatar4" src="sap-icon://incident" displaySize="XS" class="sapUiTinyMarginEnd" />
-                                    <m:Title id="_IDGenTitle10" text="Underlying Incidents ({headerDetails>/incidentCount})" level="H5" />
+                                    <m:Avatar id="_IDGenAvatar4" src="sap-icon://connected" displaySize="XS" class="sapUiTinyMarginEnd" />
+                                    <m:Title id="_IDGenTitle10" text="Associated IFlows ({= ${headerDetails>/monitoredArtifacts}.length })" level="H5" />
 
                                 </m:HBox>
-                                <m:VBox id="_IDGenVBox5">
+                                <!-- <m:VBox id="_IDGenVBox5">
                                     <m:Text id="_IDGenText12" text="{incidentsModel>/incidents/0/errorMessage}" wrapping="true" />
-                                </m:VBox>
+                                </m:VBox> -->
 
-                                <m:Table  id="idIncidentTable" growing="true" growingScrollToLoad="false" growingThreshold="5" mode="None" items="{headerDetails>/monitoredArtifacts}">
-                                    <m:headerToolbar>
+                                <m:Table id="idIncidentTable" growing="true" growingScrollToLoad="false" growingThreshold="5" mode="None" items="{headerDetails>/monitoredArtifacts}">
+                                    <!-- <m:headerToolbar>
                                         <m:OverflowToolbar id="_IDGenOverflowToolbar2">
-                                            <m:Title id="_IDGenTitle11" text="Iflow Details"/>
+                                            <m:Title id="_IDGenTitle11" level="H2" titleStyle="H2" text="Iflow Details"/>
                                         </m:OverflowToolbar>
-                                    </m:headerToolbar>
+                                    </m:headerToolbar> -->
 
                                     <m:columns>
 
@@ -253,14 +253,14 @@
                                         </m:Column>
 
                                         <m:Column id="_IDGenColumn1" minScreenWidth="Tablet" demandPopin="true">
-                                            <m:Text id="_IDGenText2" text="Namespace"/>
+                                            <m:Text id="_IDGenText2" text="ID"/>
                                         </m:Column>
 
-                                        <m:Column id="_IDGenColumn2" minScreenWidth="Tablet"  demandPopin="true">
+                                        <m:Column id="_IDGenColumn2" minScreenWidth="Tablet" demandPopin="true">
                                             <m:Text id="_IDGenText3" text="Last Poll"/>
                                         </m:Column>
 
-                                        <m:Column id="_IDGenColumn3" minScreenWidth="Tablet"  demandPopin="true">
+                                        <m:Column id="_IDGenColumn3" minScreenWidth="Tablet" demandPopin="true">
                                             <m:Text id="_IDGenText4" text="Status"/>
                                         </m:Column>
 
@@ -271,16 +271,12 @@
                                         <m:ColumnListItem id="_IDGenColumnListItem">
 
                                             <m:cells>
-
+                                                <!-- ID -->
+                                                <m:Text id="_IDGenText7" text="{headerDetails>artifact/ID}"/>
                                                 <!-- iFlow Name -->
                                                 <m:Text id="_IDGenText5" text="{headerDetails>artifact/iFlowName}"/>
-
-                                                <!-- Namespace -->
-                                                <m:Text id="_IDGenText7" text="{headerDetails>artifact/namespace}"/>
-
                                                 <!-- Last Poll -->
-                                                <m:Text id="_IDGenText8"
-                                                 text="{
+                                                <m:Text id="_IDGenText8" text="{
                                                         path: 'headerDetails>artifact/lastPollTimestamp',
                                                         formatter: '.formatter.formatDateTime'
                                                     }" />
@@ -295,11 +291,7 @@
                                     </m:items>
 
                                 </m:Table>
-                                <!-- <m:List id="idErrorMessageList" items="{path: 'incidentsModel>/incidents'}" growing="true" growingScrollToLoad="true" noDataText="No incidents found">
- 
-                                    <m:StandardListItem title="{incidentsModel>errorMessage}" description="{incidentsModel>messageGuid}"/>
- 
-                                </m:List> -->
+
 
                             </m:VBox>
 
@@ -310,6 +302,65 @@
                 </subSections>
 
             </ObjectPageSection>
+
+            <ObjectPageSection title="Underlying Incidents" showTitle="false">
+
+                <subSections>
+
+                    <ObjectPageSubSection >
+
+                        <blocks>
+
+                            <m:VBox class="sapUiSmallMargin">
+
+                                <m:HBox alignItems="Center" class="sapUiTinyMarginBottom">
+                                    <m:Avatar src="sap-icon://incident" displaySize="XS" class="sapUiTinyMarginEnd" />
+                                    <m:Title text="Underlying Incidents ({headerDetails>/incidentCount})" level="H5" />
+
+                                </m:HBox>
+
+                                <m:VBox id="_IDGenVBox5">
+                                    <m:Title text="Raw Error Message" level="H2" titleStyle="H2" class="sapUiTinyMarginBottom"/>
+                                    <!-- <m:ObjectStatus text="Raw Error Message" state="Error" /> -->
+                                    <m:Text id="_IDGenText12" text="    - {incidentsModel>/incidents/0/errorMessage}" wrapping="true" class="sapUiTinyMarginBegin"/>
+                                </m:VBox>
+
+
+
+                                <!-- <m:Table items="{headerDetails>/incidents}" growing="true" growingScrollToLoad="false" growingThreshold="5" mode="None">
+
+                                    <m:columns>
+                                        <m:Column>
+                                            <m:Text text="iFlow Name"/>
+                                        </m:Column>
+                                        <m:Column>
+                                            <m:Text text="Error Message"/>
+                                        </m:Column>
+                                        <m:Column>
+                                            <m:Text text="Status"/>
+                                        </m:Column>
+                                    </m:columns>
+                                    <m:items>
+                                        <m:ColumnListItem>
+                                            <m:cells>
+                                                <m:Text text="{headerDetails>iFlowName}"/>
+                                                <m:ExpandableText text="{headerDetails>errorMessage}"/>
+                                                <m:ObjectStatus text="{headerDetails>status}" state="{= ${headerDetails>status} === 'FAILED' ? 'Error' : 'None' }"/>
+                                            </m:cells>
+                                        </m:ColumnListItem>
+                                    </m:items>
+                                </m:Table> -->
+
+                            </m:VBox>
+
+                        </blocks>
+
+                    </ObjectPageSubSection>
+
+                </subSections>
+
+            </ObjectPageSection>
+
 
             <ObjectPageSection id="_IDGenObjectPageSection4" title="Playbook" visible="true" showTitle="false">
 
@@ -365,9 +416,9 @@
 
                 <m:ToolbarSpacer id="_IDGenToolbarSpacer3" />
 
-                <m:Button id="_IDGenButton12" text="Re-diagnose" type="Attention" icon="sap-icon://ai" press="Re-diagnose" />
+                <m:Button id="_IDGenButton12" visible="false" text="Re-diagnose" type="Attention" icon="sap-icon://ai" press="Rediagnose" />
 
-                <m:Button id="_IDGenButton13" text="Resolve" type="Accept" icon="sap-icon://complete" press="onResolve"     enabled="{= ${headerDetails>/status} === 'OPEN' }" />
+                <m:Button id="_IDGenButton13" text="Resolve" type="Accept" icon="sap-icon://complete" press="onResolve" enabled="{= ${headerDetails>/status} === 'OPEN' }" />
 
             </m:OverflowToolbar>
 

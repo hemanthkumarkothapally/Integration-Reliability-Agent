@@ -3,9 +3,9 @@ import { generateClusterRecommendation } from './utils/ai-recommendation-util.js
 import { runPoll } from './utils/log-helper.js';
 export default cds.service.impl(async function () {
 
-    const { IncidentClusters, ClusterRecommendations ,Playbooks, MonitoredArtifacts, ClusterArtifacts} = this.entities;
+    const { IncidentClusters, Recommendations ,Playbooks, MonitoredArtifacts, ClusterArtifacts} = this.entities;
 
-    const { Incidents } = cds.entities('com.cytechies.integration.reliability');
+    const { Incidents,TokenUsages } = cds.entities('com.cytechies.integration.reliability');
     this.after('READ', IncidentClusters, async (data) => {  // ← add async
 
         // const records = Array.isArray(data) ? data : [data];
@@ -379,7 +379,7 @@ this.on('onReDiagnoseIncidentCluster', async (req) => {
       /*
        * STORE RECOMMENDATION
        */
-      await UPDATE(ClusterRecommendations).where({ cluster_ID }
+      await UPDATE(Recommendations).where({ cluster_ID }
       ).set({ 
         rootCause:
           aiResult.recommendation.rootCause,
@@ -410,7 +410,7 @@ this.on('onReDiagnoseIncidentCluster', async (req) => {
         ...aiResult.audit
       });
       return await SELECT.one
-        .from(ClusterRecommendations)
+        .from(Recommendations)
         .where({
           cluster_ID
         });
