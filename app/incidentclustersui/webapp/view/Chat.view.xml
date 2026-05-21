@@ -88,8 +88,8 @@
                                     <HBox id="_IDGenHBox7" alignItems="Center">
                                         <Button id="processButton" press=".onToggleClusterData" icon="sap-icon://process" type="Accept" tooltip="Incident Cluster Data is active. Click to deactivate." visible="{chatJSONModel>/clusterDataEnabled}" class="sapUiTinyMarginEnd" />
                                         <FlexBox id="_IDGenHBox" width="100%" alignItems="End" wrap="Wrap">
-                                           
-                                            <TextArea id="chatInput1" growing="true" growingMaxLines="6" width="100%" placeholder="Ask about errors, clusters, flows, or remediation... (Shift+Enter for new line)">
+
+                                            <TextArea id="chatInput1" growing="true" growingMaxLines="6" width="100%" placeholder="{= ${chatJSONModel>/clusterDataEnabled} ? &apos;🔗 Cluster context active — what would you like to know?&apos; : &apos;Ask about errors, clusters, flows, or remediation... (Shift+Enter for new line)&apos;}">
                                                 <layoutData>
                                                     <FlexItemData id="_IDGenFlexItemData" growFactor="1" />
                                                 </layoutData>
