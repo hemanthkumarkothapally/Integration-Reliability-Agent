@@ -5,7 +5,6 @@ using { com.cytechies.integration.reliability as IRA } from '../db/schema';
 service ChatService {
     entity ChatSessions as projection on IRA.ChatSessions
     order by createdAt desc;
-
     entity Messages          as projection on IRA.Messages;
 
   action createConversation(
