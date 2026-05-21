@@ -25,7 +25,7 @@
                 </expandedHeading>
 
                 <actions>
-                    <m:Button id="_IDGenButton10" icon="sap-icon://ai" type="Ghost" press=".onAipress" tooltip="AI Assistant"></m:Button>
+                    <m:Button id="_IDGenButton10" class="aiButton" icon="sap-icon://ai" type="Ghost" press=".onAipress" tooltip="AI Assistant"></m:Button>
                 </actions>
 
                 <!-- SNAPPED -->
@@ -253,7 +253,7 @@
                                         </m:Column>
 
                                         <m:Column id="_IDGenColumn1" minScreenWidth="Tablet" demandPopin="true">
-                                            <m:Text id="_IDGenText2" text="ID"/>
+                                            <m:Text id="_IDGenText2" text="Type"/>
                                         </m:Column>
 
                                         <m:Column id="_IDGenColumn2" minScreenWidth="Tablet" demandPopin="true">
@@ -271,10 +271,8 @@
                                         <m:ColumnListItem id="_IDGenColumnListItem">
 
                                             <m:cells>
-                                                <!-- ID -->
-                                                <m:Text id="_IDGenText7" text="{headerDetails>artifact/ID}"/>
-                                                <!-- iFlow Name -->
                                                 <m:Text id="_IDGenText5" text="{headerDetails>artifact/iFlowName}"/>
+                                                <m:Text id="_IDGenText7" text="{headerDetails>artifact/namespace}"/>
                                                 <!-- Last Poll -->
                                                 <m:Text id="_IDGenText8" text="{
                                                         path: 'headerDetails>artifact/lastPollTimestamp',
@@ -315,12 +313,12 @@
 
                                 <m:HBox alignItems="Center" class="sapUiTinyMarginBottom">
                                     <m:Avatar src="sap-icon://incident" displaySize="XS" class="sapUiTinyMarginEnd" />
-                                    <m:Title text="Underlying Incidents ({headerDetails>/incidentCount})" level="H5" />
+                                    <m:Title text="Underlying Incidents ({headerDetails>/incidentCount})"  />
 
                                 </m:HBox>
 
                                 <m:VBox id="_IDGenVBox5">
-                                    <m:Title text="Raw Error Message" level="H2" titleStyle="H2" class="sapUiTinyMarginBottom"/>
+                                    <m:Title text="Raw Error Message" level="H4" titleStyle="H4" class="sapUiTinyMarginBottom"/>
                                     <!-- <m:ObjectStatus text="Raw Error Message" state="Error" /> -->
                                     <m:Text id="_IDGenText12" text="    - {incidentsModel>/incidents/0/errorMessage}" wrapping="true" class="sapUiTinyMarginBegin"/>
                                 </m:VBox>
@@ -375,13 +373,13 @@
                                 <!-- Section Header: Clean spacing and bold title styling -->
                                 <m:HBox id="_IDGenHBox6" alignItems="Center" class="sapUiSmallMarginBottom">
                                     <m:Avatar id="_IDGenAvatar5" src="sap-icon://education" displaySize="XS" displayShape="Square" class="sapUiTinyMarginEnd" />
-                                    <m:Title id="_IDGenTitle12" text="Playbook" level="H4" titleStyle="H4" />
+                                    <m:Title id="_IDGenTitle12" text="Playbook" level="H5" />
                                 </m:HBox>
 
                                 <!-- Main Title Card: Prominent, distinct header for the playbook name -->
                                 <m:VBox id="_IDGenVBox9">
                                     <m:HBox id="_IDGenHBox8" alignItems="Center">
-                                        <m:Title id="_IDGenTitle" text="{headerDetails>/playbook/title}" level="H2" titleStyle="H2"/>
+                                        <m:Title id="_IDGenTitle" text="{headerDetails>/playbook/title}" level="H4" titleStyle="H4"/>
                                         <m:ObjectStatus class="sapUiSmallMarginBegin" id="_IDGenObjectStatus8" text="{headerDetails>/playbook/severity}" inverted="true" state="{= ${headerDetails>/playbook/severity} === 'CRITICAL' ? 'Error' : ${headerDetails>/playbook/severity} === 'HIGH' ? 'Warning' : ${headerDetails>/playbook/severity} === 'MEDIUM' ? 'Information' : ${headerDetails>/playbook/severity} === 'LOW' ? 'Success' : 'None' }" />
                                     </m:HBox>
 
