@@ -68,7 +68,7 @@
 		}
 	},
 	"sap.ui5": {
-		"flexEnabled": true,
+		"flexEnabled": false,
 		"dependencies": {
 			"minUI5Version": "1.147.2",
 			"libs": {
@@ -117,7 +117,28 @@
 					"earlyRequests": true
 				}
 			},
+			"chart": {
+				"type": "sap.ui.model.json.JSONModel",
+				"settings": {},
+				"preload": false
+			},
+			"topErrors": {
+				"type": "sap.ui.model.json.JSONModel",
+				"settings": {},
+				"preload": false
+			},
+			"dashboard": {
+				"type": "sap.ui.model.json.JSONModel",
+				"settings": {},
+				"preload": false
+			},
 			"globalModel": {
+				"type": "sap.ui.model.json.JSONModel",
+				"settings": {
+					"data": "model/globalmodel.json"
+				}
+			},
+			"chatJSONModel": {
 				"type": "sap.ui.model.json.JSONModel",
 				"settings": {
 					"data": "model/globalmodel.json"

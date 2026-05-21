@@ -135,7 +135,7 @@ sap.ui.define([
         onSuggestionPress: function (oEvent) {
             const sText = oEvent.getSource().getText();
 
-            const oInput = this.byId("chatInput");
+            const oInput = this.byId("chatInput1");
             oInput.setValue(sText);
         },
 
