@@ -51,14 +51,15 @@ export async function upsertClusters(Incidents,IncidentClusters,Playbooks,Monito
             console.log("Updating Existing Cluster");
             const newCount = existingCluster.incidentCount + c.incidentCount;
   
-            await UPDATE(IncidentClusters)
+            await srv.run(UPDATE(IncidentClusters)
               .set({
                 incidentCount: newCount,
                 lastSeen: c.lastSeen,
+                status: 'OPEN',
                 severity: calculateSeverity(newCount),
                 severityCriticality: mapSeverityCriticality(newCount)
               })
-              .where({ ID: existingCluster.ID });
+              .where({ ID: existingCluster.ID }));
   
             // Link incidents to existing cluster
             await UPDATE(Incidents)

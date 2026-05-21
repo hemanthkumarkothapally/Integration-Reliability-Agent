@@ -95,7 +95,7 @@ export default cds.service.impl(async function () {
 
       /* CPI logs Filter */
 
-      const filter = `Status eq 'FAILED' and LogEnd gt datetime'${lastPollTimestamp}'`;
+      const filter = `Status eq 'FAILED' and LogEnd gt datetime'2026-05-21T01:36:36.594'`;
 
       console.log("Generated Filter:", filter);
 
@@ -278,7 +278,7 @@ export default cds.service.impl(async function () {
   }
 
 
-  this.after('CREATE', IncidentClusters, async (data) => {
+  this.after(['CREATE','UPDATE'], IncidentClusters, async (data) => {
     console.log("CREATE Event Triggered for IncidentClusters");
     const record = data;
     const cluster_ID = record.ID;
