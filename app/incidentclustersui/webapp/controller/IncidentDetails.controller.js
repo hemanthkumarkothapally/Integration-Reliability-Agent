@@ -13,7 +13,7 @@ sap.ui.define([
     return BaseController.extend("com.cytechies.integration.reliability.incidentclustersui.controller.IncidentDetails", {
         formatter: formatter,
         onInit() {
-
+            
         },
         onNavBack: function () {
 

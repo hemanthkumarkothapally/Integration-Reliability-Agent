@@ -5,12 +5,72 @@
     xmlns:core="sap.ui.core" displayBlock="true">
 
     <mvc:dependents>
-        <ResponsivePopover id="historyPopover" title="Chat History" placement="Bottom" contentWidth="auto">
+        <ResponsivePopover id="clusterDataPopover" placement="Top" showHeader="false" contentWidth="auto">
+            <content>
+                <VBox class="sapUiTinyMargin">
+                    <!-- <Button text="Attach Cluster" type="Ghost" icon="sap-icon://add-process" tooltip="{i18n>cluster.toggle.attach.tooltip}" visible="{= !${chatJSONModel>/clusterDataEnabled} }" press=".onToggleClusterData" width="100%" /> -->
+                    <Button text="Select Cluster" type="Ghost" icon="sap-icon://add-process" tooltip="{i18n>cluster.toggle.attach.tooltip}" visible="{= !${chatJSONModel>/clusterDataEnabled} }" press=".onSelectClusterData" width="100%" />
+
+                    <Button text="Upload File" type="Ghost" icon="sap-icon://attachment" tooltip="Insert Image or Document" press=".onUploadFilePress" width="100%" class="sapUiTinyMarginBottom" />
+
+                    <Button text="Voice Input" type="Ghost" icon="sap-icon://microphone" tooltip="Record Audio" press=".onVoiceInputPress" width="100%" />
+
+                </VBox>
+            </content>
+        </ResponsivePopover>
+
+        <ResponsivePopover id="historyPopover" title="{i18n>history.popover.title}" placement="Bottom" contentWidth="auto">
             <content>
                 <List id="historyList" items="{chatModel>/ChatSessions}" mode="SingleSelectMaster" selectionChange=".onConversationSelect">
-
+                    <headerToolbar>
+                        <Toolbar>
+                            <SearchField id="historySearchField" width="100%" placeholder="{i18n>history.search.placeholder}" liveChange=".onHistorySearch" search=".onHistorySearch" />
+                        </Toolbar>
+                    </headerToolbar>
                     <items>
                         <StandardListItem id="_IDGenStandardListItem" title="{chatModel>title}" description ="{chatModel>modifiedAt}" info="{chatModel>totalSessionTokenUsage}" icon="sap-icon://discussion" />
+                    </items>
+                </List>
+            </content>
+        </ResponsivePopover>
+
+        <ResponsivePopover id="clusterPopover" placement="Right" title="Incident Clusters">
+            <content>
+                <List id="clusterList" mode="SingleSelectMaster" selectionChange=".onClusterSelect"  items="{
+              path: '/IncidentClusters',
+              sorter: {
+                  path: 'modifiedAt',
+                  descending: true
+              }
+          }">
+                    <headerToolbar>
+                        <Toolbar>
+                            <SearchField id="clusterSearchField" placeholder="Search clusters..." liveChange=".onClusterSearch" search=".onClusterSearch" />
+                        </Toolbar>
+                    </headerToolbar>
+                    <items>
+                        <CustomListItem type="Active" >
+                            <VBox class="sapUiSmallMargin">
+                                <HBox justifyContent="SpaceBetween" alignItems="Center">
+                                    <Text text="{errorType}" class="sapMTitleStyleH6" />
+                                    <ObjectNumber number="{incidentCount}" emphasized="true" />
+                                </HBox>
+                                <HBox justifyContent="SpaceBetween" class="sapUiTinyMarginTop">
+                                    <ObjectStatus text="{severity}" state="{
+                            path: 'severity',
+                            formatter: '.formatter.formatSeverityState'
+                        }" />
+                                    <ObjectStatus text="{status}" state="{
+                            path: 'status',
+                            formatter: '.formatter.formatStatusState'
+                        }" />
+                                </HBox>
+                                <Text text="{
+                        path: 'lastSeen',
+                        formatter: '.formatter.formatDateTime'
+                    }" class="sapUiTinyMarginTop" />
+                            </VBox>
+                        </CustomListItem>
                     </items>
                 </List>
             </content>
@@ -19,20 +79,20 @@
     <tnt:ToolPage id="toolPage">
         <tnt:header>
             <tnt:ToolHeader id="_IDGenToolHeader">
-                <Button id="backbutton" icon="sap-icon://nav-back" press=".onBackPress" tooltip="Navigate back" type="Ghost">
+                <Button id="backbutton" icon="sap-icon://nav-back" press=".onBackPress" tooltip="{i18n>backButton.tooltip}" type="Ghost">
                     <layoutData>
                         <OverflowToolbarLayoutData id="_IDGenOverflowToolbarLayoutData3" priority="NeverOverflow" />
                     </layoutData>
                 </Button>
-                <Title id="_IDGenTitle3" text="AI Chat ✦ Grounded on live HANA data" wrapping="true"/>
+                <Title id="_IDGenTitle3" text="{i18n>toolHeader.title}" wrapping="true"/>
                 <ToolbarSpacer id="_IDGenToolbarSpacer2" />
-                <Button id="_IDGenButton1" icon="sap-icon://add" press=".onNewChat" tooltip="New Chat" type="Ghost">
+                <Button id="_IDGenButton1" icon="sap-icon://add" press=".onNewChat" tooltip="{i18n>newChat.tooltip}" type="Ghost">
                     <layoutData>
                         <OverflowToolbarLayoutData id="_IDGenOverflowToolbarLayoutData1" priority="NeverOverflow" />
                     </layoutData>
                 </Button>
 
-                <Button id="historyMenuBtn" icon="sap-icon://history" type="Ghost" press=".onHistoryMenuPress" tooltip="Chat History">
+                <Button id="historyMenuBtn" icon="sap-icon://history" type="Ghost" press=".onHistoryMenuPress" tooltip="{i18n>chatHistory.tooltip}">
                     <layoutData>
                         <OverflowToolbarLayoutData id="_IDGenOverflowToolbarLayoutData2" priority="NeverOverflow" />
                     </layoutData>
@@ -43,69 +103,81 @@
         <tnt:mainContents>
             <NavContainer id="navContainer">
                 <pages>
-                    <Page id="chatPage" showHeader="true" backgroundDesign="Transparent">
+                    <Page id="chatPage" showHeader="true" backgroundDesign="Transparent" floatingFooter="true" enableScrolling="false">
                         <customHeader>
                             <Toolbar id="_IDGenToolbar">
+
                                 <Title id="_IDGenTitle1" text="{= ${chatJSONModel>/currentConversationTitle} || 'New Chat' }" class="sapUiSmallMarginBegin" wrapping="false" />
                                 <ToolbarSpacer id="_IDGenToolbarSpacer1" />
-
-                                <!-- Token Display: Only visible if a conversation is selected -->
-                                <!-- <HBox alignItems="Center" visible="{= ${chatJSONModel>/currentConversationId} !== null }"> -->
                                 <ObjectStatus id="_IDGenObjectStatus10" text="{= (${chatJSONModel>/currentConversationTokens} || 'No') + ' Tokens' }" state="Success" class="sapUiSmallMarginEnd" visible="{= ${chatJSONModel>/currentConversationId} !== null }" />
-                                <Button id="_IDGenButton" icon="sap-icon://delete" type="Reject" press=".onDeleteConversation" tooltip="Delete Chat" />
-                                <!-- </HBox> -->
+                                <Button id="_IDGenButton" icon="sap-icon://delete" type="Reject" press=".onDeleteConversation" tooltip="{i18n>chat.header.deleteTooltip}" />
                             </Toolbar>
                         </customHeader>
 
                         <content>
-                            <VBox id="_IDGenVBox" renderType="Bare" height="100%" width="100%" justifyContent="SpaceBetween">
-                                <ScrollContainer id="chatScroll" vertical="true" horizontal="false" height="100%" width="100%">
-                                    <VBox id="welcomePage" width="90%" justifyContent="Center" alignItems="Center" class="sapUiMediumMargin">
-                                        <Avatar id="_IDGenAvatar" src="sap-icon://ai" displaySize="XL" backgroundColor="Accent6" class="sapUiMediumMarginBottom"/>
-                                        <Title id="_IDGenTitle2" text="Welcome to Integration Reliability Agent" level="H1" titleStyle="H2" wrapping="true" textAlign="Center" width="100%"/>
-
-                                        <Text id="_IDGenText13" text="Your intelligent assistant for live integration data in SAP HANA. Ask a question below to analyze errors, patterns, and remediation steps." class="sapUiSmallMarginTop" textAlign="Center" width="100%"/>
-                                        <VBox id="faqContainer" class="sapUiMediumMarginTop" width="100%" alignItems="Center">
-
-                                            <Label id="_IDGenLabel1" text="Try asking:" design="Bold" class="sapUiTinyMarginBottom"/>
-                                            <FlexBox id="_IDGenFlexBox" wrap="Wrap" justifyContent="Center" width="85%" renderType="Bare">
-                                                <Button id="_IDGenButton2" text="Failed integrations in last 24h" type="Ghost" class="sapUiTinyMargin" press=".onSuggestionPress"/>
-                                                <Button id="_IDGenButton4" text="Top recurring error signatures" type="Ghost" class="sapUiTinyMargin" press=".onSuggestionPress"/>
-                                                <Button id="_IDGenButton5" text="Which iFlows are failing most?" type="Ghost" class="sapUiTinyMargin" press=".onSuggestionPress"/>
-                                                <Button id="_IDGenButton6" text="Analyze MPL ID error" type="Ghost" class="sapUiTinyMargin" press=".onSuggestionPress"/>
-                                                <Button id="_IDGenButton7" text="Message size limit issues" type="Ghost" class="sapUiTinyMargin" press=".onSuggestionPress"/>
-                                                <Button id="_IDGenButton8" text="Suggest remediation for HTTP 500" type="Ghost" class="sapUiTinyMargin" press=".onSuggestionPress"/>
-                                            </FlexBox>
-                                        </VBox>
-                                    </VBox>
-                                    <VBox id="chatContainer" width="100%" class="sapUiResponsiveContentPadding" />
-                                    <HBox id="typingIndicator" visible="false" class="sapUiSmallMargin">
-                                        <BusyIndicator id="_IDGenBusyIndicator" size="1.6rem" class="sapUiMediumMarginBegin" />
-                                    </HBox>
-                                </ScrollContainer>
-                                <VBox id="_IDGenVBox7" class="sapUiSmallMargin" backgroundDesign="Transparent">
-                                    <Button id="_IDGenToggleButton" type="Ghost" icon="sap-icon://add-process" tooltip="Click to add Incident Cluster Data." visible="{= !${chatJSONModel>/clusterDataEnabled} }" press=".onToggleClusterData" class="sapUiTinyMarginEnd" />
-                                    <HBox id="_IDGenHBox7" alignItems="Center">
-                                        <Button id="processButton" press=".onToggleClusterData" icon="sap-icon://process" type="Accept" tooltip="Incident Cluster Data is active. Click to deactivate." visible="{chatJSONModel>/clusterDataEnabled}" class="sapUiTinyMarginEnd" />
-                                        <FlexBox id="_IDGenHBox" width="100%" alignItems="End" wrap="Wrap">
-
-                                            <TextArea id="chatInput1" growing="true" growingMaxLines="6" width="100%" placeholder="{= ${chatJSONModel>/clusterDataEnabled} ? &apos;🔗 Cluster context active — what would you like to know?&apos; : &apos;Ask about errors, clusters, flows, or remediation... (Shift+Enter for new line)&apos;}">
-                                                <layoutData>
-                                                    <FlexItemData id="_IDGenFlexItemData" growFactor="1" />
-                                                </layoutData>
-                                            </TextArea>
+                            <ScrollContainer id="chatScroll" vertical="true" horizontal="false" width="100%" height="100%">
+                                <VBox id="welcomePage" width="90%" justifyContent="Center" alignItems="Center" class="sapUiMediumMargin">
+                                    <Avatar id="_IDGenAvatar" src="sap-icon://ai" displaySize="XL" backgroundColor="Accent6" class="sapUiMediumMarginBottom"/>
+                                    <Title id="_IDGenTitle2" text="{i18n>welcome.title}" level="H1" titleStyle="H2" wrapping="true" textAlign="Center" width="100%"/>
+                                    <Text id="_IDGenText13" text="{i18n>welcome.subtitle}" class="sapUiSmallMarginTop" textAlign="Center" width="100%"/>
+                                    <VBox id="faqContainer" class="sapUiMediumMarginTop" width="100%" alignItems="Center">
+                                        <Label id="_IDGenLabel1" text="{i18n>welcome.suggestions.label}" design="Bold" class="sapUiTinyMarginBottom"/>
+                                        <FlexBox id="_IDGenFlexBox" wrap="Wrap" justifyContent="Center" width="85%" renderType="Bare">
+                                            <Button id="_IDGenButton2" text="{i18n>welcome.suggestion.failed24h}" type="Ghost" class="sapUiTinyMargin" press=".onSuggestionPress"/>
+                                            <Button id="_IDGenButton4" text="{i18n>welcome.suggestion.recurringErrors}" type="Ghost" class="sapUiTinyMargin" press=".onSuggestionPress"/>
+                                            <Button id="_IDGenButton5" text="{i18n>welcome.suggestion.failingIflows}" type="Ghost" class="sapUiTinyMargin" press=".onSuggestionPress"/>
+                                            <Button id="_IDGenButton6" text="{i18n>welcome.suggestion.analyzeMpl}" type="Ghost" class="sapUiTinyMargin" press=".onSuggestionPress"/>
+                                            <Button id="_IDGenButton7" text="{i18n>welcome.suggestion.messageSize}" type="Ghost" class="sapUiTinyMargin" press=".onSuggestionPress"/>
+                                            <Button id="_IDGenButton8" text="{i18n>welcome.suggestion.remediation}" type="Ghost" class="sapUiTinyMargin" press=".onSuggestionPress"/>
                                         </FlexBox>
-                                        <Button id="_IDGenButton3" icon="sap-icon://paper-plane" press=".onPost" tooltip="Send Message" class="sapUiTinyMarginBegin" />
-                                    </HBox>
+
+                                    </VBox>
                                 </VBox>
-                            </VBox>
+                                <VBox id="chatContainer" width="100%" class="sapUiResponsiveContentPadding" />
+                                <HBox id="typingIndicator" visible="false" class="sapUiSmallMargin">
+                                    <BusyIndicator id="_IDGenBusyIndicator" size="1.6rem" class="sapUiMediumMarginBegin" />
+                                </HBox>
+                            </ScrollContainer>
                         </content>
+
+                        <footer>
+
+                            <OverflowToolbar id="chatFooter" style="Clear" height="auto">
+
+                                <Button id="addActionsBtn" icon="sap-icon://add" type="Transparent" press=".onOpenActionsPopover" tooltip="More options">
+                                    <layoutData>
+                                        <OverflowToolbarLayoutData priority="NeverOverflow" />
+                                    </layoutData>
+                                </Button>
+                                <Button type="Accept" icon="sap-icon://chain-link" tooltip="{i18n>cluster.toggle.detach.tooltip}" visible="{chatJSONModel>/clusterDataEnabled}" press=".onToggleClusterData" />
+                                <BusyIndicator id="_IDGenBusyIndicator1" visible="false" />
+
+
+                                <TextArea id="chatInput1" growing="true" growingMaxLines="3" rows="2" width="100%" wrapping="Soft" placeholder="{= ${chatJSONModel>/clusterDataEnabled} ? ${i18n>input.placeholder.clusterActive} : ${i18n>input.placeholder.default} }">
+                                    <layoutData>
+                                        <OverflowToolbarLayoutData shrinkable="true" minWidth="100px" priority="Low" />
+                                    </layoutData>
+                                </TextArea>
+
+                                <Button id="_IDGenButton3" icon="sap-icon://paper-plane" type="Neutral" press=".onPost" class="sapUiTinyMarginBegin" tooltip="{i18n>send.button.tooltip}">
+                                    <layoutData>
+                                        <OverflowToolbarLayoutData priority="NeverOverflow" />
+                                    </layoutData>
+                                </Button>
+
+                                <Button id="scrollBottomBtn" icon="sap-icon://arrow-bottom" type="Emphasized" press="._scrollToBottom" tooltip="Scroll to latest" class="sapUiTinyMarginEnd" visible="{chatJSONModel>/showScrollButton}">
+                                    <layoutData>
+                                        <OverflowToolbarLayoutData priority="NeverOverflow" />
+                                    </layoutData>
+                                </Button>
+
+                            </OverflowToolbar>
+                        </footer>
                     </Page>
                 </pages>
             </NavContainer>
         </tnt:mainContents>
     </tnt:ToolPage>
 </mvc:View>
- 
  
  

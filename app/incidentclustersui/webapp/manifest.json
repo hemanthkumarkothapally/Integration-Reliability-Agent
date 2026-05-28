@@ -68,6 +68,7 @@
       "minUI5Version": "1.147.2",
       "libs": {
         "sap.m": {},
+        "sap.suite.ui.microchart": {},
         "sap.ui.core": {}
       }
     },
@@ -171,6 +172,13 @@
           ]
         },
         {
+          "name": "RouteAIAssistant",
+          "pattern": "AIAssistant",
+          "target": [
+            "TargetAIAssistant"
+          ]
+        },
+        {
           "name": "RouteIC",
           "pattern": "IC/{ID}",
           "target": [
@@ -189,6 +197,10 @@
         "TargetOrderList": {
           "id": "OrderList",
           "name": "OrderList"
+        },
+        "TargetAIAssistant": {
+          "id": "Chat",
+          "name": "Chat"
         },
         "TargetIncidentDetails": {
           "id": "IncidentDetails",

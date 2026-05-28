@@ -7,25 +7,31 @@
     xmlns:m="sap.m" height="100%">
 
     <ObjectPageLayout id="ObjectPageLayout" showTitleInHeaderContent="true" showFooter="true" upperCaseAnchorBar="false">
+
         <headerTitle>
             <ObjectPageDynamicHeaderTitle id="_IDGenObjectPageDynamicHeaderTitle">
 
+
                 <!-- EXPANDED -->
+                <expandedContent>
+                    <!-- <m:FlexBox alignItems="Center">
+                        <m:Title id="_IDGenTitle4" text="{headerDetails>/errorType}" level="H1" titleStyle="H1" wrapping="true" />
+                    </m:FlexBox> -->
+                    <m:Title id="_IDGenTitle4" text="{headerDetails>/errorType}" level="H2" titleStyle="H2" wrapping="true" />
+                </expandedContent>
                 <expandedHeading>
 
+                    <m:Button icon="sap-icon://nav-back" type="Ghost" press=".onNavBack" class="sapUiTinyMarginEnd" tooltip="{i18n>backButton.tooltip}" />
 
-                    <m:HBox id="_IDGenHBox2" alignItems="Center">
-
-                        <m:Button id="_IDGenButton9" icon="sap-icon://nav-back" type="Default" press=".onNavBack" class="sapUiTinyMarginEnd" />
-
-                        <m:Title id="_IDGenTitle4" text="{headerDetails>/errorType}" wrapping="true" />
-
-                    </m:HBox>
 
                 </expandedHeading>
 
                 <actions>
-                    <m:Button id="_IDGenButton10" class="aiButton" icon="sap-icon://ai" type="Ghost" press=".onAipress" tooltip="AI Assistant"></m:Button>
+                    <m:Button id="_IDGenButton10" icon="sap-icon://ai" text="Ai Assistant" type="Ghost" press=".onAipress" tooltip="AI Assistant">
+                        <m:layoutData>
+                            <m:OverflowToolbarLayoutData priority="NeverOverflow" />
+                        </m:layoutData>
+                    </m:Button>
                 </actions>
 
                 <!-- SNAPPED -->
@@ -33,34 +39,33 @@
 
                     <m:FlexBox id="_IDGenFlexBox1" fitContainer="true" alignItems="Center">
 
-                        <m:Button id="_IDGenButton11" icon="sap-icon://nav-back" type="Transparent" press=".onNavBack" class="sapUiTinyMarginEnd" />
+                        <m:Button id="_IDGenButton11" icon="sap-icon://nav-back" type="Ghost" press=".onNavBack" class="sapUiTinyMarginEnd" />
 
-                        <m:Title id="_IDGenTitle5" text="{headerDetails>/errorType}" wrapping="true" />
+                        <!-- <m:Title text="{headerDetails>/errorType}" level="H2" titleStyle="H2" wrapping="true" /> -->
+
+
 
                     </m:FlexBox>
 
                 </snappedHeading>
+                <snappedContent>
 
-                <!-- EXPANDED CONTENT -->
-                <!-- <expandedContent>
- 
-                    <m:ObjectStatus id="_IDGenObjectStatus" text="{headerDetails>/status}" state="{= ${headerDetails>/status} === 'OPEN'? 'Warning': ${headerDetails>/status} === 'RESOLVED'? 'Success': 'None'}" />
- 
-                </expandedContent> -->
+                    <m:FlexBox fitContainer="true" alignItems="Center">
 
-                <!-- SNAPPED CONTENT -->
-                <!-- <snappedContent>
- 
-                    <m:ObjectStatus id="_IDGenObjectStatus1" text="{headerDetails>/status}" state="{= ${headerDetails>/status} === 'OPEN'? 'Warning': ${headerDetails>/status} === 'RESOLVED'? 'Success': 'None'}" />
- 
-                </snappedContent> -->
 
-                <!-- MOBILE -->
+                        <m:Title text="{headerDetails>/errorType}" level="H2" titleStyle="H2" wrapping="true" />
+
+
+
+                    </m:FlexBox>
+
+                </snappedContent>
+
                 <snappedTitleOnMobile>
-
-                    <m:Title id="_IDGenTitle6" text="{headerDetails>/errorType}" />
+                    <m:Title text="{headerDetails>/errorType}" level="H3" titleStyle="H3" wrapping="true" />
 
                 </snappedTitleOnMobile>
+
 
             </ObjectPageDynamicHeaderTitle>
         </headerTitle>
@@ -68,7 +73,7 @@
         <headerContent>
 
             <m:FlexBox id="_IDGenFlexBox2" wrap="Wrap" justifyContent="SpaceBetween" alignItems="Start" width="100%">
-                <layout:HorizontalLayout id="_IDGenHorizontalLayout">
+                <m:FlexBox id="_IDGenInnerFlexBox" wrap="Wrap">
                     <layout:VerticalLayout id="_IDGenVerticalLayout" class="sapUiSmallMarginBeginEnd">
 
                         <!-- <m:ObjectStatus title="iFlow Name" text="{headerDetails>/errorType}" /> -->
@@ -106,7 +111,7 @@
                         <m:ObjectStatus id="_IDGenObjectStatus7" title="Modified By" text="{headerDetails>/modifiedBy}" />
 
                     </layout:VerticalLayout> -->
-                </layout:HorizontalLayout>
+                </m:FlexBox>
                 <layout:VerticalLayout id="_IDGenVerticalLayout3" class="sapUiSmallMarginBeginEnd">
                     <m:ObjectNumber id="_IDGenObjectNumber" number="{= ${headerDetails>/totalTokenUsage} ? ${headerDetails>/totalTokenUsage} : 0 }" unit="Tokens used" emphasized="true" state="Information" class="sapMObjectNumberLarge"/>
                 </layout:VerticalLayout>
@@ -313,7 +318,7 @@
 
                                 <m:HBox alignItems="Center" class="sapUiTinyMarginBottom">
                                     <m:Avatar src="sap-icon://incident" displaySize="XS" class="sapUiTinyMarginEnd" />
-                                    <m:Title text="Underlying Incidents ({headerDetails>/incidentCount})"  />
+                                    <m:Title text="Underlying Incidents ({headerDetails>/incidentCount})" />
 
                                 </m:HBox>
 
