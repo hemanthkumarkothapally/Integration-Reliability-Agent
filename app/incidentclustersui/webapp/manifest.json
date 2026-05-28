@@ -130,11 +130,10 @@
           "data": "model/globalmodel.json"
         }
       },
-       "chatJSONModel": {
+      "chatJSONModel": {
         "type": "sap.ui.model.json.JSONModel",
-        "settings": {
-          "data": "model/globalmodel.json"
-        }
+        "settings": {},
+        "preload": false
       }
     },
     "resources": {
@@ -177,6 +176,13 @@
           "target": [
             "TargetIC"
           ]
+        },
+        {
+          "name": "RouteAIAssistant",
+          "pattern": "AIAssistant",
+          "target": [
+            "TargetAIAssistant"
+          ]
         }
       ],
       "targets": {
@@ -191,6 +197,10 @@
         "TargetIC": {
           "id": "IC",
           "name": "IC"
+        },
+        "TargetAIAssistant": {
+          "id": "Chat",
+          "name": "Chat"
         }
       }
     },

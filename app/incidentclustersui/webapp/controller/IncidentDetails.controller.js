@@ -17,6 +17,27 @@ sap.ui.define([
         },
         onNavBack: function () {
 
+            // // Clear headerDetails model
+            // this.getView().getModel("headerDetails").setData({});
+
+            // // Clear details model
+            // this.getView().getModel("details").setData({});
+
+            // // Clear remediation steps
+            // this.getView().getModel("remediationSteps").setData({
+            //     steps: []
+            // });
+
+            // // Clear playbook steps
+            // this.getView().getModel("playbookSteps").setData({
+            //     steps: []
+            // });
+
+            // // Clear incidents model
+            // this.getView().getModel("incidentsModel").setData({
+            //     incidents: []
+            // });
+
             this.getOwnerComponent()
                 .getRouter()
                 .navTo("RouteOrderList");
@@ -115,7 +136,7 @@ sap.ui.define([
                     await oModel.bindContext(
                         `/onReDiagnoseIncidentCluster(cluster_ID='${sID}')`
                     ).requestObject();
-console.log("Re-diagnose response:", oResponse);
+                console.log("Re-diagnose response:", oResponse);
                 this.showToast(
                     "Re-diagnose successful"
                 );

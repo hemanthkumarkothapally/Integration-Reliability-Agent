@@ -8,31 +8,7 @@ export default cds.service.impl(async function () {
     const { Incidents,TokenUsages } = cds.entities('com.cytechies.integration.reliability');
     this.after('READ', IncidentClusters, async (data) => {  // ← add async
 
-        // const records = Array.isArray(data) ? data : [data];
-        // if (!records.length || !records[0]) return;
-
-        // // ── KPI queries ───────────────────────────────────────────────────────
-        // const past24h = new Date(Date.now() - 24 * 60 * 60 * 1000);
-
-        // const [{ count: totalIncidents24h }, { count: activeClusters }, { count: criticalCount }, { count: resolved24h }] = await Promise.all([
-
-        //     SELECT.one.from(Incidents)
-        //         .columns('count(*) as count')
-        //         .where('logEnd >', past24h),
-
-        //     SELECT.one.from(IncidentClusters)
-        //         .columns('count(*) as count')
-        //         .where`upper(status) != 'RESOLVED'`,
-
-        //     SELECT.one.from(IncidentClusters)
-        //         .columns('count(*) as count')
-        //         .where`upper(status) != 'RESOLVED' and upper(severity) = 'CRITICAL'`,
-
-        //     SELECT.one.from(IncidentClusters)
-        //         .columns('count(*) as count')
-        //        .where`upper(status) = 'RESOLVED'`
-        //         .and('modifiedAt >', past24h)
-        // ]);
+       
 
 
         console.log("READ Event Triggered");
