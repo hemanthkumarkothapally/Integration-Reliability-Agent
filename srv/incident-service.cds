@@ -53,7 +53,6 @@ service IncidentService {
 
     // @requires: 'Admin'
     function triggerPoll() returns array of Map;
-
     function GetIncidentChartData() returns {
         severityData : array of {
             severity : String;
@@ -72,7 +71,6 @@ service IncidentService {
         count     : Integer;
         severity  : String;
     };
-
     function onReDiagnoseIncidentCluster(
     cluster_ID : UUID
     ) returns {

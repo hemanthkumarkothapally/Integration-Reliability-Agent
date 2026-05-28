@@ -22,12 +22,14 @@ entity IncidentClusters : cuid, managed {
     status          : String(50);
     playbook        : Association to Playbooks;
     severityCriticality : Integer;
-    
+    globalStatus           : String(50);
     incidents              : Composition of many Incidents
                            on incidents.cluster = $self;
     chatSessions : Association to many ChatSessions on chatSessions.cluster = $self;
     totalTokenUsage : Integer;
     monitoredArtifacts   : Association to many ClusterArtifacts on monitoredArtifacts.cluster = $self;
+    recommendations     : Composition of one ClusterRecommendations
+                            on recommendations.cluster = $self;
 }
 entity ClusterRecommendations : cuid, managed {
     cluster             : Association to IncidentClusters;
@@ -38,18 +40,26 @@ entity ClusterRecommendations : cuid, managed {
     confidenceScore     : Decimal(5,2);
     generatedAt         : Timestamp;
 }
-
 entity MonitoredArtifacts : cuid, managed {
     iFlowName          : String(255);
     iFlowId            : String(255);
     namespace          : String(255);
     isActive           : Boolean;
     lastPollTimestamp  : Timestamp;
-    clusters            : Association to many ClusterArtifacts on clusters.artifact = $self;
+    overallSeverity    : String(50) default 'HEALTHY';
+    severityScore      : Decimal(10,2);
+    severityZScore     : Decimal(10,2);
+    openClusterCount   : Integer default 0;
+    resolvedClusterCount: Integer default 0;
+    totalBusinessImpactEUR : Decimal(15,2) default 0;
+    clusters : Association to many ClusterArtifacts
+               on clusters.artifact = $self;
 }
-entity ClusterArtifacts : cuid {
+entity ClusterArtifacts : cuid, managed{
     cluster             : Association to IncidentClusters;
     artifact            : Association to MonitoredArtifacts;
+    resolutionStatus    : String(50)  default 'OPEN';
+    resolutionNote      : String(2000);
 }
 entity Playbooks :cuid, managed {
     errorType       : String(100);

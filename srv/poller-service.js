@@ -95,7 +95,7 @@ export default cds.service.impl(async function () {
 
       /* CPI logs Filter */
 
-      const filter = `Status eq 'FAILED' and LogEnd gt datetime'2026-05-21T01:36:36.594'`;
+      const filter = `Status eq 'FAILED' and LogEnd gt datetime'2026-05-27T07:00:36.594'`;
 
       console.log("Generated Filter:", filter);
 
