@@ -54,6 +54,7 @@ sap.ui.define([
 
 
         _onObjectMatched: async function (oEvent) {
+            
             this.resetDetailsPage(oEvent.getParameter("arguments").ID);
         },
        
