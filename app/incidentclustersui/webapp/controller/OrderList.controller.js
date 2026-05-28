@@ -259,7 +259,14 @@ sap.ui.define([
                 "Dashboard Model Set Successfully"
             );
 
+        },
+        onAipress: function () {    
+            // console.log("AI Assistant Button Pressed");
+            this.showBusy();
+            this.navTo("RouteAIAssistant");
+            this.hideBusy();
         }
+
 
 
     });

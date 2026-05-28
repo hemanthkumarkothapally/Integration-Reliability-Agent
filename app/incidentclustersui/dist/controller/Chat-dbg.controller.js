@@ -11,7 +11,7 @@ sap.ui.define([
     "sap/m/FlexJustifyContent",
     "sap/m/FlexAlignItems",
     "sap/f/library"
-], function (BaseController, FormattedText, VBox, HBox, ObjectStatus, Avatar, AvatarSize, AvatarColor, MessageBox,FlexJustifyContent, FlexAlignItems, fioriLibrary) {
+], function (BaseController, FormattedText, VBox, HBox, ObjectStatus, Avatar, AvatarSize, AvatarColor, MessageBox, FlexJustifyContent, FlexAlignItems, fioriLibrary) {
     "use strict";
 
     return BaseController.extend("com.cytechies.integration.reliability.incidentclustersui.controller.Chat", {
@@ -55,20 +55,28 @@ sap.ui.define([
             var oJsonModel = this.getModel("chatJSONModel");
             var bCurrentState = oJsonModel.getProperty("/clusterDataEnabled");
             oJsonModel.setProperty("/clusterDataEnabled", !bCurrentState);
+            this.byId("clusterDataPopover").close();
 
             console.log("Cluster data active:", !bCurrentState);
         },
 
         _resetToWelcomePage: function () {
             var oJsonModel = this.getModel("chatJSONModel");
+            console.log("oJsonModel before reset:", oJsonModel.getData());
 
             oJsonModel.setProperty("/currentConversationId", null);
             oJsonModel.setProperty("/currentConversationTitle", "New Chat");
             oJsonModel.setProperty("/clusterDataEnabled", true);
+            oJsonModel.setProperty("/allMessagesLoaded", false);
+            oJsonModel.setProperty("/messageSkip", 0);
+            oJsonModel.setProperty("/showScrollButton", false);
+
             this.byId("historyList").removeSelections(true);;
             this.byId("historyPopover").close();
             this.byId("chatContainer").removeAllItems();
             this.byId("welcomePage").setVisible(true);
+            console.log("oJsonModel after reset:", oJsonModel.getData());
+
 
         },
 
@@ -78,7 +86,6 @@ sap.ui.define([
 
         onConversationSelect: function (oEvent) {
             this.showBusy();
-            debugger;
             let oListItem = oEvent.getParameter("listItem");
             let oCtx = oListItem.getBindingContext("chatModel");
             let sKey = oCtx.getProperty("ID");
@@ -95,10 +102,28 @@ sap.ui.define([
             this.hideBusy();
         },
 
-        onHistoryMenuPress(oEvent) {
+        onHistoryMenuPress: function (oEvent) {
             const oButton = oEvent.getSource();
             const oPopover = this.byId("historyPopover");
-            oPopover.openBy(oButton);
+
+            // Check if the popover is already open
+            if (oPopover.isOpen()) {
+                oPopover.close();
+            } else {
+                oPopover.openBy(oButton);
+            }
+        },
+
+        onOpenActionsPopover: function (oEvent) {
+            const oButton = oEvent.getSource();
+            const oPopover = this.byId("clusterDataPopover");
+
+            // Check if the popover is already open
+            if (oPopover.isOpen()) {
+                oPopover.close();
+            } else {
+                oPopover.openBy(oButton);
+            }
         },
 
         onDeleteConversation: function () {
@@ -172,7 +197,7 @@ sap.ui.define([
                 oJsonModel.setProperty("/clusterDataEnabled", false);
                 referenceID = this.getView().getModel("headerDetails").getProperty("/ID");
                 let referenceName = this.getView().getModel("headerDetails").getProperty("/errorType");
-                sQuery = `<span style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px 4px 8px;border:0.5px solid #f97316;border-radius:999px;color:#c05407;">🔗 ${referenceName}</span><br /><br/>${sQuery}`;
+                sQuery = `<span style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px 4px 8px;border:0.5px solid #f97316;border-radius:999px;color:#c05407;">🔗${referenceName}</span><br /><br/>${sQuery}`;
             }
 
             this._appendMessage(sQuery, "user", { tokenCount: "Calculating" });
@@ -255,11 +280,14 @@ sap.ui.define([
             console.log("Loading conversation with ID:", sConversationId);
             this.showBusy();
 
-            let oModel = this.getView().getModel("chatModel");
             let oJsonModel = this.getModel("chatJSONModel");
-
             oJsonModel.setProperty("/currentConversationId", sConversationId);
+            oJsonModel.setProperty("/allMessagesLoaded", false);
+            oJsonModel.setProperty("/messageSkip", 0); // tracks how many old messages loaded
+            this._sCurrentConversationId = sConversationId; // store for pagination
+
             this._updateTotalSessionTokens();
+
             let oContainer = this.byId("chatContainer");
             oContainer.removeAllItems();
 
@@ -267,49 +295,123 @@ sap.ui.define([
                 this.byId("welcomePage").setVisible(false);
             }
 
+            this._loadMessageBatch(sConversationId, false); // false = append (normal, bottom-up)
+            this.hideBusy();
+        },
+        _loadMessageBatch: function (sConversationId, bPrepend) {
+            if (this._bLoadingMessages) return;
+            this._bLoadingMessages = true;
+
+            const PAGE_SIZE = 10;
+            let oModel = this.getView().getModel("chatModel");
+            let oJsonModel = this.getModel("chatJSONModel");
+            let nSkip = oJsonModel.getProperty("/messageSkip") || 0;
+
             let oListBinding = oModel.bindList("/Messages", null, [
-                new sap.ui.model.Sorter("createdAt", false)
+                new sap.ui.model.Sorter("createdAt", true)
             ], [
                 new sap.ui.model.Filter("conversation_ID", sap.ui.model.FilterOperator.EQ, sConversationId)
             ]);
 
-            oListBinding.requestContexts(0, 100).then(function (aContexts) {
-                let aMessages = aContexts.map(function (ctx) { return ctx.getObject(); });
+            oListBinding.requestContexts(nSkip, PAGE_SIZE).then(function (aContexts) {
 
-                aMessages.sort(function (a, b) {
-                    let timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-                    let timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+                // ✅ Stale check: if conversation changed or reset happened, discard results
+                let sActiveId = oJsonModel.getProperty("/currentConversationId");
+                if (sActiveId !== sConversationId) {
+                    console.log("Discarding stale batch for:", sConversationId);
+                    return;
+                }
 
-                    if (timeA === timeB) {
+                if (aContexts.length < PAGE_SIZE) {
+                    oJsonModel.setProperty("/allMessagesLoaded", true);
+                }
+
+                if (aContexts.length === 0) return;
+
+                oJsonModel.setProperty("/messageSkip", nSkip + aContexts.length);
+
+                let aMessages = aContexts.map(ctx => ctx.getObject());
+
+                aMessages.sort((a, b) => {
+                    let tA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+                    let tB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+                    if (tA === tB) {
                         if (a.role === "user" && b.role !== "user") return -1;
                         if (a.role !== "user" && b.role === "user") return 1;
                         return 0;
                     }
-                    return timeA - timeB;
+                    return tA - tB;
                 });
 
-                aMessages.forEach(function (msg) {
-                    this._appendMessage(msg.content, msg.role, msg);
-                }.bind(this));
+                let oContainer = this.byId("chatContainer");
+                let oScroll = this.byId("chatScroll");
 
-                this._scrollToBottom();
-                console.log("Loaded messages:", aMessages);
-            }.bind(this)).catch(function (oError) {
+                if (bPrepend) {
+                    let nOldScrollHeight = oScroll.getDomRef()?.scrollHeight || 0;
+
+                    aMessages.forEach((msg, i) => {
+                        let oItem = this._buildMessageItem(msg.content, msg.role, msg);
+                        oContainer.insertItem(oItem, i);
+                    });
+
+                    setTimeout(() => {
+                        let oDom = oScroll.getDomRef();
+                        if (oDom) {
+                            oScroll.scrollTo(0, oDom.scrollHeight - nOldScrollHeight);
+                        }
+                    }, 50);
+
+                } else {
+                    aMessages.forEach(msg => {
+                        this._appendMessage(msg.content, msg.role, msg);
+                    });
+                    this._scrollToBottom();
+                }
+
+            }.bind(this)).catch(() => {
                 this.showToast("Error loading conversation history.");
+            }).finally(() => {
+                this._bLoadingMessages = false;
             });
-            this.hideBusy();
         },
 
-        _updateUserTokenCount: function (iCount) {
-            if (this._lastUserTokenStatus && !this._lastUserTokenStatus.bIsDestroyed) {
-                this._lastUserTokenStatus.setText(iCount + " tokens");
-            } else {
-                console.warn("Could not find the last user token status control.");
+        onAfterRendering: function () {
+            // Prevent attaching multiple listeners
+            if (this._scrollListenerAttached) return;
+            this._scrollListenerAttached = true;
+
+            let oScroll = this.byId("chatScroll");
+            let oDom = oScroll?.getDomRef();
+
+            if (oDom) {
+                oDom.addEventListener("scroll", () => {
+                    let oJsonModel = this.getModel("chatJSONModel");
+
+                    // --- 1. EXISTING LOGIC: Pagination (Scroll to Top) ---
+                    if (oDom.scrollTop < 50) {
+                        let bAllLoaded = oJsonModel.getProperty("/allMessagesLoaded");
+                        // Guard: only load if a real conversation is active
+                        if (!bAllLoaded && this._sCurrentConversationId && !this._bLoadingMessages) {
+                            this._loadMessageBatch(this._sCurrentConversationId, true);
+                        }
+                    }
+
+                    // --- 2. NEW LOGIC: Floating Button Visibility (Scroll to Bottom) ---
+                    // Calculate how far the scrollbar is from the absolute bottom
+                    let nDistanceToBottom = oDom.scrollHeight - oDom.scrollTop - oDom.clientHeight;
+
+                    // If we are more than 20 pixels away from the bottom, show the button
+                    let bNotAtBottom = nDistanceToBottom > 20;
+
+                    // Only update the model if the state actually needs to change (prevents flickering)
+                    if (oJsonModel.getProperty("/showScrollButton") !== bNotAtBottom) {
+                        oJsonModel.setProperty("/showScrollButton", bNotAtBottom);
+                    }
+                });
             }
         },
 
-        _appendMessage: function (sText, sSender, oData, bStream = false) {
-            const oContainer = this.byId("chatContainer");
+        _buildMessageItem: function (sText, sSender, oData, bStream = false) {
 
             const isAssistant = sSender === "assistant";
             if (this.byId("welcomePage")) {
@@ -422,18 +524,104 @@ sap.ui.define([
                     }, 5);
                 }
             }
+            return oMessageItem;
+        },
 
-            oContainer.addItem(oMessageItem);
-
+        _appendMessage: function (sText, sSender, oData, bStream = false) {
+            const oContainer = this.byId("chatContainer");
+            if (this.byId("welcomePage")) {
+                this.byId("welcomePage").setVisible(false);
+            }
+            let oItem = this._buildMessageItem(sText, sSender, oData, bStream);
+            oContainer.addItem(oItem);
             if (!bStream) {
                 this._scrollToBottom();
             }
         },
 
+        _updateUserTokenCount: function (iCount) {
+            if (this._lastUserTokenStatus && !this._lastUserTokenStatus.bIsDestroyed) {
+                this._lastUserTokenStatus.setText(iCount + " tokens");
+            } else {
+                console.warn("Could not find the last user token status control.");
+            }
+        },
+
         _scrollToBottom: function () {
             const oScroll = this.byId("chatScroll");
-            setTimeout(() => oScroll.scrollTo(0, 10000), 100);
+            // Parameters: x-coordinate, y-coordinate, time (in milliseconds)
+
+            setTimeout(() => oScroll.scrollTo(0, 100000, 1000), 100);
         },
+
+        onUploadFilePress: function (oEvent) {
+            // 1. Close the popover menu
+            this.byId("clusterDataPopover").close();
+
+            // 2. Trigger your file upload logic here
+            // (e.g., opening a sap.ui.unified.FileUploader dialog)
+            console.log("File upload triggered");
+        },
+
+        onVoiceInputPress: function (oEvent) {
+            // 1. Close the popover menu immediately
+            this.byId("clusterDataPopover").close();
+
+            // 2. Check if the user's browser supports Speech Recognition
+            var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                this.showToast("Sorry, voice input is not supported in this browser.");
+                return;
+            }
+
+            // 3. Initialize the speech recognition engine
+            var recognition = new SpeechRecognition();
+            recognition.lang = 'en-US'; // You can change this to match your user's locale
+            recognition.interimResults = false; // Set to true if you want to see words as they speak
+            recognition.maxAlternatives = 1;
+
+            // Grab your specific TextArea
+            var oTextArea = this.byId("chatInput1");
+
+            // Optional: Let the user know it is 
+            this.byId("_IDGenBusyIndicator1").setVisible(true);
+            this.showToast("Listening... Speak now.");
+
+            // 4. Handle the successful result
+            recognition.onresult = function (event) {
+                // Extract the spoken text
+                var sTranscript = event.results[0][0].transcript;
+
+                // Get whatever is currently in the text box
+                var sCurrentText = oTextArea.getValue();
+
+                // Append the new voice text (add a space if there's already text)
+                var sNewText = sCurrentText ? sCurrentText + " " + sTranscript : sTranscript;
+
+                // Set the final text back into the UI5 TextArea
+                oTextArea.setValue(sNewText);
+            };
+
+            // 5. Handle any errors (like microphone denied)
+            recognition.onerror = (event) => {
+                if (event.error === 'network') {
+                    this.showToast("Network Error: Cannot reach speech servers. Check your VPN.");
+                } else if (event.error === 'not-allowed') {
+                    this.showToast("Microphone access denied. Please check browser permissions.");
+                } else if (event.error === 'no-speech') {
+                    // NEW: Catch the silent timeout
+                    this.showToast("No speech detected. Please check your mic settings and speak immediately.");
+                } else {
+                    this.showToast("Microphone error: " + event.error);
+                }
+            };
+            recognition.onend = () => {
+                this.byId("_IDGenBusyIndicator1").setVisible(false);
+            };
+
+            // 6. Start the microphone!
+            recognition.start();
+        }
 
     });
 });

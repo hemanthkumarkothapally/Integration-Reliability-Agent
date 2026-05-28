@@ -6,9 +6,9 @@ description: An Integration Reliability Agent Application (Managed).
 
 version: 1.0.0
 
-modules:
+modules:rv
 
-  - name: integration-reliability-agent-srv
+  - name: integration-reliability-agent-s
     type: nodejs
 
     path: gen/srv

@@ -9,6 +9,7 @@
     xmlns:viz="sap.viz.ui5.controls"
     xmlns:viz.data="sap.viz.ui5.data"
     xmlns:viz.feeds="sap.viz.ui5.controls.common.feeds"
+    xmlns:mc="sap.suite.ui.microchart"
     xmlns:card="sap.f.cards">
 
     <tnt:ToolPage id="toolPage1">
@@ -40,6 +41,8 @@
                 <Title text="Integration Monitoring Overview" level="H1" />
 
                 <ToolbarSpacer />
+                <Button icon="sap-icon://ai" text="Ai Assistant" type="Ghost" press=".onAipress" tooltip="AI Assistant"/>
+
 
                 <!-- HEADER ACTIONS -->
 
@@ -177,17 +180,19 @@
                                 <!-- TOTAL INCIDENTS -->
                                 <!-- ===================================================== -->
 
-                                <f:Card width="100%"  semanticRole="ListItem" class="sapUiTinyMarginEnd">
-
+                                <f:Card width="100%" semanticRole="ListItem" class="sapUiTinyMarginEnd">
                                     <f:header>
-
                                         <card:NumericHeader title="Total Incidents " subtitle="Total incidents in last 24 hours" number="{dashboard>/totalIncidents24h}" state="Neutral" iconSrc="sap-icon://activity-items" />
-
                                     </f:header>
+                                    <f:content>
+                                        <!-- The FlexBox container provides the required layout bounds for the responsive chart -->
+                                        <FlexBox width="100%" height="5rem" alignItems="Center" justifyContent="Center" class="sapUiContentPadding">
+                                            <mc:RadialMicroChart width="5rem" height="5rem" value="{dashboard>/totalIncidents24h}" displayValue="{dashboard>/totalIncidents24h}" state="Neutral" class="sapUiTinyMarginBottom" />
 
-
-
+                                        </FlexBox>
+                                    </f:content>
                                 </f:Card>
+
 
                                 <!-- ===================================================== -->
                                 <!-- ACTIVE CLUSTERS -->
@@ -226,7 +231,7 @@
                                 <!-- RESOLVED TODAY -->
                                 <!-- ===================================================== -->
 
-                                <f:Card width="100%"  semanticRole="ListItem" class="sapUiTinyMarginEnd">
+                                <f:Card width="100%" semanticRole="ListItem" class="sapUiTinyMarginEnd">
 
                                     <f:header>
 
@@ -398,9 +403,9 @@
                             <!-- ===================================================== -->
 
                             <Table id="idIncidentClustersTable" inset="false" width="100%" growing="true" growingScrollToLoad="false" growingThreshold="5" mode="None" sticky="ColumnHeaders,HeaderToolbar" items="{
-            path:'/IncidentClusters',
+            path:'/MonitoredArtifacts',
              sorter:{
-            path:'modifiedAt',
+            path:'lastPollTimestamp',
             descending:true
         }
         }">
@@ -417,9 +422,9 @@
 
 
 
-                                    <Column  minScreenWidth="Tablet" demandPopin="true">
+                                    <Column minScreenWidth="Tablet" demandPopin="true">
 
-                                        <Text text="Message" />
+                                        <Text text="iFlowName" />
                                     </Column>
 
                                     <Column width="10rem" minScreenWidth="Tablet" demandPopin="true">
@@ -431,7 +436,7 @@
                                     </Column>
 
                                     <Column width="15rem" minScreenWidth="Tablet" demandPopin="true">
-                                        <Text text="Last Seen" />
+                                        <Text text="last Poll" />
                                     </Column>
 
                                 </columns>
@@ -453,7 +458,7 @@
 
                                             <!-- MESSAGE -->
 
-                                            <Text text="{errorType}" wrapping="false" />
+                                            <Text text="{iFlowName}" wrapping="false" />
 
                                             <!-- SEVERITY -->
 
@@ -464,14 +469,14 @@
 
                                             <!-- STATUS -->
 
-                                            <ObjectStatus text="{status}" state="{
+                                            <ObjectStatus text="{isActive}" state="{
                             path:'status',
                             formatter:'.formatter.formatStatusState'
                         }" />
 
                                             <!-- LAST SEEN -->
 
-                                            <Text text="{lastSeen}" />
+                                            <Text text="{lastPollTimestamp}" />
 
                                         </cells>
 
