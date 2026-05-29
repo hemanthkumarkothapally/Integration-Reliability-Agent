@@ -503,11 +503,8 @@ if (artifact) {
         });
 }
             await refreshArtifactDashboard(
-
                 MonitoredArtifacts,
-
                 ClusterArtifacts,
-
                 IncidentClusters
             );
             return 'Cluster resolved successfully';
