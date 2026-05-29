@@ -13,7 +13,9 @@ sap.ui.define([
     return BaseController.extend("com.cytechies.integration.reliability.incidentclustersui.controller.IncidentDetails", {
         formatter: formatter,
         onInit() {
+
             
+
         },
         onNavBack: function () {
 
@@ -41,7 +43,7 @@ sap.ui.define([
             this.getOwnerComponent()
                 .getRouter()
                 .navTo("RouteOrderList");
-            this.getView().getModel("globalModel").setProperty("/iflowId",null);
+            this.getView().getModel("globalModel").setProperty("/iflowId", null);
 
         },
         onAipress: function () {
@@ -155,6 +157,29 @@ sap.ui.define([
 
             }
         },
+        onExpandAll: function () {
+
+            const oModel = this.getView().getModel("view");
+            const aClusters = oModel.getProperty("/clusters") || [];
+
+            aClusters.forEach(function (oCluster) {
+                oCluster.expanded = true;
+            });
+
+            oModel.setProperty("/clusters", aClusters);
+        },
+
+        onCollapseAll: function () {
+
+            const oModel = this.getView().getModel("view");
+            const aClusters = oModel.getProperty("/clusters") || [];
+
+            aClusters.forEach(function (oCluster) {
+                oCluster.expanded = false;
+            });
+
+            oModel.setProperty("/clusters", aClusters);
+        }
 
 
 
