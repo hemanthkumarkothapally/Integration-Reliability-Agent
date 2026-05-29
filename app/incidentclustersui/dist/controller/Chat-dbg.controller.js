@@ -76,8 +76,80 @@ sap.ui.define([
         },
 
         onSelectClusterData: function (oEvent) {
-            this.byId("clusterPopover").openBy(oEvent.getSource());
+            var oGlobalModel = this.getView().getModel("globalModel");
+            var sIflowId = oGlobalModel ? oGlobalModel.getProperty("/iflowId") : null;
+
+            // Save the event source control immediately (oEvent falls out of scope inside async functions)
+            var oSource = oEvent.getSource();
+            var oList = this.byId("clusterList");
+            var oPopover = this.byId("clusterPopover");
+
+            console.log("Selected cluster data with iFlow ID:", sIflowId);
+
+            if (oList && oPopover) {
+                var oBinding = oList.getBinding("items");
+
+                if (oBinding) {
+                    // Set global app view or parent view to busy so user knows a click action is running
+                    this.getView().setBusy(true);
+
+                    // 1. Create a promise that resolves ONLY when the backend returns the updated V4 payload
+                    var oDataLoadPromise = new Promise(function (resolve) {
+                        oBinding.attachEventOnce("dataReceived", function () {
+                            resolve();
+                        });
+                    });
+
+                    // 2. Set your custom filter paths
+                    this.applyListSearch("clusterList", sIflowId, ["monitoredArtifacts/artifact_ID"]);
+
+                    // 3. Trigger the asynchronous refresh request
+                    oBinding.refresh();
+
+                    // 4. Wait for the data payload to land before executing UI transitions
+                    oDataLoadPromise.then(function () {
+                        this.getView().setBusy(false);
+
+                        // Popover now opens safely with 100% freshly rendered rows
+                        oPopover.openBy(oSource);
+                        console.log("Opening cluster data popover with updated data for iFlow:", sIflowId);
+                    }.bind(this)).catch(function (oError) {
+                        this.getView().setBusy(false);
+                        console.error("Error updating popover OData V4 dataset:", oError);
+                    }.bind(this));
+
+                    return; // Exit execution early; the popover is managed inside the Promise resolution
+                }
+            }
+
+            // Fallback if list components or bindings aren't loaded into view context yet
+            if (oPopover) {
+                oPopover.openBy(oSource);
+            }
         },
+
+
+
+        // onSelectClusterData: function (oEvent) {
+        //     var oGlobalModel = this.getView().getModel("globalModel");
+        //     var sIflowId = oGlobalModel ? oGlobalModel.getProperty("/iflowId") : null;
+        //     console.log("Selected cluster data with iFlow ID:", sIflowId);
+
+        //     // this.applyContextFilter("clusterList", [
+        //     //     { path: "monitoredArtifacts/artifact_ID", value: sIflowId }
+        //     // ]);
+
+        //     this.applyListSearch("clusterList", sIflowId, ["monitoredArtifacts/artifact_ID"]);
+
+        //     // this.applyListSearch("clusterList", [
+        //     //     { path: "monitoredArtifacts/artifact_ID", value: sIflowId }
+        //     // ]);
+
+        //     this.byId("clusterPopover").openBy(oEvent.getSource());
+
+        //     console.log("Opening cluster data popover with iFlow filter:", sIflowId);
+        // },
+
 
         _resetToWelcomePage: function () {
             let oJsonModel = this.getModel("chatJSONModel");
