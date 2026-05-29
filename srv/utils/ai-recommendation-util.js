@@ -56,7 +56,8 @@ Required JSON structure:
   "remediationSteps": ["", "", "",...],
   "affectedAdapter": "",
   "confidenceScore": 0,
-  "playbookId": "" // optional, can be null if no relevant playbook found
+  "playbookId": "" // optional, can be null if no relevant playbook found,
+  "errorType": "" // optional, can be null if error type is unknown
 }
 
 Cluster:
@@ -84,6 +85,9 @@ ${JSON.stringify(playbooks, null, 2)}
 
 - Match the most relevant playbook by errorType or errorSignature and return its ID in playbookId field.
 `;
+    }
+    if(cluster.errorType === 'UNKNOWN_ERROR'){
+        prompt = prompt + `- If error type is UNKNOWN_ERROR, try to infer the error type based on the error message and other available data and return it in the errorType field.`;
     }
     try {
 
@@ -238,7 +242,8 @@ ${JSON.stringify(response)}`
                 purpose:
                     'CLUSTER_RCA'
             },
-            playbook_ID: parsed.playbookId || null
+            playbook_ID: parsed.playbookId || null,
+            errorType: parsed.errorType || null
         };
 
     } catch (err) {

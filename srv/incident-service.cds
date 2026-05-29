@@ -2,7 +2,7 @@ using {com.cytechies.integration.reliability as IRA} from '../db/schema';
 
 @path: '/Incident'
 service IncidentService {
-    entity Incidents          as projection on IRA.Incidents;
+    entity Incidents          as projection on IRA.Incidents order by logEnd desc;
 
     // @requires                                  : 'Viewer'
     @Capabilities.FilterRestrictions.Filterable: true
@@ -44,7 +44,7 @@ service IncidentService {
             to   : 'Admin'
         }
     ]
-    entity MonitoredArtifacts as projection on IRA.MonitoredArtifacts;
+    entity MonitoredArtifacts as projection on IRA.MonitoredArtifacts order by lastPollTimestamp desc;
 
     // @requires: 'Viewer'
     @readonly
@@ -85,4 +85,10 @@ service IncidentService {
         modelName            : String(100);
         generatedAt          : Timestamp;
     };
+
+function resolveClusterForArtifact(
+        clusterId  : UUID,
+        artifactId : UUID,
+        note       : String
+    ) returns String;
 }

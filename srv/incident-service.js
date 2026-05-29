@@ -1,16 +1,13 @@
 import cds from '@sap/cds';
 import { generateClusterRecommendation } from './utils/ai-recommendation-util.js';
 import { runPoll } from './utils/log-helper.js';
+import { refreshArtifactDashboard } from './utils/clustering-util.js';
 export default cds.service.impl(async function () {
 
     const { IncidentClusters, Recommendations ,Playbooks, MonitoredArtifacts, ClusterArtifacts} = this.entities;
 
     const { Incidents,TokenUsages } = cds.entities('com.cytechies.integration.reliability');
-    this.after('READ', IncidentClusters, async (data) => {  // ← add async
-
-       
-
-
+    this.after('READ', IncidentClusters, async (data) => {
         console.log("READ Event Triggered");
 
         const records = Array.isArray(data)
@@ -18,26 +15,14 @@ export default cds.service.impl(async function () {
             : [data];
 
         if (!records.length || !records[0]) {
-
             console.log("No Records Found");
-
             return;
         }
-
-        // ---------------------------------------------------
-        // Last 24 Hours
-        // ---------------------------------------------------
-
         const past24h = new Date(
             Date.now() - 24 * 60 * 60 * 1000
         );
 
         console.log("Past 24 Hours Time:", past24h);
-
-        // ---------------------------------------------------
-        // KPI Queries
-        // ---------------------------------------------------
-
         const totalIncidentsQuery =
             SELECT.one.from(Incidents)
                 .columns('count(*) as count')
@@ -427,4 +412,77 @@ this.on('onReDiagnoseIncidentCluster', async (req) => {
         );
     }
   });
+
+
+  this.on( 'resolveClusterForArtifact', async (req) => {
+            const {
+                clusterId,
+                artifactId,
+                note
+            } = req.data;
+
+            if (!clusterId) {
+                req.error(400, 'clusterId is required');
+            }
+
+            if (!artifactId) {
+                req.error(400, 'artifactId is required');
+            }
+            const relation =
+                await SELECT.one
+                    .from(ClusterArtifacts)
+                    .where({
+                        cluster_ID:
+                            clusterId,
+                        artifact_ID:
+                            artifactId
+                    });
+            if (!relation) {
+                req.error(
+                    404,
+                    'ClusterArtifact relation not found'
+                );
+            }
+
+            await UPDATE(ClusterArtifacts)
+                .set({
+                    resolutionStatus:
+                        'RESOLVED',
+                    resolutionNote:
+                        note || 'Resolved from UI'
+                })
+                .where({
+                    ID: relation.ID
+                });
+            const openRelations =
+                await SELECT.from(ClusterArtifacts)
+                    .where({
+                        cluster_ID:
+                            clusterId,
+                        resolutionStatus:
+                            { '!=': 'RESOLVED' }
+                    });
+            if (openRelations.length === 0) {
+                await UPDATE(IncidentClusters)
+                    .set({
+                        globalStatus:
+                            'RESOLVED',
+                        status:
+                            'RESOLVED'
+                    })
+                    .where({
+                        ID: clusterId
+                    });
+            }
+            await refreshArtifactDashboard(
+
+                MonitoredArtifacts,
+
+                ClusterArtifacts,
+
+                IncidentClusters
+            );
+            return 'Cluster resolved successfully';
+        }
+    );
 });

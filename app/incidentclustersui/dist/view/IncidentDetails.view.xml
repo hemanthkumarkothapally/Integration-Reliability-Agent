@@ -17,7 +17,7 @@
                     <!-- <m:FlexBox alignItems="Center">
                         <m:Title id="_IDGenTitle4" text="{headerDetails>/errorType}" level="H1" titleStyle="H1" wrapping="true" />
                     </m:FlexBox> -->
-                    <m:Title id="_IDGenTitle4" text="{headerDetails>/errorType}" level="H2" titleStyle="H2" wrapping="true" />
+                    <m:Title id="_IDGenTitle4" text="{iFlowName}" level="H2" titleStyle="H2" wrapping="true" />
                 </expandedContent>
                 <expandedHeading>
 
@@ -244,56 +244,45 @@
                                     <m:Text id="_IDGenText12" text="{incidentsModel>/incidents/0/errorMessage}" wrapping="true" />
                                 </m:VBox> -->
 
-                                <m:Table id="idIncidentTable" growing="true" growingScrollToLoad="false" growingThreshold="5" mode="None" items="{headerDetails>/monitoredArtifacts}">
-                                    <!-- <m:headerToolbar>
-                                        <m:OverflowToolbar id="_IDGenOverflowToolbar2">
-                                            <m:Title id="_IDGenTitle11" level="H2" titleStyle="H2" text="Iflow Details"/>
-                                        </m:OverflowToolbar>
-                                    </m:headerToolbar> -->
-
+                                <m:Table id="idIncidentTable" growing="true" growingScrollToLoad="false" growingThreshold="5" mode="None" items="{clusters}">
                                     <m:columns>
-
                                         <m:Column id="_IDGenColumn" minScreenWidth="Tablet" demandPopin="true">
-                                            <m:Text id="_IDGenText1" text="iFlow Name"/>
+                                            <m:Text id="_IDGenText1" text="Cluster Name"/>
                                         </m:Column>
-
                                         <m:Column id="_IDGenColumn1" minScreenWidth="Tablet" demandPopin="true">
-                                            <m:Text id="_IDGenText2" text="Type"/>
+                                            <m:Text id="_IDGenText2" text="Incident Count"/>
                                         </m:Column>
-
                                         <m:Column id="_IDGenColumn2" minScreenWidth="Tablet" demandPopin="true">
                                             <m:Text id="_IDGenText3" text="Last Poll"/>
                                         </m:Column>
-
                                         <m:Column id="_IDGenColumn3" minScreenWidth="Tablet" demandPopin="true">
                                             <m:Text id="_IDGenText4" text="Status"/>
                                         </m:Column>
-
                                     </m:columns>
 
                                     <m:items>
-
                                         <m:ColumnListItem id="_IDGenColumnListItem">
-
                                             <m:cells>
-                                                <m:Text id="_IDGenText5" text="{headerDetails>artifact/iFlowName}"/>
-                                                <m:Text id="_IDGenText7" text="{headerDetails>artifact/namespace}"/>
-                                                <!-- Last Poll -->
+                                                <!-- Cluster Name / Error Type -->
+                                                <m:Text id="_IDGenText5" text="{cluster/errorType}"/>
+
+                                                <!-- Incident Count -->
+                                                <m:Text id="_IDGenText7" text="{cluster/incidentCount}"/>
+
+                                                <!-- Last Poll (Point to Parent Context Property via OData V4 Syntax) -->
                                                 <m:Text id="_IDGenText8" text="{
-                                                        path: 'headerDetails>artifact/lastPollTimestamp',
-                                                        formatter: '.formatter.formatDateTime'
-                                                    }" />
+                                                    path: '$parent/lastPollTimestamp',
+                                                    formatter: '.formatter.formatDateTime'
+                                                }" />
 
-                                                <!-- Active Status -->
-                                                <m:ObjectStatus id="_IDGenObjectStatus9" text="{= ${headerDetails>artifact/isActive} ? 'Active' : 'Inactive' }" state="{= ${headerDetails>artifact/isActive} ? 'Success' : 'Error' }"/>
-
+                                                <!-- Active Status (Point to Parent Context Property via OData V4 Syntax) -->
+                                                <m:ObjectStatus id="_IDGenObjectStatus9" text="{= ${$parent/isActive} ? 'Active' : 'Inactive' }" state="{= ${$parent/isActive} ? 'Success' : 'Error' }"/>
                                             </m:cells>
-
                                         </m:ColumnListItem>
-
                                     </m:items>
-
                                 </m:Table>
+
+
 
 
                             </m:VBox>

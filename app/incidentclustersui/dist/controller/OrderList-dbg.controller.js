@@ -14,7 +14,7 @@ sap.ui.define([
 
             try {
 
-                this._initializeControls();
+                //this._initializeControls();
                 this._attachEvents();
                 await this._initializeData();
 
@@ -29,46 +29,53 @@ sap.ui.define([
             }
         },
 
-        _initializeControls: function () {
+        // _initializeControls: function () {
 
-            const oVizFrame = this.byId("idLineChart");
+        //     const oVizFrame = this.byId("idLineChart");
 
-            const oPopOver = this.byId("idPopOver");
+        //     const oPopOver = this.byId("idPopOver");
 
-            oPopOver.connect(
-                oVizFrame.getVizUid()
-            );
+        //     oPopOver.connect(
+        //         oVizFrame.getVizUid()
+        //     );
 
-            oVizFrame.setVizProperties({
+        //     oVizFrame.setVizProperties({
 
-                title: {
-                    visible: false
-                },
-                plotArea: {
-                    
-                    marker: {
-                        visible: true
-                    },
-                    dataLabel: {
-                        
-                        visible: true
-                    }
-                },
+        //         title: {
+        //             visible: false
+        //         },
+                
+        //         plotArea: {
 
-                valueAxis: {
-                    title: {
-                        visible: true
-                    }
-                },
+        //             marker: {
+        //                 visible: true
+        //             },
+        //             dataLabel: {
 
-                valueAxis2: {
-                    title: {
-                        visible: true
-                    }
-                }
+        //                 visible: true
+        //             }
+        //         },
 
-            });
+        //         valueAxis: {
+        //             title: {
+        //                 visible: true
+        //             }
+        //         },
 
+        //         valueAxis2: {
+        //             title: {
+        //                 visible: true
+        //             }
+        //         }
+
+        //     });
+
+        // },
+        onAipress: function () {    
+            // console.log("AI Assistant Button Pressed");
+            this.showBusy();
+            this.navTo("RouteAIAssistant");
+            this.hideBusy();
         },
         _attachEvents: function () {
 
@@ -189,7 +196,7 @@ sap.ui.define([
         },
 
         onRowPress: async function (oEvent) {
-            this.showBusy();
+           // this.showBusy(5000);
             console.log("event tRiggered")
 
             const oItem = oEvent.getSource();
@@ -203,8 +210,53 @@ sap.ui.define([
             });
 
             console.log("Route Activated")
-            this.hideBusy();
+            //this.hideBusy();
         },
+
+        // onRowPress: async function (oEvent) {
+
+        //     this.showBusy(0);
+
+        //     try {
+
+        //         const oItem = oEvent.getSource();
+        //         const oContext = oItem.getBindingContext();
+
+        //         if (!oContext) {
+        //             throw new Error("Binding context not found");
+        //         }
+
+        //         const sID = oContext.getProperty("ID");
+
+        //         this.getOwnerComponent()
+        //             .getModel("globalModel")
+        //             .setProperty("/cluster_id", sID);
+
+        //         console.log("Cluster ID set in global model:", sID);
+
+        //         // Allow UI rendering cycle
+        //         await new Promise((resolve) => {
+        //             setTimeout(resolve, 1000);
+        //         });
+
+        //         this.navTo("RouteIC", {
+        //             ID: sID
+        //         });
+
+        //         console.log("Route Activated");
+
+        //     } catch (error) {
+
+        //         console.error("Navigation Error:", error);
+
+        //         sap.m.MessageToast.show("Unable to navigate");
+
+        //     } finally {
+
+        //         this.hideBusy();
+
+        //     }
+        // },
 
         _loadDashboardKPIs: function () {
 
@@ -259,7 +311,14 @@ sap.ui.define([
                 "Dashboard Model Set Successfully"
             );
 
+        },
+        onAipress: function () {    
+            // console.log("AI Assistant Button Pressed");
+            this.showBusy();
+            this.navTo("RouteAIAssistant");
+            this.hideBusy();
         }
+
 
 
     });
