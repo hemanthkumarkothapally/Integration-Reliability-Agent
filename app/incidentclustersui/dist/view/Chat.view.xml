@@ -5,11 +5,20 @@
     xmlns:core="sap.ui.core" displayBlock="true">
 
     <mvc:dependents>
+        <ResponsivePopover id="activeClusterPopover" placement="Top" title="Attached Cluster" class="sapUiContentPadding">
+
+            <VBox alignItems="Center">
+                <ObjectStatus text="{chatJSONModel>/clusterName}" icon="sap-icon://chain-link" state="Indication13" active="true" inverted="true" class="sapUiSmallMarginBottom" />
+
+                <Button text="Remove Cluster" type="Reject" icon="sap-icon://delete" press=".onRemoveClusterPress" />
+            </VBox>
+
+        </ResponsivePopover>
         <ResponsivePopover id="clusterDataPopover" placement="Top" showHeader="false" contentWidth="auto">
             <content>
                 <VBox class="sapUiTinyMargin">
                     <!-- <Button text="Attach Cluster" type="Ghost" icon="sap-icon://add-process" tooltip="{i18n>cluster.toggle.attach.tooltip}" visible="{= !${chatJSONModel>/clusterDataEnabled} }" press=".onToggleClusterData" width="100%" /> -->
-                    <Button text="Select Cluster" type="Ghost" icon="sap-icon://add-process" tooltip="{i18n>cluster.toggle.attach.tooltip}" visible="{= !${chatJSONModel>/clusterDataEnabled} }" press=".onSelectClusterData" width="100%" />
+                    <Button text="Attach Cluster" type="Ghost" icon="sap-icon://add-process" tooltip="{i18n>cluster.toggle.attach.tooltip}" visible="{= !${chatJSONModel>/clusterDataEnabled} }" press=".onSelectClusterData" width="100%" />
 
                     <Button text="Upload File" type="Ghost" icon="sap-icon://attachment" tooltip="Insert Image or Document" press=".onUploadFilePress" width="100%" class="sapUiTinyMarginBottom" />
 
@@ -36,7 +45,7 @@
 
         <ResponsivePopover id="clusterPopover" placement="Right" title="Incident Clusters">
             <content>
-                <List id="clusterList" mode="SingleSelectMaster" selectionChange=".onClusterSelect"  items="{
+                <List id="clusterList" mode="SingleSelectMaster" selectionChange=".onClusterSelect" items="{
               path: '/IncidentClusters',
               sorter: {
                   path: 'modifiedAt',
@@ -49,7 +58,7 @@
                         </Toolbar>
                     </headerToolbar>
                     <items>
-                        <CustomListItem type="Active" >
+                        <CustomListItem type="Active">
                             <VBox class="sapUiSmallMargin">
                                 <HBox justifyContent="SpaceBetween" alignItems="Center">
                                     <Title text="{errorType}" wrapping="true" class="sapMTitleStyleH6" />
@@ -149,7 +158,12 @@
                                         <OverflowToolbarLayoutData priority="NeverOverflow" />
                                     </layoutData>
                                 </Button>
-                                <Button type="Accept" icon="sap-icon://chain-link" tooltip="{i18n>cluster.toggle.detach.tooltip}" visible="{chatJSONModel>/clusterDataEnabled}" press=".onToggleClusterData" />
+                                <Button type="Attention" icon="sap-icon://chain-link" tooltip="{i18n>cluster.toggle.detach.tooltip}" visible="{chatJSONModel>/clusterDataEnabled}" press=".onToggleClusterData">
+                                    <layoutData>
+                                        <OverflowToolbarLayoutData priority="NeverOverflow" />
+                                    </layoutData>
+                                </Button>
+
                                 <BusyIndicator id="_IDGenBusyIndicator1" visible="false" />
 
 
