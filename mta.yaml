@@ -10,37 +10,21 @@ modules:
 
   - name: integration-reliability-agent-srv
     type: nodejs
-
     path: gen/srv
-
     requires:
-
       - name: integration-reliability-agent-auth
-
       - name: integration-reliability-agent-db
-
       - name: integration-reliability-agent-destination-service
-
     provides:
-
       - name: srv-api
-
         properties:
-
           srv-url: ${default-url}
-
     parameters:
-
       buildpack: nodejs_buildpack
-
       instances: 1
-
     build-parameters:
-
       builder: npm-ci
-
   - name: integration-reliability-agent-db-deployer
-
     type: hdb
 
     path: gen/db

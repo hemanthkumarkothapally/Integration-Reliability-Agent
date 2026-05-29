@@ -57,7 +57,7 @@ Required JSON structure:
   "affectedAdapter": "",
   "confidenceScore": 0,
   "playbookId": "" // optional, can be null if no relevant playbook found,
-  "errorType": "" // optional, can be null if error type is unknown
+  "errorType": "" 
 }
 
 Cluster:
@@ -73,6 +73,7 @@ Rules:
 - Confidence score must be 0-100
 - if playbook is not there in cluster, try to go throgh the playbooks entity and find the relevant playbook based on the error signature and iflow name and use that to give more accurate recommendation.
 - if not able to find relevant playbook, then give null in playbook id field in the response.
+- Give the Error type by analysing the error signature and error type field in the cluster and also from the error message in the incidents. If not able to find the error type then give UNKNOWN_ERROR in the error type field.
 - Output JSON only
 `;
     if (!cluster.playbook_ID) {
@@ -86,9 +87,9 @@ ${JSON.stringify(playbooks, null, 2)}
 - Match the most relevant playbook by errorType or errorSignature and return its ID in playbookId field.
 `;
     }
-    if(cluster.errorType === 'UNKNOWN_ERROR'){
-        prompt = prompt + `- If error type is UNKNOWN_ERROR, try to infer the error type based on the error message and other available data and return it in the errorType field.`;
-    }
+    // if(cluster.errorType === 'UNKNOWN_ERROR'){
+    //     prompt = prompt + `- If error type is UNKNOWN_ERROR, try to infer the error type based on the error message and other available data and return it in the errorType field.`;
+    // }
     try {
 
         /*
