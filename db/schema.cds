@@ -60,6 +60,8 @@ entity MonitoredArtifacts : cuid, managed {
 entity ClusterArtifacts : cuid, managed{
     cluster             : Association to IncidentClusters;
     artifact            : Association to MonitoredArtifacts;
+    incidentCount       : Integer default 0;
+    iflowClusterSeverity: String(50);
     resolutionStatus    : String(50)  default 'OPEN';
     resolutionNote      : String(2000);
 }

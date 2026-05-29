@@ -1,121 +1,166 @@
-export function calculateArtifactSeverity(
-  currentLoad,
-  historicalCounts = []
+export async function refreshClusterSeverity(
+    IncidentClusters
 ) {
 
-  if (!historicalCounts.length) {
+    /*
+     * ----------------------------------------
+     * FETCH ACTIVE CLUSTERS
+     * ----------------------------------------
+     */
 
-    return {
+    const clusters =
+        await SELECT
+            .from(IncidentClusters)
+            .where({
+                globalStatus: {
+                    '!=': 'RESOLVED'
+                }
+            });
 
-      severity: 'LOW',
+    if (!clusters.length) {
+        console.log(
+            'No active clusters found'
+        );
+        return;
+    }
 
-      score: 0,
+    /*
+     * ----------------------------------------
+     * BUILD DATASET
+     * ----------------------------------------
+     */
 
-      zScore: 0,
+    const counts =
+        clusters.map(
+            c => c.incidentCount || 0
+        );
 
-      mean: 0,
+    const mean =
+        counts.reduce(
+            (a, b) => a + b,
+            0
+        ) / counts.length;
 
-      stdDev: 0
-    };
-  }
+    const variance =
+        counts.reduce(
+            (sum, value) =>
+                sum +
+                Math.pow(
+                    value - mean,
+                    2
+                ),
+            0
+        ) / counts.length;
 
-  /*
-   * ----------------------------------------
-   * MEAN
-   * ----------------------------------------
-   */
+    const stdDev =
+        Math.sqrt(variance);
 
-  const mean =
-    historicalCounts.reduce(
-      (a, b) => a + b,
-      0
-    ) / historicalCounts.length;
+    console.log({
+        mean:
+            mean.toFixed(2),
 
-  /*
-   * ----------------------------------------
-   * VARIANCE
-   * ----------------------------------------
-   */
+        stdDev:
+            stdDev.toFixed(2)
+    });
 
-  const variance =
-    historicalCounts.reduce(
-      (sum, value) =>
-        sum +
-        Math.pow(value - mean, 2),
-      0
-    ) / historicalCounts.length;
+    /*
+     * ----------------------------------------
+     * UPDATE CLUSTER SEVERITY
+     * ----------------------------------------
+     */
 
-  /*
-   * ----------------------------------------
-   * STANDARD DEVIATION
-   * ----------------------------------------
-   */
+    for (const cluster of clusters) {
 
-  const stdDev =
-    Math.sqrt(variance);
+        const count =
+            cluster.incidentCount || 0;
 
-  /*
-   * ----------------------------------------
-   * Z SCORE
-   * ----------------------------------------
-   */
+        const zScore =
+            stdDev === 0
+                ? 0
+                : (
+                    count - mean
+                  ) / stdDev;
 
-  const zScore =
-    stdDev === 0
-      ? 0
-      : (currentLoad - mean) /
-        stdDev;
+        let severity =
+            'LOW';
 
-  /*
-   * ----------------------------------------
-   * SCORE
-   * ----------------------------------------
-   */
+        let criticality =
+            5;
 
-  const score =
-    Number(
-      Math.abs(zScore)
-        .toFixed(2)
+        if (zScore >= 2.0) {
+
+            severity =
+                'CRITICAL';
+
+            criticality =
+                1;
+        }
+
+        else if (
+            zScore >= 1.5
+        ) {
+
+            severity =
+                'HIGH';
+
+            criticality =
+                2;
+        }
+
+        else if (
+            zScore >= 1.0
+        ) {
+
+            severity =
+                'MEDIUM';
+
+            criticality =
+                3;
+        }
+
+        else if (
+            count > 0
+        ) {
+
+            severity =
+                'LOW';
+
+            criticality =
+                5;
+        }
+
+        await UPDATE(
+            IncidentClusters
+        )
+        .set({
+
+            severity,
+
+            severityCriticality:
+                criticality
+        })
+        .where({
+            ID:
+                cluster.ID
+        });
+
+        console.log(
+            cluster.errorType,
+            {
+                incidentCount:
+                    count,
+
+                zScore:
+                    Number(
+                        zScore.toFixed(2)
+                    ),
+
+                severity
+            }
+        );
+    }
+
+    console.log(
+        'Cluster severity refresh completed'
     );
-
-  /*
-   * ----------------------------------------
-   * SEVERITY
-   * ----------------------------------------
-   */
-
-  let severity = 'LOW';
-
-  if (zScore >= 3) {
-
-    severity = 'CRITICAL';
-
-  } else if (zScore >= 2) {
-
-    severity = 'HIGH';
-
-  } else if (zScore >= 1) {
-
-    severity = 'MEDIUM';
-
-  } else if (zScore < 0.5) {
-
-    severity = 'HEALTHY';
-  }
-
-  return {
-
-    severity,
-
-    score,
-
-    zScore:
-      Number(zScore.toFixed(2)),
-
-    mean:
-      Number(mean.toFixed(2)),
-
-    stdDev:
-      Number(stdDev.toFixed(2))
-  };
 }

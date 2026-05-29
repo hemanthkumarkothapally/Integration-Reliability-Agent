@@ -474,6 +474,34 @@ this.on('onReDiagnoseIncidentCluster', async (req) => {
                         ID: clusterId
                     });
             }
+            else{
+                await UPDATE(IncidentClusters)
+                    .set({
+                        globalStatus:
+                            'PARTIALLY_RESOLVED'
+                    })
+                    .where({
+                        ID: clusterId
+                    });
+            }
+            const artifact =
+    await SELECT.one
+        .from(MonitoredArtifacts)
+        .where({
+            ID: artifactId
+        });
+
+if (artifact) {
+
+    await UPDATE(Incidents)
+        .set({
+            status: 'RESOLVED'
+        })
+        .where({
+            cluster_ID: clusterId,
+            iFlowName: artifact.iFlowName
+        });
+}
             await refreshArtifactDashboard(
 
                 MonitoredArtifacts,

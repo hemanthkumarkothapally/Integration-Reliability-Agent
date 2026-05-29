@@ -94,7 +94,7 @@ export default cds.service.impl(async function () {
 
       /* CPI logs Filter */
 
-      const filter = `Status eq 'FAILED' and LogEnd gt datetime'2026-05-28T09:30:20'`;
+      const filter = `Status eq 'FAILED' and LogEnd lt datetime'${lastPollTimestamp}'`;
 
       console.log("Generated Filter:", filter);
 
@@ -201,7 +201,7 @@ export default cds.service.impl(async function () {
           return {
             messageGuid: guid,
             iFlowName: log.IntegrationFlowName,
-            status: log.Status,
+            status: 'OPEN',
             logStart: convertDate(log.LogStart),
             logEnd: convertDate(log.LogEnd),
             adapter: adapterType,
@@ -331,7 +331,7 @@ export default cds.service.impl(async function () {
           .orderBy({
             logEnd: 'desc'
           })
-          .limit(10);
+          .limit(2);
 
       /*
        * GENERATE AI RECOMMENDATION

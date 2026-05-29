@@ -1,19 +1,19 @@
 import {
   normaliseLog
 } from './log-utils.js';
-import { calculateArtifactSeverity } from './severityEngine-util.js';
+import { refreshClusterSeverity } from './severityEngine-util.js';
 // export async function upsertClusters(Incidents,IncidentClusters,Playbooks,MonitoredArtifacts,ClusterArtifacts, newLogs,srv) {
 
 //   const clusterMap = {};
-  
+
 //         for (const log of newLogs) {
-  
+
 //           const key = log.errorSignature;
-  
+
 //           if (!clusterMap[key]) {
-  
+
 //             clusterMap[key] = {
-  
+
 //               errorSignature: log.errorSignature,
 //               incidentCount: 0,
 //               firstSeen: log.logEnd,
@@ -21,22 +21,22 @@ import { calculateArtifactSeverity } from './severityEngine-util.js';
 //               iFlows: new Set()
 //             };
 //           }
-  
+
 //           clusterMap[key].incidentCount++;
 //           clusterMap[key].lastSeen = log.logEnd;
 //           clusterMap[key].iFlows.add(log.iFlowName);
 //         }
-  
+
 //         console.log("Cluster Count:", Object.keys(clusterMap).length);
-  
+
 //         /*
 //          * ------------------------------------------------------------
 //          * UPSERT CLUSTERS
 //          * ------------------------------------------------------------
 //          */
-  
+
 //         for (const key in clusterMap) {
-  
+
 //           console.log("Processing Cluster:", key);
 //           const newClusterID = cds.utils.uuid();
 //           const c = clusterMap[key];
@@ -47,11 +47,11 @@ import { calculateArtifactSeverity } from './severityEngine-util.js';
 //               .where({
 //                 errorSignature: c.errorSignature
 //               });
-  
+
 //           if (existingCluster) {
 //             console.log("Updating Existing Cluster");
 //             const newCount = existingCluster.incidentCount + c.incidentCount;
-  
+
 //             await srv.run(UPDATE(IncidentClusters)
 //               .set({
 //                 incidentCount: newCount,
@@ -61,7 +61,7 @@ import { calculateArtifactSeverity } from './severityEngine-util.js';
 //                 severityCriticality: mapSeverityCriticality(newCount)
 //               })
 //               .where({ ID: existingCluster.ID }));
-  
+
 //             // Link incidents to existing cluster
 //             await UPDATE(Incidents)
 //               .set({ cluster_ID: existingCluster.ID })
@@ -74,11 +74,11 @@ import { calculateArtifactSeverity } from './severityEngine-util.js';
 //                     .map(l => l.ID)
 //                 }
 //               });
-  
+
 //           } else {
 //             console.log("Creating New Cluster");
-  
-  
+
+
 //             const analysed =
 //               normaliseLog({
 //                 errorMessage:
@@ -104,7 +104,7 @@ import { calculateArtifactSeverity } from './severityEngine-util.js';
 //               status: 'OPEN',
 //               playbook_ID: matchedPlaybook?.ID || null
 //             }));
-  
+
 //             // Link incidents to the new cluster
 //             await UPDATE(Incidents)
 //               .set({ cluster_ID: newClusterID })
@@ -123,7 +123,7 @@ import { calculateArtifactSeverity } from './severityEngine-util.js';
 //             !existingCluster.playbook_ID &&
 //             matchedPlaybook
 //           ) {
-  
+
 //             await UPDATE(IncidentClusters)
 //               .set({
 //                 playbook_ID:
@@ -135,16 +135,16 @@ import { calculateArtifactSeverity } from './severityEngine-util.js';
 //           }
 //           const clusterId =
 //             existingCluster?.ID || newClusterID;
-  
+
 //           for (const iFlowId of c.iFlows) {
-  
+
 //             const artifact =
 //               await SELECT.one
 //                 .from(MonitoredArtifacts)
 //                 .where({ iFlowId });
-  
+
 //             if (!artifact) continue;
-  
+
 //             const existingRelation =
 //               await SELECT.one
 //                 .from(ClusterArtifacts)
@@ -152,15 +152,15 @@ import { calculateArtifactSeverity } from './severityEngine-util.js';
 //                   cluster_ID: clusterId,
 //                   artifact_ID: artifact.ID
 //                 });
-  
+
 //             if (!existingRelation) {
-  
+
 //               await INSERT.into(ClusterArtifacts).entries({
 //                 ID: cds.utils.uuid(),
 //                 cluster_ID: clusterId,
 //                 artifact_ID: artifact.ID
 //               });
-  
+
 //               console.log(
 //                 `Linked Cluster ${clusterId} -> iFlow ${artifact.iFlowName}`
 //               );
@@ -189,12 +189,12 @@ export async function upsertClusters(
    */
 
   for (const log of newLogs) {
-    
+
     // const key = log.errorSignature;
-    const analysed = normaliseLog({ errorMessage:log.errorSignature});
+    const analysed = normaliseLog({ errorMessage: log.errorSignature });
     const key = analysed.errorSignature === 'UNKNOWN_ERROR'
-    ? analysed.errorMessage
-    : analysed.errorSignature;
+      ? analysed.errorMessage
+      : analysed.errorSignature;
 
     if (!clusterMap[key]) {
 
@@ -328,29 +328,29 @@ export async function upsertClusters(
       await UPDATE(
         IncidentClusters
       )
-      .set({
+        .set({
 
-        incidentCount:
-          updatedCount,
+          incidentCount:
+            updatedCount,
 
-        lastSeen:
-          clusterData.lastSeen,
+          lastSeen:
+            clusterData.lastSeen,
 
-        severity:
-          calculateSeverity(
-            updatedCount
-          ),
+          severity:
+            calculateSeverity(
+              updatedCount
+            ),
 
-        severityCriticality:
-          mapSeverityCriticality(
-            updatedCount
-          ),
+          severityCriticality:
+            mapSeverityCriticality(
+              updatedCount
+            ),
 
-        globalStatus: 'OPEN'
-      })
-      .where({
-        ID: cluster.ID
-      });
+          globalStatus: 'OPEN'
+        })
+        .where({
+          ID: cluster.ID
+        });
     }
 
     /*
@@ -452,17 +452,51 @@ export async function upsertClusters(
         await UPDATE(
           ClusterArtifacts
         )
-        .set({
-          resolutionStatus:
-            'OPEN'
-        })
-        .where({
-          ID:
-            relation.ID
-        });
+          .set({
+            resolutionStatus:
+              'OPEN'
+          })
+          .where({
+            ID:
+              relation.ID
+          });
       }
+      
     }
+    const relations = await SELECT.from(ClusterArtifacts);
+
+for (const rel of relations) {
+
+  const artifact =
+    await SELECT.one
+      .from(MonitoredArtifacts)
+      .where({ ID: rel.artifact_ID });
+
+  const count =
+    await SELECT.one
+      .from(Incidents)
+      .columns`count(*) as count`
+      .where({
+        cluster_ID: rel.cluster_ID,
+        iFlowName: artifact.iFlowName,
+        status: 'OPEN'
+      });
+console.log(
+  "Count for",
+  artifact.iFlowName,
+  cluster.ID,
+  count
+);
+  await UPDATE(ClusterArtifacts)
+    .set({
+      incidentCount: count.count
+    })
+    .where({
+      ID: rel.ID
+    });
+}
   }
+  
 
   /*
    * ----------------------------------------
@@ -478,146 +512,149 @@ export async function upsertClusters(
 }
 
 export async function refreshArtifactDashboard(
-    MonitoredArtifacts,
-    ClusterArtifacts,
-    IncidentClusters
+  MonitoredArtifacts,
+  ClusterArtifacts,
+  IncidentClusters
 ) {
-    // 1. Fetch all artifacts
-    const artifacts = await SELECT.from(MonitoredArtifacts);
-    if (!artifacts.length) { console.log("No artifacts found"); return; }
+  // 1. Fetch all artifacts
+  const artifacts = await SELECT.from(MonitoredArtifacts);
+  if (!artifacts.length) { console.log("No artifacts found"); return; }
 
-    // 2. Fetch all cluster relations + clusters in ONE query each
-    const allRelations = await SELECT.from(ClusterArtifacts);
+  // 2. Fetch all cluster relations + clusters in ONE query each
+  const allRelations = await SELECT.from(ClusterArtifacts);
 
-    // 3. Total unresolved clusters globally
-    const totalOpenClusters = await SELECT.from(IncidentClusters)
-        .where({ globalStatus: { '!=': 'RESOLVED' } });
+  // 3. Total unresolved clusters globally
+  const totalOpenClusters = await SELECT.from(IncidentClusters)
+    .where({ globalStatus: { '!=': 'RESOLVED' } });
 
-    const globalOpenCount = totalOpenClusters.length;
+  const globalOpenCount = totalOpenClusters.length;
 
-    // 4. Group relations by artifact
-    const relationsByArtifact = new Map();
-    for (const rel of allRelations) {
-        if (!relationsByArtifact.has(rel.artifact_ID)) {
-            relationsByArtifact.set(rel.artifact_ID, []);
-        }
-        relationsByArtifact.get(rel.artifact_ID).push(rel);
+  // 4. Group relations by artifact
+  const relationsByArtifact = new Map();
+  for (const rel of allRelations) {
+    if (!relationsByArtifact.has(rel.artifact_ID)) {
+      relationsByArtifact.set(rel.artifact_ID, []);
+    }
+    relationsByArtifact.get(rel.artifact_ID).push(rel);
+  }
+
+  // 5. Build stats per artifact — only counts, no cluster severity
+  const artifactStats = [];
+
+  for (const artifact of artifacts) {
+    const relations = relationsByArtifact.get(artifact.ID) || [];
+    const openRelations = relations.filter(r => r.resolutionStatus === 'OPEN');
+    const resolvedRelations = relations.filter(r => r.resolutionStatus === 'RESOLVED');
+
+    // Last failure — fetch timestamps of linked open clusters only
+    const openClusterIds = openRelations.map(r => r.cluster_ID).filter(Boolean);
+
+    let lastFailure = null;
+
+    if (openClusterIds.length) {
+      const linkedClusters = await SELECT
+        .from(IncidentClusters)
+        .where({ ID: { in: openClusterIds } })
+        .columns('lastSeen');
+
+      lastFailure = linkedClusters.reduce((latest, c) => {
+        return !latest || new Date(c.lastSeen) > new Date(latest)
+          ? c.lastSeen
+          : latest;
+      }, null);
     }
 
-    // 5. Build stats per artifact — only counts, no cluster severity
-    const artifactStats = [];
-
-    for (const artifact of artifacts) {
-        const relations         = relationsByArtifact.get(artifact.ID) || [];
-        const openRelations     = relations.filter(r => r.resolutionStatus === 'OPEN');
-        const resolvedRelations = relations.filter(r => r.resolutionStatus === 'RESOLVED');
-
-        // Last failure — fetch timestamps of linked open clusters only
-        const openClusterIds = openRelations.map(r => r.cluster_ID).filter(Boolean);
-
-        let lastFailure = null;
-
-        if (openClusterIds.length) {
-            const linkedClusters = await SELECT
-                .from(IncidentClusters)
-                .where({ ID: { in: openClusterIds } })
-                .columns('lastSeen');
-
-            lastFailure = linkedClusters.reduce((latest, c) => {
-                return !latest || new Date(c.lastSeen) > new Date(latest)
-                    ? c.lastSeen
-                    : latest;
-            }, null);
-        }
-
-        artifactStats.push({
-            artifact,
-            openClusterCount:     openRelations.length,
-            resolvedClusterCount: resolvedRelations.length,
-            lastFailureAt:        lastFailure
-        });
-    }
-
-    // 6. Z-score across artifact open cluster counts only
-    const counts   = artifactStats.map(a => a.openClusterCount);
-    const mean     = counts.reduce((a, b) => a + b, 0) / counts.length;
-    const variance = counts.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / counts.length;
-    const stdDev   = Math.sqrt(variance);
-
-    console.log({
-        globalOpenClusters: globalOpenCount,
-        mean:   mean.toFixed(2),
-        stdDev: stdDev.toFixed(2)
+    artifactStats.push({
+      artifact,
+      openClusterCount: openRelations.length,
+      resolvedClusterCount: resolvedRelations.length,
+      lastFailureAt: lastFailure
     });
+  }
 
-    // 7. Update each artifact
-    for (const stat of artifactStats) {
+  // 6. Z-score across artifact open cluster counts only
+  const counts = artifactStats.map(a => a.openClusterCount);
+  const mean = counts.reduce((a, b) => a + b, 0) / counts.length;
+  const variance = counts.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / counts.length;
+  const stdDev = Math.sqrt(variance);
 
-        // Z-score — how anomalous is this artifact vs peers
-        const zScore = stdDev === 0
-            ? 0
-            : (stat.openClusterCount - mean) / stdDev;
+  console.log({
+    globalOpenClusters: globalOpenCount,
+    mean: mean.toFixed(2),
+    stdDev: stdDev.toFixed(2)
+  });
 
-        const score  = Number(Math.abs(zScore).toFixed(2));
-        const zFixed = Number(zScore.toFixed(2));
+  // 7. Update each artifact
+  for (const stat of artifactStats) {
 
-        // Severity purely from z-score
-        let severity = 'HEALTHY';
-        if      (zScore >= 2.0) severity = 'CRITICAL';
-        else if (zScore >= 1.5) severity = 'HIGH';
-        else if (zScore >= 1.0) severity = 'MEDIUM';
-        else if (zScore >= 0.5) severity = 'LOW';
+    // Z-score — how anomalous is this artifact vs peers
+    const zScore = stdDev === 0
+      ? 0
+      : (stat.openClusterCount - mean) / stdDev;
 
-        // ✅ Only override: if open clusters exist → never HEALTHY
-        if (severity === 'HEALTHY' && stat.openClusterCount > 0) {
-            // Use ratio of this artifact's open clusters vs global open clusters
-            const ratio = globalOpenCount > 0
-                ? stat.openClusterCount / globalOpenCount
-                : 0;
+    const score = Number(Math.abs(zScore).toFixed(2));
+    const zFixed = Number(zScore.toFixed(2));
 
-            if      (ratio >= 0.5)  severity = 'CRITICAL'; // owns 50%+ of all open clusters
-            else if (ratio >= 0.3)  severity = 'HIGH';
-            else if (ratio >= 0.15) severity = 'MEDIUM';
-            else                    severity = 'LOW';      // has open clusters but not anomalous
-        }
+    // Severity purely from z-score
+    let severity = 'HEALTHY';
+    if (zScore >= 2.0) severity = 'CRITICAL';
+    else if (zScore >= 1.5) severity = 'HIGH';
+    else if (zScore >= 1.0) severity = 'MEDIUM';
+    else if (zScore >= 0.5) severity = 'LOW';
 
-        await UPDATE(MonitoredArtifacts)
-            .set({
-                overallSeverity:      severity,
-                severityScore:        score,
-                severityZScore:       zFixed,
-                openClusterCount:     stat.openClusterCount,
-                resolvedClusterCount: stat.resolvedClusterCount,
-                lastPollTimestamp:    new Date(),
-                ...(stat.lastFailureAt && { lastFailureAt: stat.lastFailureAt })
-            })
-            .where({ ID: stat.artifact.ID });
+    // ✅ Only override: if open clusters exist → never HEALTHY
+    if (severity === 'HEALTHY' && stat.openClusterCount > 0) {
+      // Use ratio of this artifact's open clusters vs global open clusters
+      const ratio = globalOpenCount > 0
+        ? stat.openClusterCount / globalOpenCount
+        : 0;
 
-        console.log(`${stat.artifact.iFlowName}`, {
-            severity,
-            zScore:           zFixed,
-            openClusterCount: stat.openClusterCount,
-            globalOpenCount,
-            ratio: globalOpenCount > 0
-                ? (stat.openClusterCount / globalOpenCount).toFixed(2)
-                : 0
-        });
+      if (ratio >= 0.5) severity = 'CRITICAL'; // owns 50%+ of all open clusters
+      else if (ratio >= 0.3) severity = 'HIGH';
+      else if (ratio >= 0.15) severity = 'MEDIUM';
+      else severity = 'LOW';      // has open clusters but not anomalous
     }
+
+    await UPDATE(MonitoredArtifacts)
+      .set({
+        overallSeverity: severity,
+        severityScore: score,
+        severityZScore: zFixed,
+        openClusterCount: stat.openClusterCount,
+        resolvedClusterCount: stat.resolvedClusterCount,
+        lastPollTimestamp: new Date(),
+        ...(stat.lastFailureAt && { lastFailureAt: stat.lastFailureAt })
+      })
+      .where({ ID: stat.artifact.ID });
+
+    console.log(`${stat.artifact.iFlowName}`, {
+      severity,
+      zScore: zFixed,
+      openClusterCount: stat.openClusterCount,
+      globalOpenCount,
+      ratio: globalOpenCount > 0
+        ? (stat.openClusterCount / globalOpenCount).toFixed(2)
+        : 0
+    });
+  }
+  await refreshClusterSeverity(
+    IncidentClusters
+  );
 }
 function calculateSeverity(count) {
 
-    if (count > 30) return 'CRITICAL';
-    if (count >= 15) return 'HIGH';
-    if (count >= 5) return 'MEDIUM';
+  if (count > 30) return 'CRITICAL';
+  if (count >= 15) return 'HIGH';
+  if (count >= 5) return 'MEDIUM';
 
-    return 'LOW';
-  }
+  return 'LOW';
+}
 
-  function mapSeverityCriticality(count) {
+function mapSeverityCriticality(count) {
 
-    if (count > 30) return 1;
-    if (count >= 15) return 2;
-    if (count >= 5) return 3;
+  if (count > 30) return 1;
+  if (count >= 15) return 2;
+  if (count >= 5) return 3;
 
-    return 4;
-  }
+  return 4;
+}
