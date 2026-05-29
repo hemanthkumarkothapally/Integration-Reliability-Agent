@@ -2,12 +2,16 @@
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
     xmlns:f="sap.f"
+    xmlns:grid="sap.ui.layout.cssgrid"
     xmlns:fb="sap.ui.comp.filterbar"
     xmlns:layout="sap.ui.layout"
     xmlns:core="sap.ui.core"
-    xmlns:card="sap.f.cards">    <!-- Fixed: Restored the card namespace definition -->
+    xmlns:card="sap.f.cards">
 
-    <f:DynamicPage id="dynamicPageId" headerExpanded="true" toggleHeaderOnTitleClick="true">
+    <f:DynamicPage id="dynamicPageId" headerExpanded="true" 
+        preserveHeaderStateOnScroll="true" 
+        toggleHeaderOnTitleClick="false">
+
 
         <f:title>
             <f:DynamicPageTitle>
@@ -34,6 +38,14 @@
                                     <MultiComboBox id="idIFlowFilter" width="100%" placeholder="Filter by IFlow Name" items="{path:'/MonitoredArtifacts'}" selectionChange=".onFilterChange">
                                         <core:Item key="{iFlowName}" text="{iFlowName}" />
                                     </MultiComboBox>
+                                </items>
+                            </VBox>
+                            <VBox width="auto" class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
+                                <layoutData>
+                                    <FlexItemData growFactor="1" />
+                                </layoutData>
+                                <items>
+                                    <DateRangeSelection id="idDateRangeFilter" width="100%" placeholder="Select Date Range" change=".onFilterChange" />
                                 </items>
                             </VBox>
 
@@ -79,57 +91,75 @@
 
         <f:content>
             <VBox width="100%">
-                <layout:Grid defaultSpan="XL3 L3 M6 S12" id="idGridId" hSpacing="1" vSpacing="1" containerQuery="true"  class="sapUiNoContentPadding" content="{
-                        path: '/MonitoredArtifacts',sorter: { path: 'modifiedAt', descending: true}}">
-                    <layout:content>
-                        <f:Card semanticRole="ListItem" press=".onCardPress">
-
-                            <f:content>
-                                <Panel class="sapUiSmallMargin">
-                                    <headerToolbar>
-                                        <Toolbar>
+                <MessageStrip enableFormattedText="true" text="Click any &lt;strong&gt;iFlow card&lt;/strong&gt; to open the &lt;strong&gt;Detail View&lt;/strong&gt; with all associated clusters and recent incidents." type="Information" showIcon="true" showCloseButton="true" class="sapUiSmallMarginBottom" />
 
 
-                                            <core:Icon src="sap-icon://process" class="sapUiTinyMarginEnd" size="1.5rem" color="{path: 'overallSeverity',formatter: '.formatter.severityIconColor'}"/>
+                <f:GridList id="idGridListId" growing="true" growingThreshold="15" class="sapUiNoContentPadding" items="{
+                path: '/MonitoredArtifacts',
+                sorter: { path: 'modifiedAt', descending: true}
+            }">
 
-                                            <!-- Text Title: Truncation works perfectly now -->
-                                            <Title text="{iFlowName}" wrapping="false" titleStyle="H5" />
-                                            <ToolbarSpacer  />
-                                            <!-- Right Side Container: Fixed layout data ensures it never shrinks or vanishes -->
-                                            <ObjectNumber number="{openClusterCount}" class="sapMObjectNumberLarge sapUiTinyMarginBegin" state="{ path: 'overallSeverity', formatter: '.formatter.formatSeverityState'}"/>
+                    <f:customLayout>
+                        <grid:GridBasicLayout gridTemplateColumns="repeat(auto-fit, minmax(17rem, 1fr))" gridGap="1rem" />
+                    </f:customLayout>
 
-                                        </Toolbar>
-                                    </headerToolbar>
+                    <f:items>
+                        <f:GridListItem>
+                            <f:Card semanticRole="ListItem" press=".onCardPress">
+                                <f:content>
+                                    <Panel class="sapUiSmallMargin">
+                                        <headerToolbar>
+                                            <Toolbar>
+                                                <core:Icon src="sap-icon://process" class="sapUiTinyMarginEnd" size="1.5rem" color="{path: 'overallSeverity',formatter: '.formatter.severityIconColor'}"/>
 
-                                    <!-- Horizontal Divider Line -->
-                                    <!-- <core:HTML content="&lt;hr style='border: none; border-top: 1px solid #ebebeb; margin: 0 0 12px 0;' /&gt;" /> -->
+                                                <Title text="{iFlowName}" wrapping="false" titleStyle="H5" />
+                                                <ToolbarSpacer  />
+                                                <Button text="{ path: 'overallSeverity', formatter: '.formatter.formatButtonText' }" tooltip="click to filter" press=".onTagPress" type="{ path: 'overallSeverity', formatter: '.formatter.formatButtonState' }" icon="{ path: 'overallSeverity', formatter: '.formatter.formatSeverityIcon' }">
+                                                    <customData>
+                                                        <core:CustomData key="severity" value="{overallSeverity}" />
+                                                    </customData>
+                                                </Button>
+                                                
+                                                <!-- <ObjectNumber number="{openClusterCount}" emphasized="true" unit="Clusters" class="sapMObjectNumberLarge sapUiTinyMarginBegin" state="{ path: 'overallSeverity', formatter: '.formatter.formatSeverityState'}"/> -->
+                                            </Toolbar>
+                                        </headerToolbar>
 
-                                    <!-- CARD BODY CONTENT ROWS -->
-                                    <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiTinyMarginBottom">
-                                        <Label text="Severity" />
-                                        <ObjectStatus text="{overallSeverity}" state="{               path: 'overallSeverity', formatter: '.formatter.formatSeverityState' }" />
-                                    </HBox>
+                                        <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiTinyMarginBottom">
+                                            <!-- <Label text="Severity" /> -->
+                                            <Label text="Active Clusters" />
+                                            <ObjectNumber number="{openClusterCount}" unit="/{clusters/$count}" emphasized="true" class="sapMObjectNumberLarge sapUiTinyMarginBegin" state="{ path: 'overallSeverity', formatter: '.formatter.formatSeverityState'}"/>
 
-                                    <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiTinyMarginBottom">
-                                        <Label text="Status" />
-                                        <ObjectStatus text="{= ${isActive} === 'Yes' ? 'ACTIVE' : 'INACTIVE' }" state="{= ${isActive} === 'Yes' ? 'Success' : 'Error' }" />
-                                    </HBox>
+                                            <!-- <ObjectStatus text="{overallSeverity}" state="{ path: 'overallSeverity', formatter: '.formatter.formatSeverityState' }" /> -->
+                                        </HBox>
 
-                                    <HBox justifyContent="SpaceBetween" alignItems="Center">
-                                        <Label text="Last Poll" />
-                                        <Text text="{path: 'lastPollTimestamp', formatter: '.formatter.formatDateTime'}" />
-                                    </HBox>
-                                </Panel>
-                            </f:content>
+                                        <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiTinyMarginBottom">
+                                            <Label text="Status" />
+                                            <ObjectStatus text="{= ${isActive} === 'Yes' ? 'ACTIVE' : 'INACTIVE' }" state="{= ${isActive} === 'Yes' ? 'Success' : 'Error' }" />
+                                        </HBox>
 
-                        </f:Card>
+                                        <!-- <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiTinyMarginBottom">
+                                            <Label text="Severity" />
+                                            <GenericTag text="{overallSeverity}" design="StatusIconHidden" status="{ path: 'overallSeverity', formatter: '.formatter.formatSeverityState' }" />
+                                        </HBox>
+
+                                        <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiTinyMarginBottom">
+                                            <Label text="Status" />
+                                            <GenericTag text="{= ${isActive} === 'Yes' ? 'ACTIVE' : 'INACTIVE' }" design="StatusIconHidden" status="{= ${isActive} === 'Yes' ? 'Information' : 'Warning' }" />
+                                        </HBox> -->
 
 
-                    </layout:content>
-                </layout:Grid>
-
+                                        <HBox justifyContent="SpaceBetween" alignItems="Center">
+                                            <Label text="Last Poll" />
+                                            <Text text="{path: 'lastPollTimestamp', formatter: '.formatter.formatDateTime'}" />
+                                        </HBox>
+                                    </Panel>
+                                </f:content>
+                            </f:Card>
+                        </f:GridListItem>
+                    </f:items>
+                </f:GridList>
             </VBox>
         </f:content>
-        
+
     </f:DynamicPage>
 </mvc:View>

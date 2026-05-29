@@ -325,7 +325,7 @@ export async function upsertClusters(
         cluster.incidentCount +
         clusterData.incidentCount;
 
-      await UPDATE(
+      await srv.run(UPDATE(
         IncidentClusters
       )
       .set({
@@ -350,7 +350,7 @@ export async function upsertClusters(
       })
       .where({
         ID: cluster.ID
-      });
+      }));
     }
 
     /*

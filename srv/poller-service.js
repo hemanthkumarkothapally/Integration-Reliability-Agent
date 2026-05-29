@@ -81,8 +81,7 @@ export default cds.service.impl(async function () {
       console.log("Latest Artifact:", latestArtifact);
 
       const fallback = new Date(Date.now());
-      const rawTimestamp =
-        fallback;
+      const rawTimestamp =latestArtifact.lastPollTimestamp || fallback;
 
       console.log("Raw Timestamp:", rawTimestamp);
 
@@ -94,7 +93,7 @@ export default cds.service.impl(async function () {
 
       /* CPI logs Filter */
 
-      const filter = `Status eq 'FAILED' and LogEnd gt datetime'2026-05-28T09:30:20'`;
+      const filter = `Status eq 'FAILED' and LogEnd lt datetime'2026-05-29T01:40:30'`;
 
       console.log("Generated Filter:", filter);
 
