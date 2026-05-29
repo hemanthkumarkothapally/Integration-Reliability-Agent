@@ -90,11 +90,11 @@
         </f:header>
 
         <f:content>
-            <VBox width="100%">
+            <layout:VerticalLayout width="100%">
                 <MessageStrip enableFormattedText="true" text="Click any &lt;strong&gt;iFlow card&lt;/strong&gt; to open the &lt;strong&gt;Detail View&lt;/strong&gt; with all associated clusters and recent incidents." type="Information" showIcon="true" showCloseButton="true" class="sapUiSmallMarginBottom" />
 
 
-                <f:GridList id="idGridListId" growing="true" growingThreshold="15" class="sapUiNoContentPadding" items="{
+                <f:GridList id="idGridListId" growing="true" growingThreshold="30" growingScrollToLoad="true" class="sapUiNoContentPadding" items="{
                 path: '/MonitoredArtifacts',
                 sorter: { path: 'modifiedAt', descending: true}
             }">
@@ -102,6 +102,7 @@
                     <f:customLayout>
                         <grid:GridBasicLayout gridTemplateColumns="repeat(auto-fit, minmax(17rem, 1fr))" gridGap="1rem" />
                     </f:customLayout>
+                    
 
                     <f:items>
                         <f:GridListItem>
@@ -158,7 +159,7 @@
                         </f:GridListItem>
                     </f:items>
                 </f:GridList>
-            </VBox>
+            </layout:VerticalLayout>
         </f:content>
 
     </f:DynamicPage>

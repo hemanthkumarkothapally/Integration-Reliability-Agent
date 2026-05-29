@@ -192,75 +192,126 @@ sap.ui.define([
         //         });
         //     }
         // }
+
         _onObjectMatched: async function (oEvent) {
             let sID = oEvent.getParameter("arguments").ID;
             let oDetailsView = this.byId("beginView");
             this.getView().getModel("globalModel").setProperty("/iflowId", sID);
-            if (!oDetailsView) return;
+
+            if (!oDetailsView) {
+                return;
+            }
 
             oDetailsView.bindElement({
                 path: "/MonitoredArtifacts('" + sID + "')",
                 parameters: {
-                    $expand: "clusters($expand=cluster($expand=recommendations))"
+                    $expand: "clusters($expand=cluster($expand=recommendations,monitoredArtifacts($expand=artifact)))"
                 },
                 events: {
                     dataRequested: function () {
                         oDetailsView.setBusy(true);
                     },
-                    dataReceived: async function (oEvent) {
+
+                    dataReceived: async function () {
                         oDetailsView.setBusy(false);
 
                         let oContext = oDetailsView.getBindingContext();
-                        if (!oContext) return;
+                        if (!oContext) {
+                            return;
+                        }
 
                         try {
                             let oData = await oContext.requestObject();
                             console.log("Full data via requestObject:", oData);
 
                             let oViewData = JSON.parse(JSON.stringify(oData));
-                            let oModel = oDetailsView.getModel(); // default OData V4 model
+                            let oModel = oDetailsView.getModel();
 
-                            // For each cluster, fetch recommendations directly
-                            let aPromises = (oViewData.clusters || []).map(async function (clusterArtifact) {
-                                let cluster = clusterArtifact.cluster;
-                                if (!cluster || !cluster.recommendations) return;
+                            // Fetch recommendations and parse remediation steps
+                            let aPromises = (oViewData.clusters || []).map(async function (oClusterArtifact) {
 
-                                let sRecId = cluster.recommendations.ID;
+                                let oCluster = oClusterArtifact.cluster;
 
-                                // Fetch the recommendation directly to bypass cache issues
-                                let oRecBinding = oModel.bindContext("/Recommendations('" + sRecId + "')");
+                                if (!oCluster || !oCluster.recommendations) {
+                                    return;
+                                }
+
+                                let sRecId = oCluster.recommendations.ID;
+
+                                let oRecBinding = oModel.bindContext(
+                                    "/Recommendations('" + sRecId + "')"
+                                );
+
                                 let oRecContext = oRecBinding.getBoundContext();
                                 let oFullRec = await oRecContext.requestObject();
 
-                                console.log("Fetched recommendation directly:", oFullRec);
+                                oCluster.recommendations = oFullRec;
 
-                                cluster.recommendations = oFullRec;
-
-                                // Parse remediationSteps
                                 let sStepsJson = oFullRec.remediationSteps;
                                 let aSteps = [];
 
                                 if (sStepsJson) {
                                     try {
                                         let aRaw = JSON.parse(sStepsJson);
-                                        aSteps = aRaw.map(function (step, idx) {
+
+                                        aSteps = aRaw.map(function (sStep, iIndex) {
                                             return {
-                                                title: "STEP " + (idx + 1),
-                                                text: step
+                                                title: "STEP " + (iIndex + 1),
+                                                text: sStep
                                             };
                                         });
+
                                     } catch (e) {
-                                        console.error("Parse failed:", e);
+                                        console.error("Failed to parse remediationSteps", e);
                                     }
                                 }
 
-                                cluster.recommendations.parsedSteps = aSteps;
+                                oCluster.recommendations.parsedSteps = aSteps;
                             });
 
                             await Promise.all(aPromises);
 
+                            // ==========================================
+                            // Summary Calculations
+                            // ==========================================
+
+                            let aClusters = oViewData.clusters || [];
+
+                            let iOpenClusters = aClusters.filter(function (oItem) {
+                                return oItem.cluster &&
+                                    oItem.cluster.status === "OPEN";
+                            }).length;
+
+                            let iResolvedClusters = aClusters.filter(function (oItem) {
+                                return oItem.cluster &&
+                                    oItem.cluster.status === "RESOLVED";
+                            }).length;
+
+                            let iTotalIncidents = aClusters.reduce(function (iTotal, oItem) {
+                                return iTotal + (oItem?.incidentCount || 0);
+                            }, 0);
+
+                            let iCriticalClusters = aClusters.filter(function (oItem) {
+                                return oItem.cluster &&
+                                    oItem.cluster.severity === "CRITICAL";
+                            }).length;
+
+                            oViewData.summary = {
+                                openClusters: iOpenClusters,
+                                resolvedClusters: iResolvedClusters,
+                                totalIncidents: iTotalIncidents,
+                                criticalClusters: iCriticalClusters
+                            };
+
+                            // ==========================================
+                            // Create View Model
+                            // ==========================================
+
                             let oViewModel = new sap.ui.model.json.JSONModel(oViewData);
+
                             oDetailsView.setModel(oViewModel, "view");
+
+                            console.log("Summary:", oViewData.summary);
                             console.log("Final view model:", oViewData);
 
                         } catch (err) {
@@ -270,12 +321,6 @@ sap.ui.define([
                 }
             });
         }
-
-
-
-
-
-
     });
 
 });

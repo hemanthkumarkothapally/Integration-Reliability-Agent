@@ -64,67 +64,76 @@ sap.ui.define([
                 console.log("Closing chat side panel");
             }
         },
-        onResolve: async function () {
+  onResolve: async function (oEvent) {
 
-            this.showBusy();
+    const oContext =
+        oEvent.getSource()
+            .getBindingContext("view");
 
-            try {
+    const oData =
+        oContext.getObject();
 
-                const sID =
-                    this.getModel("globalModel")
-                        .getProperty("/cluster_id");
+    this.showBusy();
 
-                const oModel =
-                    this.getModel();
+    try {
 
-                const oContext =
-                    oModel.bindContext(
-                        `/IncidentClusters('${sID}')`
-                    );
+        const oModel =
+            this.getOwnerComponent()
+                .getModel();
 
-                await oContext.requestObject();
+        const oAction =
+            oModel.bindContext(
+                "/resolveClusterForArtifact(...)"
+            );
 
-                const oBoundContext =
-                    oContext.getBoundContext();
+        oAction.setParameter(
+            "clusterId",
+            oData.cluster_ID
+        );
 
-                oBoundContext.setProperty(
-                    "status",
-                    "RESOLVED"
-                );
+        oAction.setParameter(
+            "artifactId",
+            oData.artifact_ID
+        );
 
-                await oModel.submitBatch(
-                    "$auto"
-                );
+        oAction.setParameter(
+            "note",
+            "Resolved the cluster"
+        );
 
-                // Update JSON Model
-                this.getView().getModel("headerDetails")
-                    .setProperty(
-                        "/status",
-                        "RESOLVED"
-                    );
+        await oAction.execute();
 
-                MessageBox.success(
-                    "Incident resolved successfully"
-                );
+        const oResponse =
+            oAction.getBoundContext()
+                ?.getObject();
 
-            } catch (error) {
+        console.log(
+            "Resolve Response",
+            oResponse
+        );
 
-                console.error(
-                    "Resolve Failed",
-                    error
-                );
+        MessageBox.success(
+            "Incident resolved successfully"
+        );
 
-                MessageBox.error(
-                    "Failed to resolve incident"
-                );
+        oModel.refresh();
 
-            } finally {
+    } catch (error) {
 
-                this.hideBusy();
+        console.error(
+            "Resolve Failed",
+            error
+        );
 
-            }
+        MessageBox.error(
+            "Failed to resolve incident"
+        );
 
-        },
+    } finally {
+
+        this.hideBusy();
+    }
+},
 
         async Rediagnose() {
             this.showBusy();
