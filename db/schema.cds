@@ -9,6 +9,7 @@ entity Incidents : cuid, managed {
     status          : String(50);
     logStart        : Timestamp;
     logEnd          : Timestamp;
+    PackageName     : String(255);
     cluster                : Association to IncidentClusters;
 }
 
@@ -27,7 +28,7 @@ entity IncidentClusters : cuid, managed {
                            on incidents.cluster = $self;
     chatSessions : Association to many ChatSessions on chatSessions.cluster = $self;
     totalTokenUsage : Integer;
-    monitoredArtifacts   : Association to many ClusterArtifacts on monitoredArtifacts.cluster = $self;
+    monitoredArtifacts   : Composition of many ClusterArtifacts on monitoredArtifacts.cluster = $self;
     recommendations     : Composition of one ClusterRecommendations
                             on recommendations.cluster = $self;
 }
@@ -43,7 +44,8 @@ entity ClusterRecommendations : cuid, managed {
 entity MonitoredArtifacts : cuid, managed {
     iFlowName          : String(255);
     iFlowId            : String(255);
-    namespace          : String(255);
+    Type          : String(255);
+    PackageName     : String(255);
     isActive           : Boolean;
     lastPollTimestamp  : Timestamp;
     overallSeverity    : String(50) default 'HEALTHY';

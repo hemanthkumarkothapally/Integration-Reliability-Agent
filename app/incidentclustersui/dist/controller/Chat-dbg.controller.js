@@ -10,21 +10,23 @@ sap.ui.define([
     "sap/m/MessageBox",
     "sap/m/FlexJustifyContent",
     "sap/m/FlexAlignItems",
-    "sap/f/library"
-], function (BaseController, FormattedText, VBox, HBox, ObjectStatus, Avatar, AvatarSize, AvatarColor, MessageBox, FlexJustifyContent, FlexAlignItems, fioriLibrary) {
+    "sap/f/library",
+    "../model/formatter"
+
+], function (BaseController, FormattedText, VBox, HBox, ObjectStatus, Avatar, AvatarSize, AvatarColor, MessageBox, FlexJustifyContent, FlexAlignItems, fioriLibrary, formatter) {
     "use strict";
 
     return BaseController.extend("com.cytechies.integration.reliability.incidentclustersui.controller.Chat", {
-
+        formatter: formatter,
         onInit: function () {
 
 
-            var oChatInput = this.byId("chatInput1");
+            let oChatInput = this.byId("chatInput1");
             if (oChatInput) {
                 oChatInput.attachBrowserEvent("keydown", function (oEvent) {
                     if (oEvent.key === "Enter" && !oEvent.shiftKey) {
                         oEvent.preventDefault();
-                        var sValue = oChatInput.getValue().trim();
+                        let sValue = oChatInput.getValue().trim();
                         if (sValue) {
                             this.onPost(sValue); // Pass the string
                             oChatInput.setValue("");
@@ -34,44 +36,61 @@ sap.ui.define([
             };
             const oRouter = this.getRouter();
 
+            oRouter.getRoute("RouteAIAssistant")
+                .attachPatternMatched(function () {
+                    console.log("AIAssistant route matched!");
+
+                    this._resetToWelcomePage();
+                    // this.onBackPress();
+                }, this);
+
             oRouter.getRoute("RouteIC")
                 .attachPatternMatched(function () {
                     this._resetToWelcomePage();
-                    this.onBackPress();
+                    // this.onBackPress();
                 }, this);
             // this.getView().setModel(new JSONModel({ currentConversationId: null }), "appView");
-            this._resetToWelcomePage();
+            // this._resetToWelcomePage();
         },
 
         onBackPress: function () {
             let oFCL = this.getView().getParent().getParent();
-            if (oFCL) {
+            if (oFCL && oFCL.setLayout) {
                 oFCL.setLayout(sap.f.LayoutType.OneColumn);
+            }
+            else {
+                this.getOwnerComponent()
+                    .getRouter()
+                    .navTo("RouteOrderList");
             }
             console.log("Closing chat side panel");
         },
 
         onToggleClusterData: function (oEvent) {
-            var oJsonModel = this.getModel("chatJSONModel");
-            var bCurrentState = oJsonModel.getProperty("/clusterDataEnabled");
+            let oJsonModel = this.getModel("chatJSONModel");
+            let bCurrentState = oJsonModel.getProperty("/clusterDataEnabled");
             oJsonModel.setProperty("/clusterDataEnabled", !bCurrentState);
             this.byId("clusterDataPopover").close();
 
             console.log("Cluster data active:", !bCurrentState);
         },
 
+        onSelectClusterData: function (oEvent) {
+            this.byId("clusterPopover").openBy(oEvent.getSource());
+        },
+
         _resetToWelcomePage: function () {
-            var oJsonModel = this.getModel("chatJSONModel");
+            let oJsonModel = this.getModel("chatJSONModel");
             console.log("oJsonModel before reset:", oJsonModel.getData());
 
             oJsonModel.setProperty("/currentConversationId", null);
             oJsonModel.setProperty("/currentConversationTitle", "New Chat");
-            oJsonModel.setProperty("/clusterDataEnabled", true);
+            oJsonModel.setProperty("/clusterDataEnabled", false);
             oJsonModel.setProperty("/allMessagesLoaded", false);
             oJsonModel.setProperty("/messageSkip", 0);
             oJsonModel.setProperty("/showScrollButton", false);
 
-            this.byId("historyList").removeSelections(true);;
+            this.byId("historyList").removeSelections(true);
             this.byId("historyPopover").close();
             this.byId("chatContainer").removeAllItems();
             this.byId("welcomePage").setVisible(true);
@@ -95,7 +114,7 @@ sap.ui.define([
                 oPopover.close();
             }
             let sTitle = oCtx.getProperty("title");
-            var oJsonModel = this.getModel("chatJSONModel");
+            let oJsonModel = this.getModel("chatJSONModel");
             oJsonModel.setProperty("/currentConversationTitle", sTitle);
             oJsonModel.setProperty("/clusterDataEnabled", false);
             this._loadConversationMessages(sKey);
@@ -171,12 +190,12 @@ sap.ui.define([
             let bClusterEnabled = oJsonModel.getProperty("/clusterDataEnabled");
 
             let sQuery;
-            var oSource = oEvent.getSource ? oEvent.getSource() : null;
+            let oSource = oEvent.getSource ? oEvent.getSource() : null;
 
             if (oSource && typeof oSource.getValue === "function") {
                 sQuery = oSource.getValue().trim();
             } else {
-                var oInput = this.byId("chatInput1");
+                let oInput = this.byId("chatInput1");
                 sQuery = oInput ? oInput.getValue().trim() : "";
                 if (oInput) oInput.setValue("");
             }
@@ -195,9 +214,11 @@ sap.ui.define([
             let referenceID = null;
             if (bClusterEnabled) {
                 oJsonModel.setProperty("/clusterDataEnabled", false);
-                referenceID = this.getView().getModel("headerDetails").getProperty("/ID");
-                let referenceName = this.getView().getModel("headerDetails").getProperty("/errorType");
-                sQuery = `<span style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px 4px 8px;border:0.5px solid #f97316;border-radius:999px;color:#c05407;">🔗${referenceName}</span><br /><br/>${sQuery}`;
+                referenceID = oJsonModel.getProperty("/clusterId");
+                let clusterName = oJsonModel.getProperty("/clusterName");
+
+                // let referenceName = this.getView().getModel("headerDetails").getProperty("/errorType");
+                sQuery = `<span style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px 4px 8px;border:0.5px solid #f97316;border-radius:999px;color:#c05407;">🔗${clusterName}</span><br /><br/>${sQuery}`;
             }
 
             this._appendMessage(sQuery, "user", { tokenCount: "Calculating" });
@@ -217,7 +238,8 @@ sap.ui.define([
                 this._updateTotalSessionTokens();
             } catch (oError) {
                 console.error("Chat action failed", oError);
-                this._appendMessage("Sorry, I encountered an error processing your request.", "assistant");
+                this._updateUserTokenCount("No");
+                this._appendMessage("Sorry, I encountered an error processing your request.", "assistant", {}, true);
             } finally {
                 this.byId("typingIndicator").setVisible(false);
                 this._scrollToBottom();
@@ -568,20 +590,20 @@ sap.ui.define([
             this.byId("clusterDataPopover").close();
 
             // 2. Check if the user's browser supports Speech Recognition
-            var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SpeechRecognition) {
                 this.showToast("Sorry, voice input is not supported in this browser.");
                 return;
             }
 
             // 3. Initialize the speech recognition engine
-            var recognition = new SpeechRecognition();
+            let recognition = new SpeechRecognition();
             recognition.lang = 'en-US'; // You can change this to match your user's locale
             recognition.interimResults = false; // Set to true if you want to see words as they speak
             recognition.maxAlternatives = 1;
 
             // Grab your specific TextArea
-            var oTextArea = this.byId("chatInput1");
+            let oTextArea = this.byId("chatInput1");
 
             // Optional: Let the user know it is 
             this.byId("_IDGenBusyIndicator1").setVisible(true);
@@ -590,13 +612,13 @@ sap.ui.define([
             // 4. Handle the successful result
             recognition.onresult = function (event) {
                 // Extract the spoken text
-                var sTranscript = event.results[0][0].transcript;
+                let sTranscript = event.results[0][0].transcript;
 
                 // Get whatever is currently in the text box
-                var sCurrentText = oTextArea.getValue();
+                let sCurrentText = oTextArea.getValue();
 
                 // Append the new voice text (add a space if there's already text)
-                var sNewText = sCurrentText ? sCurrentText + " " + sTranscript : sTranscript;
+                let sNewText = sCurrentText ? sCurrentText + " " + sTranscript : sTranscript;
 
                 // Set the final text back into the UI5 TextArea
                 oTextArea.setValue(sNewText);
@@ -621,6 +643,47 @@ sap.ui.define([
 
             // 6. Start the microphone!
             recognition.start();
+        },
+
+        onClusterSearch: function (oEvent) {
+            let sQuery = oEvent.getParameter("newValue") || oEvent.getParameter("query") || "";
+            this.applyListSearch("clusterList", sQuery, ["errorType", "severity", "status"]);
+        },
+        onHistorySearch: function (oEvent) {
+            let sQuery = oEvent.getParameter("newValue") || oEvent.getParameter("query") || "";
+            this.applyListSearch("historyList", sQuery, ["title"]);
+        },
+        onClusterSelect: function (oEvent) {
+            let oListItem = oEvent.getParameter("listItem");
+
+            // Check if the item exists before working with it
+            if (!oListItem) {
+                return;
+            }
+            let oCtx = oEvent.getParameter("listItem").getBindingContext();
+            console.log("Selected cluster context data : ", oCtx);
+            let sKey = oCtx.getProperty("ID");
+
+            let oJsonModel = this.getModel("chatJSONModel");
+            // console.log("Cluster ID set to:", sKey);
+            oJsonModel.setProperty("/clusterId", sKey);
+            oJsonModel.setProperty("/clusterName", oCtx.getProperty("errorType"));
+
+            oJsonModel.setProperty("/clusterDataEnabled", true);
+            this.byId("clusterDataPopover").close();
+            let oList = oListItem.getParent();
+            if (oList) {
+                // Unselect the specific item visually
+                oListItem.setSelected(false);
+                // Clear the master selection tracking on the list itself
+                if (typeof oList.setSelectedItem === "function") {
+                    oList.setSelectedItem(null);
+                }
+            }
+
+            // console.log("Cluster data active:", !bCurrentState);
+            this.byId("clusterDataPopover").close();
+
         }
 
     });

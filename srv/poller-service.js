@@ -80,9 +80,8 @@ export default cds.service.impl(async function () {
 
       console.log("Latest Artifact:", latestArtifact);
 
-      const fallback = new Date(Date.now() - 5 * 60 * 1000);
+      const fallback = new Date(Date.now());
       const rawTimestamp =
-        latestArtifact?.lastPollTimestamp ||
         fallback;
 
       console.log("Raw Timestamp:", rawTimestamp);
@@ -95,7 +94,7 @@ export default cds.service.impl(async function () {
 
       /* CPI logs Filter */
 
-      const filter = `Status eq 'FAILED' and LogEnd gt datetime'2026-05-27T07:00:36.594'`;
+      const filter = `Status eq 'FAILED' and LogEnd gt datetime'2026-05-28T09:30:20'`;
 
       console.log("Generated Filter:", filter);
 
@@ -207,7 +206,8 @@ export default cds.service.impl(async function () {
             logEnd: convertDate(log.LogEnd),
             adapter: adapterType,
             errorMessage: safeErrorMessage,
-            errorSignature: normalized
+            errorSignature: analysed.errorMessage,
+            PackageName: log.IntegrationArtifact.PackageName,
           };
 
         } catch (err) {
@@ -399,6 +399,16 @@ export default cds.service.impl(async function () {
           .where({
             ID: cluster_ID
           });
+      }
+      if(aiResult.errorType){
+        await UPDATE(IncidentClusters)
+          .set({
+            errorType:
+              aiResult.errorType
+          })
+           .where({
+            ID: cluster_ID
+           });
       }
       /*
        * RETURN SAVED RECORD

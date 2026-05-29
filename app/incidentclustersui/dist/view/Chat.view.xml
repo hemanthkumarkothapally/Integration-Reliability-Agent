@@ -8,22 +8,69 @@
         <ResponsivePopover id="clusterDataPopover" placement="Top" showHeader="false" contentWidth="auto">
             <content>
                 <VBox class="sapUiTinyMargin">
-                    <!-- When cluster is OFF -->
-                    <Button text="Attach Cluster" type="Ghost" icon="sap-icon://add-process" tooltip="{i18n>cluster.toggle.attach.tooltip}" visible="{= !${chatJSONModel>/clusterDataEnabled} }" press=".onToggleClusterData" width="100%" />
+                    <!-- <Button text="Attach Cluster" type="Ghost" icon="sap-icon://add-process" tooltip="{i18n>cluster.toggle.attach.tooltip}" visible="{= !${chatJSONModel>/clusterDataEnabled} }" press=".onToggleClusterData" width="100%" /> -->
+                    <Button text="Select Cluster" type="Ghost" icon="sap-icon://add-process" tooltip="{i18n>cluster.toggle.attach.tooltip}" visible="{= !${chatJSONModel>/clusterDataEnabled} }" press=".onSelectClusterData" width="100%" />
+
                     <Button text="Upload File" type="Ghost" icon="sap-icon://attachment" tooltip="Insert Image or Document" press=".onUploadFilePress" width="100%" class="sapUiTinyMarginBottom" />
-            
-            <Button text="Voice Input" type="Ghost" icon="sap-icon://microphone" tooltip="Record Audio" press=".onVoiceInputPress" width="100%" />
-                    
-                    </VBox>
+
+                    <Button text="Voice Input" type="Ghost" icon="sap-icon://microphone" tooltip="Record Audio" press=".onVoiceInputPress" width="100%" />
+
+                </VBox>
             </content>
         </ResponsivePopover>
 
         <ResponsivePopover id="historyPopover" title="{i18n>history.popover.title}" placement="Bottom" contentWidth="auto">
             <content>
                 <List id="historyList" items="{chatModel>/ChatSessions}" mode="SingleSelectMaster" selectionChange=".onConversationSelect">
-
+                    <headerToolbar>
+                        <Toolbar>
+                            <SearchField id="historySearchField" width="100%" placeholder="{i18n>history.search.placeholder}" liveChange=".onHistorySearch" search=".onHistorySearch" />
+                        </Toolbar>
+                    </headerToolbar>
                     <items>
                         <StandardListItem id="_IDGenStandardListItem" title="{chatModel>title}" description ="{chatModel>modifiedAt}" info="{chatModel>totalSessionTokenUsage}" icon="sap-icon://discussion" />
+                    </items>
+                </List>
+            </content>
+        </ResponsivePopover>
+
+        <ResponsivePopover id="clusterPopover" placement="Right" title="Incident Clusters">
+            <content>
+                <List id="clusterList" mode="SingleSelectMaster" selectionChange=".onClusterSelect"  items="{
+              path: '/IncidentClusters',
+              sorter: {
+                  path: 'modifiedAt',
+                  descending: true
+              }
+          }">
+                    <headerToolbar>
+                        <Toolbar>
+                            <SearchField id="clusterSearchField" placeholder="Search clusters..." liveChange=".onClusterSearch" search=".onClusterSearch" />
+                        </Toolbar>
+                    </headerToolbar>
+                    <items>
+                        <CustomListItem type="Active" >
+                            <VBox class="sapUiSmallMargin">
+                                <HBox justifyContent="SpaceBetween" alignItems="Center">
+                                    <Text text="{errorType}" class="sapMTitleStyleH6" />
+                                    <ObjectNumber number="{incidentCount}" emphasized="true" />
+                                </HBox>
+                                <HBox justifyContent="SpaceBetween" class="sapUiTinyMarginTop">
+                                    <ObjectStatus text="{severity}" state="{
+                            path: 'severity',
+                            formatter: '.formatter.formatSeverityState'
+                        }" />
+                                    <ObjectStatus text="{status}" state="{
+                            path: 'status',
+                            formatter: '.formatter.formatStatusState'
+                        }" />
+                                </HBox>
+                                <Text text="{
+                        path: 'lastSeen',
+                        formatter: '.formatter.formatDateTime'
+                    }" class="sapUiTinyMarginTop" />
+                            </VBox>
+                        </CustomListItem>
                     </items>
                 </List>
             </content>
@@ -83,6 +130,7 @@
                                             <Button id="_IDGenButton7" text="{i18n>welcome.suggestion.messageSize}" type="Ghost" class="sapUiTinyMargin" press=".onSuggestionPress"/>
                                             <Button id="_IDGenButton8" text="{i18n>welcome.suggestion.remediation}" type="Ghost" class="sapUiTinyMargin" press=".onSuggestionPress"/>
                                         </FlexBox>
+
                                     </VBox>
                                 </VBox>
                                 <VBox id="chatContainer" width="100%" class="sapUiResponsiveContentPadding" />
@@ -104,7 +152,7 @@
                                 <Button type="Accept" icon="sap-icon://chain-link" tooltip="{i18n>cluster.toggle.detach.tooltip}" visible="{chatJSONModel>/clusterDataEnabled}" press=".onToggleClusterData" />
                                 <BusyIndicator id="_IDGenBusyIndicator1" visible="false" />
 
-                                
+
                                 <TextArea id="chatInput1" growing="true" growingMaxLines="3" rows="2" width="100%" wrapping="Soft" placeholder="{= ${chatJSONModel>/clusterDataEnabled} ? ${i18n>input.placeholder.clusterActive} : ${i18n>input.placeholder.default} }">
                                     <layoutData>
                                         <OverflowToolbarLayoutData shrinkable="true" minWidth="100px" priority="Low" />
