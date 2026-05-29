@@ -43,7 +43,7 @@ sap.ui.define([
             MessageToast.show(sMessage);
         },
 
-        
+
 
         onListSearch: function (oEvent) {
             var oSource = oEvent.getSource();
@@ -60,6 +60,26 @@ sap.ui.define([
 
             var aFields = sFields.split(",").map(function (s) { return s.trim(); });
             this.applyListSearch(sListId, sQuery, aFields);
+        },
+
+
+        applyCentralBindingFilter: function (sControlId, sAggregation, aFilters) {
+            sAggregation = sAggregation || "items";
+            var oControl = this.byId(sControlId);
+
+            if (!oControl) {
+                console.warn("BaseController: Control target element not found: " + sControlId);
+                return;
+            }
+
+            var oBinding = oControl.getBinding(sAggregation);
+            if (!oBinding) {
+                console.warn("BaseController: No binding found on aggregation context: " + sAggregation);
+                return;
+            }
+
+            // Executes the filter updates on your OData V4 Model
+            oBinding.filter(aFilters);
         },
 
 
@@ -97,6 +117,39 @@ sap.ui.define([
             } else {
                 oBinding.filter([]);
             }
+        },
+
+
+        applyFilterBarSearch: function (sTargetControlId, sAggregationName, aFilterConfigs) {
+            var oTargetControl = this.byId(sTargetControlId);
+            if (!oTargetControl) { return; }
+
+            var oBinding = oTargetControl.getBinding(sAggregationName);
+            if (!oBinding) { return; }
+
+            var aRootFilters = [];
+
+            aFilterConfigs.forEach(function (oConfig) {
+                var oMultiCombo = this.byId(oConfig.controlId);
+                if (oMultiCombo) {
+                    var aSelectedKeys = oMultiCombo.getSelectedKeys();
+                    if (aSelectedKeys && aSelectedKeys.length > 0) {
+                        var aSubFilters = aSelectedKeys.map(function (sKey) {
+                            return new Filter(oConfig.bindingPath, FilterOperator.EQ, sKey);
+                        });
+                        // Items within the same multi-combobox get grouped with OR
+                        aRootFilters.push(new Filter({ filters: aSubFilters, and: false }));
+                    }
+                }
+            }.bind(this));
+
+            // All separate filters together get grouped with AND
+            if (aRootFilters.length > 0) {
+                oBinding.filter(new Filter({ filters: aRootFilters, and: true }));
+            } else {
+                oBinding.filter([]); // Clear all filters if nothing is selected
+            }
         }
+
     });
 });

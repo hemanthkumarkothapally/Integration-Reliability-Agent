@@ -194,7 +194,9 @@ sap.ui.define([
         // }
         _onObjectMatched: async function (oEvent) {
             let sID = oEvent.getParameter("arguments").ID;
+            this.getOwnerComponent().getModel("globalModel").setProperty("/iflowId", sID);
             let oDetailsView = this.byId("beginView");
+
 
             if (oDetailsView) {
                 oDetailsView.bindElement({
