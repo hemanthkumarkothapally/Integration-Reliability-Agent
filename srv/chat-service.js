@@ -88,20 +88,20 @@ export default cds.service.impl(async function () {
             role: 'user',
             content: userMessage
         });
-        const newAiMessage = {
-            conversation_ID: conversationId,
-            role: 'assistant',
-            content: "Generating AI response... TEST",
-            tokenCount: 5678,
+        // const newAiMessage = {
+        //     conversation_ID: conversationId,
+        //     role: 'assistant',
+        //     content: "Generating AI response... TEST",
+        //     tokenCount: 5678,
 
-        };
-        await srv.run(UPDATE(Messages)
-            .set({ tokenCount: 1234 })
-            .where({ ID: uid }));
-        await srv.run(INSERT.into(Messages).entries(newAiMessage));
-        newAiMessage.inputTokens = 1234;
-        newAiMessage.outputTokens = 5678;
-        return newAiMessage; // for testing
+        // };
+        // await srv.run(UPDATE(Messages)
+        //     .set({ tokenCount: 1234 })
+        //     .where({ ID: uid }));
+        // await srv.run(INSERT.into(Messages).entries(newAiMessage));
+        // newAiMessage.inputTokens = 1234;
+        // newAiMessage.outputTokens = 5678;
+        // return newAiMessage; // for testing
         try {
             // 2. Load full history (includes the message we just inserted)
             // const history = await SELECT

@@ -66,13 +66,40 @@ sap.ui.define([
             console.log("Closing chat side panel");
         },
 
-        onToggleClusterData: function (oEvent) {
-            let oJsonModel = this.getModel("chatJSONModel");
-            let bCurrentState = oJsonModel.getProperty("/clusterDataEnabled");
-            oJsonModel.setProperty("/clusterDataEnabled", !bCurrentState);
-            this.byId("clusterDataPopover").close();
+        onRemoveClusterPress: function (oEvent) {
+            // 1. Close the popover
+            if (this._oClusterPopover) {
+                this._oClusterPopover.close();
+            }
 
-            console.log("Cluster data active:", !bCurrentState);
+            // 2. Clear the cluster data from your model to hide the main button
+            var oModel = this.getView().getModel("chatJSONModel");
+            
+            oModel.setProperty("/clusterName", "");
+            oModel.setProperty("/clusterDataEnabled", false);
+            
+            // 3. Provide feedback to the user
+            MessageToast.show("Cluster detached successfully");
+            
+            // Note: Add any backend API calls here if you need to delete the linkage in the database
+        },
+
+        onToggleClusterData: function (oEvent) {
+            const oButton = oEvent.getSource();
+            const oPopover = this.byId("activeClusterPopover");
+
+            // Check if the popover is already open
+            if (oPopover.isOpen()) {
+                oPopover.close();
+            } else {
+                oPopover.openBy(oButton);
+            }
+            // let oJsonModel = this.getModel("chatJSONModel");
+            // let bCurrentState = oJsonModel.getProperty("/clusterDataEnabled");
+            // oJsonModel.setProperty("/clusterDataEnabled", !bCurrentState);
+            // this.byId("clusterDataPopover").close();
+
+            // console.log("Cluster data active:", !bCurrentState);
         },
 
         onSelectClusterData: function (oEvent) {
@@ -128,27 +155,6 @@ sap.ui.define([
             }
         },
 
-
-
-        // onSelectClusterData: function (oEvent) {
-        //     var oGlobalModel = this.getView().getModel("globalModel");
-        //     var sIflowId = oGlobalModel ? oGlobalModel.getProperty("/iflowId") : null;
-        //     console.log("Selected cluster data with iFlow ID:", sIflowId);
-
-        //     // this.applyContextFilter("clusterList", [
-        //     //     { path: "monitoredArtifacts/artifact_ID", value: sIflowId }
-        //     // ]);
-
-        //     this.applyListSearch("clusterList", sIflowId, ["monitoredArtifacts/artifact_ID"]);
-
-        //     // this.applyListSearch("clusterList", [
-        //     //     { path: "monitoredArtifacts/artifact_ID", value: sIflowId }
-        //     // ]);
-
-        //     this.byId("clusterPopover").openBy(oEvent.getSource());
-
-        //     console.log("Opening cluster data popover with iFlow filter:", sIflowId);
-        // },
 
 
         _resetToWelcomePage: function () {
@@ -319,12 +325,14 @@ sap.ui.define([
         },
 
         _executeCreateConversation: function (sTitle) {
-            this.showBusy(100)
+            debugger
+            this.showBusy();
             return new Promise((resolve, reject) => {
                 let oModel = this.getView().getModel("chatModel");
                 let oJsonModel = this.getModel("chatJSONModel");
                 let oAction = oModel.bindContext("/createConversation(...)");
-                let clusterId = this.getView().getModel("headerDetails").getProperty("/ID");
+                // console.log("Cluster ID set to:", sKey);
+                let clusterId = oJsonModel.getProperty("/clusterId") || null;
 
                 // 3. Set parameters
                 oAction.setParameter("title", sTitle);
@@ -344,9 +352,8 @@ sap.ui.define([
 
                     console.error("Conversation creation failed:", oError);
                     reject(oError);
-                }).finally(() => {
-                    this.hideBusy();
                 });
+                this.hideBusy();
             });
 
 
