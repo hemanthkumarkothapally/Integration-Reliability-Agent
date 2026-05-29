@@ -185,7 +185,7 @@ sap.ui.define([
             if (sKey !== "ALL") {
                 aFilters.push(
                     new Filter(
-                        "severity",
+                        "overallSeverity",
                         FilterOperator.EQ,
                         sKey
                     )
@@ -202,7 +202,7 @@ sap.ui.define([
             const oItem = oEvent.getSource();
             const oContext = oItem.getBindingContext();
             const sID = oContext.getProperty("ID");
-            this.getOwnerComponent().getModel("globalModel").setProperty("/cluster_id", sID);
+            this.getOwnerComponent().getModel("globalModel").setProperty("/ID", sID);
             console.log("Cluster ID set in global model:", sID);
 
             this.navTo("RouteIC", {

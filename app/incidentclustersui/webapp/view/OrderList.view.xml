@@ -262,21 +262,21 @@
 
                                     <items>
 
-                                        <IconTabFilter key="ALL" text="All" count="{/IncidentClusters/$count}" iconColor="Neutral" icon="sap-icon://list" />
+                                        <IconTabFilter key="ALL" text="All" count="{/MonitoredArtifacts/$count}" iconColor="Neutral" icon="sap-icon://list" />
 
 
-                                        <IconTabFilter key="CRITICAL" text="Critical" count="{path: '/IncidentClusters/$count', parameters: {$filter: 'severity eq \'CRITICAL\''}}" icon="sap-icon://error" iconColor="Negative" />
+                                        <IconTabFilter key="CRITICAL" text="Critical" count="{path: '/MonitoredArtifacts/$count', parameters: {$filter: 'overallSeverity eq \'CRITICAL\''}}" icon="sap-icon://error" iconColor="Negative" />
 
 
-                                        <IconTabFilter key="HIGH" text="High" count="{path: '/IncidentClusters/$count', parameters: {$filter: 'severity eq \'HIGH\''}}" icon="sap-icon://alert" iconColor="Critical" />
-
-
-
-                                        <IconTabFilter key="MEDIUM" text="Medium" count="{path: '/IncidentClusters/$count', parameters: {$filter: 'severity eq \'MEDIUM\''}}" icon="sap-icon://information" iconColor="Default" />
+                                        <IconTabFilter key="HIGH" text="High" count="{path: '/MonitoredArtifacts/$count', parameters: {$filter: 'overallSeverity eq \'HIGH\''}}" icon="sap-icon://alert" iconColor="Critical" />
 
 
 
-                                        <IconTabFilter key="LOW" text="Low" count="{path: '/IncidentClusters/$count', parameters: {$filter: 'severity eq \'LOW\''}}" icon="sap-icon://sys-help-2" iconColor="Positive" />
+                                        <IconTabFilter key="MEDIUM" text="Medium" count="{path: '/MonitoredArtifacts/$count', parameters: {$filter: 'overallSeverity eq \'MEDIUM\''}}" icon="sap-icon://information" iconColor="Default" />
+
+
+
+                                        <IconTabFilter key="LOW" text="Low" count="{path: '/MonitoredArtifacts/$count', parameters: {$filter: 'overallSeverity eq \'LOW\''}}" icon="sap-icon://sys-help-2" iconColor="Positive" />
 
                                     </items>
 
@@ -300,8 +300,8 @@
 
                                     <columns>
 
-                                        <Column width="4rem" hAlign="Center">
-                                            <Text text="Count" />
+                                        <Column width="4rem">
+                                            <Text text="No of Clusters" />
                                         </Column>
 
 
@@ -330,7 +330,7 @@
                                     <items>
 
                                         <ColumnListItem type="Navigation" press=".onRowPress" highlight="{
-        path: 'severity',
+        path: 'overallSeverity',
         formatter: '.formatter.formatRowHighlight'
     }">
 
@@ -338,7 +338,7 @@
 
                                                 <!-- COUNT -->
 
-                                                <ObjectNumber number="{incidentCount}" emphasized="true" />
+                                                <ObjectNumber number="{openClusterCount}" emphasized="true" />
 
                                                 <!-- MESSAGE -->
 
@@ -346,21 +346,18 @@
 
                                                 <!-- SEVERITY -->
 
-                                                <ObjectStatus text="{severity}" state="{
-                            path:'severity',
+                                                <ObjectStatus text="{overallSeverity}" state="{
+                            path:'overallSeverity',
                             formatter:'.formatter.formatSeverityState'
                         }" />
 
                                                 <!-- STATUS -->
 
-                                                <ObjectStatus text="{isActive}" state="{
-                            path:'status',
-                            formatter:'.formatter.formatStatusState'
-                        }" />
+                                                <ObjectStatus text="{= ${isActive} === 'Yes' ? 'ACTIVE' : 'INACTIVE' }" state="{= ${isActive} === 'Yes' ? 'Success' : 'Error' }" />
 
                                                 <!-- LAST SEEN -->
 
-                                                <Text text="{modifiedAt}" />
+                                                <Text text="{lastPollTimestamp}" />
 
                                             </cells>
 

@@ -71,3 +71,10 @@
     50%  { box-shadow: 0 4px 15px rgba(0, 112, 243, 0.4), 0 0 0 10px rgba(0, 112, 243, 0); }
     100% { box-shadow: 0 4px 15px rgba(0, 112, 243, 0.4), 0 0 0 0 rgba(0, 112, 243, 0); }
 }
+
+.vboxborderclass {
+    border: 1px solid #e0e0e0 !important;
+    border-radius: 8px !important;
+    padding: 16px !important;
+    background-color: #fafafa !important;
+}
