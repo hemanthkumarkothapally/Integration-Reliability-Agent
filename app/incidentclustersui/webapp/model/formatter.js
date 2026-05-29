@@ -3,6 +3,27 @@ sap.ui.define([], function () {
     "use strict";
 
     return {
+
+
+        formatSeverityIcon: function (sSeverity) {
+            if (!sSeverity) {
+                return "";
+            }
+
+            switch (sSeverity.toUpperCase()) {
+                case "CRITICAL":
+                    return "sap-icon://error";       // The white 'X' on red
+                case "HIGH":
+                    return "sap-icon://warning";     // The warning triangle
+                case "MEDIUM":
+                    return "sap-icon://information"; // The 'i' icon
+                case "LOW":
+                    return "sap-icon://incident";    // The green question mark/incident icon
+                default:
+                    return "sap-icon://process";     // Fallback icon
+            }
+        },
+
         severityIconColor: function (sSeverity) {
         if (!sSeverity) {
             return sap.ui.core.IconColor.Positive; // Green
@@ -42,6 +63,50 @@ sap.ui.define([], function () {
             }
 
         },
+
+         formatButtonState: function (sSeverity) {
+
+            switch (sSeverity) {
+
+                case "CRITICAL":
+                    return "Reject";
+
+                case "HIGH":
+                    return "Attention";
+
+                case "MEDIUM":
+                    return "Neutral";
+
+                case "LOW":
+                    return "Accept";
+
+                default:
+                    return "None";
+            }
+
+        },
+        formatButtonText: function (sSeverity) {
+
+            switch (sSeverity) {
+
+                case "CRITICAL":
+                    return "Critical";
+
+                case "HIGH":
+                    return "High";
+
+                case "MEDIUM":
+                    return "Medium";
+
+                case "LOW":
+                    return "Low";
+
+                default:
+                    return "None";
+            }
+
+        },
+
         formatRowHighlight: function (sSeverity) {
 
             switch (sSeverity) {
