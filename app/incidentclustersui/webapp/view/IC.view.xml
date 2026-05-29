@@ -12,8 +12,9 @@
 		<f:beginColumnPages>
 			<mvc:XMLView id="beginView" viewName="com.cytechies.integration.reliability.incidentclustersui.view.IncidentDetails"/>
 		</f:beginColumnPages>
+        
 		<f:midColumnPages>
-			<mvc:XMLView id="requestView" viewName="com.cytechies.integration.reliability.incidentclustersui.view.Chat"/>
+			<mvc:XMLView id="aIView" viewName="com.cytechies.integration.reliability.incidentclustersui.view.Chat"/>
 		</f:midColumnPages>
 	</f:FlexibleColumnLayout>
     </App>

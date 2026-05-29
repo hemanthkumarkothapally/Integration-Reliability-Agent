@@ -196,36 +196,81 @@ sap.ui.define([
             let sID = oEvent.getParameter("arguments").ID;
             let oDetailsView = this.byId("beginView");
 
-            if (oDetailsView) {
-                oDetailsView.bindElement({
-                    path: "/MonitoredArtifacts('" + sID + "')",
-                    parameters: {
-                        $expand: "clusters($expand=cluster)"
+            if (!oDetailsView) return;
+
+            oDetailsView.bindElement({
+                path: "/MonitoredArtifacts('" + sID + "')",
+                parameters: {
+                    $expand: "clusters($expand=cluster($expand=recommendations))"
+                },
+                events: {
+                    dataRequested: function () {
+                        oDetailsView.setBusy(true);
                     },
-                    events: {
-                        dataRequested: function () {
-                            oDetailsView.setBusy(true);
-                        },
-                        dataReceived: function (oEvent) {
-                            oDetailsView.setBusy(false);
+                    dataReceived: async function (oEvent) {
+                        oDetailsView.setBusy(false);
 
-                            // 1. Get the bound context object
-                            let oContext = oDetailsView.getBindingContext();
-                            if (oContext) {
-                                // 2. Safely log the root element payload data 
-                                console.log("Root Bound Data Object:", oContext.getObject());
-                            }
+                        let oContext = oDetailsView.getBindingContext();
+                        if (!oContext) return;
 
-                            // 3. Catch structural backend errors if they occur
-                            let oError = oEvent.getParameter("error");
-                            if (oError) {
-                                console.error("OData V4 Binding Data Fetch Error: ", oError);
-                            }
+                        try {
+                            let oData = await oContext.requestObject();
+                            console.log("Full data via requestObject:", oData);
+
+                            let oViewData = JSON.parse(JSON.stringify(oData));
+                            let oModel = oDetailsView.getModel(); // default OData V4 model
+
+                            // For each cluster, fetch recommendations directly
+                            let aPromises = (oViewData.clusters || []).map(async function (clusterArtifact) {
+                                let cluster = clusterArtifact.cluster;
+                                if (!cluster || !cluster.recommendations) return;
+
+                                let sRecId = cluster.recommendations.ID;
+
+                                // Fetch the recommendation directly to bypass cache issues
+                                let oRecBinding = oModel.bindContext("/Recommendations('" + sRecId + "')");
+                                let oRecContext = oRecBinding.getBoundContext();
+                                let oFullRec = await oRecContext.requestObject();
+
+                                console.log("Fetched recommendation directly:", oFullRec);
+
+                                cluster.recommendations = oFullRec;
+
+                                // Parse remediationSteps
+                                let sStepsJson = oFullRec.remediationSteps;
+                                let aSteps = [];
+
+                                if (sStepsJson) {
+                                    try {
+                                        let aRaw = JSON.parse(sStepsJson);
+                                        aSteps = aRaw.map(function (step, idx) {
+                                            return {
+                                                title: "STEP " + (idx + 1),
+                                                text: step
+                                            };
+                                        });
+                                    } catch (e) {
+                                        console.error("Parse failed:", e);
+                                    }
+                                }
+
+                                cluster.recommendations.parsedSteps = aSteps;
+                            });
+
+                            await Promise.all(aPromises);
+
+                            let oViewModel = new sap.ui.model.json.JSONModel(oViewData);
+                            oDetailsView.setModel(oViewModel, "view");
+                            console.log("Final view model:", oViewData);
+
+                        } catch (err) {
+                            console.error("Error:", err);
                         }
                     }
-                });
-            }
+                }
+            });
         }
+
 
 
 
