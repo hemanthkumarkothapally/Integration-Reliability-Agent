@@ -3,382 +3,133 @@
     xmlns="sap.m"
     xmlns:f="sap.f"
     xmlns:fb="sap.ui.comp.filterbar"
-    xmlns:tnt="sap.tnt"
-    xmlns:core="sap.ui.core"
     xmlns:layout="sap.ui.layout"
-    xmlns:viz="sap.viz.ui5.controls"
-    xmlns:viz.data="sap.viz.ui5.data"
-    xmlns:viz.feeds="sap.viz.ui5.controls.common.feeds"
-    xmlns:mc="sap.suite.ui.microchart"
-    xmlns:card="sap.f.cards">
-
-    <tnt:ToolPage id="toolPage1">
-
-        <!-- ===================================================== -->
-        <!-- HEADER -->
-        <!-- ===================================================== -->
-
-        <tnt:header >
-
-            <tnt:ToolHeader>
-
-                <!-- MENU BUTTON -->
-
-                <Button icon="sap-icon://menu2" type="Transparent" press=".onSideNavButtonPress">
-
-                    <layoutData>
-                        <OverflowToolbarLayoutData priority="NeverOverflow" />
-                    </layoutData>
-
-                </Button>
-
-                <!-- SAP LOGO -->
-
-                <!-- <Image src="https://www.sap.com/dam/application/shared/logos/sap-logo-svg.svg" width="4rem" /> -->
-
-                <!-- TITLE -->
-
-                <Title text="Integration Monitoring Overview" level="H1" />
-
-
-                <ToolbarSpacer />
-                <Button icon="sap-icon://ai" text="Ai Assistant" type="Ghost" press=".onAipress" tooltip="AI Assistant"/>
-                <!-- HEADER ACTIONS -->
-
-                <!-- <Button icon="sap-icon://search" type="Transparent" />
- 
-                <Button icon="sap-icon://bell" type="Transparent" />
- 
-                <Button icon="sap-icon://question-mark" type="Transparent" />
- 
-                <Avatar initials="JP" backgroundColor="Accent6" /> -->
-
-            </tnt:ToolHeader>
-
-        </tnt:header>
-
-        <!-- ===================================================== -->
-        <!-- SIDE NAVIGATION -->
-        <!-- ===================================================== -->
-
-        <tnt:sideContent>
-
-            <!-- <tnt:SideNavigation id="sideNavigation"> -->
-
-            <!-- <tnt:NavigationList>
-
-                    <tnt:NavigationListItem text="Overview" icon="sap-icon://home" key="overview" />
-
-                    <tnt:NavigationListItem text="Incidents" icon="sap-icon://alert" key="incidents" />
-
-                    <tnt:NavigationListItem text="iFlows" icon="sap-icon://process" key="iflows" />
-
-                    <tnt:NavigationListItem text="Clusters" icon="sap-icon://share-2" key="clusters" />
-
-                </tnt:NavigationList> -->
-
-
-            <!-- </tnt:SideNavigation> -->
-
-        </tnt:sideContent>
-
-        <!-- ===================================================== -->
-        <!-- MAIN CONTENT -->
-        <!-- ===================================================== -->
-
-        <tnt:mainContents>
-
-            <f:DynamicPage id="dynamicPage" toggleHeaderOnTitleClick="false">
-
-                <f:header >
-
-                    <f:DynamicPageHeader>
-
-                        <f:content>
-
-                            <fb:FilterBar id="filterbar" persistencyKey="incidentMonitoring" useToolbar="false" search=".onSearchiFlowName" filterChange=".onFilterChange" afterVariantLoad=".onAfterVariantLoad" class="sapUiSmallMargin">
-
-                                <fb:filterGroupItems>
-
-                                    <fb:FilterGroupItem name="iFlowName" label="iFlow Name" groupName="Group1" visibleInFilterBar="true">
-
-                                        <fb:control>
-
-                                            <MultiComboBox id="idIFlowFilter" width="14rem" items="{
-                path:'/MonitoredArtifacts'
-            }">
-
-                                                <core:Item key="{iFlowName}" text="{iFlowName}" />
-
-                                            </MultiComboBox>
-
-                                        </fb:control>
-
-                                    </fb:FilterGroupItem>
-
-
-                                    <fb:FilterGroupItem name="Severity" label="Severity" groupName="Group1" visibleInFilterBar="true">
-
-                                        <fb:control>
-
-                                            <MultiComboBox id="idSeverityFilter" width="14rem">
-
-                                                <core:Item key="CRITICAL" text="CRITICAL" />
-
-                                                <core:Item key="HIGH" text="HIGH" />
-
-                                                <core:Item key="MEDIUM" text="MEDIUM" />
-
-                                                <core:Item key="LOW" text="LOW" />
-
-                                            </MultiComboBox>
-
-                                        </fb:control>
-
-                                    </fb:FilterGroupItem>
-
-
-
-                                    <fb:FilterGroupItem name="Status" label="Status" groupName="Group1" visibleInFilterBar="true">
-
-                                        <fb:control>
-
-                                            <MultiComboBox id="idStatusFilter" width="14rem">
-
-                                                <core:Item key="OPEN" text="OPEN" />
-
-                                                <core:Item key="RESOLVED" text="RESOLVED" />
-
-                                            </MultiComboBox>
-
-                                        </fb:control>
-
-                                    </fb:FilterGroupItem>
-
-
-
-                                </fb:filterGroupItems>
-
-                            </fb:FilterBar>
-
-                        </f:content>
-
-                    </f:DynamicPageHeader>
-
-                </f:header>
-
-                <!-- ===================================================== -->
-                <!-- PAGE CONTENT -->
-                <!-- ===================================================== -->
-
+    xmlns:core="sap.ui.core"
+    xmlns:card="sap.f.cards">    <!-- Fixed: Restored the card namespace definition -->
+
+    <f:DynamicPage id="dynamicPageId" headerExpanded="true" toggleHeaderOnTitleClick="true">
+
+        <f:title>
+            <f:DynamicPageTitle>
+                <f:heading>
+                    <Title text="Integration Monitoring Overview"/>
+                </f:heading>
+                <f:actions>
+                    <Button icon="sap-icon://ai" text="Ai Assistant" type="Ghost" press=".onAipress" tooltip="AI Assistant"/>
+                </f:actions>
+            </f:DynamicPageTitle>
+        </f:title>
+
+        <f:header>
+            <f:DynamicPageHeader pinnable="true">
                 <f:content>
-
-                    <!-- ===================================================== -->
-                    <!-- KPI CARDS -->
-                    <!-- ===================================================== -->
-                    <VBox>
-
-                        <layout:Grid defaultSpan="XL3 L3 M6 S12" hSpacing="1" vSpacing="1" class="sapUiSmallMarginBottom">
-
-                            <layout:content>
-
-                                <!-- ===================================================== -->
-                                <!-- TOTAL INCIDENTS -->
-                                <!-- ===================================================== -->
-
-                                <f:Card width="100%" height="140px" semanticRole="ListItem" class="sapUiContentPadding">
-
-                                    <f:header>
-
-                                        <card:NumericHeader title="Total Incidents " subtitle="In last 24 hours" number="{dashboard>/totalIncidents24h}" state="Neutral" iconSrc="sap-icon://activity-items" />
-
-                                    </f:header>
-
-
-
-                                </f:Card>
-
-                                <!-- ===================================================== -->
-                                <!-- ACTIVE CLUSTERS -->
-                                <!-- ===================================================== -->
-
-                                <f:Card width="100%" height="140px" semanticRole="ListItem" class="sapUiTinyMarginEnd">
-
-                                    <f:header>
-
-                                        <card:NumericHeader title="Active Clusters" subtitle="Currently active" number="{dashboard>/activeClusters}" state="Critical" iconSrc="sap-icon://bbyd-active-sales" />
-
-
-                                    </f:header>
-
-
-                                </f:Card>
-
-                                <!-- ===================================================== -->
-                                <!-- IFLOWS MONITORED -->
-                                <!-- ===================================================== -->
-
-                                <f:Card width="100%" height="140px" semanticRole="ListItem" class="sapUiTinyMarginEnd">
-
-                                    <f:header>
-
-                                        <card:NumericHeader title="Critical" subtitle="Open Critical clusters" number="{dashboard>/criticalCount}" state="Error" iconSrc="sap-icon://alert" />
-
-
-                                    </f:header>
-
-
-
-                                </f:Card>
-
-                                <!-- ===================================================== -->
-                                <!-- RESOLVED TODAY -->
-                                <!-- ===================================================== -->
-
-                                <f:Card width="100%" height="140px" semanticRole="ListItem" class="sapUiTinyMarginEnd">
-
-                                    <f:header>
-
-                                        <card:NumericHeader title="Resolved Today" subtitle="In the last 24 hours" number="{dashboard>/resolved24h}" state="Good" iconSrc="sap-icon://accept" />
-
-                                    </f:header>
-
-
-
-                                </f:Card>
-
-                            </layout:content>
-                        </layout:Grid>
-
-                        <!-- ===================================================== -->
-                        <!-- INCIDENT TABLE SECTION -->
-                        <!-- ===================================================== -->
-                        <VBox class="sapUiSmallMargin">
-                            <Panel width="100%" class="sapUiMediumMarginBottom">
-
-
-
-                                <IconTabHeader id="idSeverityTabBar" select=".onSeverityTabSelect" class="sapUiResponsiveContentPadding">
-
-                                    <items>
-
-                                        <IconTabFilter key="ALL" text="All" count="{/MonitoredArtifacts/$count}" iconColor="Neutral" icon="sap-icon://list" />
-
-
-                                        <IconTabFilter key="CRITICAL" text="Critical" count="{path: '/MonitoredArtifacts/$count', parameters: {$filter: 'overallSeverity eq \'CRITICAL\''}}" icon="sap-icon://error" iconColor="Negative" />
-
-
-                                        <IconTabFilter key="HIGH" text="High" count="{path: '/MonitoredArtifacts/$count', parameters: {$filter: 'overallSeverity eq \'HIGH\''}}" icon="sap-icon://alert" iconColor="Critical" />
-
-
-
-                                        <IconTabFilter key="MEDIUM" text="Medium" count="{path: '/MonitoredArtifacts/$count', parameters: {$filter: 'overallSeverity eq \'MEDIUM\''}}" icon="sap-icon://information" iconColor="Default" />
-
-
-
-                                        <IconTabFilter key="LOW" text="Low" count="{path: '/MonitoredArtifacts/$count', parameters: {$filter: 'overallSeverity eq \'LOW\''}}" icon="sap-icon://sys-help-2" iconColor="Positive" />
-
-                                    </items>
-
-
-                                </IconTabHeader>
-                                <!-- ===================================================== -->
-                                <!-- TABLE -->
-                                <!-- ===================================================== -->
-                                <!-- <ScrollContainer height="20rem" vertical="true" horizontal="false" focusable="true">  -->
-                                <Table id="idIncidentClustersTable" inset="false" width="100%" growingScrollToLoad="false" growingThreshold="5" mode="None" sticky="ColumnHeaders" items="{
-            path:'/MonitoredArtifacts',
-             sorter:{
-            path:'modifiedAt',
-            descending:true
-        }
-        }">
-
-
-
-                                    <!-- COLUMNS -->
-
-                                    <columns>
-
-                                        <Column width="4rem">
-                                            <Text text="No of Clusters" />
-                                        </Column>
-
-
-
-                                        <Column width="20rem" minScreenWidth="Tablet" demandPopin="true">
-
-                                            <Text text="iFlowName" />
-                                        </Column>
-
-                                        <Column width="10rem" minScreenWidth="Desktop" demandPopin="true">
-                                            <Text text="Severity" />
-                                        </Column>
-
-                                        <Column width="10rem" minScreenWidth="Desktop" demandPopin="true">
-                                            <Text text="Status" />
-                                        </Column>
-
-                                        <Column width="15rem" minScreenWidth="Desktop" demandPopin="true">
-                                            <Text text="Last Seen" />
-                                        </Column>
-
-                                    </columns>
-
-                                    <!-- ITEMS -->
-
-                                    <items>
-
-                                        <ColumnListItem type="Navigation" press=".onRowPress" highlight="{
-        path: 'overallSeverity',
-        formatter: '.formatter.formatRowHighlight'
-    }">
-
-                                            <cells>
-
-                                                <!-- COUNT -->
-
-                                                <ObjectNumber number="{openClusterCount}" emphasized="true" />
-
-                                                <!-- MESSAGE -->
-
-                                                <Text text="{iFlowName}" wrapping="false" />
-
-                                                <!-- SEVERITY -->
-
-                                                <ObjectStatus text="{overallSeverity}" state="{
-                            path:'overallSeverity',
-                            formatter:'.formatter.formatSeverityState'
-                        }" />
-
-                                                <!-- STATUS -->
-
-                                                <ObjectStatus text="{= ${isActive} === 'Yes' ? 'ACTIVE' : 'INACTIVE' }" state="{= ${isActive} === 'Yes' ? 'Success' : 'Error' }" />
-
-                                                <!-- LAST SEEN -->
-
-                                                <Text text="{lastPollTimestamp}" />
-
-                                            </cells>
-
-                                        </ColumnListItem>
-
-                                    </items>
-
-                                </Table>
-                                <!-- </ScrollContainer> -->
-                            </Panel>
-                        </VBox>
-                    </VBox>
-
-
-
+                    <FlexBox alignItems="Start" justifyContent="SpaceBetween" wrap="Wrap" width="100%" class="sapUiSmallMarginTop">
+                        <items>
+
+                            <VBox width="auto" class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
+                                <layoutData>
+                                    <FlexItemData growFactor="1" />
+                                </layoutData>
+                                <items>
+                                    <MultiComboBox id="idIFlowFilter" width="100%" placeholder="Filter by IFlow Name" items="{path:'/MonitoredArtifacts'}" selectionChange=".onFilterChange">
+                                        <core:Item key="{iFlowName}" text="{iFlowName}" />
+                                    </MultiComboBox>
+                                </items>
+                            </VBox>
+
+                            <FlexBox wrap="Wrap" justifyContent="Start" class="sapUiTinyMarginBottom">
+                                <layoutData>
+                                    <FlexItemData growFactor="0" />
+                                </layoutData>
+                                <items>
+                                    <Button icon="sap-icon://process" text="{= 'All (' + (${/MonitoredArtifacts/$count} || '0') + ')' }" type="Ghost" press=".onTagPress" class="sapUiTinyMarginEnd sapUiTinyMarginBottom" />
+
+                                    <Button icon="sap-icon://error" text="{= 'Critical (' + (${path: '/MonitoredArtifacts/$count', parameters: {$filter: 'overallSeverity eq \'CRITICAL\''}} || '0') + ')' }" type="Reject" press=".onTagPress" class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+                                        <customData>
+                                            <core:CustomData key="severity" value="CRITICAL" />
+                                        </customData>
+                                    </Button>
+
+                                    <Button icon="sap-icon://warning" text="{= 'High (' + (${path: '/MonitoredArtifacts/$count', parameters: {$filter: 'overallSeverity eq \'HIGH\''}} || '0') + ')' }" type="Attention" press=".onTagPress" class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+                                        <customData>
+                                            <core:CustomData key="severity" value="HIGH" />
+                                        </customData>
+                                    </Button>
+
+                                    <Button icon="sap-icon://information" text="{= 'Medium (' + (${path: '/MonitoredArtifacts/$count', parameters: {$filter: 'overallSeverity eq \'MEDIUM\''}} || '0') + ')' }" type="Neutral" press=".onTagPress" class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+                                        <customData>
+                                            <core:CustomData key="severity" value="MEDIUM" />
+                                        </customData>
+                                    </Button>
+
+                                    <Button icon="sap-icon://incident" text="{= 'Low (' + (${path: '/MonitoredArtifacts/$count', parameters: {$filter: 'overallSeverity eq \'LOW\''}} || '0') + ')' }" type="Accept" press=".onTagPress" class="sapUiTinyMarginBottom">
+                                        <customData>
+                                            <core:CustomData key="severity" value="LOW" />
+                                        </customData>
+                                    </Button>
+                                </items>
+                            </FlexBox>
+
+                        </items>
+                    </FlexBox>
                 </f:content>
 
-            </f:DynamicPage>
+            </f:DynamicPageHeader>
+        </f:header>
 
-        </tnt:mainContents>
+        <f:content>
+            <VBox width="100%">
+                <layout:Grid defaultSpan="XL3 L3 M6 S12" id="idGridId" hSpacing="1" vSpacing="1" containerQuery="true"  class="sapUiNoContentPadding" content="{
+                        path: '/MonitoredArtifacts',sorter: { path: 'modifiedAt', descending: true}}">
+                    <layout:content>
+                        <f:Card semanticRole="ListItem" press=".onCardPress">
 
-    </tnt:ToolPage>
+                            <f:content>
+                                <Panel class="sapUiSmallMargin">
+                                    <headerToolbar>
+                                        <Toolbar>
+
+
+                                            <core:Icon src="sap-icon://process" class="sapUiTinyMarginEnd" size="1.5rem" color="{path: 'overallSeverity',formatter: '.formatter.severityIconColor'}"/>
+
+                                            <!-- Text Title: Truncation works perfectly now -->
+                                            <Title text="{iFlowName}" wrapping="false" titleStyle="H5" />
+                                            <ToolbarSpacer  />
+                                            <!-- Right Side Container: Fixed layout data ensures it never shrinks or vanishes -->
+                                            <ObjectNumber number="{openClusterCount}" class="sapMObjectNumberLarge sapUiTinyMarginBegin" state="{ path: 'overallSeverity', formatter: '.formatter.formatSeverityState'}"/>
+
+                                        </Toolbar>
+                                    </headerToolbar>
+
+                                    <!-- Horizontal Divider Line -->
+                                    <!-- <core:HTML content="&lt;hr style='border: none; border-top: 1px solid #ebebeb; margin: 0 0 12px 0;' /&gt;" /> -->
+
+                                    <!-- CARD BODY CONTENT ROWS -->
+                                    <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiTinyMarginBottom">
+                                        <Label text="Severity" />
+                                        <ObjectStatus text="{overallSeverity}" state="{               path: 'overallSeverity', formatter: '.formatter.formatSeverityState' }" />
+                                    </HBox>
+
+                                    <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiTinyMarginBottom">
+                                        <Label text="Status" />
+                                        <ObjectStatus text="{= ${isActive} === 'Yes' ? 'ACTIVE' : 'INACTIVE' }" state="{= ${isActive} === 'Yes' ? 'Success' : 'Error' }" />
+                                    </HBox>
+
+                                    <HBox justifyContent="SpaceBetween" alignItems="Center">
+                                        <Label text="Last Poll" />
+                                        <Text text="{path: 'lastPollTimestamp', formatter: '.formatter.formatDateTime'}" />
+                                    </HBox>
+                                </Panel>
+                            </f:content>
+
+                        </f:Card>
+
+
+                    </layout:content>
+                </layout:Grid>
+
+            </VBox>
+        </f:content>
+        
+    </f:DynamicPage>
 </mvc:View>
- 

@@ -41,6 +41,7 @@ sap.ui.define([
             this.getOwnerComponent()
                 .getRouter()
                 .navTo("RouteOrderList");
+            this.getView().getModel("globalModel").setProperty("/iflowId",null);
 
         },
         onAipress: function () {

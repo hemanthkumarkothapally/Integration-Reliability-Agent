@@ -3,6 +3,23 @@ sap.ui.define([], function () {
     "use strict";
 
     return {
+        severityIconColor: function (sSeverity) {
+        if (!sSeverity) {
+            return sap.ui.core.IconColor.Positive; // Green
+        }
+        
+        switch (sSeverity.toUpperCase()) {
+            case "CRITICAL":
+                return sap.ui.core.IconColor.Negative; // Red
+            case "HIGH":
+                return sap.ui.core.IconColor.Critical; // Orange
+            case "MEDIUM":
+                return "#0066cc";  // Blue (Theme Neutral)
+            case "LOW":
+            default:
+                return sap.ui.core.IconColor.Positive; // Green
+        }
+    },
 
         formatSeverityState: function (sSeverity) {
 
@@ -77,7 +94,10 @@ sap.ui.define([], function () {
                 })
                 .format(oDate);
 
-        }
+        },
+
+      
+
     };
 
 });
