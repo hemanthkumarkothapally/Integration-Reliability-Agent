@@ -288,7 +288,7 @@ sap.ui.define([
                             }).length;
 
                             let iTotalIncidents = aClusters.reduce(function (iTotal, oItem) {
-                                return iTotal + (oItem.cluster?.incidentCount || 0);
+                                return iTotal + (oItem?.incidentCount || 0);
                             }, 0);
 
                             let iCriticalClusters = aClusters.filter(function (oItem) {

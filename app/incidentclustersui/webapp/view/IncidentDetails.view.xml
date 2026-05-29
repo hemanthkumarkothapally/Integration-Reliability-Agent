@@ -155,7 +155,7 @@
                                                     <m:OverflowToolbar height="auto" class="sapUiSmallMarginTopBottom sapUiContentPadding">
 
                                                         <!-- Error Type -->
-                                                        <m:Title text="{= ${view>cluster/errorType} + ' (' + ${view>cluster/incidentCount} +  ' incidents)' } " level="H5" titleStyle="H5" wrapping="true" />
+                                                        <m:Title text="{= ${view>cluster/errorType} + ' (' + ${view>incidentCount} +  ' incidents)' } " level="H5" titleStyle="H5" wrapping="true" />
 
                                                         <m:ToolbarSpacer />
 

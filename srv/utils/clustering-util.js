@@ -524,10 +524,10 @@ export async function refreshArtifactDashboard(
   const allRelations = await SELECT.from(ClusterArtifacts);
 
   // 3. Total unresolved clusters globally
-  const totalOpenClusters = await SELECT.from(IncidentClusters)
+  const totalOpenClusters = await SELECT.one`count(1) as total`.from(IncidentClusters)
     .where({ globalStatus: { '!=': 'RESOLVED' } });
 
-  const globalOpenCount = totalOpenClusters.length;
+  const globalOpenCount = totalOpenClusters.total;
 
   // 4. Group relations by artifact
   const relationsByArtifact = new Map();
