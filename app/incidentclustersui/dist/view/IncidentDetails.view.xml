@@ -4,9 +4,10 @@
     xmlns:suite="sap.suite.ui.commons"
     xmlns:layout="sap.ui.layout"
     xmlns:core="sap.ui.core"
+    xmlns:f="sap.f"
     xmlns:m="sap.m" height="100%">
 
-    <ObjectPageLayout id="ObjectPageLayout" showTitleInHeaderContent="true" showFooter="true" upperCaseAnchorBar="false">
+    <ObjectPageLayout headerContentPinned="true" height="100vh" id="ObjectPageLayout" showTitleInHeaderContent="true" showFooter="true" upperCaseAnchorBar="false">
 
         <headerTitle>
             <ObjectPageDynamicHeaderTitle id="_IDGenObjectPageDynamicHeaderTitle">
@@ -53,7 +54,7 @@
                     <m:FlexBox fitContainer="true" alignItems="Center">
 
 
-                        <m:Title text="{headerDetails>/errorType}" level="H2" titleStyle="H2" wrapping="true" />
+                        <m:Title text="{iFlowName}" level="H2" titleStyle="H2" wrapping="true" />
 
 
 
@@ -62,7 +63,7 @@
                 </snappedContent>
 
                 <snappedTitleOnMobile>
-                    <m:Title text="{headerDetails>/errorType}" level="H3" titleStyle="H3" wrapping="true" />
+                    <m:Title text="{iFlowName}" level="H3" titleStyle="H3" wrapping="true" />
 
                 </snappedTitleOnMobile>
 
@@ -76,333 +77,202 @@
                 <m:FlexBox id="_IDGenInnerFlexBox" wrap="Wrap">
                     <layout:VerticalLayout id="_IDGenVerticalLayout" class="sapUiSmallMarginBeginEnd">
 
-                        <!-- <m:ObjectStatus title="iFlow Name" text="{headerDetails>/errorType}" /> -->
-
-                        <m:ObjectStatus id="_IDGenObjectStatus2" title="Severity" text="{headerDetails>/severity}" state="{= ${headerDetails>/severity} === 'CRITICAL' ? 'Error' : ${headerDetails>/severity} === 'HIGH' ? 'Warning' : ${headerDetails>/severity} === 'MEDIUM' ? 'Information' : ${headerDetails>/severity} === 'LOW' ? 'Success' : 'None' }" />
-                        <!-- <m:ObjectStatus title="Status" text="{headerDetails>/status}" /> -->
-
-                        <!-- <m:ObjectStatus title="Error Type" text="{headerDetails>/errorSignature}" /> -->
-                        <m:ObjectStatus id="_IDGenObjectStatus3" title="Incident Count" text="{headerDetails>/incidentCount}" />
-
-                        <m:ObjectStatus id="_IDGenObjectStatus" title="Confidence Score" />
-                        <m:ProgressIndicator displayOnly="false" id="_IDGenProgressIndicator" percentValue="{details>/confidenceScore}" displayValue="{details>/confidenceScore}%" showValue="true" class="sapUiNoMarginTop" state="{= ${details>/confidenceScore} === null || !${details>/confidenceScore} ? 'None' : (${details>/confidenceScore} &lt;= 33 ? 'Error' : (${details>/confidenceScore} &lt;= 66 ? 'Warning' : 'Success')) }" />
-
+                        <m:ObjectStatus id="_IDGenObjectStatus2" title="Severity" text="{overallSeverity}" state="{= ${overallSeverity} === 'CRITICAL' ? 'Error' : ${overallSeverity} === 'HIGH' ? 'Warning' : ${overallSeverity} === 'MEDIUM' ? 'Information' : ${overallSeverity} === 'LOW' ? 'Success' : 'None' }" />
+                        <m:ObjectStatus id="_IDGenObjectStatus1" title="iFlow Status" text="{= ${isActive} === 'Yes' ? 'ACTIVE' : 'INACTIVE' }" state="{= ${isActive} === 'Yes' ? 'Success' : 'Error' }" />
+                        <m:ObjectAttribute id="_IDGenObjectStatus4" title="Last Polled" text="{lastPollTimestamp}" />
+                        <m:ObjectAttribute id="_IDGenObjectStatus5" title="Package Name" text="{PackageName}" />
 
                     </layout:VerticalLayout>
 
-                    <layout:VerticalLayout id="_IDGenVerticalLayout1" class="sapUiSmallMarginBeginEnd">
-                        <m:ObjectStatus id="_IDGenObjectStatus1" title="Status" text="{headerDetails>/status}" state="{= ${headerDetails>/status} === 'OPEN'? 'Warning': ${headerDetails>/status} === 'RESOLVED'? 'Success': 'None'}" />
 
-                        <m:ObjectStatus id="_IDGenObjectStatus4" title="First Seen" text="{
-                            path: 'headerDetails>/firstSeen',
-                            formatter: '.formatter.formatDateTime'
-                        }" />
 
-                        <m:ObjectStatus id="_IDGenObjectStatus5" title="Last Seen" text="{
-                            path: 'headerDetails>/lastSeen',
-                            formatter: '.formatter.formatDateTime'
-                        }"/>
-                    </layout:VerticalLayout>
 
-                    <!-- <layout:VerticalLayout id="_IDGenVerticalLayout2" class="sapUiSmallMarginBeginEnd">
-
-                        <m:ObjectStatus id="_IDGenObjectStatus6" title="Created By" text="{headerDetails>/createdBy}" />
-
-                        <m:ObjectStatus id="_IDGenObjectStatus7" title="Modified By" text="{headerDetails>/modifiedBy}" />
-
-                    </layout:VerticalLayout> -->
                 </m:FlexBox>
-                <layout:VerticalLayout id="_IDGenVerticalLayout3" class="sapUiSmallMarginBeginEnd">
+                <!-- <layout:VerticalLayout id="_IDGenVerticalLayout3" class="sapUiSmallMarginBeginEnd">
                     <m:ObjectNumber id="_IDGenObjectNumber" number="{= ${headerDetails>/totalTokenUsage} ? ${headerDetails>/totalTokenUsage} : 0 }" unit="Tokens used" emphasized="true" state="Information" class="sapMObjectNumberLarge"/>
-                </layout:VerticalLayout>
+                </layout:VerticalLayout> -->
+                <m:FlexBox alignItems="Center" justifyContent="End" class="sapUiSmallMarginEnd sapUiMediumMarginBottom">
 
+                    <!-- Open Clusters -->
+                    <m:VBox class="sapUiTinyMarginBeginEnd" alignItems="Center">
+                        <m:ObjectNumber number="{openClusterCount}" emphasized="true" state="Error" class="sapMObjectNumberLarge" />
+                        <m:Text text="OPEN CLUSTERS" />
+                    </m:VBox>
+
+                    <!-- Total Incidents -->
+                    <m:VBox class="sapUiTinyMarginBeginEnd" alignItems="Center">
+                        <m:ObjectNumber number="{view>/summary/totalIncidents}" emphasized="true" class="sapMObjectNumberLarge" />
+                        <m:Text text="TOTAL INCIDENTS" />
+                    </m:VBox>
+
+                    <!-- Resolved -->
+                    <m:VBox class="sapUiTinyMarginBeginEnd" alignItems="Center">
+                        <m:ObjectNumber number="{resolvedClusterCount}" emphasized="true" state="Success" class="sapMObjectNumberLarge" />
+                        <m:Text text="RESOLVED" />
+                    </m:VBox>
+
+                </m:FlexBox>
 
             </m:FlexBox>
+
+
 
         </headerContent>
 
         <sections>
 
             <!-- ROOT CAUSE -->
-            <ObjectPageSection id="_IDGenObjectPageSection" title="Root Cause Analysis" showTitle="false">
-
+            <ObjectPageSection id="_IDGenSectionClusters" title="Clusters" showTitle="false">
                 <subSections>
-
-                    <ObjectPageSubSection id="_IDGenObjectPageSubSection">
-
+                    <ObjectPageSubSection id="_IDGenSubSectionClusters" class="sapUiNoBackgroundColor">
                         <blocks>
+                            <m:ScrollContainer id="_IDGenScrollContainer1" height="100%" width="100%" vertical="true" horizontal="false" class="sapUiContentPadding">
 
-                            <m:VBox id="_IDGenVBox1" class="sapUiSmallMargin">
-
-                                <m:HBox id="_IDGenHBox1" alignItems="Center" class="sapUiTinyMarginBottom">
-
-                                    <m:Avatar id="_IDGenAvatar2" src="sap-icon://inspection" displaySize="XS" class="sapUiTinyMarginEnd" />
-
-                                    <m:Title id="_IDGenTitle7" text="Root Cause Analysis" level="H5" />
-
+                                <m:HBox >
+                                    <m:Title text="{= 'Associated Error Clusters (' + ${view>/clusters}.length + ')' }" wrapping="true" level="H1" titleStyle="H4" class="sapUiTinyMarginBeginEnd"/>
                                 </m:HBox>
 
-                                <m:Text id="_IDGenText6" wrapping="true" text="{details>/rootCause}" />
+                                <m:ToolbarSpacer ></m:ToolbarSpacer>
 
-                            </m:VBox>
+                                <m:HBox justifyContent="End" class="sapUiSmallMarginBottom">
 
+
+                                    <m:Link text="Expand All" press="onExpandAll" class="sapUiTinyMarginEnd" />
+
+                                    <m:Text text=" | " class="sapUiTinyMarginBeginEnd"/>
+
+                                    <m:Link text="Collapse All" press="onCollapseAll" />
+                                </m:HBox>
+
+                                <m:VBox id="_IDGenVBoxClusters" items="{view>/clusters}" class="sapUiContentPadding">
+
+                                    <f:Card class="sapUiSmallMarginBottom">
+                                        <f:content>
+                                            <m:Panel expandable="true" expanded="{view>expanded}" width="100%" expandAnimation="false" class="sapUiNoBackgroundColor">
+
+
+                                                <m:headerToolbar>
+                                                    <m:OverflowToolbar height="auto" class="sapUiSmallMarginTopBottom sapUiContentPadding">
+
+                                                        <!-- Error Type -->
+                                                        <m:Title text="{= ${view>cluster/errorType} + ' (' + ${view>cluster/incidentCount} +  ' incidents)' } " level="H5" titleStyle="H5" wrapping="true" />
+
+                                                        <m:ToolbarSpacer />
+
+                                                        <!-- Severity -->
+                                                        <m:GenericTag design="StatusIconHidden" text="{view>cluster/severity}" status="{= ${view>cluster/severity} === 'CRITICAL' ? 'Error' :
+                     ${view>cluster/severity} === 'HIGH' ? 'Warning' :
+                     ${view>cluster/severity} === 'MEDIUM' ? 'Information' :
+                     'Success' }" class="sapUiTinyMarginEnd" />
+
+                                                        <!-- Resolution Status -->
+                                                        <m:ObjectStatus text="{view>resolutionStatus}" state="{= ${view>resolutionStatus} === 'OPEN' ? 'Information' : 'Success' }" inverted="true" class="sapUiTinyMarginEnd sapUiSmallMarginBegin" />
+
+                                                        <!-- Resolve Button -->
+                                                        <m:Button text="Resolve" icon="sap-icon://complete" type="Emphasized" press="onResolve" enabled="{= ${view>resolutionStatus} === 'OPEN' }" />
+
+                                                    </m:OverflowToolbar>
+                                                </m:headerToolbar>
+
+
+                                                <m:VBox class="sapUiSmallMargin">
+
+                                                    <!-- Root Cause Analysis -->
+                                                    <m:VBox class="sapUiSmallMarginBottom vboxborderclass">
+                                                        <m:HBox alignItems="Center" class="sapUiTinyMarginBottom">
+                                                            <m:Avatar src="sap-icon://inspection" displaySize="XS" class="sapUiTinyMarginEnd" />
+                                                            <m:Title text="Root Cause Analysis" wrapping="true" level="H6" />
+                                                        </m:HBox>
+                                                        <m:Text text="{view>cluster/recommendations/rootCause}" wrapping="true" />
+                                                        <m:ToolbarSpacer ></m:ToolbarSpacer>
+                                                        <m:VBox class="sapUiSmallMarginTop sapUiSmallMarginBottom">
+<m:HBox alignItems="Center" class="sapUiTinyMarginBottom">
+                                                            <m:Avatar  src="sap-icon://error" displaySize="XS" class="sapUiTinyMarginEnd" />
+                                                            <m:Title text="Raw Error" wrapping="true" level="H6" />
+                                                        </m:HBox>
+                                                            <!-- <m:Title text="Raw Error" level="H6"  class="sapUiTinyMarginBottom sapUiLargeMarginBegin" /> -->
+
+                                                            <m:MessageStrip type="Error" showIcon="false" enableFormattedText="true" text="{view>cluster/errorSignature}" />
+
+                                                        </m:VBox>
+                                                    </m:VBox>
+
+                                                    <!-- Business Impact -->
+                                                    <m:VBox class="sapUiSmallMarginBottom vboxborderclass">
+                                                        <m:HBox alignItems="Center" class="sapUiTinyMarginBottom">
+                                                            <m:Avatar src="sap-icon://business-objects-experience" displaySize="XS" class="sapUiTinyMarginEnd" />
+                                                            <m:Title text="Business Impact" wrapping="true" level="H6" />
+                                                        </m:HBox>
+                                                        <m:Text text="{view>cluster/recommendations/businessImpact}" wrapping="true" />
+                                                    </m:VBox>
+
+                                                    <!-- Remediation Steps as Timeline -->
+                                                    <m:VBox class="sapUiSmallMarginBottom  vboxborderclass">
+                                                        <m:HBox alignItems="Center" class="sapUiTinyMarginBottom">
+                                                            <m:Avatar src="sap-icon://activity-items" displaySize="XS" class="sapUiTinyMarginEnd" />
+                                                            <m:Title text="Remediation Steps" wrapping="true" level="H6" />
+                                                        </m:HBox>
+
+                                                        <suite:Timeline showIcons="false" showHeaderBar="false" enableScroll="false" content="{view>cluster/recommendations/parsedSteps}">
+
+                                                            <suite:TimelineItem userName="{view>title}" text="{view>text}" userNameClickable="false" />
+
+                                                        </suite:Timeline>
+                                                    </m:VBox>
+                                                    <m:VBox class="sapUiSmallMarginBottom vboxborderclass">
+
+                                                        <m:HBox alignItems="Center" class="sapUiTinyMarginBottom">
+                                                            <m:Avatar src="sap-icon://process" displaySize="XS" class="sapUiTinyMarginEnd" />
+
+                                                            <m:Title text="Associated iFlows" level="H6" />
+                                                        </m:HBox>
+
+                                                        <m:List items="{view>cluster/monitoredArtifacts}" showSeparators="Inner" backgroundDesign="Transparent">
+
+                                                            <m:CustomListItem >
+
+                                                                <m:HBox justifyContent="SpaceBetween" alignItems="Center" width="100%">
+
+                                                                    <m:VBox>
+                                                                        <m:Title text="{view>artifact/iFlowName}" level="H6" />
+
+                                                                        <m:Text text="{view>artifact/PackageName}" />
+                                                                    </m:VBox>
+
+                                                                    <m:ObjectStatus text="{view>artifact/overallSeverity}" state="{= ${view>artifact/overallSeverity} === 'CRITICAL' ? 'Error' :
+                             ${view>artifact/overallSeverity} === 'HIGH' ? 'Warning' :
+                             ${view>artifact/overallSeverity} === 'MEDIUM' ? 'Information' :
+                             'Success'}" />
+
+                                                                </m:HBox>
+
+                                                            </m:CustomListItem>
+
+                                                        </m:List>
+
+                                                    </m:VBox>
+
+                                                </m:VBox>
+
+                                            </m:Panel>
+                                        </f:content>
+                                    </f:Card>
+
+                                </m:VBox>
+                            </m:ScrollContainer>
                         </blocks>
-
                     </ObjectPageSubSection>
-
                 </subSections>
-
             </ObjectPageSection>
+
 
             <!-- BUSINESS IMPACT -->
-            <ObjectPageSection id="_IDGenObjectPageSection1" title="Business Impact" showTitle="false">
-
-                <subSections>
-
-                    <ObjectPageSubSection id="_IDGenObjectPageSubSection1">
-
-                        <blocks>
-
-                            <m:VBox id="_IDGenVBox2" class="sapUiSmallMargin">
-
-                                <m:HBox id="_IDGenHBox3" alignItems="Center" class="sapUiTinyMarginBottom">
-                                    <m:Avatar id="_IDGenAvatar1" src="sap-icon://line-chart-time-axis" displaySize="XS" class="sapUiTinyMarginEnd" />
-
-                                    <m:Title id="_IDGenTitle8" text="Business Impact" level="H5" />
-
-                                </m:HBox>
-
-
-                                <m:Text id="_IDGenText10" wrapping="true" text="{details>/businessImpact}" />
-
-                            </m:VBox>
-
-                        </blocks>
-
-                    </ObjectPageSubSection>
-
-                </subSections>
-
-            </ObjectPageSection>
-
-            <ObjectPageSection id="_IDGenObjectPageSection2" title="Remediation Steps" showTitle="false">
-
-                <subSections>
-
-                    <ObjectPageSubSection id="_IDGenObjectPageSubSection2">
-
-                        <blocks>
-
-                            <m:VBox id="_IDGenVBox3" class="sapUiSmallMargin">
-
-                                <m:HBox id="_IDGenHBox4" alignItems="Center" class="sapUiTinyMarginBottom">
-                                    <m:Avatar id="_IDGenAvatar3" src="sap-icon://technical-object" displaySize="XS" class="sapUiTinyMarginEnd" />
-
-                                    <m:Title id="_IDGenTitle9" text="Remediation Steps" level="H5" />
-                                </m:HBox>
-
-
-
-                                <suite:Timeline width = "100%" id="idRemediationTimeline" showIcons="false" showHeaderBar="false" enableScroll="false" content="{remediationSteps>/steps}">
-
-                                    <suite:content>
-
-                                        <suite:TimelineItem id="_IDGenTimelineItem" status="Information" userName="{remediationSteps>title}" text="{remediationSteps>text}" userNameClickable="false" />
-                                    </suite:content>
-
-
-                                </suite:Timeline>
-
-                            </m:VBox>
-
-                        </blocks>
-
-                    </ObjectPageSubSection>
-
-                </subSections>
-
-            </ObjectPageSection>
-
-
-
-            <ObjectPageSection title="Associated IFlows" showTitle="false">
-
-                <subSections>
-
-                    <ObjectPageSubSection id="_IDGenObjectPageSubSection3">
-
-                        <blocks>
-
-                            <m:VBox id="_IDGenVBox4" class="sapUiSmallMargin">
-
-                                <m:HBox id="_IDGenHBox5" alignItems="Center" class="sapUiTinyMarginBottom">
-                                    <m:Avatar id="_IDGenAvatar4" src="sap-icon://connected" displaySize="XS" class="sapUiTinyMarginEnd" />
-                                    <m:Title id="_IDGenTitle10" text="Associated IFlows ({= ${headerDetails>/monitoredArtifacts}.length })" level="H5" />
-
-                                </m:HBox>
-                                <!-- <m:VBox id="_IDGenVBox5">
-                                    <m:Text id="_IDGenText12" text="{incidentsModel>/incidents/0/errorMessage}" wrapping="true" />
-                                </m:VBox> -->
-
-                                <m:Table id="idIncidentTable" growing="true" growingScrollToLoad="false" growingThreshold="5" mode="None" items="{clusters}">
-                                    <m:columns>
-                                        <m:Column id="_IDGenColumn" minScreenWidth="Tablet" demandPopin="true">
-                                            <m:Text id="_IDGenText1" text="Cluster Name"/>
-                                        </m:Column>
-                                        <m:Column id="_IDGenColumn1" minScreenWidth="Tablet" demandPopin="true">
-                                            <m:Text id="_IDGenText2" text="Incident Count"/>
-                                        </m:Column>
-                                        <m:Column id="_IDGenColumn2" minScreenWidth="Tablet" demandPopin="true">
-                                            <m:Text id="_IDGenText3" text="Last Poll"/>
-                                        </m:Column>
-                                        <m:Column id="_IDGenColumn3" minScreenWidth="Tablet" demandPopin="true">
-                                            <m:Text id="_IDGenText4" text="Status"/>
-                                        </m:Column>
-                                    </m:columns>
-
-                                    <m:items>
-                                        <m:ColumnListItem id="_IDGenColumnListItem">
-                                            <m:cells>
-                                                <!-- Cluster Name / Error Type -->
-                                                <m:Text id="_IDGenText5" text="{cluster/errorType}"/>
-
-                                                <!-- Incident Count -->
-                                                <m:Text id="_IDGenText7" text="{cluster/incidentCount}"/>
-
-                                                <!-- Last Poll (Point to Parent Context Property via OData V4 Syntax) -->
-                                                <m:Text id="_IDGenText8" text="{
-                                                    path: '$parent/lastPollTimestamp',
-                                                    formatter: '.formatter.formatDateTime'
-                                                }" />
-
-                                                <!-- Active Status (Point to Parent Context Property via OData V4 Syntax) -->
-                                                <m:ObjectStatus id="_IDGenObjectStatus9" text="{= ${$parent/isActive} ? 'Active' : 'Inactive' }" state="{= ${$parent/isActive} ? 'Success' : 'Error' }"/>
-                                            </m:cells>
-                                        </m:ColumnListItem>
-                                    </m:items>
-                                </m:Table>
-
-
-
-
-                            </m:VBox>
-
-                        </blocks>
-
-                    </ObjectPageSubSection>
-
-                </subSections>
-
-            </ObjectPageSection>
-
-            <ObjectPageSection title="Underlying Incidents" showTitle="false">
-
-                <subSections>
-
-                    <ObjectPageSubSection >
-
-                        <blocks>
-
-                            <m:VBox class="sapUiSmallMargin">
-
-                                <m:HBox alignItems="Center" class="sapUiTinyMarginBottom">
-                                    <m:Avatar src="sap-icon://incident" displaySize="XS" class="sapUiTinyMarginEnd" />
-                                    <m:Title text="Underlying Incidents ({headerDetails>/incidentCount})" />
-
-                                </m:HBox>
-
-                                <m:VBox id="_IDGenVBox5">
-                                    <m:Title text="Raw Error Message" level="H4" titleStyle="H4" class="sapUiTinyMarginBottom"/>
-                                    <!-- <m:ObjectStatus text="Raw Error Message" state="Error" /> -->
-                                    <m:Text id="_IDGenText12" text="    - {incidentsModel>/incidents/0/errorMessage}" wrapping="true" class="sapUiTinyMarginBegin"/>
-                                </m:VBox>
-
-
-
-                                <!-- <m:Table items="{headerDetails>/incidents}" growing="true" growingScrollToLoad="false" growingThreshold="5" mode="None">
-
-                                    <m:columns>
-                                        <m:Column>
-                                            <m:Text text="iFlow Name"/>
-                                        </m:Column>
-                                        <m:Column>
-                                            <m:Text text="Error Message"/>
-                                        </m:Column>
-                                        <m:Column>
-                                            <m:Text text="Status"/>
-                                        </m:Column>
-                                    </m:columns>
-                                    <m:items>
-                                        <m:ColumnListItem>
-                                            <m:cells>
-                                                <m:Text text="{headerDetails>iFlowName}"/>
-                                                <m:ExpandableText text="{headerDetails>errorMessage}"/>
-                                                <m:ObjectStatus text="{headerDetails>status}" state="{= ${headerDetails>status} === 'FAILED' ? 'Error' : 'None' }"/>
-                                            </m:cells>
-                                        </m:ColumnListItem>
-                                    </m:items>
-                                </m:Table> -->
-
-                            </m:VBox>
-
-                        </blocks>
-
-                    </ObjectPageSubSection>
-
-                </subSections>
-
-            </ObjectPageSection>
-
-
-            <ObjectPageSection id="_IDGenObjectPageSection4" title="Playbook" visible="true" showTitle="false">
-
-                <subSections>
-
-                    <ObjectPageSubSection id="_IDGenObjectPageSubSection4">
-
-                        <blocks>
-
-                            <m:VBox id="_IDGenVBox6" class="sapUiSmallMargin">
-
-                                <!-- Section Header: Clean spacing and bold title styling -->
-                                <m:HBox id="_IDGenHBox6" alignItems="Center" class="sapUiSmallMarginBottom">
-                                    <m:Avatar id="_IDGenAvatar5" src="sap-icon://education" displaySize="XS" displayShape="Square" class="sapUiTinyMarginEnd" />
-                                    <m:Title id="_IDGenTitle12" text="Playbook" level="H5" />
-                                </m:HBox>
-
-                                <!-- Main Title Card: Prominent, distinct header for the playbook name -->
-                                <m:VBox id="_IDGenVBox9">
-                                    <m:HBox id="_IDGenHBox8" alignItems="Center">
-                                        <m:Title id="_IDGenTitle" text="{headerDetails>/playbook/title}" level="H4" titleStyle="H4"/>
-                                        <m:ObjectStatus class="sapUiSmallMarginBegin" id="_IDGenObjectStatus8" text="{headerDetails>/playbook/severity}" inverted="true" state="{= ${headerDetails>/playbook/severity} === 'CRITICAL' ? 'Error' : ${headerDetails>/playbook/severity} === 'HIGH' ? 'Warning' : ${headerDetails>/playbook/severity} === 'MEDIUM' ? 'Information' : ${headerDetails>/playbook/severity} === 'LOW' ? 'Success' : 'None' }" />
-                                    </m:HBox>
-
-                                    <m:Text id="_IDGenText" text="{headerDetails>/playbook/description}" class="sapUiColorTextSecondary" />
-                                </m:VBox>
-
-
-
-                                <!-- Timeline Section: Minimalist timeline view -->
-                                <suite:Timeline id="idRemediationTimelie" showIcons="false" showHeaderBar="false" enableScroll="false" content="{playbookSteps>/steps}">
-                                    <suite:TimelineItem id="_IDGenTimelineIem" userName="{playbookSteps>title}" text="{playbookSteps>text}" userNameClickable="false" />
-                                </suite:Timeline>
-
-                            </m:VBox>
-
-
-                        </blocks>
-
-                    </ObjectPageSubSection>
-
-                </subSections>
-
-            </ObjectPageSection>
 
 
         </sections>
 
 
-        <footer>
+        <!-- <footer>
 
             <m:OverflowToolbar id="_IDGenOverflowToolbar1">
 
@@ -414,7 +284,7 @@
 
             </m:OverflowToolbar>
 
-        </footer>
+        </footer> -->
     </ObjectPageLayout>
 </mvc:View>
  

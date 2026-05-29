@@ -1,185 +1,25 @@
 sap.ui.define([
     "./BaseController",
+    "../model/formatter",
     "sap/ui/model/Filter",
-    "sap/ui/model/FilterOperator",
-    "../model/formatter"
-], (BaseController, Filter, FilterOperator, formatter) => {
+    "sap/ui/model/FilterOperator"
+], (BaseController, formatter, Filter, FilterOperator) => {
     "use strict";
 
     return BaseController.extend("com.cytechies.integration.reliability.incidentclustersui.controller.OrderList", {
         formatter: formatter,
+
         onInit: async function () {
-
-            this.showBusy();
-
-            try {
-
-                //this._initializeControls();
-                this._attachEvents();
-                await this._initializeData();
-
-            } catch (error) {
-                console.error("Initialization Failed");
-                console.error(error);
-                this.showToast("Application Load Failed");
-
-            } finally {
-
-                this.hideBusy();
-            }
         },
 
-        // _initializeControls: function () {
-
-        //     const oVizFrame = this.byId("idLineChart");
-
-        //     const oPopOver = this.byId("idPopOver");
-
-        //     oPopOver.connect(
-        //         oVizFrame.getVizUid()
-        //     );
-
-        //     oVizFrame.setVizProperties({
-
-        //         title: {
-        //             visible: false
-        //         },
-                
-        //         plotArea: {
-
-        //             marker: {
-        //                 visible: true
-        //             },
-        //             dataLabel: {
-
-        //                 visible: true
-        //             }
-        //         },
-
-        //         valueAxis: {
-        //             title: {
-        //                 visible: true
-        //             }
-        //         },
-
-        //         valueAxis2: {
-        //             title: {
-        //                 visible: true
-        //             }
-        //         }
-
-        //     });
-
-        // },
-        onAipress: function () {    
-            // console.log("AI Assistant Button Pressed");
+        onAipress: function () {
             this.showBusy();
             this.navTo("RouteAIAssistant");
             this.hideBusy();
         },
-        _attachEvents: function () {
-
-            const oTable = this.byId("idIncidentClustersTable");
-
-            oTable.attachEventOnce(
-                "updateFinished",
-                this._loadDashboardKPIs.bind(this)
-            );
-
-        },
-
-        _initializeData: async function () {
-
-            await Promise.all([
-                this._loadChartData(),
-                this._loadTopErrorTypes()
-
-            ]);
-
-        },
-
-        _loadChartData: async function () {
-
-            try {
-
-                const oModel = this.getModel();
-
-                // Call CAP Function
-                const oResponse =
-                    await oModel.bindContext(
-                        "/GetIncidentChartData()"
-                    ).requestObject();
-
-                console.log("CAP Function Response");
-                console.log(oResponse);
-
-                // Create JSON Model  // Set Model
-                // const oChartModel =
-                //     new JSONModel(oResponse);
-
-
-                // this.getView().setModel(
-                //     oChartModel,
-                //     "chart"
-                // );
-
-                this.getModel("chart").setData(oResponse);
-                //console.log("Chart Model Set Successfully", chart);
-            }
-            catch (error) {
-
-                console.error("Chart Load Failed");
-                console.error(error);
-
-            }
-
-        },
-        _loadTopErrorTypes: async function () {
-
-            try {
-
-                const oModel = this.getModel();
-
-                // Call CAP Function
-                const oResponse =
-                    await oModel.bindContext(
-                        "/GetTopErrorTypes()"
-                    ).requestObject();
-
-                console.log("CAP Function Response");
-                console.log(oResponse);
-
-                const aResults =
-                    oResponse.value || oResponse.results || [];
-
-                // this.getView().setModel(
-                //     new JSONModel({
-                //         data: aResults
-                //     }),
-                //     "topErrors"
-                // );
-                this.getModel("topErrors")
-                    .setData({
-                        data: aResults
-                    });
-
-            } catch (error) {
-                console.error("Top Error Types Load Failed");
-                console.error(error);
-                this.showToast("Failed to load top error types");
-            }
-        },
-
-        onSideNavButtonPress: function () {
-            let oToolPage = this.byId("toolPage1");
-            oToolPage.setSideExpanded(!oToolPage.getSideExpanded());
-        },
 
         onSeverityTabSelect: function (oEvent) {
-
             const sKey = oEvent.getParameter("key");
-            const oTable = this.byId("idIncidentClustersTable");
-            const oBinding = oTable.getBinding("items");
             let aFilters = [];
 
             if (sKey !== "ALL") {
@@ -192,134 +32,166 @@ sap.ui.define([
                 );
             }
 
-            oBinding.filter(aFilters);
+            // Update for Table (if still used)
+            const oTable = this.byId("idIncidentClustersTable");
+            if (oTable) {
+                const oTableBinding = oTable.getBinding("items");
+                if (oTableBinding) {
+                    oTableBinding.filter(aFilters);
+                }
+            }
+
+            // Update for the new GridList
+            const oGridList = this.byId("idGridListId");
+            if (oGridList) {
+                const oGridBinding = oGridList.getBinding("items");
+                if (oGridBinding) {
+                    oGridBinding.filter(aFilters);
+                }
+            }
+        },
+
+        onCardPress: async function (oEvent) {
+            console.log("Card press event triggered");
+
+            const oCard = oEvent.getSource();
+            const oContext = oCard.getBindingContext();
+
+            // Guard clause: Exit early if context is not yet loaded
+            if (!oContext) {
+                console.error("Binding context not found on the selected card.");
+                return;
+            }
+
+            const sID = oContext.getProperty("ID");
+
+            // Update the global model with the selected ID
+            const oGlobalModel = this.getOwnerComponent().getModel("globalModel");
+            if (oGlobalModel) {
+                oGlobalModel.setProperty("/iflowId", sID);
+                console.log("Cluster ID set in global model:", sID);
+            }
+
+            // Navigate to the target route
+            this.navTo("RouteIC", {
+                ID: sID
+            });
+
+            console.log("Route Activated for ID:", sID);
         },
 
         onRowPress: async function (oEvent) {
-           // this.showBusy(5000);
-            console.log("event tRiggered")
+            console.log("event triggered");
 
             const oItem = oEvent.getSource();
             const oContext = oItem.getBindingContext();
             const sID = oContext.getProperty("ID");
-            this.getOwnerComponent().getModel("globalModel").setProperty("/cluster_id", sID);
+            this.getOwnerComponent().getModel("globalModel").setProperty("/iflowId", sID);
             console.log("Cluster ID set in global model:", sID);
 
             this.navTo("RouteIC", {
                 ID: sID
             });
 
-            console.log("Route Activated")
-            //this.hideBusy();
+            console.log("Route Activated");
         },
 
-        // onRowPress: async function (oEvent) {
+        onTagPress: function (oEvent) {
+            var oPressedTag = oEvent.getSource();
+            this._sCurrentSeverityFilter = oPressedTag.data("severity") || "ALL";
 
-        //     this.showBusy(0);
+            // 1. Get the FlexBox container holding all the buttons
+            var oButtonContainer = oPressedTag.getParent();
+            
+            // 2. Re-enable ALL buttons in that container
+            var aButtons = oButtonContainer.getItems();
+            aButtons.forEach(function (oButton) {
+                oButton.setEnabled(true);
+            });
 
-        //     try {
+            // 3. Disable the specific button that was just pressed
+            oPressedTag.setEnabled(false);
 
-        //         const oItem = oEvent.getSource();
-        //         const oContext = oItem.getBindingContext();
+            // Fire the calculation logic
+            this.onSearchiFlowName();
+        },
 
-        //         if (!oContext) {
-        //             throw new Error("Binding context not found");
-        //         }
+        // Unified execution builder 
+        onSearchiFlowName: function () {
+            var aFilters = [];
 
-        //         const sID = oContext.getProperty("ID");
+            // --- SECTION A: MultiComboBox Handling ---
+            var oMultiCombo = this.byId("idIFlowFilter");
+            if (oMultiCombo) {
+                var aSelectedKeys = oMultiCombo.getSelectedKeys();
+                console.log(aSelectedKeys)
 
-        //         this.getOwnerComponent()
-        //             .getModel("globalModel")
-        //             .setProperty("/cluster_id", sID);
+                if (aSelectedKeys && aSelectedKeys.length > 0) {
+                    // Build multi-token select filter arrays joined by an OR condition
+                    var aComboFilters = aSelectedKeys.map(function (sKey) {
+                        return new Filter({
+                            path: "iFlowName",
+                            operator: FilterOperator.EQ,
+                            value1: sKey
+                        });
+                    });
 
-        //         console.log("Cluster ID set in global model:", sID);
-
-        //         // Allow UI rendering cycle
-        //         await new Promise((resolve) => {
-        //             setTimeout(resolve, 1000);
-        //         });
-
-        //         this.navTo("RouteIC", {
-        //             ID: sID
-        //         });
-
-        //         console.log("Route Activated");
-
-        //     } catch (error) {
-
-        //         console.error("Navigation Error:", error);
-
-        //         sap.m.MessageToast.show("Unable to navigate");
-
-        //     } finally {
-
-        //         this.hideBusy();
-
-        //     }
-        // },
-
-        _loadDashboardKPIs: function () {
-
-            const oTable = this.byId("idIncidentClustersTable");
-            const aItems = oTable.getItems();
-            if (!aItems.length) {
-                console.log("No Table Data");
-                return;
-            }
-
-            // Find First Actual Data Row
-            let oData = null;
-            for (let i = 0; i < aItems.length; i++) {
-                const oContext =
-                    aItems[i].getBindingContext();
-                if (oContext) {
-                    oData =
-                        oContext.getObject();
-                    break;
+                    aFilters.push(new Filter({
+                        filters: aComboFilters,
+                        and: false
+                    }));
                 }
             }
 
-            if (!oData) {
-                console.log("No Binding Data Found");
-                return;
+            // --- SECTION B: GenericTag Severity Handling ---
+            if (this._sCurrentSeverityFilter && this._sCurrentSeverityFilter !== "ALL") {
+                aFilters.push(new Filter({
+                    path: "overallSeverity",
+                    operator: FilterOperator.EQ,
+                    value1: this._sCurrentSeverityFilter
+                }));
             }
 
-            console.log("KPI DATA:", oData);
+           // --- SECTION C: Date Range Handling ---
+            var oDateRange = this.byId("idDateRangeFilter");
+            if (oDateRange) {
+                var oFromDate = oDateRange.getDateValue();
+                var oSecondDate = oDateRange.getSecondDateValue();
+                
+                // Only apply filter if both a start and end date are selected
+                if (oFromDate && oSecondDate) {
+                    
+                    // Clone the date to avoid mutating the control's internal value
+                    var oToDate = new Date(oSecondDate.getTime());
+                    
+                    // Set 'To' date to 23:59:59 to include all records on the final day
+                    oToDate.setHours(23, 59, 59, 999);
 
-            // Dashboard Model
-            // const oDashboardModel = new JSONModel({
+                    // FIX: Convert JS Dates to OData V4 compatible ISO Strings
+                    var sFromDate = oFromDate.toISOString();
+                    var sToDate = oToDate.toISOString();
 
-            //     totalIncidents24h: oData.totalIncidents24h,
-            //     activeClusters: oData.activeClusters,
-            //     criticalCount: oData.criticalCount,
-            //     resolved24h: oData.resolved24h,
-            //     criticalCriticality: oData.criticalCriticality
+                    aFilters.push(new Filter({
+                        path: "lastPollTimestamp", // Or "modifiedAt" depending on your backend
+                        operator: FilterOperator.BT,
+                        value1: sFromDate,
+                        value2: sToDate
+                    }));
+                }
+            }
 
-            // });
-
-            // this.getView().setModel(oDashboardModel, "dashboard");
-
-            this.getModel("dashboard")
-                .setData({
-                    totalIncidents24h: oData.totalIncidents24h,
-                    activeClusters: oData.activeClusters,
-                    criticalCount: oData.criticalCount,
-                    resolved24h: oData.resolved24h,
-                    criticalCriticality: oData.criticalCriticality
-                });
-            console.log(
-                "Dashboard Model Set Successfully"
-            );
-
-        },
-        onAipress: function () {    
-            // console.log("AI Assistant Button Pressed");
-            this.showBusy();
-            this.navTo("RouteAIAssistant");
-            this.hideBusy();
+            // --- SECTION C: Apply filters to Grid List context ---
+            // CHANGED: Target idGridListId instead of idGridId
+            var oGridList = this.byId("idGridListId");
+            if (oGridList) {
+                // CHANGED: Get binding for 'items' instead of 'content'
+                var oBinding = oGridList.getBinding("items");
+                if (oBinding) {
+                    oBinding.filter(aFilters);
+                } else {
+                    console.warn("Grid list items binding context not found.");
+                }
+            }
         }
-
-
-
     });
 });

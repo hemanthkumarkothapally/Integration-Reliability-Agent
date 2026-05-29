@@ -52,7 +52,7 @@
                         <CustomListItem type="Active" >
                             <VBox class="sapUiSmallMargin">
                                 <HBox justifyContent="SpaceBetween" alignItems="Center">
-                                    <Text text="{errorType}" class="sapMTitleStyleH6" />
+                                    <Title text="{errorType}" wrapping="true" class="sapMTitleStyleH6" />
                                     <ObjectNumber number="{incidentCount}" emphasized="true" />
                                 </HBox>
                                 <HBox justifyContent="SpaceBetween" class="sapUiTinyMarginTop">
