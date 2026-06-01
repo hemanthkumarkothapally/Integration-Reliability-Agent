@@ -8,9 +8,9 @@
         <ResponsivePopover id="activeClusterPopover" placement="Top" title="Attached Cluster" class="sapUiContentPadding">
 
             <VBox alignItems="Center">
-                <ObjectStatus text="{chatJSONModel>/clusterName}" icon="sap-icon://chain-link" state="Indication13" active="true" inverted="true" class="sapUiSmallMarginBottom" />
-
-                <Button text="Remove Cluster" type="Reject" icon="sap-icon://delete" press=".onRemoveClusterPress" />
+                <MessageStrip text="{chatJSONModel>/clusterName}"  type="Warning" showIcon="true" customIcon="sap-icon://chain-link"  class="sapUiSmallMarginBottom" />
+                                                <!-- <Button type="Attention" text="{chatJSONModel>/clusterName}" icon="sap-icon://chain-link"  /> -->
+                <Button text="Remove Cluster"  type="Reject" icon="sap-icon://delete" press=".onRemoveClusterPress" />
             </VBox>
 
         </ResponsivePopover>
