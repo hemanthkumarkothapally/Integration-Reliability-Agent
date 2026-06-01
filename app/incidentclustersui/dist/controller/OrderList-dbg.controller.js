@@ -97,24 +97,50 @@ sap.ui.define([
         },
 
         onTagPress: function (oEvent) {
+
             var oPressedTag = oEvent.getSource();
+
             this._sCurrentSeverityFilter = oPressedTag.data("severity") || "ALL";
 
-            // 1. Get the FlexBox container holding all the buttons
-            var oButtonContainer = oPressedTag.getParent();
-            
-            // 2. Re-enable ALL buttons in that container
-            var aButtons = oButtonContainer.getItems();
-            aButtons.forEach(function (oButton) {
-                oButton.setEnabled(true);
-            });
 
-            // 3. Disable the specific button that was just pressed
-            oPressedTag.setEnabled(false);
 
             // Fire the calculation logic
+
             this.onSearchiFlowName();
+
         },
+
+
+
+        // Triggered when interacting with the MultiComboBox dropdown
+
+        onFilterChange: function (oEvent) {
+
+            console.log("1. Dropdown changed!");
+
+            this.onSearchiFlowName();
+
+        },
+
+        // onTagPress: function (oEvent) {
+        //     var oPressedTag = oEvent.getSource();
+        //     this._sCurrentSeverityFilter = oPressedTag.data("severity") || "ALL";
+
+        //     // 1. Get the FlexBox container holding all the buttons
+        //     var oButtonContainer = oPressedTag.getParent();
+            
+        //     // 2. Re-enable ALL buttons in that container
+        //     var aButtons = oButtonContainer.getItems();
+        //     aButtons.forEach(function (oButton) {
+        //         oButton.setEnabled(true);
+        //     });
+
+        //     // 3. Disable the specific button that was just pressed
+        //     oPressedTag.setEnabled(false);
+
+        //     // Fire the calculation logic
+        //     this.onSearchiFlowName();
+        // },
 
         // Unified execution builder 
         onSearchiFlowName: function () {

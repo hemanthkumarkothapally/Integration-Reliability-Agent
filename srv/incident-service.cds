@@ -50,27 +50,8 @@ service IncidentService {
     @readonly
     entity Playbook           as projection on IRA.Playbooks;
 
-
     // @requires: 'Admin'
     function triggerPoll() returns array of Map;
-    function GetIncidentChartData() returns {
-        severityData : array of {
-            severity : String;
-            count    : Integer;
-        };
-        trendData    : array of {
-            day      : String;
-            critical : Integer;
-            high     : Integer;
-            medium   : Integer;
-            resolved : Integer;
-        };
-    };
-    function GetTopErrorTypes()     returns array of {
-        errorType : String;
-        count     : Integer;
-        severity  : String;
-    };
     function onReDiagnoseIncidentCluster(
     cluster_ID : UUID
     ) returns {
@@ -91,18 +72,13 @@ function resolveClusterForArtifact(
         artifactId : UUID,
         note       : String
     ) returns String;
-
-type DashboardData {
-    monitoredIflows      : Integer;
-    openClusters         : Integer;
-    openIncidents        : Integer;
-    resolvedIncidents    : Integer;
-    severityDistribution : LargeString;
-    statusDistribution   : LargeString;
-    topClusters          : LargeString;
-    incidentTrend        : LargeString;
+type DashboardCharts {
+    incidentTrend     : LargeString;
+    clusterSeverity   : LargeString;
+    iflowSeverity     : LargeString;
 }
 
-action getDashboardData() returns DashboardData;
-
+function getDashboardCharts() returns DashboardCharts;
+function getTopCriticalIflows()
+    returns many MonitoredArtifacts;
 }

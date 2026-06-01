@@ -742,60 +742,47 @@ export async function upsertMonitoredArtifacts(
   logs,
   IS_API
 ) {
-
   /*
    * ----------------------------------------
    * CONNECT CPI API
    * ----------------------------------------
    */
-
   IS_API =
     await cds.connect.to(
       'IS_RUNTIME_API'
     );
-
   console.log(
     "Connected to IS_RUNTIME_API"
   );
-
   /*
    * ----------------------------------------
    * EMPTY LOGS
    * ----------------------------------------
    */
-
   if (!logs.length)
     return;
-
   /*
    * ----------------------------------------
    * BUILD LATEST MAP
    * ----------------------------------------
    */
-
   const latestMap = {};
-
   for (const log of logs) {
-
     const current =
       latestMap[
       log.iFlowName
       ];
-
     if (
       !current ||
       new Date(log.logEnd) >
       new Date(current)
     ) {
-
       latestMap[
         log.iFlowName
       ] = log.logEnd;
     }
   }
-
   const packageMap = {};
-
   for (const log of logs) {
 
     packageMap[log.iFlowName] =
@@ -817,70 +804,61 @@ export async function upsertMonitoredArtifacts(
         a
       ])
     );
-
+  console.log(
+    "latestMap:",
+    latestMap
+  );
+  console.log(
+    "existingMap:",
+    existingMap
+  );
   /*
    * ----------------------------------------
    * UPSERT ARTIFACTS
    * ----------------------------------------
    */
-
   for (const [
     iFlowName,
     latestTimestamp
   ] of Object.entries(latestMap)) {
-
     /*
      * ----------------------------------------
      * FETCH IFLOW DETAILS
      * ----------------------------------------
      */
-
     const packageName =
       packageMap[iFlowName] ||
       'UNKNOWN_PACKAGE';
-
     let iflowDetails = null;
-
     try {
-
       iflowDetails =
         await ApiCall(IS_API, {
-
           method: 'GET',
-
           path:
             `/api/v1/IntegrationRuntimeArtifacts('${iFlowName}')`
         });
-
     } catch (err) {
-
       console.error(
         `Failed to fetch iFlow details: ${iFlowName}`
       );
-
       console.error(err);
     }
-
     const results =
       iflowDetails?.d || {};
-
     console.log(
       "Fetched iFlow details:",
       iFlowName,
       results
     );
-
     /*
      * ----------------------------------------
      * EXISTING ARTIFACT
      * ----------------------------------------
      */
-
     const existing =
       existingMap.get(
         iFlowName
       );
-
     /*
      * ----------------------------------------
      * UPDATE EXISTING
@@ -888,35 +866,28 @@ export async function upsertMonitoredArtifacts(
      */
 
     if (existing) {
-
       await UPDATE(entity)
         .set({
-
           /*
            * ----------------------------------------
            * BASIC INFO
            * ----------------------------------------
            */
-
           lastPollTimestamp:
             latestTimestamp,
-
+          lastErrorMessage: latestMap[iFlowName] > existing.lastPollTimestamp
+            ? latestMap[iFlowName] ||
+            existing.lastErrorMessage
+            : existing.lastErrorMessage,
           isActive:
             results.Status ===
             'STARTED',
-
           Type:
             results.Type ||
             existing.Type ||
             'UNKNOWN',
           PackageName:
             packageName,
-          /*
-           * ----------------------------------------
-           * RESET HEALTHY IF NO OPEN CLUSTERS
-           * ----------------------------------------
-           */
-
           overallSeverity:
             existing.openClusterCount === 0
               ? 'HEALTHY'
@@ -939,20 +910,11 @@ export async function upsertMonitoredArtifacts(
      */
 
     else {
-
       await INSERT
         .into(entity)
         .entries({
-
-          /*
-           * ----------------------------------------
-           * IDENTIFICATION
-           * ----------------------------------------
-           */
-
           ID:
             cds.utils.uuid(),
-
           iFlowName,
 
           iFlowId:
@@ -966,43 +928,23 @@ export async function upsertMonitoredArtifacts(
           isActive:
             results.Status ===
             'STARTED',
-
-          /*
-           * ----------------------------------------
-           * POLLING
-           * ----------------------------------------
-           */
-
+          lastErrorMessage: latestMap[iFlowName],
           lastPollTimestamp:
             latestTimestamp,
-
-          /*
-           * ----------------------------------------
-           * DASHBOARD DEFAULTS
-           * ----------------------------------------
-           */
-
           overallSeverity:
             'HEALTHY',
-
           severityScore:
             0,
-
           severityZScore:
             0,
-
           openClusterCount:
             0,
-
           resolvedClusterCount:
             0,
-
           openIncidentCount:
             0,
-
           criticalClusterCount:
             0,
-
           totalBusinessImpactEUR:
             0
         });

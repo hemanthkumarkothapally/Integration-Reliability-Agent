@@ -31,6 +31,7 @@ entity IncidentClusters : cuid, managed {
     monitoredArtifacts   : Composition of many ClusterArtifacts on monitoredArtifacts.cluster = $self;
     recommendations     : Composition of one ClusterRecommendations
                             on recommendations.cluster = $self;
+    messages : Association to many Messages on messages.referCluster = $self;
 }
 entity ClusterRecommendations : cuid, managed {
     cluster             : Association to IncidentClusters;
@@ -47,6 +48,7 @@ entity MonitoredArtifacts : cuid, managed {
     Type          : String(255);
     PackageName     : String(255);
     isActive           : Boolean;
+    lastErrorMessage    : Timestamp;
     lastPollTimestamp  : Timestamp;
     overallSeverity    : String(50) default 'HEALTHY';
     severityScore      : Decimal(10,2);
@@ -56,6 +58,7 @@ entity MonitoredArtifacts : cuid, managed {
     totalBusinessImpactEUR : Decimal(15,2) default 0;
     clusters : Association to many ClusterArtifacts
                on clusters.artifact = $self;
+    messages : Association to many Messages on messages.referiFlow = $self;
 }
 entity ClusterArtifacts : cuid, managed{
     cluster             : Association to IncidentClusters;
@@ -83,7 +86,9 @@ entity Messages : cuid{
    role  :LargeString;
    content  : LargeString;
    createdAt : Timestamp @cds.on.insert : $now;
-   tokenCount : Integer;
+   tokenCount : Integer;    
+   referiFlow : Association to one MonitoredArtifacts;
+   referCluster: Association to one IncidentClusters;
 }
 entity AccessLogs : cuid, managed {
     action     : String(255);

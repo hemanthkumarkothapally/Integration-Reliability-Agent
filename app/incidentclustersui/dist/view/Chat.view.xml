@@ -8,19 +8,22 @@
         <ResponsivePopover id="activeClusterPopover" placement="Top" title="Attached Cluster" class="sapUiContentPadding">
 
             <VBox alignItems="Center">
-                <MessageStrip text="{chatJSONModel>/clusterName}"  type="Warning" showIcon="true" customIcon="sap-icon://chain-link"  class="sapUiSmallMarginBottom" />
-                                                <!-- <Button type="Attention" text="{chatJSONModel>/clusterName}" icon="sap-icon://chain-link"  /> -->
-                <Button text="Remove Cluster"  type="Reject" icon="sap-icon://delete" press=".onRemoveClusterPress" />
+                <MessageStrip text="{chatJSONModel>/clusterName}" type="Warning" showIcon="true" customIcon="sap-icon://chain-link" class="sapUiSmallMarginBottom" />
+                <!-- <Button type="Attention" text="{chatJSONModel>/clusterName}" icon="sap-icon://chain-link" /> -->
+                <Button text="Remove Cluster" type="Reject" icon="sap-icon://delete" press=".onRemoveClusterPress" />
             </VBox>
 
         </ResponsivePopover>
-        <ResponsivePopover id="clusterDataPopover" placement="Top" showHeader="false" contentWidth="auto">
+
+        <ResponsivePopover id="actionDataPopover" placement="Top" showHeader="false" contentWidth="auto">
             <content>
                 <VBox class="sapUiTinyMargin">
                     <!-- <Button text="Attach Cluster" type="Ghost" icon="sap-icon://add-process" tooltip="{i18n>cluster.toggle.attach.tooltip}" visible="{= !${chatJSONModel>/clusterDataEnabled} }" press=".onToggleClusterData" width="100%" /> -->
-                    <Button text="Attach Cluster" type="Ghost" icon="sap-icon://add-process" tooltip="{i18n>cluster.toggle.attach.tooltip}" visible="{= !${chatJSONModel>/clusterDataEnabled} }" press=".onSelectClusterData" width="100%" />
+                    <Button text="Attach Cluster" type="Ghost" icon="sap-icon://combine" tooltip="{i18n>cluster.toggle.attach.tooltip}" visible="{= !${chatJSONModel>/clusterDataEnabled} }" press=".onSelectClusterData" width="100%" />
 
-                    <Button text="Upload File" type="Ghost" icon="sap-icon://attachment" tooltip="Insert Image or Document" press=".onUploadFilePress" width="100%" class="sapUiTinyMarginBottom" />
+                    <Button text="Attach iFlow" type="Ghost" icon="sap-icon://add-process" tooltip="{i18n>cluster.toggle.attach.tooltip}" visible="{= !${chatJSONModel>/iFlowDataEnabled} }" press=".onSelectiFlowData" width="100%" />
+
+                    <!-- <Button text="Upload File" type="Ghost" icon="sap-icon://attachment" tooltip="Insert Image or Document" press=".onUploadFilePress" width="100%" /> -->
 
                     <Button text="Voice Input" type="Ghost" icon="sap-icon://microphone" tooltip="Record Audio" press=".onVoiceInputPress" width="100%" />
 
@@ -38,6 +41,44 @@
                     </headerToolbar>
                     <items>
                         <StandardListItem id="_IDGenStandardListItem" title="{chatModel>title}" description ="{chatModel>modifiedAt}" info="{chatModel>totalSessionTokenUsage}" icon="sap-icon://discussion" />
+                    </items>
+                </List>
+            </content>
+        </ResponsivePopover>
+
+        <ResponsivePopover id="iFlowPopover" placement="Right" title="Monitored iFlows">
+            <content>
+                <List id="iFlowList" mode="SingleSelectMaster" selectionChange=".oniFlowSelect" items="{
+                        path: '/MonitoredArtifacts', 
+                        sorter: {
+                            path: 'lastPollTimestamp',
+                            descending: true
+                        }
+                    }">
+                    <headerToolbar>
+                        <Toolbar>
+                            <SearchField id="iFlowSearchField" placeholder="Search iFlows..." liveChange=".oniFlowSearch" search=".oniFlowSearch" />
+                        </Toolbar>
+                    </headerToolbar>
+                    <items>
+                        <CustomListItem type="Active">
+                            <VBox class="sapUiSmallMargin">
+                                <!-- Top Row: Name and Active Clusters Count -->
+                                <HBox justifyContent="SpaceBetween" alignItems="Center">
+                                    <Title text="{iFlowName}" wrapping="true" class="sapMTitleStyleH6" />
+                                    <ObjectNumber number="{openClusterCount}" unit="Clusters" emphasized="true" state="{path: 'overallSeverity', formatter: '.formatter.formatSeverityState'}" />
+                                </HBox>
+
+                                <!-- Middle Row: Severity and Activity Status -->
+                                <HBox justifyContent="SpaceBetween" class="sapUiTinyMarginTop">
+                                    <ObjectStatus text="{overallSeverity}" state="{path: 'overallSeverity', formatter: '.formatter.formatSeverityState'}" />
+                                    <ObjectStatus text="{= ${isActive} === 'Yes' ? 'ACTIVE' : 'INACTIVE' }" state="{= ${isActive} === 'Yes' ? 'Success' : 'Error' }" />
+                                </HBox>
+
+                                <!-- Bottom Row: Last Poll Timestamp -->
+                                <Text text="{path: 'lastPollTimestamp', formatter: '.formatter.formatDateTime'}" class="sapUiTinyMarginTop" />
+                            </VBox>
+                        </CustomListItem>
                     </items>
                 </List>
             </content>
@@ -159,6 +200,11 @@
                                     </layoutData>
                                 </Button>
                                 <Button type="Attention" icon="sap-icon://chain-link" tooltip="{i18n>cluster.toggle.detach.tooltip}" visible="{chatJSONModel>/clusterDataEnabled}" press=".onToggleClusterData">
+                                    <layoutData>
+                                        <OverflowToolbarLayoutData priority="NeverOverflow" />
+                                    </layoutData>
+                                </Button>
+                                <Button type="Neutral" icon="sap-icon://process" tooltip="{i18n>cluster.toggle.detach.tooltip}" visible="{chatJSONModel>/iFlowDataEnabled}" press=".onToggleiFlowData">
                                     <layoutData>
                                         <OverflowToolbarLayoutData priority="NeverOverflow" />
                                     </layoutData>
