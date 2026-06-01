@@ -510,4 +510,225 @@ if (artifact) {
             return 'Cluster resolved successfully';
         }
     );
+    this.on(
+    'getDashboardData',
+    async (req) => {
+
+        const {
+            MonitoredArtifacts,
+            IncidentClusters,
+            Incidents
+        } = cds.entities(
+            'com.cytechies.integration.reliability'
+        );
+
+        /*
+         * KPI COUNTS
+         */
+
+        const monitoredIflows =
+            await SELECT.one
+                .from(MonitoredArtifacts)
+                .columns`count(*) as count`;
+
+        const openClusters =
+            await SELECT.one
+                .from(IncidentClusters)
+                .columns`count(*) as count`
+                .where({
+                    globalStatus: {
+                        '!=': 'RESOLVED'
+                    }
+                });
+
+        const openIncidents =
+            await SELECT.one
+                .from(Incidents)
+                .columns`count(*) as count`
+                .where({
+                    status: {
+                        '!=': 'RESOLVED'
+                    }
+                });
+
+        const resolvedIncidents =
+            await SELECT.one
+                .from(Incidents)
+                .columns`count(*) as count`
+                .where({
+                    status: 'RESOLVED'
+                });
+
+        /*
+         * SEVERITY DONUT
+         */
+
+        const clusters =
+            await SELECT.from(
+                IncidentClusters
+            ).columns(
+                'severity'
+            );
+
+        const severityMap = {};
+
+        clusters.forEach(c => {
+
+            severityMap[c.severity] =
+                (severityMap[c.severity] || 0) + 1;
+        });
+
+        const severityDistribution =
+            Object.entries(
+                severityMap
+            ).map(([severity, count]) => ({
+                severity,
+                count
+            }));
+
+        /*
+         * STATUS DONUT
+         */
+
+        const incidents =
+            await SELECT.from(
+                Incidents
+            ).columns(
+                'status'
+            );
+
+        const statusMap = {};
+
+        incidents.forEach(i => {
+
+            const status =
+                i.status || 'OPEN';
+
+            statusMap[status] =
+                (statusMap[status] || 0) + 1;
+        });
+
+        const statusDistribution =
+            Object.entries(
+                statusMap
+            ).map(([status, count]) => ({
+                status,
+                count
+            }));
+
+        /*
+         * TOP CLUSTERS TABLE
+         */
+
+        const topClusters =
+            await SELECT
+                .from(
+                    IncidentClusters
+                )
+                .columns(
+                    'errorType',
+                    'severity',
+                    'incidentCount',
+                    'lastSeen'
+                )
+                .orderBy(
+                    'incidentCount desc'
+                )
+                .limit(10);
+
+        /*
+         * INCIDENT TREND
+         * LAST 7 DAYS
+         */
+
+        const trendMap = {};
+
+        const trendIncidents =
+            await SELECT
+                .from(Incidents)
+                .columns(
+                    'createdAt',
+                    'status'
+                );
+
+        trendIncidents.forEach(i => {
+
+            const day =
+                new Date(
+                    i.createdAt
+                )
+                .toISOString()
+                .split('T')[0];
+
+            if (!trendMap[day]) {
+
+                trendMap[day] = {
+
+                    day,
+
+                    totalIncidents: 0,
+
+                    openIncidents: 0
+                };
+            }
+
+            trendMap[day]
+                .totalIncidents++;
+
+            if (
+                i.status !==
+                'RESOLVED'
+            ) {
+
+                trendMap[day]
+                    .openIncidents++;
+            }
+        });
+
+        const incidentTrend =
+            Object.values(
+                trendMap
+            ).sort(
+                (a, b) =>
+                    a.day.localeCompare(
+                        b.day
+                    )
+            );
+
+        return {
+
+            monitoredIflows:
+                monitoredIflows.count,
+
+            openClusters:
+                openClusters.count,
+
+            openIncidents:
+                openIncidents.count,
+
+            resolvedIncidents:
+                resolvedIncidents.count,
+
+            severityDistribution:
+                JSON.stringify(
+                    severityDistribution
+                ),
+
+            statusDistribution:
+                JSON.stringify(
+                    statusDistribution
+                ),
+
+            topClusters:
+                JSON.stringify(
+                    topClusters
+                ),
+
+            incidentTrend:
+                JSON.stringify(
+                    incidentTrend
+                )
+        };
+    }
+);
 });

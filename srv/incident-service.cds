@@ -91,4 +91,18 @@ function resolveClusterForArtifact(
         artifactId : UUID,
         note       : String
     ) returns String;
+
+type DashboardData {
+    monitoredIflows      : Integer;
+    openClusters         : Integer;
+    openIncidents        : Integer;
+    resolvedIncidents    : Integer;
+    severityDistribution : LargeString;
+    statusDistribution   : LargeString;
+    topClusters          : LargeString;
+    incidentTrend        : LargeString;
+}
+
+action getDashboardData() returns DashboardData;
+
 }
