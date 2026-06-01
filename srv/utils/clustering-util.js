@@ -268,7 +268,7 @@ export async function upsertClusters(
       const clusterId =
         cds.utils.uuid();
 
-      await srv.run(INSERT.into(
+      await INSERT.into(
         IncidentClusters
       ).entries({
 
@@ -303,7 +303,7 @@ export async function upsertClusters(
 
         playbook_ID:
           playbook?.ID || null
-      }));
+      });
 
       cluster =
         await SELECT.one
@@ -325,7 +325,7 @@ export async function upsertClusters(
         cluster.incidentCount +
         clusterData.incidentCount;
 
-      await srv.run(UPDATE(
+      await UPDATE(
         IncidentClusters
       )
         .set({
@@ -350,7 +350,7 @@ export async function upsertClusters(
         })
         .where({
           ID: cluster.ID
-        }));
+        });
     }
 
     /*

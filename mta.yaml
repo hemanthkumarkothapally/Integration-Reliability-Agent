@@ -153,56 +153,31 @@ modules:
 
       supported-platforms:
         []
-
   - name: comcytechiesintegrationreliabilityincidentclustersui
-
     type: html5
-
     path: app/incidentclustersui
-
     build-parameters:
-
       build-result: dist
-
       builder: custom
-
       commands:
-
         - npm install
-
         - npm run build:cf
-
       supported-platforms:
         []
-
 resources:
-
   - name: integration-reliability-agent-auth
-
     type: org.cloudfoundry.managed-service
-
     parameters:
-
       config:
-
         oauth2-configuration:
-
           credential-types:
-
             - binding-secret
-
             - x509
-
         tenant-mode: dedicated
-
         xsappname: integration-reliability-agent-${org}-${space}
-
       path: ./xs-security.json
-
       service: xsuaa
-
       service-plan: application
-
   - name: integration-reliability-agent-db
 
     type: com.sap.xs.hdi-container

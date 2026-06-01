@@ -71,8 +71,15 @@ export default cds.service.impl(async function () {
 
   async function runPoll() {
     console.log("========== runPoll START ==========");
+    // await DELETE.from(Incidents);
     try {
-
+console.log(
+  JSON.stringify(
+    cds.env.requires.IS_RUNTIME_API,
+    null,
+    2
+  )
+);
       /* LAST POLL TIMESTAMP */
       console.log("Fetching latest artifact timestamp...");
       const latestArtifact = await SELECT.one.from(MonitoredArtifacts)
@@ -86,11 +93,11 @@ export default cds.service.impl(async function () {
 
       console.log("Raw Timestamp:", rawTimestamp);
 
-      const lastPollTimestamp = new Date(rawTimestamp)
-        .toISOString()
-        .split('.')[0];
+      const lastPollTimestamp = new Date(new Date(rawTimestamp).getTime() + 5 * 60 * 60 * 1000)
+    .toISOString()
+    .split('.')[0];
 
-      console.log("Formatted Timestamp:", lastPollTimestamp);
+console.log("Formatted Timestamp (Plus 5 Hours):", lastPollTimestamp);
 
       /* CPI logs Filter */
 
@@ -268,6 +275,7 @@ export default cds.service.impl(async function () {
       await upsertClusters(Incidents, IncidentClusters, Playbooks, MonitoredArtifacts, ClusterArtifacts, newLogs,srv)
       console.log("========== runPoll SUCCESS ==========");
       console.log("Raw Timestamp:", rawTimestamp);
+      console.log("Formatted Timestamp:", lastPollTimestamp);
       return enriched;
 
     } catch (err) {

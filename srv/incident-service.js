@@ -2,11 +2,12 @@ import cds from '@sap/cds';
 import { generateClusterRecommendation } from './utils/ai-recommendation-util.js';
 import { runPoll } from './utils/log-helper.js';
 import { refreshArtifactDashboard } from './utils/clustering-util.js';
+import { getIncidentTrend, getClusterSeverityChart, getIflowSeverityChart } from './utils/dashboard-charts.js';
 export default cds.service.impl(async function () {
 
-    const { IncidentClusters, Recommendations ,Playbooks, MonitoredArtifacts, ClusterArtifacts} = this.entities;
+    const { IncidentClusters, Recommendations, Playbooks, MonitoredArtifacts, ClusterArtifacts } = this.entities;
 
-    const { Incidents,TokenUsages } = cds.entities('com.cytechies.integration.reliability');
+    const { Incidents, TokenUsages } = cds.entities('com.cytechies.integration.reliability');
     this.after('READ', IncidentClusters, async (data) => {
         console.log("READ Event Triggered");
 
@@ -123,612 +124,456 @@ export default cds.service.impl(async function () {
     });
     // srv/incident-service.js
 
-  this.on('GetIncidentChartData', async (req) => {
+    this.on('GetIncidentChartData', async (req) => {
 
-    const today = new Date();
+        const today = new Date();
 
-    const allClusters = await SELECT
-        .from('com.cytechies.integration.reliability.IncidentClusters')
-        .columns('ID', 'severity', 'status', 'incidentCount', 'lastSeen');
+        const allClusters = await SELECT
+            .from('com.cytechies.integration.reliability.IncidentClusters')
+            .columns('ID', 'severity', 'status', 'incidentCount', 'lastSeen');
 
-    const clusterMap = Object.fromEntries(
-        allClusters.map(c => [c.ID, c])
-    );
+        const clusterMap = Object.fromEntries(
+            allClusters.map(c => [c.ID, c])
+        );
 
-    /*
-     * --------------------------------------------------
-     * SEVERITY SUMMARY
-     * --------------------------------------------------
-     */
-    const sevenDaysAgoDate = new Date();
-    sevenDaysAgoDate.setDate(today.getDate() - 6);
-    sevenDaysAgoDate.setHours(0, 0, 0, 0);
+        /*
+         * --------------------------------------------------
+         * SEVERITY SUMMARY
+         * --------------------------------------------------
+         */
+        const sevenDaysAgoDate = new Date();
+        sevenDaysAgoDate.setDate(today.getDate() - 6);
+        sevenDaysAgoDate.setHours(0, 0, 0, 0);
 
-    const severityMap = { Critical: 0, High: 0, Medium: 0, Low: 0, Resolved: 0 };
+        const severityMap = { Critical: 0, High: 0, Medium: 0, Low: 0, Resolved: 0 };
 
-    for (const c of allClusters) {
-        if (!c.lastSeen) continue;
-        if (new Date(c.lastSeen) < sevenDaysAgoDate) continue;
+        for (const c of allClusters) {
+            if (!c.lastSeen) continue;
+            if (new Date(c.lastSeen) < sevenDaysAgoDate) continue;
 
-        // 👇 normalize to title case
-        const sev = c.status === 'RESOLVED'
-            ? 'Resolved'
-            : toTitleCase(c.severity);
+            // 👇 normalize to title case
+            const sev = c.status === 'RESOLVED'
+                ? 'Resolved'
+                : toTitleCase(c.severity);
 
-        if (sev in severityMap) severityMap[sev] += (c.incidentCount || 1);
-    }
+            if (sev in severityMap) severityMap[sev] += (c.incidentCount || 1);
+        }
 
-    const severityData = Object.entries(severityMap)
-        .map(([severity, count]) => ({ severity, count }));
+        const severityData = Object.entries(severityMap)
+            .map(([severity, count]) => ({ severity, count }));
 
-    /*
-     * --------------------------------------------------
-     * TREND DATA
-     * --------------------------------------------------
-     */
-const trendData = [];
+        /*
+         * --------------------------------------------------
+         * TREND DATA
+         * --------------------------------------------------
+         */
+        const trendData = [];
 
-for (let i = 6; i >= 0; i--) {
+        for (let i = 6; i >= 0; i--) {
 
-    const dayStart = new Date();
+            const dayStart = new Date();
 
-    dayStart.setDate(today.getDate() - i);
-    dayStart.setHours(0, 0, 0, 0);
+            dayStart.setDate(today.getDate() - i);
+            dayStart.setHours(0, 0, 0, 0);
 
-    const dayEnd = new Date(dayStart);
+            const dayEnd = new Date(dayStart);
 
-    dayEnd.setHours(23, 59, 59, 999);
+            dayEnd.setHours(23, 59, 59, 999);
 
-    const incidents = await SELECT
-        .from('com.cytechies.integration.reliability.Incidents')
-        .columns('ID', 'cluster_ID')
-        .where`
+            const incidents = await SELECT
+                .from('com.cytechies.integration.reliability.Incidents')
+                .columns('ID', 'cluster_ID')
+                .where`
             logEnd >= ${dayStart.toISOString()}
             and logEnd <= ${dayEnd.toISOString()}
         `;
 
-    const clusters = await SELECT
-        .from('com.cytechies.integration.reliability.IncidentClusters')
-        .columns('ID')
-        .where`
+            const clusters = await SELECT
+                .from('com.cytechies.integration.reliability.IncidentClusters')
+                .columns('ID')
+                .where`
             createdAt >= ${dayStart.toISOString()}
             and createdAt <= ${dayEnd.toISOString()}
         `;
-    const label = i === 0 ? 'Today'
-                    : i === 1 ? 'Yesterday'
+            const label = i === 0 ? 'Today'
+                : i === 1 ? 'Yesterday'
                     : `${i} Days Ago`;
-    trendData.push({
-        DAY: label,
-        INCIDENTCOUNT: incidents.length,
-        CLUSTERCOUNT: clusters.length
-    });
-}
-    return { severityData, trendData };
-});
-
-// helper
-function toTitleCase(str) {
-    if (!str) return '';
-    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-}
-
-function sevenDaysAgo() {
-    const d = new Date();
-    d.setDate(d.getDate() - 6);
-    d.setHours(0, 0, 0, 0);
-    return d.toISOString();
-}
-this.on('getPlatformOverview', async (req) => {
-
-    const [
-        incidents,
-        clusters,
-        artifacts,
-        recommendations,
-        playbooks,
-        chatSessions
-    ] = await Promise.all([
-
-        SELECT.one.from('com.cytechies.integration.reliability.Incidents')
-            .columns`count(ID) as count`,
-
-        SELECT.one.from('com.cytechies.integration.reliability.IncidentClusters')
-            .columns`count(ID) as count`,
-
-        SELECT.one.from('com.cytechies.integration.reliability.MonitoredArtifacts')
-            .columns`count(ID) as count`,
-
-        SELECT.one.from('com.cytechies.integration.reliability.ClusterRecommendations')
-            .columns`count(ID) as count`,
-
-        SELECT.one.from('com.cytechies.integration.reliability.Playbooks')
-            .columns`count(ID) as count`,
-
-        SELECT.one.from('com.cytechies.integration.reliability.ChatSessions')
-            .columns`count(ID) as count`
-    ]);
-
-    return [
-        {
-            category: 'Incidents',
-            count: incidents.count
-        },
-        {
-            category: 'Clusters',
-            count: clusters.count
-        },
-        {
-            category: 'Artifacts',
-            count: artifacts.count
-        },
-        {
-            category: 'Recommendations',
-            count: recommendations.count
-        },
-        {
-            category: 'Playbooks',
-            count: playbooks.count
-        },
-        {
-            category: 'Chat Sessions',
-            count: chatSessions.count
+            trendData.push({
+                DAY: label,
+                INCIDENTCOUNT: incidents.length,
+                CLUSTERCOUNT: clusters.length
+            });
         }
-    ];
+        return { severityData, trendData };
+    });
 
-});
-this.on('GetTopErrorTypes', async (req) => {
-
-    const clusters = await SELECT
-        .from('com.cytechies.integration.reliability.IncidentClusters')
-        .columns('errorType', 'severity', 'incidentCount')
-        .where({ status: { '!=': 'RESOLVED' } })
-        .orderBy('incidentCount desc')
-        .limit(5);
-
-    return clusters.map(c => ({
-        errorType : c.errorType || 'UNKNOWN',
-        count     : c.incidentCount || 0,
-        severity  : c.severity || 'LOW'
-    }));
-});
-this.on('onReDiagnoseIncidentCluster', async (req) => {
-    try {
-      const { cluster_ID } = req.data;
-      const cluster =
-        await SELECT.one
-          .from(IncidentClusters)
-          .where({
-            ID: cluster_ID
-          });
-
-      if (!cluster) {
-        return req.error(
-          404,
-          'Cluster not found'
-        );
-      }
-      /*
-       * FETCH SAMPLE INCIDENTS
-       */
-
-      const incidents =
-        await SELECT
-          .from(Incidents)
-          .where({
-            cluster_ID
-          })
-          .orderBy({
-            logEnd: 'desc'
-          })
-          .limit(2);
-
-      /*
-       * GENERATE AI RECOMMENDATION
-       */
-
-      const aiResult =
-        await generateClusterRecommendation({
-          cluster,
-          incidents
-        });
-
-      console.log(
-        "AI Recommendation:",
-        aiResult
-      );
-
-      /*
-       * STORE RECOMMENDATION
-       */
-      await UPDATE(Recommendations).where({ cluster_ID }
-      ).set({ 
-        rootCause:
-          aiResult.recommendation.rootCause,
-
-        businessImpact:
-          aiResult.recommendation.businessImpact,
-
-        remediationSteps:
-          JSON.stringify(
-            aiResult.recommendation.remediationSteps
-          ),
-
-        affectedAdapter:
-          aiResult.recommendation.affectedAdapter,
-
-        confidenceScore:
-          aiResult.recommendation.confidenceScore,
-
-        generatedAt:
-          new Date()
-       });
-      
-
-      await INSERT.into(
-        TokenUsages
-      ).entries({
-        cluster_ID,
-        ...aiResult.audit
-      });
-      return await SELECT.one
-        .from(Recommendations)
-        .where({
-          cluster_ID
-        });
-
-    } catch (error) {
-
-      console.error(
-        'AI recommendation generation failed:',
-        error
-      );
-
-      req.error(
-        500,
-        'Recommendation generation failed'
-      );
+    // helper
+    function toTitleCase(str) {
+        if (!str) return '';
+        return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
     }
-  });
-  this.on('triggerPoll', async () => {
-    try {
 
-        console.log("Manual poll triggered");
-
-        let failedLogs = await runPoll({srv:this,
-                            Incidents,
-                            IncidentClusters,
-                            Playbooks,
-                            MonitoredArtifacts,
-                            ClusterArtifacts
-                        });
-
-        console.log("Manual poll completed");
-        return failedLogs;
-    } catch (error) {
-
-        console.error(
-            "Manual poll failed:",
-            error
-        );
+    function sevenDaysAgo() {
+        const d = new Date();
+        d.setDate(d.getDate() - 6);
+        d.setHours(0, 0, 0, 0);
+        return d.toISOString();
     }
-  });
+    this.on('getPlatformOverview', async (req) => {
 
+        const [
+            incidents,
+            clusters,
+            artifacts,
+            recommendations,
+            playbooks,
+            chatSessions
+        ] = await Promise.all([
 
-  this.on( 'resolveClusterForArtifact', async (req) => {
-            const {
-                clusterId,
-                artifactId,
-                note
-            } = req.data;
+            SELECT.one.from('com.cytechies.integration.reliability.Incidents')
+                .columns`count(ID) as count`,
 
-            if (!clusterId) {
-                req.error(400, 'clusterId is required');
+            SELECT.one.from('com.cytechies.integration.reliability.IncidentClusters')
+                .columns`count(ID) as count`,
+
+            SELECT.one.from('com.cytechies.integration.reliability.MonitoredArtifacts')
+                .columns`count(ID) as count`,
+
+            SELECT.one.from('com.cytechies.integration.reliability.ClusterRecommendations')
+                .columns`count(ID) as count`,
+
+            SELECT.one.from('com.cytechies.integration.reliability.Playbooks')
+                .columns`count(ID) as count`,
+
+            SELECT.one.from('com.cytechies.integration.reliability.ChatSessions')
+                .columns`count(ID) as count`
+        ]);
+
+        return [
+            {
+                category: 'Incidents',
+                count: incidents.count
+            },
+            {
+                category: 'Clusters',
+                count: clusters.count
+            },
+            {
+                category: 'Artifacts',
+                count: artifacts.count
+            },
+            {
+                category: 'Recommendations',
+                count: recommendations.count
+            },
+            {
+                category: 'Playbooks',
+                count: playbooks.count
+            },
+            {
+                category: 'Chat Sessions',
+                count: chatSessions.count
             }
+        ];
 
-            if (!artifactId) {
-                req.error(400, 'artifactId is required');
-            }
-            const relation =
+    });
+    this.on('GetTopErrorTypes', async (req) => {
+
+        const clusters = await SELECT
+            .from('com.cytechies.integration.reliability.IncidentClusters')
+            .columns('errorType', 'severity', 'incidentCount')
+            .where({ status: { '!=': 'RESOLVED' } })
+            .orderBy('incidentCount desc')
+            .limit(5);
+
+        return clusters.map(c => ({
+            errorType: c.errorType || 'UNKNOWN',
+            count: c.incidentCount || 0,
+            severity: c.severity || 'LOW'
+        }));
+    });
+    this.on('onReDiagnoseIncidentCluster', async (req) => {
+        try {
+            const { cluster_ID } = req.data;
+            const cluster =
                 await SELECT.one
-                    .from(ClusterArtifacts)
+                    .from(IncidentClusters)
                     .where({
-                        cluster_ID:
-                            clusterId,
-                        artifact_ID:
-                            artifactId
+                        ID: cluster_ID
                     });
-            if (!relation) {
-                req.error(
+
+            if (!cluster) {
+                return req.error(
                     404,
-                    'ClusterArtifact relation not found'
+                    'Cluster not found'
                 );
             }
+            /*
+             * FETCH SAMPLE INCIDENTS
+             */
 
-            await UPDATE(ClusterArtifacts)
-                .set({
+            const incidents =
+                await SELECT
+                    .from(Incidents)
+                    .where({
+                        cluster_ID
+                    })
+                    .orderBy({
+                        logEnd: 'desc'
+                    })
+                    .limit(2);
+
+            /*
+             * GENERATE AI RECOMMENDATION
+             */
+
+            const aiResult =
+                await generateClusterRecommendation({
+                    cluster,
+                    incidents
+                });
+
+            console.log(
+                "AI Recommendation:",
+                aiResult
+            );
+
+            /*
+             * STORE RECOMMENDATION
+             */
+            await UPDATE(Recommendations).where({ cluster_ID }
+            ).set({
+                rootCause:
+                    aiResult.recommendation.rootCause,
+
+                businessImpact:
+                    aiResult.recommendation.businessImpact,
+
+                remediationSteps:
+                    JSON.stringify(
+                        aiResult.recommendation.remediationSteps
+                    ),
+
+                affectedAdapter:
+                    aiResult.recommendation.affectedAdapter,
+
+                confidenceScore:
+                    aiResult.recommendation.confidenceScore,
+
+                generatedAt:
+                    new Date()
+            });
+
+
+            await INSERT.into(
+                TokenUsages
+            ).entries({
+                cluster_ID,
+                ...aiResult.audit
+            });
+            return await SELECT.one
+                .from(Recommendations)
+                .where({
+                    cluster_ID
+                });
+
+        } catch (error) {
+
+            console.error(
+                'AI recommendation generation failed:',
+                error
+            );
+
+            req.error(
+                500,
+                'Recommendation generation failed'
+            );
+        }
+    });
+    this.on('triggerPoll', async () => {
+        try {
+
+            console.log("Manual poll triggered");
+
+            let failedLogs = await runPoll({
+                srv: this,
+                Incidents,
+                IncidentClusters,
+                Playbooks,
+                MonitoredArtifacts,
+                ClusterArtifacts
+            });
+
+            console.log("Manual poll completed");
+            return failedLogs;
+        } catch (error) {
+
+            console.error(
+                "Manual poll failed:",
+                error
+            );
+        }
+    });
+
+
+    this.on('resolveClusterForArtifact', async (req) => {
+        const {
+            clusterId,
+            artifactId,
+            note
+        } = req.data;
+
+        if (!clusterId) {
+            req.error(400, 'clusterId is required');
+        }
+
+        if (!artifactId) {
+            req.error(400, 'artifactId is required');
+        }
+        const relation =
+            await SELECT.one
+                .from(ClusterArtifacts)
+                .where({
+                    cluster_ID:
+                        clusterId,
+                    artifact_ID:
+                        artifactId
+                });
+        if (!relation) {
+            req.error(
+                404,
+                'ClusterArtifact relation not found'
+            );
+        }
+
+        await UPDATE(ClusterArtifacts)
+            .set({
+                resolutionStatus:
+                    'RESOLVED',
+                resolutionNote:
+                    note || 'Resolved from UI'
+            })
+            .where({
+                ID: relation.ID
+            });
+        const openRelations =
+            await SELECT.from(ClusterArtifacts)
+                .where({
+                    cluster_ID:
+                        clusterId,
                     resolutionStatus:
+                        { '!=': 'RESOLVED' }
+                });
+        if (openRelations.length === 0) {
+            await UPDATE(IncidentClusters)
+                .set({
+                    globalStatus:
                         'RESOLVED',
-                    resolutionNote:
-                        note || 'Resolved from UI'
+                    status:
+                        'RESOLVED'
                 })
                 .where({
-                    ID: relation.ID
+                    ID: clusterId
                 });
-            const openRelations =
-                await SELECT.from(ClusterArtifacts)
-                    .where({
-                        cluster_ID:
-                            clusterId,
-                        resolutionStatus:
-                            { '!=': 'RESOLVED' }
-                    });
-            if (openRelations.length === 0) {
-                await UPDATE(IncidentClusters)
-                    .set({
-                        globalStatus:
-                            'RESOLVED',
-                        status:
-                            'RESOLVED'
-                    })
-                    .where({
-                        ID: clusterId
-                    });
-            }
-            else{
-                await UPDATE(IncidentClusters)
-                    .set({
-                        globalStatus:
-                            'PARTIALLY_RESOLVED'
-                    })
-                    .where({
-                        ID: clusterId
-                    });
-            }
-            const artifact =
-    await SELECT.one
-        .from(MonitoredArtifacts)
-        .where({
-            ID: artifactId
-        });
-
-if (artifact) {
-
-    await UPDATE(Incidents)
-        .set({
-            status: 'RESOLVED'
-        })
-        .where({
-            cluster_ID: clusterId,
-            iFlowName: artifact.iFlowName
-        });
-}
-            await refreshArtifactDashboard(
-                MonitoredArtifacts,
-                ClusterArtifacts,
-                IncidentClusters
-            );
-            return 'Cluster resolved successfully';
         }
-    );
-    this.on(
-    'getDashboardData',
-    async (req) => {
-
-        const {
-            MonitoredArtifacts,
-            IncidentClusters,
-            Incidents
-        } = cds.entities(
-            'com.cytechies.integration.reliability'
-        );
-
-        /*
-         * KPI COUNTS
-         */
-
-        const monitoredIflows =
+        else {
+            await UPDATE(IncidentClusters)
+                .set({
+                    globalStatus:
+                        'PARTIALLY_RESOLVED'
+                })
+                .where({
+                    ID: clusterId
+                });
+        }
+        const artifact =
             await SELECT.one
                 .from(MonitoredArtifacts)
-                .columns`count(*) as count`;
-
-        const openClusters =
-            await SELECT.one
-                .from(IncidentClusters)
-                .columns`count(*) as count`
                 .where({
-                    globalStatus: {
-                        '!=': 'RESOLVED'
-                    }
+                    ID: artifactId
                 });
 
-        const openIncidents =
-            await SELECT.one
-                .from(Incidents)
-                .columns`count(*) as count`
-                .where({
-                    status: {
-                        '!=': 'RESOLVED'
-                    }
-                });
+        if (artifact) {
 
-        const resolvedIncidents =
-            await SELECT.one
-                .from(Incidents)
-                .columns`count(*) as count`
-                .where({
+            await UPDATE(Incidents)
+                .set({
                     status: 'RESOLVED'
+                })
+                .where({
+                    cluster_ID: clusterId,
+                    iFlowName: artifact.iFlowName
                 });
-
-        /*
-         * SEVERITY DONUT
-         */
-
-        const clusters =
-            await SELECT.from(
-                IncidentClusters
-            ).columns(
-                'severity'
-            );
-
-        const severityMap = {};
-
-        clusters.forEach(c => {
-
-            severityMap[c.severity] =
-                (severityMap[c.severity] || 0) + 1;
-        });
-
-        const severityDistribution =
-            Object.entries(
-                severityMap
-            ).map(([severity, count]) => ({
-                severity,
-                count
-            }));
-
-        /*
-         * STATUS DONUT
-         */
-
-        const incidents =
-            await SELECT.from(
-                Incidents
-            ).columns(
-                'status'
-            );
-
-        const statusMap = {};
-
-        incidents.forEach(i => {
-
-            const status =
-                i.status || 'OPEN';
-
-            statusMap[status] =
-                (statusMap[status] || 0) + 1;
-        });
-
-        const statusDistribution =
-            Object.entries(
-                statusMap
-            ).map(([status, count]) => ({
-                status,
-                count
-            }));
-
-        /*
-         * TOP CLUSTERS TABLE
-         */
-
-        const topClusters =
-            await SELECT
-                .from(
-                    IncidentClusters
-                )
-                .columns(
-                    'errorType',
-                    'severity',
-                    'incidentCount',
-                    'lastSeen'
-                )
-                .orderBy(
-                    'incidentCount desc'
-                )
-                .limit(10);
-
-        /*
-         * INCIDENT TREND
-         * LAST 7 DAYS
-         */
-
-        const trendMap = {};
-
-        const trendIncidents =
-            await SELECT
-                .from(Incidents)
-                .columns(
-                    'createdAt',
-                    'status'
-                );
-
-        trendIncidents.forEach(i => {
-
-            const day =
-                new Date(
-                    i.createdAt
-                )
-                .toISOString()
-                .split('T')[0];
-
-            if (!trendMap[day]) {
-
-                trendMap[day] = {
-
-                    day,
-
-                    totalIncidents: 0,
-
-                    openIncidents: 0
-                };
-            }
-
-            trendMap[day]
-                .totalIncidents++;
-
-            if (
-                i.status !==
-                'RESOLVED'
-            ) {
-
-                trendMap[day]
-                    .openIncidents++;
-            }
-        });
-
-        const incidentTrend =
-            Object.values(
-                trendMap
-            ).sort(
-                (a, b) =>
-                    a.day.localeCompare(
-                        b.day
-                    )
-            );
-
-        return {
-
-            monitoredIflows:
-                monitoredIflows.count,
-
-            openClusters:
-                openClusters.count,
-
-            openIncidents:
-                openIncidents.count,
-
-            resolvedIncidents:
-                resolvedIncidents.count,
-
-            severityDistribution:
-                JSON.stringify(
-                    severityDistribution
-                ),
-
-            statusDistribution:
-                JSON.stringify(
-                    statusDistribution
-                ),
-
-            topClusters:
-                JSON.stringify(
-                    topClusters
-                ),
-
-            incidentTrend:
-                JSON.stringify(
-                    incidentTrend
-                )
-        };
+        }
+        await refreshArtifactDashboard(
+            MonitoredArtifacts,
+            ClusterArtifacts,
+            IncidentClusters
+        );
+        return 'Cluster resolved successfully';
     }
-);
+    );
+    this.on(
+        'getDashboardCharts',
+        async () => {
+
+            return {
+
+                incidentTrend:
+                    await getIncidentTrend(
+                        Incidents
+                    ),
+
+                clusterSeverity:
+                    await getClusterSeverityChart(
+                        IncidentClusters
+                    ),
+
+                iflowSeverity:
+                    await getIflowSeverityChart(
+                        MonitoredArtifacts
+                    )
+            };
+        }
+    );
+    this.on('getTopCriticalIflows', async () => {
+        const artifacts =
+        await SELECT
+            .from(MonitoredArtifacts)
+            .columns(
+                'ID',
+                'iFlowName',
+                'PackageName',
+                'overallSeverity',
+                'openClusterCount',
+                'severityScore',
+                'severityZScore',
+                'lastPollTimestamp'
+            );
+
+    const priority = {
+        CRITICAL: 4,
+        HIGH: 3,
+        MEDIUM: 2,
+        LOW: 1,
+        HEALTHY: 0
+    };
+
+    return artifacts
+        .sort((a, b) => {
+
+            const sevDiff =
+                priority[b.overallSeverity] -
+                priority[a.overallSeverity];
+
+            if (sevDiff !== 0) {
+                return sevDiff;
+            }
+
+            return (
+                (b.severityScore || 0) -
+                (a.severityScore || 0)
+            );
+        })
+        .slice(0, 5);
+    });
 });
