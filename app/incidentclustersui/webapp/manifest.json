@@ -157,6 +157,13 @@
         "viewPath": "com.cytechies.integration.reliability.incidentclustersui.view"
       },
       "routes": [
+         {
+          "name": "RouteOverview",
+          "pattern": ":?query:",
+          "target": [
+            "TargetOverview"
+          ]
+        },
         {
           "name": "RouteOrderList",
           "pattern": ":?query:",
@@ -194,6 +201,10 @@
         }
       ],
       "targets": {
+        "TargetOverview": {
+          "id": "Overview",
+          "name": "Overview"
+        },
         "TargetOrderList": {
           "id": "OrderList",
           "name": "OrderList"
