@@ -111,7 +111,8 @@
                                             <Toolbar>
                                                 <core:Icon src="sap-icon://process" class="sapUiTinyMarginEnd" size="1.5rem" color="{path: 'overallSeverity',formatter: '.formatter.severityIconColor'}"/>
 
-                                                <Title text="{iFlowName}" wrapping="false" titleStyle="H5" />
+                                                <!-- <Title text="{iFlowName}" wrapping="false" titleStyle="H5" /> -->
+                                                 
                                                 <ToolbarSpacer  />
                                                 <Button text="{ path: 'overallSeverity', formatter: '.formatter.formatButtonText' }" tooltip="click to filter" press=".onTagPress" type="{ path: 'overallSeverity', formatter: '.formatter.formatButtonState' }" icon="{ path: 'overallSeverity', formatter: '.formatter.formatSeverityIcon' }">
                                                     <customData>
@@ -122,9 +123,11 @@
                                                 <!-- <ObjectNumber number="{openClusterCount}" emphasized="true" unit="Clusters" class="sapMObjectNumberLarge sapUiTinyMarginBegin" state="{ path: 'overallSeverity', formatter: '.formatter.formatSeverityState'}"/> -->
                                             </Toolbar>
                                         </headerToolbar>
+                                        <Title text="{iFlowName}{iFlowName}{iFlowName}" wrapping="true" titleStyle="H5" />
 
                                         <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiTinyMarginBottom">
                                             <!-- <Label text="Severity" /> -->
+
                                             <Label text="Active Clusters" />
                                             <ObjectNumber number="{openClusterCount}" unit="/{clusters/$count}" emphasized="true" class="sapMObjectNumberLarge sapUiTinyMarginBegin" state="{ path: 'overallSeverity', formatter: '.formatter.formatSeverityState'}"/>
 

@@ -74,13 +74,13 @@ sap.ui.define([
 
             // 2. Clear the cluster data from your model to hide the main button
             var oModel = this.getView().getModel("chatJSONModel");
-            
+
             oModel.setProperty("/clusterName", "");
             oModel.setProperty("/clusterDataEnabled", false);
-            
+
             // 3. Provide feedback to the user
-            MessageToast.show("Cluster detached successfully");
-            
+            this.showToast("Cluster detached successfully");
+
             // Note: Add any backend API calls here if you need to delete the linkage in the database
         },
 
@@ -97,7 +97,7 @@ sap.ui.define([
             // let oJsonModel = this.getModel("chatJSONModel");
             // let bCurrentState = oJsonModel.getProperty("/clusterDataEnabled");
             // oJsonModel.setProperty("/clusterDataEnabled", !bCurrentState);
-            // this.byId("clusterDataPopover").close();
+            // this.byId("actionDataPopover").close();
 
             // console.log("Cluster data active:", !bCurrentState);
         },
@@ -155,7 +155,51 @@ sap.ui.define([
             }
         },
 
+        onSelectiFlowData(oEvent){
+            var oGlobalModel = this.getView().getModel("globalModel");
+            var sIflowId = oGlobalModel ? oGlobalModel.getProperty("/iflowId") : null;
 
+            // Save the event source control immediately (oEvent falls out of scope inside async functions)
+            var oSource = oEvent.getSource();
+            var oList = this.byId("iFlowList");
+            var oPopover = this.byId("iFlowPopover");
+
+            console.log("Selected iFlow data with iFlow ID:", sIflowId);
+
+            if (oList && oPopover) {
+                var oBinding = oList.getBinding("items");
+
+                if (oBinding) {
+                    this.getView().setBusy(true);
+
+                    var oDataLoadPromise = new Promise(function (resolve) {
+                        oBinding.attachEventOnce("dataReceived", function () {
+                            resolve();
+                        });
+                    });
+
+                    this.applyListSearch("iFlowList", sIflowId, ["ID"]);
+
+                    oBinding.refresh();
+
+                    oDataLoadPromise.then(function () {
+                        this.getView().setBusy(false);
+
+                        oPopover.openBy(oSource);
+                        console.log("Opening cluster data popover with updated data for iFlow:", sIflowId);
+                    }.bind(this)).catch(function (oError) {
+                        this.getView().setBusy(false);
+                        console.error("Error updating popover OData V4 dataset:", oError);
+                    }.bind(this));
+
+                    return;
+                }
+            }
+
+            if (oPopover) {
+                oPopover.openBy(oSource);
+            }
+        },
 
         _resetToWelcomePage: function () {
             let oJsonModel = this.getModel("chatJSONModel");
@@ -213,7 +257,7 @@ sap.ui.define([
 
         onOpenActionsPopover: function (oEvent) {
             const oButton = oEvent.getSource();
-            const oPopover = this.byId("clusterDataPopover");
+            const oPopover = this.byId("actionDataPopover");
 
             // Check if the popover is already open
             if (oPopover.isOpen()) {
@@ -324,39 +368,39 @@ sap.ui.define([
             }
         },
 
-        _executeCreateConversation: function (sTitle) {
-            debugger
+        _executeCreateConversation: async function (sTitle) {
+            debugger; // Execution stops here. Press F10 to step line-by-line.
+
             this.showBusy();
-            return new Promise((resolve, reject) => {
+
+            try {
+                // 1. Setup Models
                 let oModel = this.getView().getModel("chatModel");
                 let oJsonModel = this.getModel("chatJSONModel");
                 let oAction = oModel.bindContext("/createConversation(...)");
-                // console.log("Cluster ID set to:", sKey);
                 let clusterId = oJsonModel.getProperty("/clusterId") || null;
-
-                // 3. Set parameters
                 oAction.setParameter("title", sTitle);
                 if (clusterId) {
                     oAction.setParameter("clusterId", clusterId);
                 }
-                oAction.execute().then(() => {
-                    return oAction.getBoundContext().requestObject();
-                }).then((oResult) => {
-                    let sNewId = oResult.ID || (oResult.value && oResult.value.ID);
-                    oJsonModel.setProperty("/currentConversationId", sNewId);
-                    oJsonModel.setProperty("/currentConversationTitle", oResult.title);
-                    this.byId("chatContainer").removeAllItems();
-                    oModel.refresh();
-                    resolve(sNewId);
-                }).catch((oError) => {
+                await oAction.execute();
+                let oContext = oAction.getBoundContext();
+                let oResult = await oContext.requestObject();
+                let sNewId = oResult.ID || (oResult.value && oResult.value.ID);
+                let sNewTitle = oResult.title || (oResult.value && oResult.value.title);
+                oJsonModel.setProperty("/currentConversationId", sNewId);
+                oJsonModel.setProperty("/currentConversationTitle", sNewTitle);
+                this.byId("chatContainer").removeAllItems();
+                oModel.refresh();
+                return sNewId;
 
-                    console.error("Conversation creation failed:", oError);
-                    reject(oError);
-                });
+            } catch (oError) {
+                console.error("Conversation creation failed:", oError);
+                throw oError; // This automatically rejects the async function's promise
+
+            } finally {
                 this.hideBusy();
-            });
-
-
+            }
         },
 
         _updateTotalSessionTokens: function () {
@@ -657,7 +701,7 @@ sap.ui.define([
 
         onUploadFilePress: function (oEvent) {
             // 1. Close the popover menu
-            this.byId("clusterDataPopover").close();
+            this.byId("actionDataPopover").close();
 
             // 2. Trigger your file upload logic here
             // (e.g., opening a sap.ui.unified.FileUploader dialog)
@@ -666,7 +710,7 @@ sap.ui.define([
 
         onVoiceInputPress: function (oEvent) {
             // 1. Close the popover menu immediately
-            this.byId("clusterDataPopover").close();
+            this.byId("actionDataPopover").close();
 
             // 2. Check if the user's browser supports Speech Recognition
             let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -732,6 +776,39 @@ sap.ui.define([
             let sQuery = oEvent.getParameter("newValue") || oEvent.getParameter("query") || "";
             this.applyListSearch("historyList", sQuery, ["title"]);
         },
+
+        oniFlowSelect(oEvent) {
+            let oListItem = oEvent.getParameter("listItem");
+
+            if (!oListItem) {
+                return;
+            }
+            let oCtx = oEvent.getParameter("listItem").getBindingContext();
+            console.log("Selected iFlow context data : ", oCtx);
+            let sKey = oCtx.getProperty("ID");
+
+            let oJsonModel = this.getModel("chatJSONModel");
+            // console.log("iFlow ID set to:", sKey);
+            oJsonModel.setProperty("/iFlowId", sKey);
+            oJsonModel.setProperty("/iFlowName", oCtx.getProperty("iFlowName"));
+
+            oJsonModel.setProperty("/iFlowDataEnabled", true);
+            this.byId("actionDataPopover").close();
+            let oList = oListItem.getParent();
+            if (oList) {
+                // Unselect the specific item visually
+                oListItem.setSelected(false);
+                // Clear the master selection tracking on the list itself
+                if (typeof oList.setSelectedItem === "function") {
+                    oList.setSelectedItem(null);
+                }
+            }
+
+            // console.log("Cluster data active:", !bCurrentState);
+            this.byId("actionDataPopover").close();
+
+        },
+
         onClusterSelect: function (oEvent) {
             let oListItem = oEvent.getParameter("listItem");
 
@@ -749,7 +826,7 @@ sap.ui.define([
             oJsonModel.setProperty("/clusterName", oCtx.getProperty("errorType"));
 
             oJsonModel.setProperty("/clusterDataEnabled", true);
-            this.byId("clusterDataPopover").close();
+            this.byId("actionDataPopover").close();
             let oList = oListItem.getParent();
             if (oList) {
                 // Unselect the specific item visually
@@ -761,7 +838,7 @@ sap.ui.define([
             }
 
             // console.log("Cluster data active:", !bCurrentState);
-            this.byId("clusterDataPopover").close();
+            this.byId("actionDataPopover").close();
 
         }
 
