@@ -214,8 +214,8 @@
 					"name": "Overview"
 				},
 				"Targetmonitored_iflows": {
-					"id": "monitored_iflows",
-					"name": "monitored_iflows"
+					"id": "Monitored_iflows",
+					"name": "Monitored_iflows"
 				},
 				"TargetAIAssistant": {
 					"id": "Chat",

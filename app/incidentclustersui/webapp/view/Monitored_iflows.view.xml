@@ -1,4 +1,4 @@
-<mvc:View controllerName="com.cytechies.integration.reliability.incidentclustersui.controller.monitored_iflows"
+<mvc:View controllerName="com.cytechies.integration.reliability.incidentclustersui.controller.Monitored_iflows"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
     xmlns:f="sap.f"
@@ -106,7 +106,7 @@
             <layout:VerticalLayout width="100%">
                 <MessageStrip enableFormattedText="true" text="Click any &lt;strong&gt;iFlow row&lt;/strong&gt; to open the &lt;strong&gt;Detail View&lt;/strong&gt; with all associated clusters and recent incidents." type="Information" showIcon="true" showCloseButton="true" class="sapUiSmallMarginBottom" />
 
-                <Table id="idMonitoredArtifacts" updateFinished=".onTableUpdateFinished" growing="true" growingThreshold="3" growingScrollToLoad="true" mode="SingleSelectMaster" itemPress=".onRowPress" items="{
+                <Table id="idMonitoredArtifacts" updateFinished=".onTableUpdateFinished" growing="true" growingThreshold="30" growingScrollToLoad="true" mode="SingleSelectMaster" itemPress=".onRowPress" items="{
             path: '/MonitoredArtifacts',
             parameters: {
             $count: true

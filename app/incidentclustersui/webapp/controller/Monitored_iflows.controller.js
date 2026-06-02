@@ -6,12 +6,12 @@ sap.ui.define([
 ], (BaseController, formatter, Filter, FilterOperator) => {
     "use strict";
 
-    return BaseController.extend("com.cytechies.integration.reliability.incidentclustersui.controller.monitored_iflows", {
+    return BaseController.extend("com.cytechies.integration.reliability.incidentclustersui.controller.Monitored_iflows", {
         formatter: formatter,
 
         onInit: function () {
             this._updateRefreshTime();
-            var iFiveMinutes = 30000; // 1/2 minute in milliseconds
+            var iFiveMinutes = 300; // 1/2 minute in milliseconds
             this._refreshInterval = setInterval(function () {
                 this.onRefreshPress();
             }.bind(this), iFiveMinutes);
