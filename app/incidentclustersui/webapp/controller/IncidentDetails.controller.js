@@ -65,7 +65,7 @@ sap.ui.define([
             }
         },
   onResolve: async function (oEvent) {
-
+   
     const oContext =
         oEvent.getSource()
             .getBindingContext("view");

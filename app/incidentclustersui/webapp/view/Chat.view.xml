@@ -179,7 +179,7 @@
                                     <Avatar id="_IDGenAvatar" src="sap-icon://ai" displaySize="XL" backgroundColor="Accent6" class="sapUiMediumMarginBottom"/>
                                     <Title id="_IDGenTitle2" text="{i18n>welcome.title}" level="H1" titleStyle="H2" wrapping="true" textAlign="Center" width="100%"/>
                                     <Text id="_IDGenText13" text="{i18n>welcome.subtitle}" class="sapUiSmallMarginTop" textAlign="Center" width="100%"/>
-                                    <VBox id="faqContainer" class="sapUiMediumMarginTop" width="100%" alignItems="Center">
+                                    <!-- <VBox id="faqContainer" class="sapUiMediumMarginTop" width="100%" alignItems="Center">
                                         <Label id="_IDGenLabel1" text="{i18n>welcome.suggestions.label}" design="Bold" class="sapUiTinyMarginBottom"/>
                                         <FlexBox id="_IDGenFlexBox" wrap="Wrap" justifyContent="Center" width="85%" renderType="Bare">
                                             <Button id="_IDGenButton2" text="{i18n>welcome.suggestion.failed24h}" type="Ghost" class="sapUiTinyMargin" press=".onSuggestionPress"/>
@@ -190,7 +190,7 @@
                                             <Button id="_IDGenButton8" text="{i18n>welcome.suggestion.remediation}" type="Ghost" class="sapUiTinyMargin" press=".onSuggestionPress"/>
                                         </FlexBox>
 
-                                    </VBox>
+                                    </VBox> -->
                                 </VBox>
                                 <VBox id="chatContainer" width="100%" class="sapUiResponsiveContentPadding" />
                                 <HBox id="typingIndicator" visible="false" class="sapUiSmallMargin">

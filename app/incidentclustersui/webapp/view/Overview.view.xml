@@ -315,7 +315,7 @@
 
                             <f:content>
 
-                                <Table id="topIflowsTable" items="{topIflows>/topIflows}" autoPopinMode="true" sticky="ColumnHeaders">
+                                <Table id="idMonitoredArtifacts" items="{topIflows>/topIflows}" autoPopinMode="true" sticky="ColumnHeaders">
 
                                     <columns>
                                         <Column width="3rem" hAlign="Center" />

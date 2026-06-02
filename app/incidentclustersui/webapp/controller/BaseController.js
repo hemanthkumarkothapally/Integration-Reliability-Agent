@@ -35,6 +35,10 @@ sap.ui.define([
             BusyIndicator.show(iDelay);
         },
 
+        showBusyTime: function (iDelay) {
+            BusyIndicator.show(iDelay);
+        },
+
         hideBusy: function () {
             BusyIndicator.hide();
         },

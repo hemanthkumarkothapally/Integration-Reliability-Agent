@@ -8,13 +8,12 @@ sap.ui.define([
     "sap/m/AvatarSize",
     "sap/m/AvatarColor",
     "sap/m/MessageBox",
-    "sap/m/FlexJustifyContent",
-    "sap/m/FlexAlignItems",
+    "sap/m/library",
     "sap/m/MessageStrip",
     "sap/f/library",
     "../model/formatter"
 
-], function (BaseController, FormattedText, VBox, HBox, ObjectStatus, Avatar, AvatarSize, AvatarColor, MessageBox, FlexJustifyContent, FlexAlignItems, MessageStrip, fioriLibrary, formatter) {
+], function (BaseController, FormattedText, VBox, HBox, ObjectStatus, Avatar, AvatarSize, AvatarColor, MessageBox, library , MessageStrip, fioriLibrary, formatter) {
     "use strict";
 
     return BaseController.extend("com.cytechies.integration.reliability.incidentclustersui.controller.Chat", {
@@ -681,18 +680,18 @@ sap.ui.define([
                 aBubbleItems.push(oUserTokenInfo.addStyleClass("sapUiTinyMarginTop"));
 
                 oMessageItem = new VBox({
-                    alignItems: FlexAlignItems.End,
+                    alignItems: library.FlexAlignItems.End,
                     width: "100%",
                     items: [
                         new HBox({
                             width: "100%",
-                            justifyContent: FlexJustifyContent.End,
-                            alignItems: FlexAlignItems.Start,
+                            justifyContent: library.FlexJustifyContent.End,
+                            alignItems: library.FlexAlignItems.Start,
                             fitContainer: false,
                             items: [
                                 // Wrapped Text inside layout panel container to retain structural width
                                 new VBox({
-                                    items: [aBubbleItems, oUserText, oUserTokenInfo.addStyleClass("sapUiTinyMarginTop")]
+                                    items: [...aBubbleItems, oUserText, oUserTokenInfo.addStyleClass("sapUiTinyMarginTop")]
                                 }).addStyleClass("userChatBubbleNew sapUiSmallMarginEnd"),
                                 oUserAvatar
                             ]
@@ -720,13 +719,13 @@ sap.ui.define([
                 }
 
                 oMessageItem = new VBox({
-                    alignItems: FlexAlignItems.Start,
+                    alignItems: library.FlexAlignItems.Start,
                     width: "100%",
                     items: [
                         new HBox({
                             width: "100%",
-                            justifyContent: FlexJustifyContent.Start,
-                            alignItems: FlexAlignItems.Start,
+                            justifyContent: library.FlexJustifyContent.Start,
+                            alignItems: library.FlexAlignItems.Start,
                             fitContainer: false,
                             items: [
                                 oAiAvatar,
@@ -892,6 +891,8 @@ sap.ui.define([
             }
 
             // console.log("Cluster data active:", !bCurrentState);
+            const oInput = this.byId("chatInput1");
+            oInput.setValue("I want to talk about iFlow: " + oCtx.getProperty("iFlowName"));
             this.byId("actionDataPopover").close();
 
         },
@@ -925,6 +926,8 @@ sap.ui.define([
             }
 
             // console.log("Cluster data active:", !bCurrentState);
+            const oInput = this.byId("chatInput1");
+            oInput.setValue("I want to talk about cluster: " + oCtx.getProperty("errorType"));
             this.byId("actionDataPopover").close();
 
         }
