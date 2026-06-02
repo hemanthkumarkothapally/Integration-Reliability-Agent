@@ -740,20 +740,9 @@ export async function ApiCall(
 export async function upsertMonitoredArtifacts(
   entity,
   logs,
-  IS_API
+  IS_API,
+  tenant
 ) {
-  /*
-   * ----------------------------------------
-   * CONNECT CPI API
-   * ----------------------------------------
-   */
-  IS_API =
-    await cds.connect.to(
-      'IS_RUNTIME_API'
-    );
-  console.log(
-    "Connected to IS_RUNTIME_API"
-  );
   /*
    * ----------------------------------------
    * EMPTY LOGS
@@ -795,7 +784,11 @@ export async function upsertMonitoredArtifacts(
    */
 
   const existingArtifacts =
-    await SELECT.from(entity);
+    await SELECT
+    .from(entity)
+    .where({
+      tenant_ID: tenant.ID
+    });
 
   const existingMap =
     new Map(
@@ -875,7 +868,7 @@ export async function upsertMonitoredArtifacts(
            */
           lastPollTimestamp:
             latestTimestamp,
-       
+          lastErrorAt: latestTimestamp,
           isActive:
             results.Status ===
             'STARTED',
@@ -891,8 +884,8 @@ export async function upsertMonitoredArtifacts(
               : existing.overallSeverity
         })
         .where({
-          ID:
-            existing.ID
+          ID: existing.ID,
+          tenant_ID: tenant.ID
         });
 
       console.log(
@@ -912,11 +905,10 @@ export async function upsertMonitoredArtifacts(
         .entries({
           ID:
             cds.utils.uuid(),
+          tenant_ID: tenant.ID,
           iFlowName,
-
           iFlowId:
             iFlowName,
-
           Type:
             results.Type ||
             'UNKNOWN',
@@ -924,10 +916,10 @@ export async function upsertMonitoredArtifacts(
             packageName,
           isActive:
             results.Status ===
-            'STARTED',
-          
+            'STARTED',  
           lastPollTimestamp:
             latestTimestamp,
+          lastErrorAt: latestTimestamp,
           overallSeverity:
             'HEALTHY',
           severityScore:
@@ -937,10 +929,6 @@ export async function upsertMonitoredArtifacts(
           openClusterCount:
             0,
           resolvedClusterCount:
-            0,
-          openIncidentCount:
-            0,
-          criticalClusterCount:
             0,
           totalBusinessImpactEUR:
             0

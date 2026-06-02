@@ -1,4 +1,7 @@
-export async function getIncidentTrend(Incidents) {
+export async function getIncidentTrend(
+    Incidents,
+    tenantId
+) {
     // 1. Calculate the cutoff (Current Time - 5 Hours)
     const fiveHoursAgo = new Date(Date.now() - 5 * 60 * 60 * 1000);
     const now = new Date();
@@ -16,11 +19,24 @@ export async function getIncidentTrend(Incidents) {
     }
 
     // 3. Fetch incidents within this specific 5-hour window
-   const incidentData = await SELECT.from(Incidents).where([
-    { ref: ['createdAt'] }, '>=', { val: fiveHoursAgo.toISOString() },
-    'and',
-    { ref: ['createdAt'] }, '<=', { val: now.toISOString() }
-]);
+    const where = [
+        { ref: ['createdAt'] }, '>=', { val: fiveHoursAgo.toISOString() },
+        'and',
+        { ref: ['createdAt'] }, '<=', { val: now.toISOString() }
+    ];
+
+    if (tenantId) {
+        where.push(
+            'and',
+            { ref: ['tenant_ID'] }, '=', { val: tenantId }
+        );
+    }
+
+    const incidentData =
+        await SELECT
+            .from(Incidents)
+            .where(where);
+
 
     // 4. Populate buckets
     incidentData.forEach(i => {
@@ -40,23 +56,25 @@ export async function getIncidentTrend(Incidents) {
     return Object.values(buckets).sort((a, b) => a.hour.localeCompare(b.hour));
 }
 export async function getClusterSeverityChart(
-    IncidentClusters
+    IncidentClusters,
+    tenantId
 ) {
+
+    const filter = {
+        globalStatus: {
+            '!=': 'RESOLVED'
+        }
+    };
+
+    if (tenantId) {
+        filter.tenant_ID = tenantId;
+    }
 
     const clusters =
         await SELECT
-            .from(
-                IncidentClusters
-            )
-            .columns(
-                'severity'
-            )
-            .where({
-                globalStatus: {
-                    '!=':
-                    'RESOLVED'
-                }
-            });
+            .from(IncidentClusters)
+            .columns('severity')
+            .where(filter);
 
     const result = {
 
@@ -92,17 +110,21 @@ export async function getClusterSeverityChart(
     );
 }
 export async function getIflowSeverityChart(
-    MonitoredArtifacts
+    MonitoredArtifacts,
+    tenantId
 ) {
+
+    const filter = {};
+
+    if (tenantId) {
+        filter.tenant_ID = tenantId;
+    }
 
     const artifacts =
         await SELECT
-            .from(
-                MonitoredArtifacts
-            )
-            .columns(
-                'overallSeverity'
-            );
+            .from(MonitoredArtifacts)
+            .columns('overallSeverity')
+            .where(filter);
 
     const result = {
 

@@ -39,10 +39,15 @@
         "db": "hana"
       },
       "destinations": true,
-      "IS_RUNTIME_API": {
+      "IS_RUNTIME_API_DEV": {
         "kind": "rest",
         "credentials": {
-          "destination": "IS_RUNTIME_API"
+          "destination": "IS_RUNTIME_API_DEV"
+        }
+      },"IS_RUNTIME_API_QA": {
+        "kind": "rest",
+        "credentials": {
+          "destination": "IS_RUNTIME_API_QA"
         }
       },
       "GenAIHubDestination": {

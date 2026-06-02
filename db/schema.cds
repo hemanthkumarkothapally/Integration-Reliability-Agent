@@ -1,6 +1,15 @@
 namespace com.cytechies.integration.reliability;
 using { cuid, managed } from '@sap/cds/common';
+
+entity Tenants : cuid, managed {
+    tenantName      : String(255);
+    tenantId        : String(255);
+    destinationName : String(255);
+    region          : String(100);
+    isActive        : Boolean default true;
+}
 entity Incidents : cuid, managed {
+    tenant          : Association to Tenants;
     messageGuid     : String(100);
     iFlowName       : String(300);
     errorMessage    : LargeString;
@@ -14,6 +23,7 @@ entity Incidents : cuid, managed {
 }
 
 entity IncidentClusters : cuid, managed {
+    tenant          : Association to Tenants;
     errorSignature  : String;
     errorType       : String(300);
     severity        : String(50);
@@ -43,12 +53,13 @@ entity ClusterRecommendations : cuid, managed {
     generatedAt         : Timestamp;
 }
 entity MonitoredArtifacts : cuid, managed {
+    tenant              : Association to Tenants;
     iFlowName          : String(255);
     iFlowId            : String(255);
     Type          : String(255);
     PackageName     : String(255);
     isActive           : Boolean;
-    lastErrorMessage    : Timestamp;
+    lastErrorAt : Timestamp;
     lastPollTimestamp  : Timestamp;
     overallSeverity    : String(50) default 'HEALTHY';
     severityScore      : Decimal(10,2);

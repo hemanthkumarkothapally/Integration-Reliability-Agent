@@ -26,8 +26,13 @@ export default cds.service.impl(async function () {
   let IS_API;
   let db;
   try {
-    IS_API = await cds.connect.to('IS_RUNTIME_API');
-    console.log("Connected to IS_RUNTIME_API");
+    const tenants =
+      await SELECT.from(Tenants)
+        .where({ isActive: true });
+
+    console.log(
+      `Found ${tenants.length} active tenants`
+    );
   } catch (err) {
     console.error("Failed to connect IS_RUNTIME_API");
     console.error(err);
@@ -50,16 +55,31 @@ export default cds.service.impl(async function () {
     ClusterRecommendations,
     TokenUsages,
     ClusterArtifacts,
-    Playbooks
+    Playbooks,
+    Tenants
   } = db.entities;
   const { IncidentClusters } = srv.entities;
   this.on('getFailedLogs', async () => {
     console.log("========== getFailedLogs START ==========");
     try {
-      let enrichedResults = await runPoll();
-      console.log("getFailedLogs SUCCESS");
-      console.log("Returned Records:", enrichedResults?.length || 0);
-      return enrichedResults;
+      const tenants =
+        await SELECT.from(Tenants)
+          .where({ isActive: true });
+      const allResults = [];
+      for (const tenant of tenants) {
+        console.log(
+          `Processing Tenant: ${tenant.tenantName}`
+        );
+        const tenantResults =
+          await runPoll(tenant);
+        allResults.push(...tenantResults);
+      }
+      console.log(`Total Failed Logs Processed: ${allResults.length}`);
+      console.log("========== getFailedLogs SUCCESS ==========");
+      return allResults;
+      // console.log("getFailedLogs SUCCESS");
+      // console.log("Returned Records:", enrichedResults?.length || 0);
+      // return enrichedResults;
     } catch (err) {
       console.error("getFailedLogs FAILED");
       console.error(err);
@@ -69,17 +89,17 @@ export default cds.service.impl(async function () {
     }
   });
 
-  async function runPoll() {
+  async function runPoll(tenant) {
     console.log("========== runPoll START ==========");
-    await DELETE.from(Incidents);
+    // await DELETE.from(Incidents);
     try {
-console.log(
-  JSON.stringify(
-    cds.env.requires.IS_RUNTIME_API,
-    null,
-    2
-  )
-);
+      const IS_API =
+        await cds.connect.to(
+          tenant.destinationName
+        );
+      console.log(
+        `Connected to ${tenant.destinationName}`
+      );
       /* LAST POLL TIMESTAMP */
       console.log("Fetching latest artifact timestamp...");
       const latestArtifact = await SELECT.one.from(MonitoredArtifacts)
@@ -94,10 +114,10 @@ console.log(
       console.log("Raw Timestamp:", rawTimestamp);
 
       const lastPollTimestamp = new Date(new Date(rawTimestamp).getTime() + 5 * 60 * 60 * 1000)
-    .toISOString()
-    .split('.')[0];
+        .toISOString()
+        .split('.')[0];
 
-console.log("Formatted Timestamp (Plus 5 Hours):", lastPollTimestamp);
+      console.log("Formatted Timestamp (Plus 5 Hours):", lastPollTimestamp);
 
       /* CPI logs Filter */
 
@@ -206,6 +226,7 @@ console.log("Formatted Timestamp (Plus 5 Hours):", lastPollTimestamp);
           console.log(analysed);
 
           return {
+            tenant_ID: tenant.ID,
             messageGuid: guid,
             iFlowName: log.IntegrationFlowName,
             status: 'OPEN',
@@ -265,14 +286,15 @@ console.log("Formatted Timestamp (Plus 5 Hours):", lastPollTimestamp);
       await upsertMonitoredArtifacts(
         MonitoredArtifacts,
         newLogs,
-        IS_API
+        IS_API,
+        tenant
       );
       console.log(" MonitoredArtifacts Updated");
 
       /* CLUSTERING */
 
       console.log("Starting clustering...");
-      await upsertClusters(Incidents, IncidentClusters, Playbooks, MonitoredArtifacts, ClusterArtifacts, newLogs,srv)
+      await upsertClusters(Incidents, IncidentClusters, Playbooks, MonitoredArtifacts, ClusterArtifacts, newLogs, srv, tenant)
       console.log("========== runPoll SUCCESS ==========");
       console.log("Raw Timestamp:", rawTimestamp);
       console.log("Formatted Timestamp:", lastPollTimestamp);
@@ -286,7 +308,7 @@ console.log("Formatted Timestamp (Plus 5 Hours):", lastPollTimestamp);
   }
 
 
-  this.after(['CREATE','UPDATE'], IncidentClusters, async (data) => {
+  this.after(['CREATE', 'UPDATE'], IncidentClusters, async (data) => {
     console.log("CREATE Event Triggered for IncidentClusters");
     const record = data;
     const cluster_ID = record.ID;
@@ -408,15 +430,15 @@ console.log("Formatted Timestamp (Plus 5 Hours):", lastPollTimestamp);
             ID: cluster_ID
           });
       }
-      if(aiResult.errorType){
+      if (aiResult.errorType) {
         await UPDATE(IncidentClusters)
           .set({
             errorType:
               aiResult.errorType
           })
-           .where({
+          .where({
             ID: cluster_ID
-           });
+          });
       }
       /*
        * RETURN SAVED RECORD

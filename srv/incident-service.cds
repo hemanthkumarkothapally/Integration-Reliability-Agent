@@ -49,7 +49,7 @@ service IncidentService {
     // @requires: 'Viewer'
     @readonly
     entity Playbook           as projection on IRA.Playbooks;
-
+    entity Tenants as projection on IRA.Tenants;
     // @requires: 'Admin'
     function triggerPoll() returns array of Map;
     function onReDiagnoseIncidentCluster(
@@ -83,7 +83,7 @@ type DashboardCharts {
     iflowSeverity     : LargeString;
 }
  
-function getDashboardCharts() returns DashboardCharts;
+function getDashboardCharts(tenantId : UUID) returns DashboardCharts;
 type TopCriticalIFlow {
     ID                : UUID;
     iFlowName         : String(255);
@@ -95,6 +95,6 @@ type TopCriticalIFlow {
     severityZScore    : Decimal(10,2);
     lastPollTimestamp : Timestamp;
 }
-function getTopCriticalIflows() returns many TopCriticalIFlow;
+function getTopCriticalIflows(tenantId : UUID) returns many TopCriticalIFlow;
 
 }

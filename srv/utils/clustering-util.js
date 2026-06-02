@@ -177,7 +177,8 @@ export async function upsertClusters(
   MonitoredArtifacts,
   ClusterArtifacts,
   newLogs,
-  srv
+  srv,
+  tenant
 ) {
 
   const clusterMap = {};
@@ -245,6 +246,7 @@ export async function upsertClusters(
       await SELECT.one
         .from(IncidentClusters)
         .where({
+          tenant_ID: tenant.ID,
           errorSignature:
             clusterData.errorSignature
         });
@@ -273,7 +275,7 @@ export async function upsertClusters(
       ).entries({
 
         ID: clusterId,
-
+        tenant_ID: tenant.ID,
         errorSignature:
           clusterData.errorSignature,
 
@@ -390,6 +392,7 @@ export async function upsertClusters(
         await SELECT.one
           .from(MonitoredArtifacts)
           .where({
+            tenant_ID: tenant.ID,
             iFlowName:
               log.iFlowName
           });
@@ -461,42 +464,43 @@ export async function upsertClusters(
               relation.ID
           });
       }
-      
+
     }
     const relations = await SELECT.from(ClusterArtifacts);
 
-for (const rel of relations) {
+    for (const rel of relations) {
 
-  const artifact =
-    await SELECT.one
-      .from(MonitoredArtifacts)
-      .where({ ID: rel.artifact_ID });
-if (!artifact) continue;
-  const count =
-    await SELECT.one
-      .from(Incidents)
-      .columns`count(*) as count`
-      .where({
-        cluster_ID: rel.cluster_ID,
-        iFlowName: artifact.iFlowName,
-        status: 'OPEN'
-      });
-console.log(
-  "Count for",
-  artifact.iFlowName,
-  cluster.ID,
-  count
-);
-  await UPDATE(ClusterArtifacts)
-    .set({
-      incidentCount: count.count
-    })
-    .where({
-      ID: rel.ID
-    });
-}
+      const artifact =
+        await SELECT.one
+          .from(MonitoredArtifacts)
+          .where({ ID: rel.artifact_ID });
+      if (!artifact) continue;
+      const count =
+        await SELECT.one
+          .from(Incidents)
+          .columns`count(*) as count`
+          .where({
+            tenant_ID: tenant.ID,
+            cluster_ID: rel.cluster_ID,
+            iFlowName: artifact.iFlowName,
+            status: 'OPEN'
+          });
+      console.log(
+        "Count for",
+        artifact.iFlowName,
+        cluster.ID,
+        count
+      );
+      await UPDATE(ClusterArtifacts)
+        .set({
+          incidentCount: count.count
+        })
+        .where({
+          ID: rel.ID
+        });
+    }
   }
-  
+
 
   /*
    * ----------------------------------------
@@ -507,17 +511,22 @@ console.log(
   await refreshArtifactDashboard(
     MonitoredArtifacts,
     ClusterArtifacts,
-    IncidentClusters
+    IncidentClusters,
+    tenant
   );
 }
 
 export async function refreshArtifactDashboard(
   MonitoredArtifacts,
   ClusterArtifacts,
-  IncidentClusters
+  IncidentClusters,
+  tenant
 ) {
   // 1. Fetch all artifacts
-  const artifacts = await SELECT.from(MonitoredArtifacts);
+  const artifacts = await SELECT.from(MonitoredArtifacts).where({
+      tenant_ID:
+        tenant.ID
+    });
   if (!artifacts.length) { console.log("No artifacts found"); return; }
 
   // 2. Fetch all cluster relations + clusters in ONE query each
@@ -525,7 +534,7 @@ export async function refreshArtifactDashboard(
 
   // 3. Total unresolved clusters globally
   const totalOpenClusters = await SELECT.one`count(1) as total`.from(IncidentClusters)
-    .where({ globalStatus: { '!=': 'RESOLVED' } });
+    .where({   tenant_ID: tenant.ID,globalStatus: { '!=': 'RESOLVED' } });
 
   const globalOpenCount = totalOpenClusters.total;
 
@@ -554,7 +563,7 @@ export async function refreshArtifactDashboard(
     if (openClusterIds.length) {
       const linkedClusters = await SELECT
         .from(IncidentClusters)
-        .where({ ID: { in: openClusterIds } })
+        .where({  tenant_ID: tenant.ID, ID: { in: openClusterIds } })
         .columns('lastSeen');
 
       lastFailure = linkedClusters.reduce((latest, c) => {
