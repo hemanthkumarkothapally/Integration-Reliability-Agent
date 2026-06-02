@@ -10,8 +10,19 @@
 
         <f:title>
             <f:DynamicPageTitle>
-                <f:heading>
-                    <Title text="Integration Monitoring Overview"/>
+               <f:heading>
+                     <HBox alignItems="Center" renderType="Bare">
+
+                <Button
+                    icon="sap-icon://nav-back"
+                    type="Transparent"
+                    press=".onNavBackToOverview"/>
+
+                <Title
+                    text="Integration Monitoring Overview"
+                    class="sapUiTinyMarginBegin"/>
+
+            </HBox>
                 </f:heading>
                 <f:actions>
                     <Button icon="sap-icon://ai" text="Ai Assistant" type="Ghost" press=".onAipress" tooltip="AI Assistant"/>

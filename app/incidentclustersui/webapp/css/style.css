@@ -83,3 +83,10 @@
     padding: 16px !important;
     background-color: #fafafa !important;
 }
+
+.sapUiSizeCompact .sapFCard .sapFCardContent .sapMListTbl {
+     padding-bottom: 0rem !important; 
+}
+
+
+

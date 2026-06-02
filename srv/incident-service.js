@@ -430,6 +430,9 @@ export default cds.service.impl(async function () {
         if (!artifactId) {
             req.error(400, 'artifactId is required');
         }
+        console.log("Resolving cluster for artifact:",
+            { clusterId, artifactId }
+        );
         const relation =
             await SELECT.one
                 .from(ClusterArtifacts)

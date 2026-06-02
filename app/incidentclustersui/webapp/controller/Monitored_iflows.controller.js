@@ -27,6 +27,10 @@ sap.ui.define([
                 );
         },
 
+        onNavBackToOverview: function () {
+            this.navTo("RouteOverview");
+        },
+
         _onRouteMatched: function () {
             var oDateRange = this.byId("idDateRangeFilter");
 
