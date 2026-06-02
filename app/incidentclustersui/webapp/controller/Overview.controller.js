@@ -29,7 +29,7 @@ onIFlowBtn: function () {
 
     this.getOwnerComponent()
         .getRouter()
-        .navTo("RouteOrderList");
+        .navTo("Routemonitored_iflows");
 
 },
 
@@ -48,7 +48,7 @@ onIFlowBtn: function () {
         case "iflows":
             this.getOwnerComponent()
                 .getRouter()
-                .navTo("RouteOrderList");
+                .navTo("Routemonitored_iflows");
             break;
 
         case "incidents":

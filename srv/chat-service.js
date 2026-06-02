@@ -180,7 +180,7 @@ export default cds.service.impl(async function () {
                 content: userMessage
             }];
             //{ text: systemPrompt,tokenCount: 1234,inputTokens: 1234,outputTokens: 1234};
-        const { text, tokenCount, inputTokens, outputTokens } ={ text: systemPrompt,tokenCount: 1234,inputTokens: 1234,outputTokens: 1234};// await callAI(destination, messages, systemPrompt, 1524);
+        const { text, tokenCount, inputTokens, outputTokens } = await callAI(destination, messages, systemPrompt, 1524);
         console.log("AI Response:", text);
         const aiText = text ?? 'Failed to generate AI response.';
 

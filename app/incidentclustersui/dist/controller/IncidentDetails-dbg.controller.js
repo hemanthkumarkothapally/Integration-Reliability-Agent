@@ -42,7 +42,7 @@ sap.ui.define([
 
             this.getOwnerComponent()
                 .getRouter()
-                .navTo("RouteOrderList");
+                .navTo("Routemonitored_iflows");
             this.getView().getModel("globalModel").setProperty("/iflowId", null);
 
         },

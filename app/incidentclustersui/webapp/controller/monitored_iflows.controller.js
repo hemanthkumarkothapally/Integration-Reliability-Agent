@@ -11,7 +11,7 @@ sap.ui.define([
 
         onInit: function () {
             this._updateRefreshTime();
-            var iFiveMinutes = 30000; // 1/2 minute in milliseconds
+            var iFiveMinutes = 300; // 1/2 minute in milliseconds
             this._refreshInterval = setInterval(function () {
                 this.onRefreshPress();
             }.bind(this), iFiveMinutes);

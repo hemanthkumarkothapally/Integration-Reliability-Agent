@@ -62,7 +62,7 @@ sap.ui.define([
             else {
                 this.getOwnerComponent()
                     .getRouter()
-                    .navTo("RouteOrderList");
+                    .navTo("Routemonitored_iflows");
             }
             console.log("Closing chat side panel");
         },
