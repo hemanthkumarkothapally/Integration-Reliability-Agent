@@ -1,29 +1,72 @@
 sap.ui.define([
-      "./BaseController",
+  "sap/ui/core/mvc/Controller",
   "../model/formatter",
   "sap/ui/model/json/JSONModel"
 ], (BaseController, formatter, JSONModel) => {
   "use strict";
 
   return BaseController.extend("com.cytechies.integration.reliability.incidentclustersui.controller.Overview", {
-     formatter: formatter,
+    formatter: formatter,
     onInit() {
+      //  this.byId("sideNavigation")
+      //   .setSelectedKey("overview");
 
       this.loadDashboardCharts();
       this.loadTopCriticalIflows();
 
-    },
-    onNavToIncidents(){
-      this.navTo("Routemonitored_iflows");
-      console.log("Navigating to monitored iFlows");
-    },
-    onSideNavButtonPress: function () {
-      const oToolPage = this.byId("toolPage1");
+      var oPopover = this.byId("idPopOver");
 
-      oToolPage.setSideExpanded(
-        !oToolPage.getSideExpanded()
-      )
+      oPopover.connect(this.byId("topErrorTypesChart").getVizUid());
+
+      oPopover.connect(this.byId("severityChart").getVizUid());
+
+      oPopover.connect(this.byId("idLineChart").getVizUid());
+
+
+
     },
+onIFlowBtn: function () {
+
+    this.getOwnerComponent()
+        .getRouter()
+        .navTo("RouteOrderList");
+
+},
+
+    onSideNavigationSelect: function (oEvent) {
+
+    const sKey = oEvent.getParameter("item").getKey();
+
+    switch (sKey) {
+
+        case "overview":
+            this.getOwnerComponent()
+                .getRouter()
+                .navTo("RouteOverview");
+            break;
+
+        case "iflows":
+            this.getOwnerComponent()
+                .getRouter()
+                .navTo("RouteOrderList");
+            break;
+
+        case "incidents":
+            // Future page
+            break;
+
+        case "clusters":
+            // Future page
+            break;
+    }
+},
+    // onSideNavButtonPress: function () {
+    //   const oToolPage = this.byId("toolPage1");
+
+    //   oToolPage.setSideExpanded(
+    //     !oToolPage.getSideExpanded()
+    //   )
+    // },
     loadTopCriticalIflows: async function () {
 
       const oModel = this.getOwnerComponent().getModel();
@@ -78,7 +121,46 @@ sap.ui.define([
         console.error("Error loading dashboard charts", oError);
 
       }
-    }
+    },
+    onTopIflowPress: function (oEvent) {
 
+      const oItem = oEvent.getSource();
+
+      const oContext = oItem.getBindingContext("topIflows");
+
+      if (!oContext) {
+        console.error("No binding context found");
+        return;
+      }
+
+      // Debug - check what data is available in the selected row
+      console.log("Selected Row Data:", oContext.getObject());
+
+      // If your service returns ID use this
+      const sID = oContext.getProperty("ID");
+
+      if (sID) {
+
+        const oGlobalModel = this.getOwnerComponent().getModel("globalModel");
+
+        if (oGlobalModel) {
+          oGlobalModel.setProperty("/iflowId", sID);
+        }
+
+        this.getOwnerComponent()
+          .getRouter()
+          .navTo("RouteIC", {
+            ID: sID
+          });
+
+      } else {
+
+        console.error(
+          "ID field not found in row data. Available data:",
+          oContext.getObject()
+        );
+
+      }
+    }
   });
 });

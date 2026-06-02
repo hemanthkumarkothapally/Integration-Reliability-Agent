@@ -18,12 +18,20 @@
                     <!-- <m:FlexBox alignItems="Center">
                         <m:Title id="_IDGenTitle4" text="{headerDetails>/errorType}" level="H1" titleStyle="H1" wrapping="true" />
                     </m:FlexBox> -->
-                    <m:Title id="_IDGenTitle4" text="{iFlowName}" level="H2" titleStyle="H2" wrapping="true" />
+                    <!-- <m:Title id="_IDGenTitle4" text="{iFlowName}" level="H2" titleStyle="H2" wrapping="true" /> -->
                 </expandedContent>
                 <expandedHeading>
 
-                    <m:Button icon="sap-icon://nav-back" type="Ghost" press=".onNavBack" class="sapUiTinyMarginEnd" tooltip="{i18n>backButton.tooltip}" />
+                    <!-- <m:Button icon="sap-icon://nav-back" type="Ghost" press=".onNavBack" class="sapUiTinyMarginEnd" tooltip="{i18n>backButton.tooltip}" /> -->
 
+                    <m:HBox width="100%" wrap="Wrap" alignItems="Center">
+
+                        <m:Button icon="sap-icon://nav-back"  type="Transparent" press=".onNavBack" class="sapUiTinyMarginEnd" tooltip="{i18n>backButton.tooltip}" />
+
+                        <m:Title text="{iFlowName}" level="H1" titleStyle="H1" wrapping="true" />
+                        <m:ToolbarSpacer ></m:ToolbarSpacer>
+
+                    </m:HBox>
 
                 </expandedHeading>
 
@@ -38,15 +46,23 @@
                 <!-- SNAPPED -->
                 <snappedHeading>
 
-                    <m:FlexBox id="_IDGenFlexBox1" fitContainer="true" alignItems="Center">
+                    <!-- <m:FlexBox id="_IDGenFlexBox1" fitContainer="true" alignItems="Center">
 
                         <m:Button id="_IDGenButton11" icon="sap-icon://nav-back" type="Ghost" press=".onNavBack" class="sapUiTinyMarginEnd" />
 
-                        <!-- <m:Title text="{headerDetails>/errorType}" level="H2" titleStyle="H2" wrapping="true" /> -->
+                         <m:Title text="{headerDetails>/errorType}" level="H2" titleStyle="H2" wrapping="true" />
 
 
 
-                    </m:FlexBox>
+                    </m:FlexBox> -->
+
+                    <m:HBox wrap="Wrap" alignItems="Center">
+
+                        <m:Button icon="sap-icon://nav-back" type="Transparent" press=".onNavBack" class="sapUiTinyMarginEnd" />
+
+                        <m:Title text="{iFlowName}" level="H2" titleStyle="H2" wrapping="true" />
+
+                    </m:HBox>
 
                 </snappedHeading>
                 <snappedContent>
@@ -54,7 +70,7 @@
                     <m:FlexBox fitContainer="true" alignItems="Center">
 
 
-                        <m:Title text="{iFlowName}" level="H2" titleStyle="H2" wrapping="true" />
+                        <!-- <m:Title text="{iFlowName}" level="H2" titleStyle="H2" wrapping="true" /> -->
 
 
 
@@ -186,11 +202,11 @@
                                                         <m:Text text="{view>cluster/recommendations/rootCause}" wrapping="true" />
                                                         <m:ToolbarSpacer ></m:ToolbarSpacer>
                                                         <m:VBox class="sapUiSmallMarginTop sapUiSmallMarginBottom">
-<m:HBox alignItems="Center" class="sapUiTinyMarginBottom">
-                                                            <m:Avatar  src="sap-icon://error" displaySize="XS" class="sapUiTinyMarginEnd" />
-                                                            <m:Title text="Raw Error" wrapping="true" level="H6" />
-                                                        </m:HBox>
-                                                            <!-- <m:Title text="Raw Error" level="H6"  class="sapUiTinyMarginBottom sapUiLargeMarginBegin" /> -->
+                                                            <m:HBox alignItems="Center" class="sapUiTinyMarginBottom">
+                                                                <m:Avatar src="sap-icon://error" displaySize="XS" class="sapUiTinyMarginEnd" />
+                                                                <m:Title text="Raw Error" wrapping="true" level="H6" />
+                                                            </m:HBox>
+                                                            <!-- <m:Title text="Raw Error" level="H6" class="sapUiTinyMarginBottom sapUiLargeMarginBegin" /> -->
 
                                                             <m:MessageStrip type="Error" showIcon="false" enableFormattedText="true" text="{view>cluster/errorSignature}" />
 
