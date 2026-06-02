@@ -167,7 +167,7 @@
         
         {
           "name": "Routemonitored_iflows",
-          "pattern": "monitored_iflows/:?query:",
+          "pattern": "Monitored_iflows/:?query:",
           "target": [
             "Targetmonitored_iflows"
           ]
@@ -200,8 +200,8 @@
           "name": "Overview"
         },
         "Targetmonitored_iflows": {
-          "id": "monitored_iflows",
-          "name": "monitored_iflows"
+          "id": "Monitored_iflows",
+          "name": "Monitored_iflows"
         },
         "TargetAIAssistant": {
           "id": "Chat",
