@@ -11,13 +11,18 @@
         <f:title>
             <f:DynamicPageTitle>
                 <f:heading>
-            <Title text="Monitoring IFlows" wrapping="true" />
-        </f:heading>
+                    <HBox alignItems="Center" class="sapUiSmallMarginBottom">
+                        <items>
+                            <Button icon="sap-icon://nav-back" type="Ghost" press=".onNavBackToOverview" class="sapUiSmallMarginEnd"/>
+                            <Title text="Monitoring IFlows" wrapping="true" />
+                        </items>
+                    </HBox>
+                </f:heading>
 
-        <f:expandedContent>
-            <Label text="Monitor your iFlows &amp; Associated Clusters" class="sapUiSmallMarginBegin" />
-        </f:expandedContent>
-                
+                <!-- <f:expandedContent>
+                    <Label text="Monitor your iFlows &amp; Associated Clusters" class="sapUiSmallMarginBegin" />
+                </f:expandedContent> -->
+
                 <f:actions>
                     <Button icon="sap-icon://ai" text="Ai Assistant" type="Ghost" press=".onAipress" tooltip="AI Assistant"/>
                 </f:actions>
@@ -105,7 +110,8 @@
                                         </customData>
                                     </Button>
 
-                                    <Button icon="sap-icon://process" text="{= 'All' }" type="Ghost" press=".onTagPress" class="sapUiTinyMarginEnd sapUiTinyMarginBottom" ><customData>
+                                    <Button icon="sap-icon://process" text="{= 'All' }" type="Ghost" press=".onTagPress" class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+                                        <customData>
                                             <core:CustomData key="severity" value="ALL" />
                                         </customData>
                                     </Button>
