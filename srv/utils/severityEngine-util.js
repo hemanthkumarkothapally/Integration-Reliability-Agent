@@ -1,34 +1,29 @@
 export async function refreshClusterSeverity(
-    IncidentClusters
+    IncidentClusters,
+    tenant
 ) {
-
-    /*
-     * ----------------------------------------
-     * FETCH ACTIVE CLUSTERS
-     * ----------------------------------------
-     */
 
     const clusters =
         await SELECT
             .from(IncidentClusters)
             .where({
+
+                tenant_ID:
+                    tenant.ID,
+
                 globalStatus: {
                     '!=': 'RESOLVED'
                 }
             });
 
     if (!clusters.length) {
+
         console.log(
-            'No active clusters found'
+            `No active clusters found for tenant ${tenant.tenantName}`
         );
+
         return;
     }
-
-    /*
-     * ----------------------------------------
-     * BUILD DATASET
-     * ----------------------------------------
-     */
 
     const counts =
         clusters.map(
@@ -56,18 +51,16 @@ export async function refreshClusterSeverity(
         Math.sqrt(variance);
 
     console.log({
+
+        tenant:
+            tenant.tenantName,
+
         mean:
             mean.toFixed(2),
 
         stdDev:
             stdDev.toFixed(2)
     });
-
-    /*
-     * ----------------------------------------
-     * UPDATE CLUSTER SEVERITY
-     * ----------------------------------------
-     */
 
     for (const cluster of clusters) {
 
@@ -79,7 +72,7 @@ export async function refreshClusterSeverity(
                 ? 0
                 : (
                     count - mean
-                  ) / stdDev;
+                ) / stdDev;
 
         let severity =
             'LOW';
@@ -96,9 +89,7 @@ export async function refreshClusterSeverity(
                 1;
         }
 
-        else if (
-            zScore >= 1.5
-        ) {
+        else if (zScore >= 1.5) {
 
             severity =
                 'HIGH';
@@ -107,9 +98,7 @@ export async function refreshClusterSeverity(
                 2;
         }
 
-        else if (
-            zScore >= 1.0
-        ) {
+        else if (zScore >= 1.0) {
 
             severity =
                 'MEDIUM';
@@ -118,9 +107,7 @@ export async function refreshClusterSeverity(
                 3;
         }
 
-        else if (
-            count > 0
-        ) {
+        else if (count > 0) {
 
             severity =
                 'LOW';
@@ -140,8 +127,12 @@ export async function refreshClusterSeverity(
                 criticality
         })
         .where({
+
             ID:
-                cluster.ID
+                cluster.ID,
+
+            tenant_ID:
+                tenant.ID
         });
 
         console.log(
@@ -161,6 +152,6 @@ export async function refreshClusterSeverity(
     }
 
     console.log(
-        'Cluster severity refresh completed'
+        `Cluster severity refresh completed for tenant ${tenant.tenantName}`
     );
 }
