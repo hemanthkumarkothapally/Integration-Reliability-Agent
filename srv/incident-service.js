@@ -512,14 +512,14 @@ export default cds.service.impl(async function () {
         return 'Cluster resolved successfully';
     }
     );
-     this.on(
+    this.on(
         'getDashboardCharts',
         async () => {
             const monitoredIflows =
                 await SELECT.one
                     .from(MonitoredArtifacts)
                     .columns`count(*) as count`;
- 
+
             const openClusters =
                 await SELECT.one
                     .from(IncidentClusters)
@@ -529,7 +529,7 @@ export default cds.service.impl(async function () {
                             '!=': 'RESOLVED'
                         }
                     });
- 
+
             const openIncidents =
                 await SELECT.one
                     .from(Incidents)
@@ -539,7 +539,7 @@ export default cds.service.impl(async function () {
                             '!=': 'RESOLVED'
                         }
                     });
- 
+
             const criticalIflows =
                 await SELECT.one
                     .from(MonitoredArtifacts)
@@ -548,17 +548,17 @@ export default cds.service.impl(async function () {
                         overallSeverity:
                             'CRITICAL'
                     });
- 
+
             const today =
                 new Date();
- 
+
             today.setHours(
                 0,
                 0,
                 0,
                 0
             );
- 
+
             const resolvedToday =
                 await SELECT.one
                     .from(ClusterArtifacts)
@@ -570,33 +570,33 @@ export default cds.service.impl(async function () {
                             '>=': today
                         }
                     });
- 
+
             return {
                 monitoredIflows:
                     monitoredIflows.count || 0,
- 
+
                 openClusters:
                     openClusters.count || 0,
- 
+
                 openIncidents:
                     openIncidents.count || 0,
- 
+
                 criticalIflows:
                     criticalIflows.count || 0,
- 
+
                 resolvedToday:
                     resolvedToday.count || 0,
- 
+
                 incidentTrend:
                     await getIncidentTrend(
                         Incidents
                     ),
- 
+
                 clusterSeverity:
                     await getClusterSeverityChart(
                         IncidentClusters
                     ),
- 
+
                 iflowSeverity:
                     await getIflowSeverityChart(
                         MonitoredArtifacts
@@ -605,7 +605,7 @@ export default cds.service.impl(async function () {
         }
     );
     this.on('getTopCriticalIflows', async () => {
- 
+
         const artifacts =
             await SELECT
                 .from(MonitoredArtifacts)
@@ -619,7 +619,7 @@ export default cds.service.impl(async function () {
                     'severityZScore',
                     'lastPollTimestamp'
                 );
- 
+
         const relations =
             await SELECT
                 .from(ClusterArtifacts)
@@ -627,16 +627,16 @@ export default cds.service.impl(async function () {
                     'artifact_ID',
                     'incidentCount'
                 );
- 
+
         const incidentMap = {};
- 
+
         relations.forEach(r => {
- 
+
             incidentMap[r.artifact_ID] =
                 (incidentMap[r.artifact_ID] || 0) +
                 (r.incidentCount || 0);
         });
- 
+
         const priority = {
             CRITICAL: 4,
             HIGH: 3,
@@ -644,7 +644,7 @@ export default cds.service.impl(async function () {
             LOW: 1,
             HEALTHY: 0
         };
- 
+
         return artifacts
             .map(a => ({
                 ...a,
@@ -652,15 +652,15 @@ export default cds.service.impl(async function () {
                     incidentMap[a.ID] || 0
             }))
             .sort((a, b) => {
- 
+
                 const sevDiff =
                     priority[b.overallSeverity] -
                     priority[a.overallSeverity];
- 
+
                 if (sevDiff !== 0) {
                     return sevDiff;
                 }
- 
+
                 return (
                     (b.severityScore || 0) -
                     (a.severityScore || 0)
@@ -668,5 +668,4 @@ export default cds.service.impl(async function () {
             })
             .slice(0, 5);
     });
- 
 });

@@ -2,7 +2,7 @@ export async function getIncidentTrend(Incidents) {
     // 1. Calculate the cutoff (Current Time - 5 Hours)
     const fiveHoursAgo = new Date(Date.now() - 5 * 60 * 60 * 1000);
     const now = new Date();
- 
+
     // 2. Initialize buckets ONLY for the last 5 hours
     const buckets = {};
     for (let i = 0; i <= 5; i++) {
@@ -14,35 +14,35 @@ export async function getIncidentTrend(Incidents) {
             openIncidents: 0
         };
     }
- 
+
     // 3. Fetch incidents within this specific 5-hour window
    const incidentData = await SELECT.from(Incidents).where([
     { ref: ['createdAt'] }, '>=', { val: fiveHoursAgo.toISOString() },
     'and',
     { ref: ['createdAt'] }, '<=', { val: now.toISOString() }
 ]);
- 
+
     // 4. Populate buckets
     incidentData.forEach(i => {
         const date = new Date(i.createdAt);
         const bucket = date.getUTCHours().toString().padStart(2, '0') + ':00';
- 
+
         if (buckets[bucket]) {
             buckets[bucket].totalIncidents++;
- 
+
             if (i.status !== 'RESOLVED') {
                 buckets[bucket].openIncidents++;
             }
         }
     });
- 
+
     // 5. Sort to ensure chronological order and return
     return Object.values(buckets).sort((a, b) => a.hour.localeCompare(b.hour));
 }
 export async function getClusterSeverityChart(
     IncidentClusters
 ) {
- 
+
     const clusters =
         await SELECT
             .from(
@@ -57,36 +57,36 @@ export async function getClusterSeverityChart(
                     'RESOLVED'
                 }
             });
- 
+
     const result = {
- 
+
         CRITICAL: 0,
- 
+
         HIGH: 0,
- 
+
         MEDIUM: 0,
- 
+
         LOW: 0
     };
- 
+
     clusters.forEach(c => {
- 
+
         if (
             result[c.severity] !==
             undefined
         ) {
- 
+
             result[c.severity]++;
         }
     });
- 
+
     return Object.entries(
         result
     ).map(
         ([severity, count]) => ({
- 
+
             severity,
- 
+
             count
         })
     );
@@ -94,7 +94,7 @@ export async function getClusterSeverityChart(
 export async function getIflowSeverityChart(
     MonitoredArtifacts
 ) {
- 
+
     const artifacts =
         await SELECT
             .from(
@@ -103,43 +103,42 @@ export async function getIflowSeverityChart(
             .columns(
                 'overallSeverity'
             );
- 
+
     const result = {
- 
+
         CRITICAL: 0,
- 
+
         HIGH: 0,
- 
+
         MEDIUM: 0,
- 
+
         LOW: 0,
- 
+
         HEALTHY: 0
     };
- 
+
     artifacts.forEach(a => {
- 
+
         const sev =
             a.overallSeverity;
- 
+
         if (
             result[sev] !==
             undefined
         ) {
- 
+
             result[sev]++;
         }
     });
- 
+
     return Object.entries(
         result
     ).map(
         ([severity, count]) => ({
- 
+
             severity,
- 
+
             count
         })
     );
 }
- 
