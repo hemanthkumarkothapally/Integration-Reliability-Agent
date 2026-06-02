@@ -32,6 +32,12 @@
                 <Title text="Integration Monitoring Overview" level="H1" />
 
                 <ToolbarSpacer />
+                <Select id="tenantSelect" width="15rem" change=".onTenantChange" items="{
+        path: '/Tenants'
+    }">
+                    <core:Item key="{ID}" text="{tenantName}" />
+
+                </Select>
                 <Button icon="sap-icon://process" text="iFlows" type="Ghost" press=".onIFlowBtn" tooltip="Navigate to iFlows Page"/>
 
 
@@ -114,7 +120,7 @@
                                 <f:GridListItem>
                                     <f:Card width="100%" semanticRole="ListItem">
                                         <f:header>
-                                            <card:NumericHeader title="Open Incidents"  number="{chart>/openIncidents}" state="None" iconSrc="sap-icon://message-warning" />
+                                            <card:NumericHeader title="Open Incidents" number="{chart>/openIncidents}" state="None" iconSrc="sap-icon://message-warning" />
                                         </f:header>
                                     </f:Card>
                                 </f:GridListItem>
@@ -155,7 +161,7 @@
                                         </f:header> -->
 
                                         <f:content >
-                                            <viz:VizFrame id="topErrorTypesChart" uiConfig="{applicationSet:'fiori'}" vizType="donut"  vizProperties="{
+                                            <viz:VizFrame id="topErrorTypesChart" uiConfig="{applicationSet:'fiori'}" vizType="donut" vizProperties="{
         'title': {
             'visible': true,
             'text': 'Clusters by Severity'
@@ -323,7 +329,7 @@
                         <f:Card semanticRole="ListItem" width="100%">
 
                             <f:header>
-                                <card:Header title="Top 5 Critical iFlows"  />
+                                <card:Header title="Top 5 Critical iFlows" />
                             </f:header>
 
                             <f:content>

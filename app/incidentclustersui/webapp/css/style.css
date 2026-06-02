@@ -88,13 +88,5 @@
      padding-bottom: 0rem !important; 
 }
 
-.sapFCard:focus,
-.sapFCard:focus-within {
-    outline: none !important;
-}
 
-.sapFCard.sapFCardFocus {
-    outline: none !important;
-    border-color: transparent !important;
-}
 

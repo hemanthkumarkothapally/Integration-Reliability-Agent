@@ -25,41 +25,51 @@ sap.ui.define([
 
 
     },
-onIFlowBtn: function () {
+    onTenantChange: function (oEvent) {
 
-    this.getOwnerComponent()
+      const sKey =
+        oEvent.getSource().getSelectedKey();
+
+      console.log("Selected Key:", sKey);
+      this.loadDashboardCharts();
+      this.loadTopCriticalIflows();
+
+    },
+    onIFlowBtn: function () {
+
+      this.getOwnerComponent()
         .getRouter()
         .navTo("Routemonitored_iflows");
 
-},
+    },
 
     onSideNavigationSelect: function (oEvent) {
 
-    const sKey = oEvent.getParameter("item").getKey();
+      const sKey = oEvent.getParameter("item").getKey();
 
-    switch (sKey) {
+      switch (sKey) {
 
         case "overview":
-            this.getOwnerComponent()
-                .getRouter()
-                .navTo("RouteOverview");
-            break;
+          this.getOwnerComponent()
+            .getRouter()
+            .navTo("RouteOverview");
+          break;
 
         case "iflows":
-            this.getOwnerComponent()
-                .getRouter()
-                .navTo("Routemonitored_iflows");
-            break;
+          this.getOwnerComponent()
+            .getRouter()
+            .navTo("Routemonitored_iflows");
+          break;
 
         case "incidents":
-            // Future page
-            break;
+          // Future page
+          break;
 
         case "clusters":
-            // Future page
-            break;
-    }
-},
+          // Future page
+          break;
+      }
+    },
     // onSideNavButtonPress: function () {
     //   const oToolPage = this.byId("toolPage1");
 
@@ -70,10 +80,18 @@ onIFlowBtn: function () {
     loadTopCriticalIflows: async function () {
 
       const oModel = this.getOwnerComponent().getModel();
+      const sSelectedTenant = this.getView().byId("tenantSelect").getSelectedKey();
+      console.log("Selected Tenant:", sSelectedTenant);
 
       try {
 
         const oContext = oModel.bindContext("/getTopCriticalIflows(...)");
+        if (sSelectedTenant !== "") {
+          oContext.setParameter(
+            "tenantId",
+            sSelectedTenant
+          );
+        }
 
         await oContext.execute();
 
@@ -101,11 +119,19 @@ onIFlowBtn: function () {
     loadDashboardCharts: async function () {
 
       const oModel = this.getOwnerComponent().getModel();
-
+      debugger
+      const sSelectedTenant = this.getView().byId("tenantSelect").getSelectedKey();
+      console.log("Selected Tenant:", sSelectedTenant);
+     
       try {
 
         const oContext = oModel.bindContext("/getDashboardCharts(...)");
-
+       if (sSelectedTenant !== "") {
+          oContext.setParameter(
+            "tenantId",
+            sSelectedTenant
+          );
+        }
         await oContext.execute();
 
         const oResult = oContext.getBoundContext().getObject();
