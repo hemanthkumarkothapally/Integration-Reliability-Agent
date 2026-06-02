@@ -235,7 +235,7 @@
 
                                                         </suite:Timeline>
                                                     </m:VBox>
-                                                    <m:VBox class="sapUiSmallMarginBottom vboxborderclass">
+                                                    <!-- <m:VBox class="sapUiSmallMarginBottom vboxborderclass">
 
                                                         <m:HBox alignItems="Center" class="sapUiTinyMarginBottom">
                                                             <m:Avatar src="sap-icon://process" displaySize="XS" class="sapUiTinyMarginEnd" />
@@ -266,7 +266,7 @@
 
                                                         </m:List>
 
-                                                    </m:VBox>
+                                                    </m:VBox> -->
 
                                                 </m:VBox>
 

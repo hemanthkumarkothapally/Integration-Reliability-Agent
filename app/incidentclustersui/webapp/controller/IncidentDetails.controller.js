@@ -66,12 +66,24 @@ sap.ui.define([
         },
   onResolve: async function (oEvent) {
 
+    console.log("=== Resolve Button Clicked ===");
+
     const oContext =
         oEvent.getSource()
             .getBindingContext("view");
 
-    const oData =
-        oContext.getObject();
+    console.log("Binding Context:", oContext);
+
+    if (!oContext) {
+        console.error("No binding context found");
+        return;
+    }
+
+    const oData = oContext.getObject();
+
+    console.log("Selected Row Data:", oData);
+    console.log("Cluster ID:", oData.cluster_ID);
+    console.log("Artifact ID:", oData.artifact_ID);
 
     this.showBusy();
 
@@ -81,10 +93,14 @@ sap.ui.define([
             this.getOwnerComponent()
                 .getModel();
 
+        console.log("OData Model:", oModel);
+
         const oAction =
             oModel.bindContext(
                 "/resolveClusterForArtifact(...)"
             );
+
+        console.log("Action Context Created:", oAction);
 
         oAction.setParameter(
             "clusterId",
@@ -101,29 +117,39 @@ sap.ui.define([
             "Resolved the cluster"
         );
 
+        console.log("Parameters Set:");
+        console.log("clusterId =", oData.cluster_ID);
+        console.log("artifactId =", oData.artifact_ID);
+        console.log("note = Resolved the cluster");
+
+        console.log("Executing Action...");
+
         await oAction.execute();
+
+        console.log("Action Executed Successfully");
 
         const oResponse =
             oAction.getBoundContext()
                 ?.getObject();
 
-        console.log(
-            "Resolve Response",
-            oResponse
-        );
+        console.log("Resolve Response:", oResponse);
 
         MessageBox.success(
             "Incident resolved successfully"
         );
 
+        console.log("Refreshing Model...");
+
         oModel.refresh();
+
+        console.log("Model Refreshed");
 
     } catch (error) {
 
-        console.error(
-            "Resolve Failed",
-            error
-        );
+        console.error("=== Resolve Failed ===");
+        console.error("Error Object:", error);
+        console.error("Error Message:", error?.message);
+        console.error("Error Response:", error?.responseText);
 
         MessageBox.error(
             "Failed to resolve incident"
@@ -131,41 +157,43 @@ sap.ui.define([
 
     } finally {
 
+        console.log("Hiding Busy Indicator");
+
         this.hideBusy();
     }
 },
 
-        async Rediagnose() {
-            this.showBusy();
-            try {
+        // async Rediagnose() {
+        //     this.showBusy();
+        //     try {
 
-                const oModel = this.getModel();
-                const sID =
-                    this.getModel("globalModel")
-                        .getProperty("/cluster_id");
+        //         const oModel = this.getModel();
+        //         const sID =
+        //             this.getModel("globalModel")
+        //                 .getProperty("/cluster_id");
 
-                const oResponse =
-                    await oModel.bindContext(
-                        `/onReDiagnoseIncidentCluster(cluster_ID='${sID}')`
-                    ).requestObject();
-                console.log("Re-diagnose response:", oResponse);
-                this.showToast(
-                    "Re-diagnose successful"
-                );
+        //         const oResponse =
+        //             await oModel.bindContext(
+        //                 `/onReDiagnoseIncidentCluster(cluster_ID='${sID}')`
+        //             ).requestObject();
+        //         console.log("Re-diagnose response:", oResponse);
+        //         this.showToast(
+        //             "Re-diagnose successful"
+        //         );
 
-            }
-            catch (error) {
+        //     }
+        //     catch (error) {
 
-                this.showToast(
-                    "Failed to re-diagnose incident"
-                );
+        //         this.showToast(
+        //             "Failed to re-diagnose incident"
+        //         );
 
-            } finally {
-                this.hideBusy();
-                this.resetDetailsPage(sID);
+        //     } finally {
+        //         this.hideBusy();
+        //         this.resetDetailsPage(sID);
 
-            }
-        },
+        //     }
+        // },
         onExpandAll: function () {
 
             const oModel = this.getView().getModel("view");
