@@ -32,6 +32,7 @@
                 <Title text="Integration Monitoring Overview" level="H1" />
 
                 <ToolbarSpacer />
+                <Button icon="sap-icon://process" text ="iFlows" type="Ghost" press=".onNavToIncidents" tooltip="Go to Incidents"/>
                 <Button icon="sap-icon://ai" text="Ai Assistant" type="Ghost" press=".onAipress" tooltip="AI Assistant"/>
 
 

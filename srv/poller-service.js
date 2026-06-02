@@ -71,7 +71,7 @@ export default cds.service.impl(async function () {
 
   async function runPoll() {
     console.log("========== runPoll START ==========");
-    await DELETE.from(Incidents);
+    // await DELETE.from(Incidents);
     try {
 console.log(
   JSON.stringify(
