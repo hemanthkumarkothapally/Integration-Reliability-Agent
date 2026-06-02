@@ -875,10 +875,7 @@ export async function upsertMonitoredArtifacts(
            */
           lastPollTimestamp:
             latestTimestamp,
-          lastErrorMessage: latestMap[iFlowName] > existing.lastPollTimestamp
-            ? latestMap[iFlowName] ||
-            existing.lastErrorMessage
-            : existing.lastErrorMessage,
+       
           isActive:
             results.Status ===
             'STARTED',
@@ -928,7 +925,7 @@ export async function upsertMonitoredArtifacts(
           isActive:
             results.Status ===
             'STARTED',
-          lastErrorMessage: latestMap[iFlowName],
+          
           lastPollTimestamp:
             latestTimestamp,
           overallSeverity:

@@ -471,7 +471,7 @@ for (const rel of relations) {
     await SELECT.one
       .from(MonitoredArtifacts)
       .where({ ID: rel.artifact_ID });
-
+if (!artifact) continue;
   const count =
     await SELECT.one
       .from(Incidents)
