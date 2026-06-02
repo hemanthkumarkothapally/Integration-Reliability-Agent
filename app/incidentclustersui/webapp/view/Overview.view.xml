@@ -1,349 +1,380 @@
 <mvc:View controllerName="com.cytechies.integration.reliability.incidentclustersui.controller.Overview" displayBlock="true"
-        xmlns:mvc="sap.ui.core.mvc"
-        xmlns="sap.m"
-        xmlns:f="sap.f"
-        xmlns:fb="sap.ui.comp.filterbar"
-        xmlns:tnt="sap.tnt"
-        xmlns:core="sap.ui.core"
-        xmlns:layout="sap.ui.layout"
-        xmlns:viz="sap.viz.ui5.controls"
-        xmlns:viz.data="sap.viz.ui5.data"
-        xmlns:viz.feeds="sap.viz.ui5.controls.common.feeds"
-        xmlns:grid="sap.ui.layout.cssgrid"
-        xmlns:card="sap.f.cards">
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+    xmlns:fb="sap.ui.comp.filterbar"
+    xmlns:tnt="sap.tnt"
+    xmlns:core="sap.ui.core"
+    xmlns:layout="sap.ui.layout"
+    xmlns:viz="sap.viz.ui5.controls"
+    xmlns:viz.data="sap.viz.ui5.data"
+    xmlns:viz.feeds="sap.viz.ui5.controls.common.feeds"
+    xmlns:grid="sap.ui.layout.cssgrid"
+    xmlns:card="sap.f.cards">
 
-        <tnt:ToolPage id="toolPage1" sideExpanded="true">
-
-
-            <tnt:header >
-
-                <tnt:ToolHeader>
-
-                    <!-- MENU BUTTON -->
-
-                    <Button icon="sap-icon://menu2" type="Transparent" press=".onSideNavButtonPress">
-
-                        <layoutData>
-                            <OverflowToolbarLayoutData priority="NeverOverflow" />
-                        </layoutData>
-
-                    </Button>
-
-                    <Title text="Integration Monitoring Overview" level="H1" />
-
-                    <ToolbarSpacer />
-                    <Button icon="sap-icon://ai" text="Ai Assistant" type="Ghost" press=".onAipress" tooltip="AI Assistant"/>
+    <tnt:ToolPage id="toolPage1" sideExpanded="true">
 
 
-                </tnt:ToolHeader>
+        <tnt:header >
 
-            </tnt:header>
+            <tnt:ToolHeader>
 
-            <!-- ===================================================== -->
-            <!-- SIDE NAVIGATION -->
-            <!-- ===================================================== -->
+                <!-- MENU BUTTON -->
 
-            <tnt:sideContent>
+                <Button icon="sap-icon://menu2" type="Transparent" press=".onSideNavButtonPress">
 
-                <tnt:SideNavigation id="sideNavigation">
+                    <layoutData>
+                        <OverflowToolbarLayoutData priority="NeverOverflow" />
+                    </layoutData>
 
-                    <tnt:NavigationList>
+                </Button>
 
-                        <tnt:NavigationListItem text="Overview" icon="sap-icon://home" key="overview" />
+                <Title text="Integration Monitoring Overview" level="H1" />
 
-                        <tnt:NavigationListItem text="Incidents" icon="sap-icon://alert" key="incidents" />
-
-                        <tnt:NavigationListItem text="iFlows" icon="sap-icon://process" key="iflows" />
-
-                        <tnt:NavigationListItem text="Clusters" icon="sap-icon://share-2" key="clusters" />
-
-                    </tnt:NavigationList>
+                <ToolbarSpacer />
+                <Button icon="sap-icon://ai" text="Ai Assistant" type="Ghost" press=".onAipress" tooltip="AI Assistant"/>
 
 
-                </tnt:SideNavigation>
+            </tnt:ToolHeader>
 
-            </tnt:sideContent>
+        </tnt:header>
 
-            <!-- ===================================================== -->
-            <!-- MAIN CONTENT -->
-            <!-- ===================================================== -->
+        <!-- ===================================================== -->
+        <!-- SIDE NAVIGATION -->
+        <!-- ===================================================== -->
 
-            <tnt:mainContents>
+        <!-- <tnt:sideContent>
 
-                <f:DynamicPage id="dynamicPage" fitContent="true" toggleHeaderOnTitleClick="false">
+            <tnt:SideNavigation id="sideNavigation">
 
+                <tnt:NavigationList>
+
+                    <tnt:NavigationListItem text="Overview" icon="sap-icon://home" key="overview" />
+
+                    <tnt:NavigationListItem text="Incidents" icon="sap-icon://alert" key="incidents" />
+
+                    <tnt:NavigationListItem text="iFlows" icon="sap-icon://process" key="iflows" />
+
+                    <tnt:NavigationListItem text="Clusters" icon="sap-icon://share-2" key="clusters" />
+
+                </tnt:NavigationList>
+
+
+            </tnt:SideNavigation>
+
+        </tnt:sideContent> -->
+
+        <!-- ===================================================== -->
+        <!-- MAIN CONTENT -->
+        <!-- ===================================================== -->
+
+        <tnt:mainContents>
+
+            <f:DynamicPage id="dynamicPage" fitContent="true" toggleHeaderOnTitleClick="false">
+
+
+                <!-- ===================================================== -->
+                <!-- PAGE CONTENT -->
+                <!-- ===================================================== -->
+
+                <f:content >
 
                     <!-- ===================================================== -->
-                    <!-- PAGE CONTENT -->
+                    <!-- KPI CARDS -->
                     <!-- ===================================================== -->
 
-                    <f:content >
+                    <VBox class="sapUiSmallMargin">
+                        <f:GridList id="kpiGridList" width="100%" growing="false">
+
+                            <f:customLayout>
+                                <grid:GridBasicLayout gridTemplateColumns="repeat(auto-fit, minmax(16rem, 1fr))" gridGap="0.8rem" />
+                            </f:customLayout>
+
+                            <f:items>
+
+                                <!-- Total Incidents -->
+                                <f:GridListItem>
+                                    <f:Card width="100%" semanticRole="Region">
+                                        <f:header>
+                                            <card:NumericHeader title="Monitored iFlows" number="{chart>/monitoredIflows}" state="Neutral" iconSrc="sap-icon://activity-items" />
+                                        </f:header>
+                                    </f:Card>
+                                </f:GridListItem>
+
+                                <!-- Active Clusters -->
+                                <f:GridListItem>
+                                    <f:Card width="100%" semanticRole="ListItem">
+                                        <f:header>
+                                            <card:NumericHeader title="Open Clusters" number="{chart>/openClusters}" state="Critical" iconSrc="sap-icon://bbyd-active-sales" />
+                                        </f:header>
+                                    </f:Card>
+                                </f:GridListItem>
+
+                                <!-- Critical -->
+                                <f:GridListItem>
+                                    <f:Card width="100%" semanticRole="ListItem">
+                                        <f:header>
+                                            <card:NumericHeader title="Open Incidents" number="{chart>/openIncidents}" state="Error" iconSrc="sap-icon://alert" />
+                                        </f:header>
+                                    </f:Card>
+                                </f:GridListItem>
+
+                                <!-- Critical Iflows -->
+                                <f:GridListItem>
+                                    <f:Card width="100%" semanticRole="ListItem">
+                                        <f:header>
+                                            <card:NumericHeader title="Critical Iflows" number="{chart>/criticalIflows}" state="Good" iconSrc="sap-icon://accept" />
+                                        </f:header>
+                                    </f:Card>
+                                </f:GridListItem>
+
+                                <f:GridListItem>
+                                    <f:Card width="100%" semanticRole="ListItem">
+                                        <f:header>
+                                            <card:NumericHeader title="Clusters Resolved Today" number="{chart>/resolvedToday}" state="Good" iconSrc="sap-icon://accept" />
+                                        </f:header>
+                                    </f:Card>
+                                </f:GridListItem>
+                            </f:items>
+
+                        </f:GridList>
+
+                        <f:GridList width="100%">
+
+                            <f:customLayout>
+                                <grid:GridBasicLayout gridTemplateColumns="repeat(auto-fit, minmax(16rem, 1fr))" gridGap="1rem" />
+                            </f:customLayout>
+
+                            <f:items>
+
+                                <!-- Top Error Types -->
+                                <f:GridListItem>
+                                    <f:Card width="100%" semanticRole="ListItem" height="100%">
+                                        <!-- <f:header>
+                                            <card:Header title="Incidents by Error Type" subtitle="Top 5 Clusters in the last 24 hours" iconSrc="sap-icon://donut-chart" />
+                                        </f:header> -->
+
+                                        <f:content >
+                                            <viz:VizFrame id="topErrorTypesChart" vizType="donut" vizProperties="{
+                                                'title': {
+                                                    'visible': true,
+                                                    'text': 'Clusters by Severity'
+                                                },
+                                                'legend': {
+                                                    'visible': true
+                                                },
+                                                'plotArea': {
+                                                    'dataLabel': {
+                                                        'visible': true
+                                                    }
+                                                }
+                                            }" width="100%" height="18rem">
+
+                                                <viz:dataset >
+
+                                                    <viz.data:FlattenedDataset data="{chart>/clusterSeverity}">
+
+                                                        <viz.data:dimensions>
+                                                            <viz.data:DimensionDefinition name="Severity" value="{chart>severity}" />
+                                                        </viz.data:dimensions>
+
+                                                        <viz.data:measures>
+                                                            <viz.data:MeasureDefinition name="Count" value="{chart>count}" />
+                                                        </viz.data:measures>
+
+                                                    </viz.data:FlattenedDataset>
+                                                </viz:dataset>
+
+
+                                                <viz:feeds>
+                                                    <viz.feeds:FeedItem uid="size" type="Measure" values="Count" />
+
+                                                    <viz.feeds:FeedItem uid="color" type="Dimension" values="Severity" />
+                                                </viz:feeds>
+
+                                            </viz:VizFrame>
+                                        </f:content>
+                                    </f:Card>
+                                </f:GridListItem>
+
+                                <!-- Incident Trend -->
+                                <f:GridListItem >
+                                    <f:Card width="100%" semanticRole="ListItem" height="100%">
+                                        <!-- <f:header>
+                                            <card:Header title="Incidents Trend" subtitle="Last 7 Days" iconSrc="sap-icon://line-chart" />
+                                        </f:header> -->
+
+                                        <f:content>
+                                            <viz:VizFrame id="idLineChart" vizType="dual_line" uiConfig="{applicationSet:'fiori'}" width="100%" height="18rem">
+
+                                                <viz:dataset>
+                                                    <viz.data:FlattenedDataset data="{chart>/incidentTrend}">
+
+                                                        <viz.data:dimensions>
+                                                            <viz.data:DimensionDefinition name="Time" value="{chart>hour}" />
+                                                        </viz.data:dimensions>
+
+                                                        <viz.data:measures>
+                                                            <viz.data:MeasureDefinition name="Total Incidents" value="{chart>totalIncidents}" />
+
+                                                            <viz.data:MeasureDefinition name="Open Incidents" value="{chart>openIncidents}" />
+                                                        </viz.data:measures>
+
+                                                    </viz.data:FlattenedDataset>
+                                                </viz:dataset>
+
+                                                <viz:feeds>
+                                                    <viz.feeds:FeedItem uid="valueAxis" type="Measure" values="Total Incidents"/>
+
+                                                    <viz.feeds:FeedItem uid="valueAxis2" type="Measure" values="Open Incidents"/>
+
+                                                    <viz.feeds:FeedItem uid="categoryAxis" type="Dimension" values="Time"/>
+                                                </viz:feeds>
+
+                                            </viz:VizFrame>
+                                        </f:content>
+                                    </f:Card>
+                                </f:GridListItem>
+
+                                <f:GridListItem>
+                                    <f:Card width="100%" semanticRole="ListItem" height="100%">
+                                        <!-- <f:header>
+                                            <card:Header title="Severity Distribution" subtitle="Current Open Clusters" iconSrc="sap-icon://pie-chart" />
+                                        </f:header> -->
+
+                                        <f:content>
+                                            <viz:VizFrame id="severityChart" vizType="donut" width="100%" height="18rem" uiConfig="{applicationSet:'fiori'}" vizProperties="{
+                                                'title': {
+                                                    'visible': true,
+                                                    'text': 'Iflows by Severity'
+                                                },
+                                                'legend': {
+                                                    'visible': true
+                                                },
+                                                'plotArea': {
+                                                    'dataLabel': {
+                                                        'visible': true
+                                                    }
+                                                }
+                                            }">
+
+                                                <viz:dataset>
+                                                    <viz.data:FlattenedDataset data="{chart>/iflowSeverity}">
+
+                                                        <viz.data:dimensions>
+                                                            <viz.data:DimensionDefinition name="Severity" value="{chart>severity}" />
+                                                        </viz.data:dimensions>
+
+                                                        <viz.data:measures>
+                                                            <viz.data:MeasureDefinition name="Count" value="{chart>count}" />
+                                                        </viz.data:measures>
+
+
+
+                                                    </viz.data:FlattenedDataset>
+                                                </viz:dataset>
+
+                                                <viz:feeds>
+                                                    <viz.feeds:FeedItem uid="size" type="Measure" values="Count" />
+
+                                                    <viz.feeds:FeedItem uid="color" type="Dimension" values="Severity" />
+                                                </viz:feeds>
+
+                                            </viz:VizFrame>
+                                        </f:content>
+                                    </f:Card>
+                                </f:GridListItem>
+
+                            </f:items>
+
+                        </f:GridList>
+
+                        <viz:Popover id="idPopOver"/>
 
                         <!-- ===================================================== -->
-                        <!-- KPI CARDS -->
+                        <!-- TOP PROBLEMATIC IFLOWS -->
                         <!-- ===================================================== -->
 
-                        <VBox class="sapUiSmallMargin">
-                            <f:GridList id="kpiGridList" width="100%" growing="false">
-
-                                <f:customLayout>
-                                    <grid:GridBasicLayout gridTemplateColumns="repeat(auto-fit, minmax(16rem, 1fr))" gridGap="0.8rem" />
-                                </f:customLayout>
-
-                                <f:items>
-
-                                    <!-- Total Incidents -->
-                                    <f:GridListItem>
-                                        <f:Card width="100%" semanticRole="ListItem">
-                                            <f:header>
-                                                <card:NumericHeader title="Total Incidents" subtitle="In last 24 hours" number="{dashboard>/totalIncidents24h}" state="Neutral" iconSrc="sap-icon://activity-items" />
-                                            </f:header>
-                                        </f:Card>
-                                    </f:GridListItem>
-
-                                    <!-- Active Clusters -->
-                                    <f:GridListItem>
-                                        <f:Card width="100%" semanticRole="ListItem">
-                                            <f:header>
-                                                <card:NumericHeader title="Active Clusters" subtitle="Currently active" number="{dashboard>/activeClusters}" state="Critical" iconSrc="sap-icon://bbyd-active-sales" />
-                                            </f:header>
-                                        </f:Card>
-                                    </f:GridListItem>
-
-                                    <!-- Critical -->
-                                    <f:GridListItem>
-                                        <f:Card width="100%" semanticRole="ListItem">
-                                            <f:header>
-                                                <card:NumericHeader title="Critical" subtitle="Open Critical Clusters" number="{dashboard>/criticalCount}" state="Error" iconSrc="sap-icon://alert" />
-                                            </f:header>
-                                        </f:Card>
-                                    </f:GridListItem>
-
-                                    <!-- Resolved Today -->
-                                    <f:GridListItem>
-                                        <f:Card width="100%" semanticRole="ListItem">
-                                            <f:header>
-                                                <card:NumericHeader title="Resolved Today" subtitle="In the last 24 hours" number="{dashboard>/resolved24h}" state="Good" iconSrc="sap-icon://accept" />
-                                            </f:header>
-                                        </f:Card>
-                                    </f:GridListItem>
-
-                                </f:items>
-
-                            </f:GridList>
-
-                            <f:GridList width="100%">
-
-                                <f:customLayout>
-                                    <grid:GridBasicLayout gridTemplateColumns="repeat(auto-fit, minmax(16rem, 1fr))" gridGap="1rem" />
-                                </f:customLayout>
-
-                                <f:items>
-
-                                    <!-- Top Error Types -->
-                                    <f:GridListItem>
-                                        <f:Card width="100%" semanticRole="ListItem" height="100%">
-                                            <f:header>
-                                                <card:Header title="Incidents by Error Type" subtitle="Top 5 Clusters in the last 24 hours" iconSrc="sap-icon://donut-chart" />
-                                            </f:header>
-
-                                            <f:content >
-                                                <viz:VizFrame id="topErrorTypesChart" vizType="bar" width="100%" height="18rem" vizProperties="{
-                            'plotArea': {
-                                'dataLabel': { 'visible': true }
-                            },
-                            'legend': { 'visible': false },
-                            'title': { 'visible': false }
-                        }">
-
-                                                    <viz:dataset>
-                                                        <viz.data:FlattenedDataset data="{topErrors>/data}">
-                                                            <viz.data:dimensions>
-                                                                <viz.data:DimensionDefinition name='Error Type' value='{topErrors>errorType}' />
-                                                            </viz.data:dimensions>
-
-                                                            <viz.data:measures>
-                                                                <viz.data:MeasureDefinition name='Incidents' value='{topErrors>count}' />
-                                                            </viz.data:measures>
-                                                        </viz.data:FlattenedDataset>
-                                                    </viz:dataset>
-
-                                                    <viz:feeds>
-                                                        <viz.feeds:FeedItem uid="valueAxis" type="Measure" values="Incidents" />
-
-                                                        <viz.feeds:FeedItem uid="categoryAxis" type="Dimension" values="Error Type" />
-                                                    </viz:feeds>
-
-                                                </viz:VizFrame>
-                                            </f:content>
-                                        </f:Card>
-                                    </f:GridListItem>
+                        <f:Card semanticRole="ListItem" width="100%">
 
-                                    <!-- Incident Trend -->
-                                    <f:GridListItem >
-                                        <f:Card width="100%" semanticRole="ListItem" height="100%">
-                                            <f:header>
-                                                <card:Header title="Incidents Trend" subtitle="Last 7 Days" iconSrc="sap-icon://line-chart" />
-                                            </f:header>
+                            <f:header>
+                                <card:Header title="Top Problematic iFlows" subtitle="Highest incident volume and open clusters" iconSrc="sap-icon://process" />
+                            </f:header>
 
-                                            <f:content>
-                                                <viz:VizFrame id="idLineChart" vizType="dual_line" uiConfig="{applicationSet:'fiori'}" width="100%" height="18rem">
+                            <f:content>
 
-                                                    <viz:dataset>
-                                                        <viz.data:FlattenedDataset data="{chart>/trendData}">
+                                <Table id="topIflowsTable" items="{topIflows>/topIflows}" autoPopinMode="true" sticky="ColumnHeaders">
 
-                                                            <viz.data:dimensions>
-                                                                <viz.data:DimensionDefinition name="Day" value="{chart>DAY}" />
-                                                            </viz.data:dimensions>
+                                    <columns>
 
-                                                            <viz.data:measures>
-                                                                <viz.data:MeasureDefinition name="Incidents" value="{chart>INCIDENTCOUNT}" />
+                                        <Column width="18rem">
+                                            <Text text="iFlow Name" />
+                                        </Column>
 
-                                                                <viz.data:MeasureDefinition name="Clusters" value="{chart>CLUSTERCOUNT}" />
-                                                            </viz.data:measures>
+                                        <Column minScreenWidth="Tablet">
+                                            <Text text="Severity" />
+                                        </Column>
 
-                                                        </viz.data:FlattenedDataset>
-                                                    </viz:dataset>
+                                        <Column minScreenWidth="Tablet">
+                                            <Text text="Open Clusters" />
+                                        </Column>
 
-                                                    <viz:feeds>
-                                                        <viz.feeds:FeedItem uid="valueAxis" type="Measure" values="Incidents" />
+                                        <Column minScreenWidth="Tablet">
+                                            <Text text="Open Incidents" />
+                                        </Column>
 
-                                                        <viz.feeds:FeedItem uid="valueAxis2" type="Measure" values="Clusters" />
+                                        <Column minScreenWidth="Desktop">
+                                            <Text text="Last Failure" />
+                                        </Column>
 
-                                                        <viz.feeds:FeedItem uid="categoryAxis" type="Dimension" values="Day" />
-                                                    </viz:feeds>
+                                    </columns>
 
-                                                </viz:VizFrame>
-                                            </f:content>
-                                        </f:Card>
-                                    </f:GridListItem>
+                                    <items>
 
-                                    <f:GridListItem>
-                                        <f:Card width="100%" semanticRole="ListItem" height="100%">
-                                            <f:header>
-                                                <card:Header title="Severity Distribution" subtitle="Current Open Clusters" iconSrc="sap-icon://pie-chart" />
-                                            </f:header>
+                                        <ColumnListItem type="Navigation">
 
-                                            <f:content>
-                                                <viz:VizFrame id="severityChart" vizType="donut" width="100%" height="18rem" uiConfig="{applicationSet:'fiori'}">
+                                            <cells>
 
-                                                    <viz:dataset>
-                                                        <viz.data:FlattenedDataset data="{severity>/data}">
+                                                <Text text="{topIflows>iFlowName}" />
 
-                                                            <viz.data:dimensions>
-                                                                <viz.data:DimensionDefinition name="Severity" value="{severity>severity}" />
-                                                            </viz.data:dimensions>
+                                                <ObjectStatus text="{topIflows>overallSeverity}" state="{
+        path: 'topIflows>overallSeverity',
+        formatter: '.formatter.formatSeverityState'
+    }" />
 
-                                                            <viz.data:measures>
-                                                                <viz.data:MeasureDefinition name="Count" value="{severity>count}" />
-                                                            </viz.data:measures>
+                                                <ObjectNumber number="{topIflows>openClusterCount}" />
 
-                                                        </viz.data:FlattenedDataset>
-                                                    </viz:dataset>
+                                                <ObjectNumber number="{topIflows>totalIncidents}" emphasized="true" />
 
-                                                    <viz:feeds>
-                                                        <viz.feeds:FeedItem uid="size" type="Measure" values="Count" />
+                                                <Text text="{topIflows>lastPollTimestamp}" />
 
-                                                        <viz.feeds:FeedItem uid="color" type="Dimension" values="Severity" />
-                                                    </viz:feeds>
+                                            </cells>
 
-                                                </viz:VizFrame>
-                                            </f:content>
-                                        </f:Card>
-                                    </f:GridListItem>
+                                        </ColumnListItem>
 
-                                </f:items>
+                                    </items>
 
-                            </f:GridList>
+                                </Table>
 
-                            <viz:Popover id="idPopOver"/>
+                            </f:content>
 
-                            <!-- ===================================================== -->
-                            <!-- TOP PROBLEMATIC IFLOWS -->
-                            <!-- ===================================================== -->
+                        </f:Card>
+                    </VBox >
+                    <!-- ===================================================== -->
+                    <!-- INCIDENT TABLE SECTION -->
+                    <!-- ===================================================== -->
 
-                            <f:Card semanticRole="ListItem" width="100%">
 
-                                <f:header>
-                                    <card:Header title="Top Problematic iFlows" subtitle="Highest incident volume and open clusters" iconSrc="sap-icon://process" />
-                                </f:header>
 
-                                <f:content>
 
-                                    <Table id="topIflowsTable" items="{/MonitoredArtifacts}" autoPopinMode="true" sticky="ColumnHeaders">
 
-                                        <columns>
 
-                                            <Column width="18rem">
-                                                <Text text="iFlow Name" />
-                                            </Column>
+                </f:content>
 
-                                            <Column minScreenWidth="Tablet">
-                                                <Text text="Severity" />
-                                            </Column>
+            </f:DynamicPage>
 
-                                            <Column minScreenWidth="Tablet">
-                                                <Text text="Open Clusters" />
-                                            </Column>
+        </tnt:mainContents>
 
-                                            <Column minScreenWidth="Tablet">
-                                                <Text text="Open Incidents" />
-                                            </Column>
+    </tnt:ToolPage>
 
-                                            <Column minScreenWidth="Desktop">
-                                                <Text text="Last Failure" />
-                                            </Column>
-
-                                        </columns>
-
-                                        <items>
-
-                                            <ColumnListItem type="Navigation">
-
-                                                <cells>
-
-                                                    <Link text="{dashboard>iFlowName}" press="onIflowPress" />
-
-                                                    <ObjectStatus text="{dashboard>severity}" state="{
-                                = ${dashboard>severity} === 'CRITICAL' ? 'Error' :
-                                  ${dashboard>severity} === 'HIGH' ? 'Warning' :
-                                  ${dashboard>severity} === 'MEDIUM' ? 'Information' :
-                                  'Success'
-                            }" />
-
-                                                    <ObjectNumber number="{dashboard>openClusters}" />
-
-                                                    <ObjectNumber number="{dashboard>openIncidents}" emphasized="true" />
-
-                                                    <Text text="{dashboard>lastFailure}" />
-
-                                                </cells>
-
-                                            </ColumnListItem>
-
-                                        </items>
-
-                                    </Table>
-
-                                </f:content>
-
-                            </f:Card>
-                        </VBox >
-                        <!-- ===================================================== -->
-                        <!-- INCIDENT TABLE SECTION -->
-                        <!-- ===================================================== -->
-
-
-
-
-
-
-                    </f:content>
-
-                </f:DynamicPage>
-
-            </tnt:mainContents>
-
-        </tnt:ToolPage>
-    
 </mvc:View>
