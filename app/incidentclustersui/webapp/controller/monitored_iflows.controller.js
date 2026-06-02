@@ -6,7 +6,7 @@ sap.ui.define([
 ], (BaseController, formatter, Filter, FilterOperator) => {
     "use strict";
 
-    return BaseController.extend("com.cytechies.integration.reliability.incidentclustersui.controller.OrderList", {
+    return BaseController.extend("com.cytechies.integration.reliability.incidentclustersui.controller.monitored_iflows", {
         formatter: formatter,
 
         onInit: function () {
