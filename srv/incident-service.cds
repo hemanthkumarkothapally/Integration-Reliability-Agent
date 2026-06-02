@@ -73,12 +73,28 @@ function resolveClusterForArtifact(
         note       : String
     ) returns String;
 type DashboardCharts {
+    monitoredIflows    : Integer;
+    openClusters       : Integer;
+    openIncidents      : Integer;
+    criticalIflows     : Integer;
+    resolvedToday      : Integer;
     incidentTrend     : LargeString;
     clusterSeverity   : LargeString;
     iflowSeverity     : LargeString;
 }
-
+ 
 function getDashboardCharts() returns DashboardCharts;
-function getTopCriticalIflows()
-    returns many MonitoredArtifacts;
+type TopCriticalIFlow {
+    ID                : UUID;
+    iFlowName         : String(255);
+    PackageName       : String(255);
+    overallSeverity   : String(50);
+    openClusterCount  : Integer;
+    totalIncidents    : Integer;
+    severityScore     : Decimal(10,2);
+    severityZScore    : Decimal(10,2);
+    lastPollTimestamp : Timestamp;
+}
+function getTopCriticalIflows() returns many TopCriticalIFlow;
+
 }
