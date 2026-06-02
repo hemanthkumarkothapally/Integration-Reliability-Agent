@@ -159,14 +159,14 @@
       "routes": [
          {
           "name": "RouteOverview",
-          "pattern": ":?query:",
+          "pattern": "",
           "target": [
             "TargetOverview"
           ]
         },
         {
           "name": "RouteOrderList",
-          "pattern": ":?query:",
+          "pattern": "OrderList",
           "target": [
             "TargetOrderList"
           ]
@@ -234,4 +234,5 @@
       "async": true
     }
   }
+
 }

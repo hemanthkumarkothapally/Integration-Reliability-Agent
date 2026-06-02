@@ -17,6 +17,10 @@ sap.ui.define([
             }.bind(this), iFiveMinutes);
         },
 
+        onNavBackToOverview: function () {
+            this.navTo("RouteOverview");
+        },
+
         onRefreshPress: function () {
             var oTable = this.byId("idGridListId");
             if (oTable && oTable.getBinding("items")) {
