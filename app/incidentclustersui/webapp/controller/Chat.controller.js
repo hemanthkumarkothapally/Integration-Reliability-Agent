@@ -10,10 +10,11 @@ sap.ui.define([
     "sap/m/MessageBox",
     "sap/m/FlexJustifyContent",
     "sap/m/FlexAlignItems",
+    "sap/m/MessageStrip",
     "sap/f/library",
     "../model/formatter"
 
-], function (BaseController, FormattedText, VBox, HBox, ObjectStatus, Avatar, AvatarSize, AvatarColor, MessageBox, FlexJustifyContent, FlexAlignItems, fioriLibrary, formatter) {
+], function (BaseController, FormattedText, VBox, HBox, ObjectStatus, Avatar, AvatarSize, AvatarColor, MessageBox, FlexJustifyContent, FlexAlignItems, MessageStrip, fioriLibrary, formatter) {
     "use strict";
 
     return BaseController.extend("com.cytechies.integration.reliability.incidentclustersui.controller.Chat", {
@@ -84,7 +85,25 @@ sap.ui.define([
             // Note: Add any backend API calls here if you need to delete the linkage in the database
         },
 
-        onToggleClusterData: function (oEvent) {
+        onRemoveiFlowPress: function (oEvent) {
+            // 1. Close the popover
+            if (this._oClusterPopover) {
+                this._oClusterPopover.close();
+            }
+
+            // 2. Clear the cluster data from your model to hide the main button
+            var oModel = this.getView().getModel("chatJSONModel");
+
+            oModel.setProperty("/iFlowName", "");
+            oModel.setProperty("/iFlowDataEnabled", false);
+
+            // 3. Provide feedback to the user
+            this.showToast("iFlow detached successfully");
+
+            // Note: Add any backend API calls here if you need to delete the linkage in the database
+        },
+
+        onClusterInfoPopover: function (oEvent) {
             const oButton = oEvent.getSource();
             const oPopover = this.byId("activeClusterPopover");
 
@@ -100,6 +119,19 @@ sap.ui.define([
             // this.byId("actionDataPopover").close();
 
             // console.log("Cluster data active:", !bCurrentState);
+        },
+
+        oniflowInfoPopover: function (oEvent) {
+            const oButton = oEvent.getSource();
+            const oPopover = this.byId("activeiFlowPopover");
+
+            // Check if the popover is already open
+            if (oPopover.isOpen()) {
+                oPopover.close();
+            } else {
+                oPopover.openBy(oButton);
+            }
+
         },
 
         onSelectClusterData: function (oEvent) {
@@ -155,7 +187,7 @@ sap.ui.define([
             }
         },
 
-        onSelectiFlowData(oEvent){
+        onSelectiFlowData(oEvent) {
             var oGlobalModel = this.getView().getModel("globalModel");
             var sIflowId = oGlobalModel ? oGlobalModel.getProperty("/iflowId") : null;
 
@@ -208,6 +240,7 @@ sap.ui.define([
             oJsonModel.setProperty("/currentConversationId", null);
             oJsonModel.setProperty("/currentConversationTitle", "New Chat");
             oJsonModel.setProperty("/clusterDataEnabled", false);
+            oJsonModel.setProperty("/iFlowDataEnabled", false);
             oJsonModel.setProperty("/allMessagesLoaded", false);
             oJsonModel.setProperty("/messageSkip", 0);
             oJsonModel.setProperty("/showScrollButton", false);
@@ -310,6 +343,7 @@ sap.ui.define([
             let oJsonModel = this.getModel("chatJSONModel");
             let sCurrentConvId = oJsonModel.getProperty("/currentConversationId");
             let bClusterEnabled = oJsonModel.getProperty("/clusterDataEnabled");
+            let biFlowEnabled = oJsonModel.getProperty("/iFlowDataEnabled");
 
             let sQuery;
             let oSource = oEvent.getSource ? oEvent.getSource() : null;
@@ -324,7 +358,6 @@ sap.ui.define([
 
             if (!sQuery) return;
 
-
             if (!sCurrentConvId) {
                 try {
                     sCurrentConvId = await this._executeCreateConversation(sQuery.substring(0, 20).replace(/[\r\n]+/g, " ") + "...");
@@ -333,27 +366,50 @@ sap.ui.define([
                     return;
                 }
             }
-            let referenceID = null;
-            if (bClusterEnabled) {
-                oJsonModel.setProperty("/clusterDataEnabled", false);
-                referenceID = oJsonModel.getProperty("/clusterId");
-                let clusterName = oJsonModel.getProperty("/clusterName");
 
-                // let referenceName = this.getView().getModel("headerDetails").getProperty("/errorType");
-                sQuery = `<span style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px 4px 8px;border:0.5px solid #f97316;border-radius:999px;color:#c05407;">🔗${clusterName}</span><br /><br/>${sQuery}`;
+            // --- NEW: Prepare the UI Data object for the chat bubble ---
+            let oMessageData = {
+                tokenCount: "Calculating",
+                referCluster: null,
+                referiFlow: null
+            };
+
+            const oAction = oModel.bindContext("/chat(...)");
+            oAction.setParameter("conversationId", sCurrentConvId);
+
+            if (biFlowEnabled) {
+                let sIflowId = oJsonModel.getProperty("/iFlowId");
+                let sIflowName = oJsonModel.getProperty("/iFlowName");
+
+                // Mock the structure expected by _buildMessageItem
+                oMessageData.referiFlow = { ID: sIflowId, iFlowName: sIflowName };
+
+                oAction.setParameter("referiFlowID", sIflowId);
+                oJsonModel.setProperty("/iFlowDataEnabled", false);
             }
 
-            this._appendMessage(sQuery, "user", { tokenCount: "Calculating" });
+            if (bClusterEnabled) {
+                let sClusterId = oJsonModel.getProperty("/clusterId");
+                let sClusterName = oJsonModel.getProperty("/clusterName");
+
+                // Mock the structure expected by _buildMessageItem
+                oMessageData.referCluster = { ID: sClusterId, errorType: sClusterName };
+
+                oAction.setParameter("referClusterID", sClusterId);
+                oJsonModel.setProperty("/clusterDataEnabled", false);
+            }
+            // -----------------------------------------------------------
+
+            // Pass the rich oMessageData object to the UI
+            this._appendMessage(sQuery, "user", oMessageData);
+
             this.byId("typingIndicator").setVisible(true);
             this._scrollToBottom();
 
             try {
-                const oAction = oModel.bindContext("/chat(...)");
-                oAction.setParameter("conversationId", sCurrentConvId);
-                oAction.setParameter("referenceID", referenceID);
                 oAction.setParameter("userMessage", sQuery);
-
                 await oAction.execute();
+
                 const oResult = oAction.getBoundContext().getObject();
                 this._updateUserTokenCount(oResult.inputTokens);
                 this._appendMessage(oResult.content, "assistant", oResult, true);
@@ -456,10 +512,12 @@ sap.ui.define([
                 new sap.ui.model.Sorter("createdAt", true)
             ], [
                 new sap.ui.model.Filter("conversation_ID", sap.ui.model.FilterOperator.EQ, sConversationId)
-            ]);
+            ], {
+                $expand: "referiFlow,referCluster"
+            });
 
             oListBinding.requestContexts(nSkip, PAGE_SIZE).then(function (aContexts) {
-
+                debugger
                 // ✅ Stale check: if conversation changed or reset happened, discard results
                 let sActiveId = oJsonModel.getProperty("/currentConversationId");
                 if (sActiveId !== sConversationId) {
@@ -513,7 +571,8 @@ sap.ui.define([
                     this._scrollToBottom();
                 }
 
-            }.bind(this)).catch(() => {
+            }.bind(this)).catch((err) => {
+                console.error("Failed to load messages for conversation:", sConversationId, err);
                 this.showToast("Error loading conversation history.");
             }).finally(() => {
                 this._bLoadingMessages = false;
@@ -556,7 +615,19 @@ sap.ui.define([
             }
         },
 
+    _createReferenceData: function (oRefData, sType) {
+    const isCluster = sType === "Cluster";
+    return  new MessageStrip({
+            text: isCluster ? oRefData.errorType : oRefData.iFlowName ,
+            type: isCluster ? sap.ui.core.MessageType.Warning : sap.ui.core.MessageType.Information,
+            showIcon: true,
+            customIcon: isCluster ? "sap-icon://chain-link" : "sap-icon://process"
+        }).addStyleClass("sapUiTinyMarginBottom")
+}
+,
+
         _buildMessageItem: function (sText, sSender, oData, bStream = false) {
+            console.log("Building message item. Sender:", sSender, "Data:", oData);
 
             const isAssistant = sSender === "assistant";
             if (this.byId("welcomePage")) {
@@ -591,9 +662,23 @@ sap.ui.define([
                     backgroundColor: AvatarColor.Accent1
                 });
 
-                const oUserText = new FormattedText({
-                    htmlText: `${bStream ? '' : sText}`
-                });
+                const oUserText = new FormattedText();
+                if (!bStream) {
+                    oUserText.setHtmlText(sText);
+                }
+
+                let aBubbleItems = [];
+
+                if (oData && oData.referCluster) {
+                    aBubbleItems.push(this._createReferenceData(oData.referCluster, "Cluster"));
+                }
+                if (oData && oData.referiFlow) {
+                    aBubbleItems.push(this._createReferenceData(oData.referiFlow, "iFlow"));
+                }
+
+                // 4. Add the actual message text and token info
+                aBubbleItems.push(oUserText);
+                aBubbleItems.push(oUserTokenInfo.addStyleClass("sapUiTinyMarginTop"));
 
                 oMessageItem = new VBox({
                     alignItems: FlexAlignItems.End,
@@ -607,7 +692,7 @@ sap.ui.define([
                             items: [
                                 // Wrapped Text inside layout panel container to retain structural width
                                 new VBox({
-                                    items: [oUserText, oUserTokenInfo.addStyleClass("sapUiTinyMarginTop")]
+                                    items: [aBubbleItems, oUserText, oUserTokenInfo.addStyleClass("sapUiTinyMarginTop")]
                                 }).addStyleClass("userChatBubbleNew sapUiSmallMarginEnd"),
                                 oUserAvatar
                             ]
@@ -629,9 +714,10 @@ sap.ui.define([
                     displaySize: AvatarSize.XS
                 });
 
-                const oTextControl = new FormattedText({
-                    htmlText: `${bStream ? '' : sText}`
-                });
+                const oTextControl = new FormattedText(); // Instantiate empty
+                if (!bStream) {
+                    oTextControl.setHtmlText(sText);      // Set text explicitly to bypass binding engine
+                }
 
                 oMessageItem = new VBox({
                     alignItems: FlexAlignItems.Start,
@@ -673,6 +759,7 @@ sap.ui.define([
         },
 
         _appendMessage: function (sText, sSender, oData, bStream = false) {
+            debugger
             const oContainer = this.byId("chatContainer");
             if (this.byId("welcomePage")) {
                 this.byId("welcomePage").setVisible(false);

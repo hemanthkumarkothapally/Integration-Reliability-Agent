@@ -75,7 +75,8 @@ export default cds.service.impl(async function () {
         return newConv;
     });
     this.on('chat', async (req) => {
-        const { conversationId, referenceID, userMessage } = req.data;
+        const { conversationId, referiFlowID, referClusterID, userMessage } = req.data;
+        console.log("Received chat request for conversationId:", conversationId, "with iFlow reference:", referiFlowID, "and cluster reference:", referClusterID);
 
         if (!conversationId || !userMessage) {
             return req.error(400, "Missing conversationId or userMessage");
@@ -86,22 +87,12 @@ export default cds.service.impl(async function () {
             ID: uid,
             conversation_ID: conversationId,
             role: 'user',
-            content: userMessage
-        });
-        // const newAiMessage = {
-        //     conversation_ID: conversationId,
-        //     role: 'assistant',
-        //     content: "Generating AI response... TEST",
-        //     tokenCount: 5678,
+            referiFlow_ID: referiFlowID || null,     
+            referCluster_ID: referClusterID || null,
+            content: userMessage,
 
-        // };
-        // await srv.run(UPDATE(Messages)
-        //     .set({ tokenCount: 1234 })
-        //     .where({ ID: uid }));
-        // await srv.run(INSERT.into(Messages).entries(newAiMessage));
-        // newAiMessage.inputTokens = 1234;
-        // newAiMessage.outputTokens = 5678;
-        // return newAiMessage; // for testing
+        });
+
         try {
             // 2. Load full history (includes the message we just inserted)
             // const history = await SELECT
@@ -110,23 +101,15 @@ export default cds.service.impl(async function () {
             //     .orderBy('createdAt asc');
 
             let systemPrompt = `You are an AI assistant for SAP Integration Suite incident management.
- 
-                            [TASK]
-                            Answer questions specifically about this cluster. Be concise and technical.
- 
-                            [STRICT OUTPUT RULES]
-                            1. You MUST output RAW, VALID HTML ONLY.
-                            2. DO NOT use any Markdown formatting whatsoever (no **, no ##, no * for bullets).
-                            3. DO NOT wrap your response in \`\`\`html or \`\`\` code blocks. The response must be injected directly into the DOM.
-                            4. Use standard HTML tags for structure: <p> for paragraphs, <ul>/<li> for lists, <strong> for emphasis, and <br> for line breaks.
-                            5. You must wrap your entire response within a single root <div> tag.`;
+[TASK] Answer questions specifically about this cluster. Be concise and technical.
+[OUTPUT RULES] Always output raw valid HTML only, wrapped in a single <div></div> root. No Markdown. Use <p></p>, <ul></ul>, <li></li>, <strong></strong>, <br></br>. Never use code blocks.`;
 
-            if (referenceID) {
+            if (referClusterID) {
                 // Fetch recent incidents for the cluster
                 const incidents = await SELECT
                     .from('com.cytechies.integration.reliability.Incidents')
                     .where({
-                        cluster_ID: referenceID
+                        cluster_ID: referClusterID
                     })
                     .orderBy({
                         logEnd: 'desc'
@@ -144,11 +127,51 @@ export default cds.service.impl(async function () {
                 // Append the dynamic context to the system prompt
                 systemPrompt += `
                     [CONTEXT]
-                    Cluster ID: ${referenceID}
+                    Cluster ID: ${referClusterID}
  
                     Recent Incidents (Latest 10):
                     ${JSON.stringify(incidentSummary, null, 2)}
                     `;
+            }
+
+            if (referiFlowID) {
+                // 2. Fetch iFlow details along with its associated cluster mapping links
+                const iflowData = await SELECT.one
+                    .from('com.cytechies.integration.reliability.MonitoredArtifacts', referiFlowID)
+                    .columns(m => {
+                        m.iFlowName, m.iFlowId, m.PackageName, m.isActive, m.overallSeverity, m.openClusterCount,
+                            m.clusters(c => {
+                                c.resolutionStatus,
+                                    c.cluster(ic => {
+                                        ic.ID, ic.errorType, ic.severity
+                                    })
+                            })
+                    });
+
+                if (iflowData) {
+                    // 3. Fetch latest 2 raw incidents tied directly to this specific iFlow name
+                    const rawIflowIncidents = await SELECT
+                        .from('com.cytechies.integration.reliability.Incidents')
+                        .where({ iFlowName: iflowData.iFlowName })
+                        .orderBy({ logEnd: 'desc' })
+                        .limit(1); // Strictly capped at 1 incident
+
+                    systemPrompt += `
+                        [IFLOW CONTEXT]
+                        iFlow Technical Name: ${iflowData.iFlowName}
+                        iFlow ID: ${iflowData.iFlowId}
+                        Package: ${iflowData.PackageName}
+                        Is Active: ${iflowData.isActive}
+                        Current Severity State: ${iflowData.overallSeverity}
+                        Open Clusters Count: ${iflowData.openClusterCount}
+
+                        Active Cluster Mappings:
+                        ${JSON.stringify(iflowData.clusters || [], null, 2)}
+
+                        Recent iFlow Execution Failures (Max 2):
+                        ${JSON.stringify(rawIflowIncidents, null, 2)}
+                        `;
+                }
             }
 
             // 5. Build messages array from history
@@ -156,103 +179,104 @@ export default cds.service.impl(async function () {
                 role: "user",
                 content: userMessage
             }];
-            const { text, tokenCount, inputTokens, outputTokens } = await callAI(destination, messages, systemPrompt, 1524);
-            console.log("AI Response:", text);
-            const aiText = text ?? 'Failed to generate AI response.';
+            //{ text: systemPrompt,tokenCount: 1234,inputTokens: 1234,outputTokens: 1234};
+        const { text, tokenCount, inputTokens, outputTokens } ={ text: systemPrompt,tokenCount: 1234,inputTokens: 1234,outputTokens: 1234};// await callAI(destination, messages, systemPrompt, 1524);
+        console.log("AI Response:", text);
+        const aiText = text ?? 'Failed to generate AI response.';
 
-            // 7. Save and return assistant reply
-            const newAiMessage = {
-                conversation_ID: conversationId,
-                role: 'assistant',
-                content: aiText,
-                tokenCount: outputTokens
-            };
-            await srv.run(UPDATE(Messages)
-                .set({ tokenCount: inputTokens })
-                .where({ ID: uid }));
-            await srv.run(INSERT.into(Messages).entries(newAiMessage));
-            newAiMessage.inputTokens = inputTokens;
-            newAiMessage.outputTokens = outputTokens;
-            return newAiMessage;
+        // 7. Save and return assistant reply
+        const newAiMessage = {
+            conversation_ID: conversationId,
+            role: 'assistant',
+            content: aiText,
+            tokenCount: outputTokens
+        };
+        await srv.run(UPDATE(Messages)
+            .set({ tokenCount: inputTokens })
+            .where({ ID: uid }));
+        await srv.run(INSERT.into(Messages).entries(newAiMessage));
+        newAiMessage.inputTokens = inputTokens;
+        newAiMessage.outputTokens = outputTokens;
+        return newAiMessage;
 
-        } catch (err) {
-            console.error("Chat AI error:", err.reason?.response?.body ?? err.message);
+    } catch (err) {
+        console.error("Chat AI error:", err.reason?.response?.body ?? err.message);
 
-            const fallback = {
-                conversation_ID: conversationId,
-                role: 'assistant',
-                content: 'Failed to generate AI response.',
-                tokenCount: null
-            };
+        const fallback = {
+            conversation_ID: conversationId,
+            role: 'assistant',
+            content: 'Failed to generate AI response.',
+            tokenCount: null
+        };
 
-            await INSERT.into('com.cytechies.integration.reliability.Messages').entries(fallback);
-            return fallback;
-        }
-    });
-    this.after(['CREATE', 'UPDATE','DELETE'], Messages, async (data, req) => {
+        await INSERT.into('com.cytechies.integration.reliability.Messages').entries(fallback);
+        return fallback;
+    }
+});
+this.after(['CREATE', 'UPDATE', 'DELETE'], Messages, async (data, req) => {
 
-        try {
+    try {
 
-            const conversationId = data.conversation_ID;
+        const conversationId = data.conversation_ID;
 
-            if (!conversationId) return;
+        if (!conversationId) return;
 
-            // Get all messages for this conversation
-            const messages = await SELECT
-                .from('com.cytechies.integration.reliability.Messages')
-                .columns('tokenCount')
-                .where({ conversation_ID: conversationId });
+        // Get all messages for this conversation
+        const messages = await SELECT
+            .from('com.cytechies.integration.reliability.Messages')
+            .columns('tokenCount')
+            .where({ conversation_ID: conversationId });
 
-            // Calculate total tokens
-            const totalTokens = messages.reduce((sum, msg) => {
-                return sum + (msg.tokenCount || 0);
-            }, 0);
+        // Calculate total tokens
+        const totalTokens = messages.reduce((sum, msg) => {
+            return sum + (msg.tokenCount || 0);
+        }, 0);
 
-            // Update session token usage
-            await srv.run(UPDATE(ChatSessions)
-                .set({
-                    totalSessionTokenUsage: totalTokens
-                })
-                .where({ ID: conversationId }));
+        // Update session token usage
+        await srv.run(UPDATE(ChatSessions)
+            .set({
+                totalSessionTokenUsage: totalTokens
+            })
+            .where({ ID: conversationId }));
 
-            console.log("Updated total token usage:", totalTokens);
+        console.log("Updated total token usage:", totalTokens);
 
-        } catch (err) {
-            console.error("Token aggregation failed:", err);
-        }
+    } catch (err) {
+        console.error("Token aggregation failed:", err);
+    }
 
-    });
-    this.after(['CREATE', 'UPDATE','DELETE'], ChatSessions, async (data, req) => {
+});
+this.after(['CREATE', 'UPDATE', 'DELETE'], ChatSessions, async (data, req) => {
 
-        try {
+    try {
 
-            const clusterId = data.cluster_ID;
+        const clusterId = data.cluster_ID;
 
-            if (!clusterId) return;
+        if (!clusterId) return;
 
-            // Get all messages for this conversation
-            const chatSessions = await SELECT
-                .from('com.cytechies.integration.reliability.ChatSessions')
-                .columns('totalSessionTokenUsage')
-                .where({ cluster_ID: clusterId });
+        // Get all messages for this conversation
+        const chatSessions = await SELECT
+            .from('com.cytechies.integration.reliability.ChatSessions')
+            .columns('totalSessionTokenUsage')
+            .where({ cluster_ID: clusterId });
 
-            // Calculate total tokens
-            const totalTokens = chatSessions.reduce((sum, session) => {
-                return sum + (session.totalSessionTokenUsage || 0);
-            }, 0);
+        // Calculate total tokens
+        const totalTokens = chatSessions.reduce((sum, session) => {
+            return sum + (session.totalSessionTokenUsage || 0);
+        }, 0);
 
-            // Update session token usage
-            await UPDATE('com.cytechies.integration.reliability.IncidentClusters')
-                .set({
-                    totalTokenUsage: totalTokens
-                })
-                .where({ ID: clusterId });
+        // Update session token usage
+        await UPDATE('com.cytechies.integration.reliability.IncidentClusters')
+            .set({
+                totalTokenUsage: totalTokens
+            })
+            .where({ ID: clusterId });
 
-            console.log("Updated total token usage of cluster", clusterId, ":", totalTokens);
+        console.log("Updated total token usage of cluster", clusterId, ":", totalTokens);
 
-        } catch (err) {
-            console.error("Cluster token aggregation failed:", err);
-        }
+    } catch (err) {
+        console.error("Cluster token aggregation failed:", err);
+    }
 
-    });
+});
 });
