@@ -9,8 +9,35 @@ sap.ui.define([
     return BaseController.extend("com.cytechies.integration.reliability.incidentclustersui.controller.OrderList", {
         formatter: formatter,
 
-        onInit: async function () {
+        onInit: function () {
+            this._updateRefreshTime();
+            var iFiveMinutes = 300;
+            this._refreshInterval = setInterval(function () {
+                this.onRefreshPress();
+            }.bind(this), iFiveMinutes);
         },
+
+        onRefreshPress: function () {
+            var oTable = this.byId("idGridListId");
+            if (oTable && oTable.getBinding("items")) {
+                oTable.getBinding("items").refresh();
+            }
+            this._updateRefreshTime();
+        },
+
+        _updateRefreshTime: function () {
+            var oModel = this.getOwnerComponent().getModel("globalModel");
+            var sCurrentTime = new Date().toLocaleTimeString();
+            oModel.setProperty("/lastRefreshTime", sCurrentTime);
+
+        },
+        onExit: function () {
+            if (this._refreshInterval) {
+                clearInterval(this._refreshInterval);
+                this._refreshInterval = null; // Clear it out completely
+            }
+        },
+
 
         onAipress: function () {
             this.showBusy();
@@ -81,19 +108,33 @@ sap.ui.define([
         },
 
         onRowPress: async function (oEvent) {
-            console.log("event triggered");
+            console.log("Row press event triggered");
 
-            const oItem = oEvent.getSource();
-            const oContext = oItem.getBindingContext();
+            // 1. Natively fetch the individual row item container from the table event parameter
+            const oItem = oEvent.getParameter("listItem") || oEvent.getSource();
+
+            // 2. Guard Clause: Safely extract and check binding context data
+            const oContext = oItem ? oItem.getBindingContext() : null;
+            if (!oContext) {
+                console.error("Binding context not found on the selected row item.");
+                return;
+            }
+
             const sID = oContext.getProperty("ID");
-            this.getOwnerComponent().getModel("globalModel").setProperty("/iflowId", sID);
-            console.log("Cluster ID set in global model:", sID);
 
+            // 3. Update Global Tracking State
+            const oGlobalModel = this.getOwnerComponent().getModel("globalModel");
+            if (oGlobalModel) {
+                oGlobalModel.setProperty("/iflowId", sID);
+                console.log("Cluster ID successfully cached in global model:", sID);
+            }
+
+            // 4. Trigger Cross-View Navigation Routing
             this.navTo("RouteIC", {
                 ID: sID
             });
 
-            console.log("Route Activated");
+            console.log("Route Activated for ID:", sID);
         },
 
         onTagPress: function (oEvent) {
@@ -128,7 +169,7 @@ sap.ui.define([
 
         //     // 1. Get the FlexBox container holding all the buttons
         //     var oButtonContainer = oPressedTag.getParent();
-            
+
         //     // 2. Re-enable ALL buttons in that container
         //     var aButtons = oButtonContainer.getItems();
         //     aButtons.forEach(function (oButton) {
@@ -178,18 +219,18 @@ sap.ui.define([
                 }));
             }
 
-           // --- SECTION C: Date Range Handling ---
+            // --- SECTION C: Date Range Handling ---
             var oDateRange = this.byId("idDateRangeFilter");
             if (oDateRange) {
                 var oFromDate = oDateRange.getDateValue();
                 var oSecondDate = oDateRange.getSecondDateValue();
-                
+
                 // Only apply filter if both a start and end date are selected
                 if (oFromDate && oSecondDate) {
-                    
+
                     // Clone the date to avoid mutating the control's internal value
                     var oToDate = new Date(oSecondDate.getTime());
-                    
+
                     // Set 'To' date to 23:59:59 to include all records on the final day
                     oToDate.setHours(23, 59, 59, 999);
 

@@ -10,7 +10,10 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
     word-break: break-word;
 }
-
+/* Add this to your style.css */
+.unclickableTag {
+    pointer-events: none !important;
+}
 /* User Message Bubble Layout Styling */
 .userChatBubbleNew {
     background: linear-gradient(-90deg, rgba(249, 115, 22, 0.08) 0%, rgba(255, 255, 255, 0) 100%) !important;

@@ -89,81 +89,66 @@
 
         <f:content>
             <layout:VerticalLayout width="100%">
-                <MessageStrip enableFormattedText="true" text="Click any &lt;strong&gt;iFlow card&lt;/strong&gt; to open the &lt;strong&gt;Detail View&lt;/strong&gt; with all associated clusters and recent incidents." type="Information" showIcon="true" showCloseButton="true" class="sapUiSmallMarginBottom" />
+                <MessageStrip enableFormattedText="true" text="Click any &lt;strong&gt;iFlow row&lt;/strong&gt; to open the &lt;strong&gt;Detail View&lt;/strong&gt; with all associated clusters and recent incidents." type="Information" showIcon="true" showCloseButton="true" class="sapUiSmallMarginBottom" />
 
+                <Table id="idGridListId" growing="true" growingThreshold="30" growingScrollToLoad="true" mode="SingleSelectMaster" itemPress=".onRowPress" items="{
+            path: '/MonitoredArtifacts',
+            sorter: { path: 'lastPollTimestamp', descending: true }
+        }">
 
-                <f:GridList id="idGridListId" growing="true" growingThreshold="30" growingScrollToLoad="true" class="sapUiNoContentPadding" items="{
-                path: '/MonitoredArtifacts',
-                sorter: { path: 'modifiedAt', descending: true}
-            }">
+                    <headerToolbar>
+                        <OverflowToolbar>
+                            <Title text="Monitored iFlows" level="H4"/>
 
-                    <f:customLayout>
-                        <grid:GridBasicLayout gridTemplateColumns="repeat(auto-fit, minmax(17rem, 1fr))" gridGap="1rem" />
-                    </f:customLayout>
+                            <ToolbarSpacer />
 
+                            <Text text="Last updated: {globalModel>/lastRefreshTime}" class="sapUiSmallMarginEnd" />
 
-                    <f:items>
-                        <f:GridListItem>
-                            <f:Card semanticRole="ListItem" press=".onCardPress">
-                                <f:content>
-                                    <Panel class="sapUiSmallMargin">
-                                        <headerToolbar>
-                                            <Toolbar>
-                                                <core:Icon src="sap-icon://process" class="sapUiTinyMarginEnd" size="1.5rem" color="{path: 'overallSeverity',formatter: '.formatter.severityIconColor'}"/>
+                            <Button icon="sap-icon://refresh" tooltip="Refresh Data" press=".onRefreshPress" type="Transparent" />
+                        </OverflowToolbar>
+                    </headerToolbar>
 
-                                                <!-- <Title text="{iFlowName}" wrapping="false" titleStyle="H5" /> -->
-                                                 
-                                                <ToolbarSpacer  />
-                                                <Button text="{ path: 'overallSeverity', formatter: '.formatter.formatButtonText' }" tooltip="click to filter" press=".onTagPress" type="{ path: 'overallSeverity', formatter: '.formatter.formatButtonState' }" icon="{ path: 'overallSeverity', formatter: '.formatter.formatSeverityIcon' }">
-                                                    <customData>
-                                                        <core:CustomData key="severity" value="{overallSeverity}" />
-                                                    </customData>
-                                                </Button>
+                    <columns>
+                        <Column width="3rem" hAlign="Center" />
+                        <Column width="40%" demandPopin="true">
+                            <Text text="iFlow Name" />
+                        </Column>
+                        <Column width="20%" hAlign="Begin" demandPopin="true" minScreenWidth="Tablet">
+                            <Text text="Package" />
+                        </Column>
+                        <Column width="10%" hAlign="Begin" demandPopin="true" minScreenWidth="Desktop">
+                            <Text text="Severity" />
+                        </Column>
+                        <Column width="10%" hAlign="Center" demandPopin="true" minScreenWidth="Tablet">
+                            <Text text="Active Clusters" />
+                        </Column>
+                        <Column width="20%" hAlign="End" demandPopin="true" minScreenWidth="Desktop">
+                            <Text text="Last Poll" />
+                        </Column>
 
-                                                <!-- <ObjectNumber number="{openClusterCount}" emphasized="true" unit="Clusters" class="sapMObjectNumberLarge sapUiTinyMarginBegin" state="{ path: 'overallSeverity', formatter: '.formatter.formatSeverityState'}"/> -->
-                                            </Toolbar>
-                                        </headerToolbar>
-                                        <Title text="{iFlowName}{iFlowName}{iFlowName}" wrapping="true" titleStyle="H5" />
+                    </columns>
 
-                                        <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiTinyMarginBottom">
-                                            <!-- <Label text="Severity" /> -->
+                    <items>
+                        <ColumnListItem type="Navigation">
+                            <cells>
+                                <core:Icon src="sap-icon://process" size="1.25rem" color="{path: 'overallSeverity', formatter: '.formatter.severityIconColor'}"/>
 
-                                            <Label text="Active Clusters" />
-                                            <ObjectNumber number="{openClusterCount}" unit="/{clusters/$count}" emphasized="true" class="sapMObjectNumberLarge sapUiTinyMarginBegin" state="{ path: 'overallSeverity', formatter: '.formatter.formatSeverityState'}"/>
+                                <Title text="{iFlowName}" titleStyle="H6" wrapping="true" />
+                                <Text text="{PackageName}" />
+                                <Button text="{path: 'overallSeverity', formatter: '.formatter.formatButtonText'}" type="{path: 'overallSeverity', formatter: '.formatter.formatButtonState'}" icon="{path: 'overallSeverity', formatter: '.formatter.formatSeverityIcon'}" class="unclickableTag">
+                                    <customData>
+                                        <core:CustomData key="severity" value="{overallSeverity}" />
+                                    </customData>
+                                </Button>
+                                <ObjectNumber number="{openClusterCount}" emphasized="true" state="{path: 'overallSeverity', formatter: '.formatter.formatSeverityState'}"/>
+                                <Text text="{path: 'lastPollTimestamp', formatter: '.formatter.formatDateTime'}" />
 
-                                            <!-- <ObjectStatus text="{overallSeverity}" state="{ path: 'overallSeverity', formatter: '.formatter.formatSeverityState' }" /> -->
-                                        </HBox>
-
-                                        <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiTinyMarginBottom">
-                                            <Label text="Status" />
-                                            <ObjectStatus text="{= ${isActive} === 'Yes' ? 'ACTIVE' : 'INACTIVE' }" state="{= ${isActive} === 'Yes' ? 'Success' : 'Error' }" />
-                                        </HBox>
-
-                                        <!-- <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiTinyMarginBottom">
-                                            <Label text="Severity" />
-                                            <GenericTag text="{overallSeverity}" design="StatusIconHidden" status="{ path: 'overallSeverity', formatter: '.formatter.formatSeverityState' }" />
-                                        </HBox>
-
-                                        <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiTinyMarginBottom">
-                                            <Label text="Status" />
-                                            <GenericTag text="{= ${isActive} === 'Yes' ? 'ACTIVE' : 'INACTIVE' }" design="StatusIconHidden" status="{= ${isActive} === 'Yes' ? 'Information' : 'Warning' }" />
-                                        </HBox> -->
-
-
-                                        <HBox justifyContent="SpaceBetween" alignItems="Start" >
-
-                                            <Label text="Last Poll" class="sapUiTinyMarginEnd" />
-
-                                            <Text text="{path: 'lastPollTimestamp', formatter: '.formatter.formatDateTime'}" textAlign="End" wrapping="true" width="100%" />
-
-                                        </HBox>
-                                    </Panel>
-                                </f:content>
-                            </f:Card>
-                        </f:GridListItem>
-                    </f:items>
-                </f:GridList>
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
             </layout:VerticalLayout>
+
         </f:content>
 
     </f:DynamicPage>
