@@ -1,4 +1,4 @@
-<mvc:View controllerName="com.cytechies.integration.reliability.incidentclustersui.controller.OrderList"
+<mvc:View controllerName="com.cytechies.integration.reliability.incidentclustersui.controller.monitored_iflows"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
     xmlns:f="sap.f"

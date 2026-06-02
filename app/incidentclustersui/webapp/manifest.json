@@ -157,18 +157,19 @@
         "viewPath": "com.cytechies.integration.reliability.incidentclustersui.view"
       },
       "routes": [
-         {
+        {
           "name": "RouteOverview",
-          "pattern": ":?query:",
+          "pattern": "",
           "target": [
             "TargetOverview"
           ]
         },
+        
         {
-          "name": "RouteOrderList",
+          "name": "Routemonitored_iflows",
           "pattern": ":?query:",
           "target": [
-            "TargetOrderList"
+            "Targetmonitored_iflows"
           ]
         },
         {
@@ -205,9 +206,9 @@
           "id": "Overview",
           "name": "Overview"
         },
-        "TargetOrderList": {
-          "id": "OrderList",
-          "name": "OrderList"
+        "Targetmonitored_iflows": {
+          "id": "monitored_iflows",
+          "name": "monitored_iflows"
         },
         "TargetAIAssistant": {
           "id": "Chat",
@@ -220,11 +221,8 @@
         "TargetIC": {
           "id": "IC",
           "name": "IC"
-        },
-        "TargetAIAssistant": {
-          "id": "Chat",
-          "name": "Chat"
         }
+       
       }
     },
     "rootView": {
