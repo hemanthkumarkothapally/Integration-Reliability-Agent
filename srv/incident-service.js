@@ -5,9 +5,9 @@ import { refreshArtifactDashboard } from './utils/clustering-util.js';
 import { getIncidentTrend, getClusterSeverityChart, getIflowSeverityChart } from './utils/dashboard-charts.js';
 export default cds.service.impl(async function () {
 
-    const { IncidentClusters, Recommendations, Playbooks, MonitoredArtifacts, ClusterArtifacts } = this.entities;
+    const { IncidentClusters, Recommendations, Playbooks, MonitoredArtifacts, ClusterArtifacts , Tenants} = this.entities;
 
-    const { Incidents, TokenUsages } = cds.entities('com.cytechies.integration.reliability');
+    const { Incidents, TokenUsages} = cds.entities('com.cytechies.integration.reliability');
     this.after('READ', IncidentClusters, async (data) => {
         console.log("READ Event Triggered");
 
@@ -492,7 +492,7 @@ export default cds.service.impl(async function () {
                 .where({
                     ID: artifactId
                 });
-
+        console.log("Artifact to update:", artifact);
         if (artifact) {
 
             await UPDATE(Incidents)
@@ -504,10 +504,17 @@ export default cds.service.impl(async function () {
                     iFlowName: artifact.iFlowName
                 });
         }
+        const tenant =
+            await SELECT.one
+                .from(Tenants)
+                .where({
+                    ID: artifact.tenant_ID
+                });
         await refreshArtifactDashboard(
             MonitoredArtifacts,
             ClusterArtifacts,
-            IncidentClusters
+            IncidentClusters,
+            tenant
         );
         return 'Cluster resolved successfully';
     }

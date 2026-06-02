@@ -1,16 +1,16 @@
-export async function getIncidentTrend(
-    Incidents,
-    tenantId
-) {
-    // 1. Calculate the cutoff (Current Time - 5 Hours)
-    const fiveHoursAgo = new Date(Date.now() - 5 * 60 * 60 * 1000);
+export async function getIncidentTrend(Incidents, tenantId) {
+    const IST_OFFSET = 5.5 * 60 * 60 * 1000; // 5 hours 30 mins
     const now = new Date();
+    const fiveHoursAgo = new Date(now.getTime() - 5 * 60 * 60 * 1000);
 
-    // 2. Initialize buckets ONLY for the last 5 hours
     const buckets = {};
+    // 1. Build buckets shifted to IST
     for (let i = 0; i <= 5; i++) {
         const d = new Date(fiveHoursAgo.getTime() + i * 60 * 60 * 1000);
-        const hourLabel = d.getUTCHours().toString().padStart(2, '0') + ':00';
+        // Add offset to the date object before pulling the hour
+        const istDate = new Date(d.getTime() + IST_OFFSET);
+        const hourLabel = istDate.getUTCHours().toString().padStart(2, '0') + ':00';
+        
         buckets[hourLabel] = {
             hour: hourLabel,
             totalIncidents: 0,
@@ -18,41 +18,33 @@ export async function getIncidentTrend(
         };
     }
 
-    // 3. Fetch incidents within this specific 5-hour window
+    // 2. Query remains in UTC (standard for HANA)
     const where = [
         { ref: ['createdAt'] }, '>=', { val: fiveHoursAgo.toISOString() },
         'and',
         { ref: ['createdAt'] }, '<=', { val: now.toISOString() }
     ];
 
-    if (tenantId) {
-        where.push(
-            'and',
-            { ref: ['tenant_ID'] }, '=', { val: tenantId }
-        );
+    if (tenantId && tenantId !== 'ALL') {
+        where.push('and', { ref: ['tenant_ID'] }, '=', { val: tenantId });
     }
 
-    const incidentData =
-        await SELECT
-            .from(Incidents)
-            .where(where);
+    const incidentData = await SELECT.from(Incidents).where(where);
 
-
-    // 4. Populate buckets
+    // 3. Map incidents shifted to IST
     incidentData.forEach(i => {
-        const date = new Date(i.createdAt);
-        const bucket = date.getUTCHours().toString().padStart(2, '0') + ':00';
+        const dateUTC = new Date(i.createdAt);
+        const dateIST = new Date(dateUTC.getTime() + IST_OFFSET);
+        const bucket = dateIST.getUTCHours().toString().padStart(2, '0') + ':00';
 
         if (buckets[bucket]) {
             buckets[bucket].totalIncidents++;
-
             if (i.status !== 'RESOLVED') {
                 buckets[bucket].openIncidents++;
             }
         }
     });
 
-    // 5. Sort to ensure chronological order and return
     return Object.values(buckets).sort((a, b) => a.hour.localeCompare(b.hour));
 }
 export async function getClusterSeverityChart(

@@ -99,6 +99,7 @@
                                             <card:NumericHeader title="Monitored iFlows" number="{chart>/monitoredIflows}" state="Neutral" iconSrc="sap-icon://process" />
                                         </f:header>
                                     </f:Card>
+                                    
                                 </f:GridListItem>
 
                                 <!-- Active Clusters -->
