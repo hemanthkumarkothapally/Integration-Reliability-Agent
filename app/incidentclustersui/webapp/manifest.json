@@ -167,7 +167,7 @@
         
         {
           "name": "Routemonitored_iflows",
-          "pattern": ":?query:",
+          "pattern": "monitored_iflows/:?query:",
           "target": [
             "Targetmonitored_iflows"
           ]
@@ -191,13 +191,6 @@
           "pattern": "IC/{ID}",
           "target": [
             "TargetIC"
-          ]
-        },
-        {
-          "name": "RouteAIAssistant",
-          "pattern": "AIAssistant",
-          "target": [
-            "TargetAIAssistant"
           ]
         }
       ],

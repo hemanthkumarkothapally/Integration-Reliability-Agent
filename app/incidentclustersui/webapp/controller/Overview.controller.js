@@ -1,5 +1,5 @@
 sap.ui.define([
-  "sap/ui/core/mvc/Controller",
+      "./BaseController",
   "../model/formatter",
   "sap/ui/model/json/JSONModel"
 ], (BaseController, formatter, JSONModel) => {
@@ -12,6 +12,10 @@ sap.ui.define([
       this.loadDashboardCharts();
       this.loadTopCriticalIflows();
 
+    },
+    onNavToIncidents(){
+      this.navTo("Routemonitored_iflows");
+      console.log("Navigating to monitored iFlows");
     },
     onSideNavButtonPress: function () {
       const oToolPage = this.byId("toolPage1");

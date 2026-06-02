@@ -11,14 +11,37 @@ sap.ui.define([
 
         onInit: function () {
             this._updateRefreshTime();
-            var iFiveMinutes = 300;
+            var iFiveMinutes = 30000; // 1/2 minute in milliseconds
             this._refreshInterval = setInterval(function () {
                 this.onRefreshPress();
             }.bind(this), iFiveMinutes);
+
+
+            const oRouter =
+                this.getOwnerComponent().getRouter();
+
+            oRouter.getRoute("Routemonitored_iflows")
+                .attachPatternMatched(
+                    this._onRouteMatched,
+                    this
+                );
+        },
+
+        _onRouteMatched: function () {
+            var oDateRange = this.byId("idDateRangeFilter");
+
+            if (oDateRange) {
+                var oToday = new Date();
+
+                oDateRange.setDateValue(oToday);
+                oDateRange.setSecondDateValue(oToday);
+
+                this.onFilteriFlow();
+            }
         },
 
         onRefreshPress: function () {
-            var oTable = this.byId("idGridListId");
+            var oTable = this.byId("idMonitoredArtifacts");
             if (oTable && oTable.getBinding("items")) {
                 oTable.getBinding("items").refresh();
             }
@@ -45,156 +68,50 @@ sap.ui.define([
             this.hideBusy();
         },
 
-        onSeverityTabSelect: function (oEvent) {
-            const sKey = oEvent.getParameter("key");
-            let aFilters = [];
-
-            if (sKey !== "ALL") {
-                aFilters.push(
-                    new Filter(
-                        "severity",
-                        FilterOperator.EQ,
-                        sKey
-                    )
-                );
-            }
-
-            // Update for Table (if still used)
-            const oTable = this.byId("idIncidentClustersTable");
-            if (oTable) {
-                const oTableBinding = oTable.getBinding("items");
-                if (oTableBinding) {
-                    oTableBinding.filter(aFilters);
-                }
-            }
-
-            // Update for the new GridList
-            const oGridList = this.byId("idGridListId");
-            if (oGridList) {
-                const oGridBinding = oGridList.getBinding("items");
-                if (oGridBinding) {
-                    oGridBinding.filter(aFilters);
-                }
-            }
-        },
-
-        onCardPress: async function (oEvent) {
-            console.log("Card press event triggered");
-
-            const oCard = oEvent.getSource();
-            const oContext = oCard.getBindingContext();
-
-            // Guard clause: Exit early if context is not yet loaded
-            if (!oContext) {
-                console.error("Binding context not found on the selected card.");
-                return;
-            }
-
-            const sID = oContext.getProperty("ID");
-
-            // Update the global model with the selected ID
-            const oGlobalModel = this.getOwnerComponent().getModel("globalModel");
-            if (oGlobalModel) {
-                oGlobalModel.setProperty("/iflowId", sID);
-                console.log("Cluster ID set in global model:", sID);
-            }
-
-            // Navigate to the target route
-            this.navTo("RouteIC", {
-                ID: sID
-            });
-
-            console.log("Route Activated for ID:", sID);
-        },
 
         onRowPress: async function (oEvent) {
-            console.log("Row press event triggered");
-
-            // 1. Natively fetch the individual row item container from the table event parameter
             const oItem = oEvent.getParameter("listItem") || oEvent.getSource();
-
-            // 2. Guard Clause: Safely extract and check binding context data
             const oContext = oItem ? oItem.getBindingContext() : null;
             if (!oContext) {
                 console.error("Binding context not found on the selected row item.");
                 return;
             }
-
             const sID = oContext.getProperty("ID");
-
-            // 3. Update Global Tracking State
             const oGlobalModel = this.getOwnerComponent().getModel("globalModel");
             if (oGlobalModel) {
                 oGlobalModel.setProperty("/iflowId", sID);
                 console.log("Cluster ID successfully cached in global model:", sID);
             }
-
-            // 4. Trigger Cross-View Navigation Routing
             this.navTo("RouteIC", {
                 ID: sID
             });
+        },
 
-            console.log("Route Activated for ID:", sID);
+        onFilterChange: function (oEvent) {
+            this.onFilteriFlow();
+
         },
 
         onTagPress: function (oEvent) {
-
             var oPressedTag = oEvent.getSource();
-
             this._sCurrentSeverityFilter = oPressedTag.data("severity") || "ALL";
-
-
-
-            // Fire the calculation logic
-
-            this.onSearchiFlowName();
-
+            var oButtonContainer = oPressedTag.getParent();
+            var aButtons = oButtonContainer.getItems();
+            aButtons.forEach(function (oButton) {
+                oButton.setEnabled(true);
+            });
+            oPressedTag.setEnabled(false);
+            this.onFilteriFlow();
         },
 
-
-
-        // Triggered when interacting with the MultiComboBox dropdown
-
-        onFilterChange: function (oEvent) {
-
-            console.log("1. Dropdown changed!");
-
-            this.onSearchiFlowName();
-
-        },
-
-        // onTagPress: function (oEvent) {
-        //     var oPressedTag = oEvent.getSource();
-        //     this._sCurrentSeverityFilter = oPressedTag.data("severity") || "ALL";
-
-        //     // 1. Get the FlexBox container holding all the buttons
-        //     var oButtonContainer = oPressedTag.getParent();
-
-        //     // 2. Re-enable ALL buttons in that container
-        //     var aButtons = oButtonContainer.getItems();
-        //     aButtons.forEach(function (oButton) {
-        //         oButton.setEnabled(true);
-        //     });
-
-        //     // 3. Disable the specific button that was just pressed
-        //     oPressedTag.setEnabled(false);
-
-        //     // Fire the calculation logic
-        //     this.onSearchiFlowName();
-        // },
-
-        // Unified execution builder 
-        onSearchiFlowName: function () {
+        onFilteriFlow: function () {
             var aFilters = [];
-
-            // --- SECTION A: MultiComboBox Handling ---
             var oMultiCombo = this.byId("idIFlowFilter");
             if (oMultiCombo) {
                 var aSelectedKeys = oMultiCombo.getSelectedKeys();
                 console.log(aSelectedKeys)
 
                 if (aSelectedKeys && aSelectedKeys.length > 0) {
-                    // Build multi-token select filter arrays joined by an OR condition
                     var aComboFilters = aSelectedKeys.map(function (sKey) {
                         return new Filter({
                             path: "iFlowName",
@@ -210,7 +127,26 @@ sap.ui.define([
                 }
             }
 
-            // --- SECTION B: GenericTag Severity Handling ---
+            var oPackageMultiCombo = this.byId("idpackageFilter");
+            if (oPackageMultiCombo) {
+                var aSelectedKeys = oPackageMultiCombo.getSelectedKeys();
+                console.log(aSelectedKeys)
+
+                if (aSelectedKeys && aSelectedKeys.length > 0) {
+                    var aComboFilters = aSelectedKeys.map(function (sKey) {
+                        return new Filter({
+                            path: "PackageName",
+                            operator: FilterOperator.EQ,
+                            value1: sKey
+                        });
+                    });
+
+                    aFilters.push(new Filter({
+                        filters: aComboFilters,
+                        and: false
+                    }));
+                }
+            }
             if (this._sCurrentSeverityFilter && this._sCurrentSeverityFilter !== "ALL") {
                 aFilters.push(new Filter({
                     path: "overallSeverity",
@@ -218,47 +154,94 @@ sap.ui.define([
                     value1: this._sCurrentSeverityFilter
                 }));
             }
-
-            // --- SECTION C: Date Range Handling ---
             var oDateRange = this.byId("idDateRangeFilter");
             if (oDateRange) {
                 var oFromDate = oDateRange.getDateValue();
                 var oSecondDate = oDateRange.getSecondDateValue();
-
-                // Only apply filter if both a start and end date are selected
                 if (oFromDate && oSecondDate) {
-
-                    // Clone the date to avoid mutating the control's internal value
                     var oToDate = new Date(oSecondDate.getTime());
-
-                    // Set 'To' date to 23:59:59 to include all records on the final day
                     oToDate.setHours(23, 59, 59, 999);
-
-                    // FIX: Convert JS Dates to OData V4 compatible ISO Strings
                     var sFromDate = oFromDate.toISOString();
                     var sToDate = oToDate.toISOString();
 
                     aFilters.push(new Filter({
-                        path: "lastPollTimestamp", // Or "modifiedAt" depending on your backend
+                        path: "lastPollTimestamp",
                         operator: FilterOperator.BT,
                         value1: sFromDate,
                         value2: sToDate
                     }));
                 }
             }
-
-            // --- SECTION C: Apply filters to Grid List context ---
-            // CHANGED: Target idGridListId instead of idGridId
-            var oGridList = this.byId("idGridListId");
-            if (oGridList) {
+            var oniFlowTable = this.byId("idMonitoredArtifacts");
+            if (oniFlowTable) {
                 // CHANGED: Get binding for 'items' instead of 'content'
-                var oBinding = oGridList.getBinding("items");
+                var oBinding = oniFlowTable.getBinding("items");
                 if (oBinding) {
                     oBinding.filter(aFilters);
                 } else {
-                    console.warn("Grid list items binding context not found.");
+                    console.warn("Table items binding context not found.");
                 }
             }
-        }
+
+        },
+        onTableUpdateFinished: function (oEvent) {
+            // This parameter is provided natively by the updateFinished event
+            var iTotalItems = oEvent.getParameter("total");
+            var oTitleControl = this.byId("idTableTitle");
+
+            if (oTitleControl) {
+                oTitleControl.setText("Monitored Artifacts (" + iTotalItems + ")");
+            }
+        },
+        onClearFilters: function () {
+
+            // Clear iFlow filter
+            var oIFlowFilter = this.byId("idIFlowFilter");
+            if (oIFlowFilter) {
+                oIFlowFilter.removeAllSelectedItems();
+            }
+
+            // Clear Package filter
+            var oPackageFilter = this.byId("idpackageFilter");
+            if (oPackageFilter) {
+                oPackageFilter.removeAllSelectedItems();
+            }
+
+            // Clear date range
+            var oDateRange = this.byId("idDateRangeFilter");
+            if (oDateRange) {
+                oDateRange.setDateValue(null);
+                oDateRange.setSecondDateValue(null);
+                oDateRange.setValue("");
+            }
+
+            // Reset severity filter
+            this._sCurrentSeverityFilter = "ALL";
+
+            // Re-enable all severity buttons
+            var aSeverityButtons = [
+                this.byId("btnAll"),
+                this.byId("btnCritical"),
+                this.byId("btnHigh"),
+                this.byId("btnMedium"),
+                this.byId("btnLow")
+            ];
+
+            aSeverityButtons.forEach(function (oButton) {
+                if (oButton) {
+                    oButton.setEnabled(true);
+                }
+            });
+
+            // Disable ALL button (optional)
+            if (this.byId("btnAll")) {
+                this.byId("btnAll").setEnabled(false);
+            }
+
+            // Remove all filters from table
+            this.onFilteriFlow();
+        },
+
+
     });
 });
