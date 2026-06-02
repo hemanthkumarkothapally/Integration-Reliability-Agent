@@ -10,20 +10,14 @@
 
         <f:title>
             <f:DynamicPageTitle>
-               <f:heading>
-                     <HBox alignItems="Center" renderType="Bare">
+                <f:heading>
+            <Title text="Monitoring IFlows" wrapping="true" />
+        </f:heading>
 
-                <Button
-                    icon="sap-icon://nav-back"
-                    type="Transparent"
-                    press=".onNavBackToOverview"/>
-
-                <Title
-                    text="Integration Monitoring Overview"
-                    class="sapUiTinyMarginBegin"/>
-
-            </HBox>
-                </f:heading>
+        <f:expandedContent>
+            <Label text="Monitor your iFlows &amp; Associated Clusters" class="sapUiSmallMarginBegin" />
+        </f:expandedContent>
+                
                 <f:actions>
                     <Button icon="sap-icon://ai" text="Ai Assistant" type="Ghost" press=".onAipress" tooltip="AI Assistant"/>
                 </f:actions>
@@ -69,6 +63,16 @@
                                     </MultiComboBox>
                                 </items>
                             </VBox>
+                            <VBox width="auto" class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
+                                <layoutData>
+                                    <FlexItemData growFactor="1" />
+                                </layoutData>
+                                <items>
+                                    <MultiComboBox id="idTenantFilter" width="100%" placeholder="Filter by Tenant" items="{path:'/Tenants'}" selectionChange=".onFilterChange">
+                                        <core:Item key="{ID}" text="{tenantName}" />
+                                    </MultiComboBox>
+                                </items>
+                            </VBox>
 
 
                             <FlexBox wrap="Wrap" justifyContent="Start" class="sapUiTinyMarginBottom">
@@ -101,8 +105,11 @@
                                         </customData>
                                     </Button>
 
-                                    <Button icon="sap-icon://process" text="{= 'All (' + (${/MonitoredArtifacts/$count} || '0') + ')' }" type="Ghost" press=".onClearFilters" class="sapUiTinyMarginEnd sapUiTinyMarginBottom" />
-                                    <!-- <Button text="Clear Filters" icon="sap-icon://clear-filter" type="Transparent" press=".onClearFilters" /> -->
+                                    <Button icon="sap-icon://process" text="{= 'All' }" type="Ghost" press=".onTagPress" class="sapUiTinyMarginEnd sapUiTinyMarginBottom" ><customData>
+                                            <core:CustomData key="severity" value="ALL" />
+                                        </customData>
+                                    </Button>
+                                    <Button text="Clear Filters" icon="sap-icon://clear-filter" type="Transparent" press=".onClearFilters" />
                                 </items>
                             </FlexBox>
 
@@ -122,7 +129,7 @@
             parameters: {
             $count: true
         },
-            sorter: { path: 'lastPollTimestamp', descending: true }
+            sorter: { path: 'lastErrorAt', descending: true }
         }">
 
                     <headerToolbar>
@@ -152,7 +159,7 @@
                             <Text text="Active Clusters" />
                         </Column>
                         <Column width="20%" hAlign="End" demandPopin="true" minScreenWidth="Desktop">
-                            <Text text="Last Poll" />
+                            <Text text="Last Failure" />
                         </Column>
 
                     </columns>
@@ -170,7 +177,7 @@
                                     </customData>
                                 </Button>
                                 <ObjectNumber number="{openClusterCount}" emphasized="true" state="{path: 'overallSeverity', formatter: '.formatter.formatSeverityState'}"/>
-                                <Text text="{path: 'lastPollTimestamp', formatter: '.formatter.formatDateTime'}" />
+                                <Text text="{path: 'lastErrorAt', formatter: '.formatter.formatDateTime'}" />
 
                             </cells>
                         </ColumnListItem>

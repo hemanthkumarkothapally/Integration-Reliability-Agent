@@ -32,48 +32,32 @@ export default cds.service.impl(async function () {
     let srv = this;
     const { ChatSessions, Messages } = this.entities;
     const destination = await cds.connect.to('GenAIHubDestination');
+
+
+
     this.on('createConversation', async (req) => {
-        const { clusterId } = req.data;
         let UserQuery = req.data.title || "New Chat";
         let title = req.data.title || "New Chat";
-        console.log("Creating conversation with title:", title, "and clusterId:", clusterId);
-        try {
-            if (clusterId) {
-                // Load cluster to generate a meaningful title
-                const cluster = await SELECT.one
-                    .from('com.cytechies.integration.reliability.IncidentClusters')
-                    .where({ ID: clusterId });
-
-                if (cluster) {
-
-                    const { text } = await callAI(destination, [
-                        {
-                            role: 'user',
-                            content: `Generate a short chat session title (max 8 words, no quotes) for an SAP Integration Suite incident investigation with these details:
-                            iFlow: ${cluster.iFlowName}
-                            Error: ${cluster.errorSignature}
-                            Severity: ${cluster.severity}
+        const { text } = await callAI(destination, [
+            {
+                role: 'user',
+                content: `Generate a short chat session title (max 8 words, no quotes) for an SAP Integration Suite incident investigation with these details:
                             UserQuery:${UserQuery}
                             Return ONLY the title text, nothing else.`
-                        }
-                    ]);
-
-                    if (text) title = text.trim();
-                }
             }
-        } catch (err) {
-            console.error("Title generation failed, using default:", err.message);
-        }
-        console.log("Final Chat Title:", title);
+        ]);
+        if (text) title = text.trim();
         const newConv = {
             ID: cds.utils.uuid(),
-            title,
-            cluster_ID: clusterId || null
+            title: title|| UserQuery,
         };
-
         await srv.run(INSERT.into(ChatSessions).entries(newConv));
         return newConv;
     });
+
+
+
+
     this.on('chat', async (req) => {
         const { conversationId, referiFlowID, referClusterID, userMessage } = req.data;
         console.log("Received chat request for conversationId:", conversationId, "with iFlow reference:", referiFlowID, "and cluster reference:", referClusterID);
@@ -87,7 +71,7 @@ export default cds.service.impl(async function () {
             ID: uid,
             conversation_ID: conversationId,
             role: 'user',
-            referiFlow_ID: referiFlowID || null,     
+            referiFlow_ID: referiFlowID || null,
             referCluster_ID: referClusterID || null,
             content: userMessage,
 
@@ -180,103 +164,103 @@ export default cds.service.impl(async function () {
                 content: userMessage
             }];
             //{ text: systemPrompt,tokenCount: 1234,inputTokens: 1234,outputTokens: 1234};
-        const { text, tokenCount, inputTokens, outputTokens } = await callAI(destination, messages, systemPrompt, 1524);
-        console.log("AI Response:", text);
-        const aiText = text ?? 'Failed to generate AI response.';
+            const { text, tokenCount, inputTokens, outputTokens } = await callAI(destination, messages, systemPrompt, 1524);
+            console.log("AI Response:", text);
+            const aiText = text ?? 'Failed to generate AI response.';
 
-        // 7. Save and return assistant reply
-        const newAiMessage = {
-            conversation_ID: conversationId,
-            role: 'assistant',
-            content: aiText,
-            tokenCount: outputTokens
-        };
-        await srv.run(UPDATE(Messages)
-            .set({ tokenCount: inputTokens })
-            .where({ ID: uid }));
-        await srv.run(INSERT.into(Messages).entries(newAiMessage));
-        newAiMessage.inputTokens = inputTokens;
-        newAiMessage.outputTokens = outputTokens;
-        return newAiMessage;
+            // 7. Save and return assistant reply
+            const newAiMessage = {
+                conversation_ID: conversationId,
+                role: 'assistant',
+                content: aiText,
+                tokenCount: outputTokens
+            };
+            await srv.run(UPDATE(Messages)
+                .set({ tokenCount: inputTokens })
+                .where({ ID: uid }));
+            await srv.run(INSERT.into(Messages).entries(newAiMessage));
+            newAiMessage.inputTokens = inputTokens;
+            newAiMessage.outputTokens = outputTokens;
+            return newAiMessage;
 
-    } catch (err) {
-        console.error("Chat AI error:", err.reason?.response?.body ?? err.message);
+        } catch (err) {
+            console.error("Chat AI error:", err.reason?.response?.body ?? err.message);
 
-        const fallback = {
-            conversation_ID: conversationId,
-            role: 'assistant',
-            content: 'Failed to generate AI response.',
-            tokenCount: null
-        };
+            const fallback = {
+                conversation_ID: conversationId,
+                role: 'assistant',
+                content: 'Failed to generate AI response.',
+                tokenCount: null
+            };
 
-        await INSERT.into('com.cytechies.integration.reliability.Messages').entries(fallback);
-        return fallback;
-    }
-});
-this.after(['CREATE', 'UPDATE', 'DELETE'], Messages, async (data, req) => {
+            await INSERT.into('com.cytechies.integration.reliability.Messages').entries(fallback);
+            return fallback;
+        }
+    });
+    this.after(['CREATE', 'UPDATE', 'DELETE'], Messages, async (data, req) => {
 
-    try {
+        try {
 
-        const conversationId = data.conversation_ID;
+            const conversationId = data.conversation_ID;
 
-        if (!conversationId) return;
+            if (!conversationId) return;
 
-        // Get all messages for this conversation
-        const messages = await SELECT
-            .from('com.cytechies.integration.reliability.Messages')
-            .columns('tokenCount')
-            .where({ conversation_ID: conversationId });
+            // Get all messages for this conversation
+            const messages = await SELECT
+                .from('com.cytechies.integration.reliability.Messages')
+                .columns('tokenCount')
+                .where({ conversation_ID: conversationId });
 
-        // Calculate total tokens
-        const totalTokens = messages.reduce((sum, msg) => {
-            return sum + (msg.tokenCount || 0);
-        }, 0);
+            // Calculate total tokens
+            const totalTokens = messages.reduce((sum, msg) => {
+                return sum + (msg.tokenCount || 0);
+            }, 0);
 
-        // Update session token usage
-        await srv.run(UPDATE(ChatSessions)
-            .set({
-                totalSessionTokenUsage: totalTokens
-            })
-            .where({ ID: conversationId }));
+            // Update session token usage
+            await srv.run(UPDATE(ChatSessions)
+                .set({
+                    totalSessionTokenUsage: totalTokens
+                })
+                .where({ ID: conversationId }));
 
-        console.log("Updated total token usage:", totalTokens);
+            console.log("Updated total token usage:", totalTokens);
 
-    } catch (err) {
-        console.error("Token aggregation failed:", err);
-    }
+        } catch (err) {
+            console.error("Token aggregation failed:", err);
+        }
 
-});
-this.after(['CREATE', 'UPDATE', 'DELETE'], ChatSessions, async (data, req) => {
+    });
+    this.after(['CREATE', 'UPDATE', 'DELETE'], ChatSessions, async (data, req) => {
 
-    try {
+        try {
 
-        const clusterId = data.cluster_ID;
+            const clusterId = data.cluster_ID;
 
-        if (!clusterId) return;
+            if (!clusterId) return;
 
-        // Get all messages for this conversation
-        const chatSessions = await SELECT
-            .from('com.cytechies.integration.reliability.ChatSessions')
-            .columns('totalSessionTokenUsage')
-            .where({ cluster_ID: clusterId });
+            // Get all messages for this conversation
+            const chatSessions = await SELECT
+                .from('com.cytechies.integration.reliability.ChatSessions')
+                .columns('totalSessionTokenUsage')
+                .where({ cluster_ID: clusterId });
 
-        // Calculate total tokens
-        const totalTokens = chatSessions.reduce((sum, session) => {
-            return sum + (session.totalSessionTokenUsage || 0);
-        }, 0);
+            // Calculate total tokens
+            const totalTokens = chatSessions.reduce((sum, session) => {
+                return sum + (session.totalSessionTokenUsage || 0);
+            }, 0);
 
-        // Update session token usage
-        await UPDATE('com.cytechies.integration.reliability.IncidentClusters')
-            .set({
-                totalTokenUsage: totalTokens
-            })
-            .where({ ID: clusterId });
+            // Update session token usage
+            await UPDATE('com.cytechies.integration.reliability.IncidentClusters')
+                .set({
+                    totalTokenUsage: totalTokens
+                })
+                .where({ ID: clusterId });
 
-        console.log("Updated total token usage of cluster", clusterId, ":", totalTokens);
+            console.log("Updated total token usage of cluster", clusterId, ":", totalTokens);
 
-    } catch (err) {
-        console.error("Cluster token aggregation failed:", err);
-    }
+        } catch (err) {
+            console.error("Cluster token aggregation failed:", err);
+        }
 
-});
+    });
 });
