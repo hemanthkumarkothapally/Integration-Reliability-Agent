@@ -1,42 +1,47 @@
 export async function getIncidentTrend(Incidents, tenantId) {
-    const IST_OFFSET = 5.5 * 60 * 60 * 1000; // 5 hours 30 mins
+    const IST_OFFSET = 5.5 * 60 * 60 * 1000;
     const now = new Date();
-    const fiveHoursAgo = new Date(now.getTime() - 5 * 60 * 60 * 1000);
 
+    // ── FIX: ceil "now" to the next full hour so partial hours get their bucket ──
+    // e.g. 12:18 IST → ceiling → 13:00 IST
+    const nowIST = new Date(now.getTime() + IST_OFFSET);
+    const ceilIST = new Date(nowIST);
+    if (ceilIST.getUTCMinutes() > 0 || ceilIST.getUTCSeconds() > 0) {
+        ceilIST.setUTCMinutes(0, 0, 0);
+        ceilIST.setUTCHours(ceilIST.getUTCHours() + 1); // push to next full hour
+    }
+    // Convert ceiling back to UTC for range calculations
+    const ceilUTC = new Date(ceilIST.getTime() - IST_OFFSET);
+
+    // Five hours back from the ceiling (not from raw now)
+    const fiveHoursAgo = new Date(ceilUTC.getTime() - 5 * 60 * 60 * 1000);
+
+    // 1. Build 6 buckets: fiveHoursAgo → ceilUTC, all expressed in IST labels
     const buckets = {};
-    // 1. Build buckets shifted to IST
     for (let i = 0; i <= 5; i++) {
         const d = new Date(fiveHoursAgo.getTime() + i * 60 * 60 * 1000);
-        // Add offset to the date object before pulling the hour
         const istDate = new Date(d.getTime() + IST_OFFSET);
         const hourLabel = istDate.getUTCHours().toString().padStart(2, '0') + ':00';
-        
-        buckets[hourLabel] = {
-            hour: hourLabel,
-            totalIncidents: 0,
-            openIncidents: 0
-        };
+        buckets[hourLabel] = { hour: hourLabel, totalIncidents: 0, openIncidents: 0 };
     }
 
-    // 2. Query remains in UTC (standard for HANA)
+    // 2. Query UTC range — upper bound is ceilUTC (not now) so we capture the full partial hour
     const where = [
         { ref: ['createdAt'] }, '>=', { val: fiveHoursAgo.toISOString() },
         'and',
-        { ref: ['createdAt'] }, '<=', { val: now.toISOString() }
+        { ref: ['createdAt'] }, '<=', { val: ceilUTC.toISOString() }  // ← was: now.toISOString()
     ];
-
     if (tenantId && tenantId !== 'ALL') {
         where.push('and', { ref: ['tenant_ID'] }, '=', { val: tenantId });
     }
 
     const incidentData = await SELECT.from(Incidents).where(where);
 
-    // 3. Map incidents shifted to IST
+    // 3. Map incidents to IST buckets (unchanged)
     incidentData.forEach(i => {
         const dateUTC = new Date(i.createdAt);
         const dateIST = new Date(dateUTC.getTime() + IST_OFFSET);
         const bucket = dateIST.getUTCHours().toString().padStart(2, '0') + ':00';
-
         if (buckets[bucket]) {
             buckets[bucket].totalIncidents++;
             if (i.status !== 'RESOLVED') {

@@ -31,7 +31,7 @@ sap.ui.define([], function () {
         
         switch (sSeverity.toUpperCase()) {
             case "CRITICAL":
-                return sap.ui.core.IconColor.Negative; // Red
+                return "#b6121f"; // Red
             case "HIGH":
                 return sap.ui.core.IconColor.Critical; // Orange
             case "MEDIUM":
@@ -58,8 +58,7 @@ sap.ui.define([], function () {
                 case "LOW":
                     return "Success";
 
-                default:
-                    return "None";
+               
             }
 
         },
@@ -80,8 +79,6 @@ sap.ui.define([], function () {
                 case "LOW":
                     return "Accept";
 
-                default:
-                    return "None";
             }
 
         },
@@ -101,8 +98,7 @@ sap.ui.define([], function () {
                 case "LOW":
                     return "Low";
 
-                default:
-                    return "None";
+              
             }
 
         },
@@ -123,8 +119,7 @@ sap.ui.define([], function () {
                 case "LOW":
                     return "Success";
 
-                default:
-                    return "None";
+               
             }
 
         },
@@ -138,8 +133,7 @@ sap.ui.define([], function () {
                 case "RESOLVED":
                     return "Success";
 
-                default:
-                    return "None";
+                
 
             }
 

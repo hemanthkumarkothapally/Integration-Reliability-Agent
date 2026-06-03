@@ -18,20 +18,20 @@
                     <!-- <m:FlexBox alignItems="Center">
                         <m:Title id="_IDGenTitle4" text="{headerDetails>/errorType}" level="H1" titleStyle="H1" wrapping="true" />
                     </m:FlexBox> -->
-                    <!-- <m:Title id="_IDGenTitle4" text="{iFlowName}" level="H2" titleStyle="H2" wrapping="true" /> -->
+                    <m:Title id="_IDGenTitle4" text="{iFlowName}" level="H3" titleStyle="H3" wrapping="true" />
                 </expandedContent>
                 <expandedHeading>
 
-                    <!-- <m:Button icon="sap-icon://nav-back" type="Ghost" press=".onNavBack" class="sapUiTinyMarginEnd" tooltip="{i18n>backButton.tooltip}" /> -->
+                    <m:Button icon="sap-icon://nav-back" type="Ghost" press=".onNavBack" class="sapUiTinyMarginEnd" tooltip="{i18n>backButton.tooltip}" />
 
-                    <m:HBox width="100%" wrap="Wrap" alignItems="Center">
+                    <!-- <m:HBox width="100%" wrap="Wrap" alignItems="Center">
 
                         <m:Button icon="sap-icon://nav-back"  type="Transparent" press=".onNavBack" class="sapUiTinyMarginEnd" tooltip="{i18n>backButton.tooltip}" />
 
                         <m:Title text="{iFlowName}" level="H1" titleStyle="H1" wrapping="true" />
                         <m:ToolbarSpacer ></m:ToolbarSpacer>
 
-                    </m:HBox>
+                    </m:HBox> -->
 
                 </expandedHeading>
 
@@ -82,8 +82,6 @@
                     <m:Title text="{iFlowName}" level="H3" titleStyle="H3" wrapping="true" />
 
                 </snappedTitleOnMobile>
-
-
             </ObjectPageDynamicHeaderTitle>
         </headerTitle>
 
@@ -235,7 +233,7 @@
 
                                                         </suite:Timeline>
                                                     </m:VBox>
-                                                    <m:VBox class="sapUiSmallMarginBottom vboxborderclass">
+                                                    <!-- <m:VBox class="sapUiSmallMarginBottom vboxborderclass">
 
                                                         <m:HBox alignItems="Center" class="sapUiTinyMarginBottom">
                                                             <m:Avatar src="sap-icon://process" displaySize="XS" class="sapUiTinyMarginEnd" />
@@ -266,7 +264,7 @@
 
                                                         </m:List>
 
-                                                    </m:VBox>
+                                                    </m:VBox> -->
 
                                                 </m:VBox>
 

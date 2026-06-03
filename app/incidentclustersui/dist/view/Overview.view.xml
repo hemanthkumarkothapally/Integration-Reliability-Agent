@@ -12,7 +12,7 @@
     xmlns:grid="sap.ui.layout.cssgrid"
     xmlns:card="sap.f.cards">
 
-    <tnt:ToolPage id="toolPage1"  sideExpanded="false">
+    <tnt:ToolPage id="toolPage1" sideExpanded="false">
 
 
         <tnt:header >
@@ -32,6 +32,13 @@
                 <Title text="Integration Monitoring Overview" level="H1" />
 
                 <ToolbarSpacer />
+                <Text text="Tenant:"></Text>
+                <Select id="tenantSelect" width="15rem" change=".onTenantChange" items="{
+        path: '/Tenants'
+    }">
+                    <core:Item key="{ID}" text="{tenantName}" />
+
+                </Select>
                 <Button icon="sap-icon://process" text="iFlows" type="Ghost" press=".onIFlowBtn" tooltip="Navigate to iFlows Page"/>
 
 
@@ -47,7 +54,7 @@
 
             <tnt:SideNavigation id="sideNavigation">
 
-                <tnt:NavigationList  itemSelect=".onSideNavigationSelect">
+                <tnt:NavigationList itemSelect=".onSideNavigationSelect">
 
                     <tnt:NavigationListItem text="Overview" icon="sap-icon://home" key="overview" />
 
@@ -99,6 +106,7 @@
                                             <card:NumericHeader title="Monitored iFlows" number="{chart>/monitoredIflows}" state="Neutral" iconSrc="sap-icon://process" />
                                         </f:header>
                                     </f:Card>
+                                    
                                 </f:GridListItem>
 
                                 <!-- Active Clusters -->
@@ -114,7 +122,7 @@
                                 <f:GridListItem>
                                     <f:Card width="100%" semanticRole="ListItem">
                                         <f:header>
-                                            <card:NumericHeader title="Open Incidents" number="{chart>/openIncidents}" state="Error" iconSrc="sap-icon://message-warning" />
+                                            <card:NumericHeader title="Open Incidents" number="{chart>/openIncidents}" state="None" iconSrc="sap-icon://message-warning" />
                                         </f:header>
                                     </f:Card>
                                 </f:GridListItem>
@@ -123,7 +131,7 @@
                                 <f:GridListItem>
                                     <f:Card width="100%" semanticRole="ListItem">
                                         <f:header>
-                                            <card:NumericHeader title="Critical Iflows" number="{chart>/criticalIflows}" state="Good" iconSrc="sap-icon://status-critical" />
+                                            <card:NumericHeader title="Critical Iflows" number="{chart>/criticalIflows}" state="Error" iconSrc="sap-icon://status-critical" />
                                         </f:header>
                                     </f:Card>
                                 </f:GridListItem>
@@ -155,20 +163,26 @@
                                         </f:header> -->
 
                                         <f:content >
-                                            <viz:VizFrame id="topErrorTypesChart"  uiConfig="{applicationSet:'fiori'}" vizType="donut" vizProperties="{
-                                                'title': {
-                                                    'visible': true,
-                                                    'text': 'Clusters by Severity'
-                                                },
-                                                'legend': {
-                                                    'visible': true
-                                                },
-                                                'plotArea': {
-                                                    'dataLabel': {
-                                                        'visible': true
-                                                    }
-                                                }
-                                            }" width="100%" height="18rem">
+                                            <viz:VizFrame id="topErrorTypesChart" uiConfig="{applicationSet:'fiori'}" vizType="donut" vizProperties="{
+        'title': {
+            'visible': true,
+            'text': 'Clusters by Severity'
+        },
+        'legend': {
+            'visible': true
+        },
+        'plotArea': {
+            'dataLabel': {
+                'visible': true
+            },
+            'colorPalette': [
+                '#bb0000',
+                '#e9730c',
+                '#0a6ed1',
+                '#16bd5b'
+            ]
+        }
+    }" width="100%" height="18rem">
 
                                                 <viz:dataset >
 
@@ -266,7 +280,14 @@
                                                 'plotArea': {
                                                     'dataLabel': {
                                                         'visible': true
-                                                    }
+                                                    },
+                                                     'colorPalette': [
+                '#bb0000',
+                '#e9730c',
+                '#0a6ed1',
+                '#16bd5b',
+                'rgb(241, 76, 213)'
+            ]
                                                 }
                                             }">
 
@@ -310,21 +331,21 @@
                         <f:Card semanticRole="ListItem" width="100%">
 
                             <f:header>
-                                <card:Header title="Top 5 Problematic iFlows" />
+                                <card:Header title="Top 5 Critical iFlows" />
                             </f:header>
 
                             <f:content>
 
-                                <Table id="topIflowsTable" items="{topIflows>/topIflows}" autoPopinMode="true" sticky="ColumnHeaders">
+                                <Table id="idMonitoredArtifacts1" items="{topIflows>/topIflows}" autoPopinMode="true" sticky="ColumnHeaders">
 
                                     <columns>
                                         <Column width="3rem" hAlign="Center" />
 
-                                        <Column width="18rem">
+                                        <Column width="40%">
                                             <Text text="iFlow Name" />
                                         </Column>
 
-                                         <Column minScreenWidth="Tablet">
+                                        <Column minScreenWidth="Tablet">
                                             <Text text="Package Name" />
                                         </Column>
 
@@ -352,19 +373,20 @@
 
                                             <cells>
                                                 <core:Icon src="sap-icon://process" size="1.25rem" color="{path: 'topIflows>overallSeverity', formatter: '.formatter.severityIconColor'}"/>
-                                                <Text text="{topIflows>iFlowName}" />
-                                                 <Text text="{topIflows>PackageName}" />
+                                                <Title titleStyle="H6" wrapping="true" text="{topIflows>iFlowName}" />
+                                                <Text text="{topIflows>PackageName}" />
 
-                                                <ObjectStatus text="{topIflows>overallSeverity}" state="{
-        path: 'topIflows>overallSeverity',
-        formatter: '.formatter.formatSeverityState'
-    }" />
+                                                <Button text="{path: 'topIflows>overallSeverity', formatter: '.formatter.formatButtonText'}" type="{path: 'topIflows>overallSeverity', formatter: '.formatter.formatButtonState'}" icon="{path: 'topIflows>overallSeverity', formatter: '.formatter.formatSeverityIcon'}" class="unclickableTag">
+                                                    <customData>
+                                                        <core:CustomData key="severity" value="{topIflows>overallSeverity}" />
+                                                    </customData>
+                                                </Button>
 
                                                 <ObjectNumber number="{topIflows>openClusterCount}" />
 
                                                 <ObjectNumber number="{topIflows>totalIncidents}" emphasized="true" />
 
-                                               <Text text="{path: 'topIflows>lastPollTimestamp', formatter: '.formatter.formatDateTime'}" />
+                                                <Text text="{path: 'topIflows>lastPollTimestamp', formatter: '.formatter.formatDateTime'}" />
 
                                             </cells>
 

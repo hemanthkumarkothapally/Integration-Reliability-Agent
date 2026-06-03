@@ -25,19 +25,7 @@ export default cds.service.impl(async function () {
   console.log("========== POLLER SERVICE STARTED ==========");
   let IS_API;
   let db;
-  try {
-    const tenants =
-      await SELECT.from(Tenants)
-        .where({ isActive: true });
-
-    console.log(
-      `Found ${tenants.length} active tenants`
-    );
-  } catch (err) {
-    console.error("Failed to connect IS_RUNTIME_API");
-    console.error(err);
-    console.error(err.stack);
-  }
+ 
   try {
     db = await cds.connect.to('db');
     console.log("Connected to DB");
@@ -59,6 +47,19 @@ export default cds.service.impl(async function () {
     Tenants
   } = db.entities;
   const { IncidentClusters } = srv.entities;
+   try {
+    const tenants =
+      await SELECT.from(Tenants)
+        .where({ isActive: true });
+
+    console.log(
+      `Found ${tenants.length} active tenants`
+    );
+  } catch (err) {
+    console.error("Failed to connect IS_RUNTIME_API");
+    console.error(err);
+    console.error(err.stack);
+  }
   this.on('getFailedLogs', async () => {
     console.log("========== getFailedLogs START ==========");
     try {
@@ -103,30 +104,31 @@ export default cds.service.impl(async function () {
       /* LAST POLL TIMESTAMP */
       console.log("Fetching latest artifact timestamp...");
       const latestArtifact = await SELECT.one.from(MonitoredArtifacts)
-        .orderBy({ lastPollTimestamp: 'desc' });
+  .orderBy({ lastPollTimestamp: 'desc' });
 
-      console.log("Latest Artifact:", latestArtifact);
+console.log("Latest Artifact:", latestArtifact);
 
-      const fallback = new Date(Date.now());
-      const rawTimestamp =
-        fallback;
+// 1. Fallback to 5 minutes ago if no previous polling record exists
+const dateFiveMinAgo = new Date(Date.now() - 5 * 60 * 1000);
 
-      console.log("Raw Timestamp:", rawTimestamp);
+// 2. CRITICAL FIX: Ensure rawTimestamp is evaluated as a Date instance
+const rawTimestamp = latestArtifact ? new Date(latestArtifact.lastPollTimestamp) : dateFiveMinAgo;
 
-      const lastPollTimestamp = new Date(new Date(rawTimestamp).getTime() + 5 * 60 * 60 * 1000)
-        .toISOString()
-        .split('.')[0];
+console.log("Raw Timestamp:", rawTimestamp);
 
-      console.log("Formatted Timestamp (Plus 5 Hours):", lastPollTimestamp);
+// 3. Strip out milliseconds/Z characters to satisfy SAP CPI's OData parser
+const lastPollTimestamp = rawTimestamp.toISOString().split('.')[0];
 
-      /* CPI logs Filter */
+console.log("Formatted Timestamp:", lastPollTimestamp);
 
-      const filter = `Status eq 'FAILED' and LogEnd lt datetime'${lastPollTimestamp}'`;
+/* CPI logs Filter */
+const filter = `Status eq 'FAILED' and LogEnd gt datetime'${lastPollTimestamp}'`;
 
-      console.log("Generated Filter:", filter);
+console.log("Generated Filter:", filter);
+
 
       // const path = `/api/v1/MessageProcessingLogs?$filter=${encodeURIComponent(filter)}`;
-      const path = `/api/v1/MessageProcessingLogs?$filter=${encodeURIComponent(filter)}&$orderby=LogEnd asc`;
+      const path = `/api/v1/MessageProcessingLogs?$filter=${encodeURIComponent(filter)}&$orderby=LogEnd desc`;
       console.log("CPI API Path:", path);
       console.log("Calling CPI MessageProcessingLogs API...");
 
