@@ -88,5 +88,87 @@
      padding-bottom: 0rem !important; 
 }
 
+.kpiTile {
+    background: #ffffff;
+    border: 1px solid #d9d9d9;
+    border-radius: 1rem;
+    min-height: 7rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.kpiTile .sapFGLIWrapper {
+    background: #ffffff;
+    border-radius: 1rem;
+}
+
+.iconCircle {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+}
+
+.blueIconBg {
+    background: #DBEAFE;
+}
+
+.orangeIconBg {
+    background: #FFEDD5;
+}
+
+.yellowIconBg {
+    background: #FEF3C7;
+}
+
+.redIconBg {
+    background: #FEE2E2;
+}
+
+.greenIconBg {
+    background: #DCFCE7;
+}
+
+.kpiTitle {
+    font-size: 1.05rem !important;
+    font-weight: 600 !important;
+}
+
+.kpiValueBlue {
+    font-size: 2rem !important;
+    font-weight: 550 !important;
+    color: #2563EB !important;
+}
+
+.kpiValueOrange {
+    font-size: 2rem !important;
+    font-weight: 550 !important;
+    color: #EA580C !important;
+}
+
+.kpiValueYellow {
+    font-size: 2rem !important;
+    font-weight: 550 !important;
+    color: #D97706 !important;
+}
+
+.kpiValueRed {
+    font-size: 2rem !important;
+    font-weight: 550 !important;
+    color: #DC2626 !important;
+}
+
+.kpiValueGreen {
+    font-size: 2rem !important;
+    font-weight: 550 !important;
+    color: #16A34A !important;
+}
+
+.iflowHeaderText {
+    font-size: 1.5rem;
+    font-weight: 1000;
+    line-height: 2.2rem;
+    color: var(--sapTextColor);
+}
+    
+
 
 

@@ -18,11 +18,31 @@
                     <!-- <m:FlexBox alignItems="Center">
                         <m:Title id="_IDGenTitle4" text="{headerDetails>/errorType}" level="H1" titleStyle="H1" wrapping="true" />
                     </m:FlexBox> -->
-                    <m:Title id="_IDGenTitle4" text="{iFlowName}" level="H3" titleStyle="H3" wrapping="true" />
+                    <!-- <m:HBox wrap="Wrap" alignItems="Center">
+
+                        <m:Button icon="sap-icon://nav-back" type="Transparent" press=".onNavBack" class="sapUiTinyMarginEnd" />
+
+                        <m:Title text="{iFlowName}" level="H2" titleStyle="H2" wrapping="true" />
+
+                    </m:HBox> -->
                 </expandedContent>
                 <expandedHeading>
 
-                    <m:Button icon="sap-icon://nav-back" type="Ghost" press=".onNavBack" class="sapUiTinyMarginEnd" tooltip="{i18n>backButton.tooltip}" />
+                    <m:HBox width="100%" alignItems="Start">
+
+    <m:Button
+        icon="sap-icon://nav-back"
+        type="Transparent"
+        press=".onNavBack"
+        class="sapUiTinyMarginEnd" />
+
+    <m:Text
+        text="{iFlowName}"
+        wrapping="true"
+        width="100%"
+        class="iflowHeaderText"/>
+
+</m:HBox>
 
                     <!-- <m:HBox width="100%" wrap="Wrap" alignItems="Center">
 

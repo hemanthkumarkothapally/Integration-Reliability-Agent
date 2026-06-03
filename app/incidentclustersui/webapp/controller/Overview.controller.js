@@ -77,21 +77,31 @@ sap.ui.define([
     //     !oToolPage.getSideExpanded()
     //   )
     // },
+
+    onSideNavButtonPress: function () {
+
+    const oSideNav = this.byId("sideNavigation");
+
+    oSideNav.setVisible(
+        !oSideNav.getVisible()
+    );
+
+},
     loadTopCriticalIflows: async function () {
 
       const oModel = this.getOwnerComponent().getModel();
-      const sSelectedTenant = this.getView().byId("tenantSelect").getSelectedKey();
-      console.log("Selected Tenant:", sSelectedTenant);
+     // const sSelectedTenant = this.getView().byId("tenantSelect").getSelectedKey();
+     // console.log("Selected Tenant:", sSelectedTenant);
 
       try {
 
         const oContext = oModel.bindContext("/getTopCriticalIflows(...)");
-        if (sSelectedTenant !== "") {
-          oContext.setParameter(
-            "tenantId",
-            sSelectedTenant
-          );
-        }
+        // if (sSelectedTenant !== "") {
+        //   oContext.setParameter(
+        //     "tenantId",
+        //     sSelectedTenant
+        //   );
+        // }
 
         await oContext.execute();
 
@@ -120,18 +130,18 @@ sap.ui.define([
 
       const oModel = this.getOwnerComponent().getModel();
       debugger
-      const sSelectedTenant = this.getView().byId("tenantSelect").getSelectedKey();
-      console.log("Selected Tenant:", sSelectedTenant);
+      //const sSelectedTenant = this.getView().byId("tenantSelect").getSelectedKey();
+      //console.log("Selected Tenant:", sSelectedTenant);
      
       try {
 
         const oContext = oModel.bindContext("/getDashboardCharts(...)");
-       if (sSelectedTenant !== "") {
-          oContext.setParameter(
-            "tenantId",
-            sSelectedTenant
-          );
-        }
+      //  if (sSelectedTenant !== "") {
+      //     oContext.setParameter(
+      //       "tenantId",
+      //       sSelectedTenant
+      //     );
+      //   }
         await oContext.execute();
 
         const oResult = oContext.getBoundContext().getObject();

@@ -12,71 +12,9 @@
     xmlns:grid="sap.ui.layout.cssgrid"
     xmlns:card="sap.f.cards">
 
-    <tnt:ToolPage id="toolPage1" sideExpanded="false">
+    
 
-
-        <tnt:header >
-
-            <tnt:ToolHeader>
-
-                <!-- MENU BUTTON -->
-
-                <Button icon="sap-icon://menu2" type="Transparent" press=".onSideNavButtonPress">
-
-                    <layoutData>
-                        <OverflowToolbarLayoutData priority="NeverOverflow" />
-                    </layoutData>
-
-                </Button>
-
-                <Title text="Integration Monitoring Overview" level="H1" />
-
-                <ToolbarSpacer />
-                <Select id="tenantSelect" width="15rem" change=".onTenantChange" items="{
-        path: '/Tenants'
-    }">
-                    <core:Item key="{ID}" text="{tenantName}" />
-
-                </Select>
-                <Button icon="sap-icon://process" text="iFlows" type="Ghost" press=".onIFlowBtn" tooltip="Navigate to iFlows Page"/>
-
-
-            </tnt:ToolHeader>
-
-        </tnt:header>
-
-        <!-- ===================================================== -->
-        <!-- SIDE NAVIGATION -->
-        <!-- ===================================================== -->
-
-        <!-- <tnt:sideContent>
-
-            <tnt:SideNavigation id="sideNavigation">
-
-                <tnt:NavigationList itemSelect=".onSideNavigationSelect">
-
-                    <tnt:NavigationListItem text="Overview" icon="sap-icon://home" key="overview" />
-
-                    <tnt:NavigationListItem text="Incidents" icon="sap-icon://alert" key="incidents" />
-
-                    <tnt:NavigationListItem text="iFlows" icon="sap-icon://process" key="iflows" />
-
-                    <tnt:NavigationListItem text="Clusters" icon="sap-icon://share-2" key="clusters" />
-
-                </tnt:NavigationList>
-
-
-            </tnt:SideNavigation>
-
-        </tnt:sideContent> -->
-
-        <!-- ===================================================== -->
-        <!-- MAIN CONTENT -->
-        <!-- ===================================================== -->
-
-        <tnt:mainContents>
-
-            <f:DynamicPage id="dynamicPage" fitContent="true" toggleHeaderOnTitleClick="false">
+            <f:DynamicPage id="dynamicPage" fitContent="false" toggleHeaderOnTitleClick="false">
 
 
                 <!-- ===================================================== -->
@@ -90,66 +28,140 @@
                     <!-- ===================================================== -->
 
                     <VBox class="sapUiNoMargin">
-                        <f:GridList id="kpiGridList" width="100%" growing="false">
+                        <f:GridList id="kpiGridList" class="sapUiTinyMarginBottom" width="100%" growing="false">
 
                             <f:customLayout>
-                                <grid:GridBasicLayout gridTemplateColumns="repeat(auto-fit, minmax(14rem, 1fr))" gridGap="0.5rem" />
+                                <grid:GridBasicLayout gridTemplateColumns="repeat(auto-fit, minmax(16rem, 1fr))" gridGap="1rem" />
                             </f:customLayout>
 
                             <f:items>
 
                                 <!-- Total Incidents -->
-                                <f:GridListItem >
-                                    <f:Card width="100%" semanticRole="ListItem">
-                                        <f:header>
+                                <f:GridListItem>
+                                    <!-- <f:Card width="100%" semanticRole="ListItem"> -->
+                                    <!-- <f:header>
                                             <card:NumericHeader title="Monitored iFlows" number="{chart>/monitoredIflows}" state="Neutral" iconSrc="sap-icon://process" />
-                                        </f:header>
-                                    </f:Card>
-                                    
+                                        </f:header> -->
+
+                                    <!-- <f:content> -->
+                                    <HBox width="100%" height="10vh" alignItems="Center" justifyContent="Start" class="sapUiSmallMargin">
+
+                                        <!-- Icon Circle -->
+                                        <VBox class="iconCircle blueIconBg" justifyContent="Center" alignItems="Center">
+
+                                            <core:Icon src="sap-icon://process" size="1.4rem" color="#2563EB"/>
+                                        </VBox>
+
+                                        <!-- KPI Content -->
+                                        <VBox class="sapUiSmallMarginBegin">
+                                            <Title text="Monitored iFlows" level="H5" class="kpiTitle"/>
+
+                                            <Text text="{chart>/monitoredIflows}" class="kpiValueBlue"/>
+                                        </VBox>
+
+                                    </HBox>
+                                    <!-- </f:content> -->
+                                    <!-- </f:Card> -->
+
                                 </f:GridListItem>
 
                                 <!-- Active Clusters -->
                                 <f:GridListItem>
-                                    <f:Card width="100%" semanticRole="ListItem">
+                                    <!-- <f:Card width="100%" semanticRole="ListItem">
                                         <f:header>
                                             <card:NumericHeader title="Open Clusters" number="{chart>/openClusters}" state="Critical" iconSrc="sap-icon://group-2" />
                                         </f:header>
-                                    </f:Card>
+                                    </f:Card> -->
+
+                                    <HBox width="100%" height="10vh" alignItems="Center" class="sapUiSmallMargin">
+
+                                        <VBox class="iconCircle orangeIconBg" justifyContent="Center" alignItems="Center">
+
+                                            <core:Icon src="sap-icon://group-2" size="1.4rem" color="#EA580C"/>
+                                        </VBox>
+
+                                        <VBox class="sapUiSmallMarginBegin">
+                                            <Title text="Open Clusters" level="H5" class="kpiTitle"/>
+                                            <Text text="{chart>/openClusters}" class="kpiValueOrange"/>
+                                        </VBox>
+
+                                    </HBox>
                                 </f:GridListItem>
 
                                 <!-- Critical -->
                                 <f:GridListItem>
-                                    <f:Card width="100%" semanticRole="ListItem">
+                                    <!-- <f:Card width="100%" semanticRole="ListItem">
                                         <f:header>
                                             <card:NumericHeader title="Open Incidents" number="{chart>/openIncidents}" state="None" iconSrc="sap-icon://message-warning" />
                                         </f:header>
-                                    </f:Card>
+                                    </f:Card> -->
+
+                                    <HBox width="100%" height="10vh" alignItems="Center" class="sapUiSmallMargin">
+
+                                        <VBox class="iconCircle yellowIconBg" justifyContent="Center" alignItems="Center">
+
+                                            <core:Icon src="sap-icon://message-warning" size="1.4rem" color="#D97706"/>
+                                        </VBox>
+
+                                        <VBox class="sapUiSmallMarginBegin">
+                                            <Title text="Open Incidents" level="H5" class="kpiTitle"/>
+                                            <Text text="{chart>/openIncidents}" class="kpiValueYellow"/>
+                                        </VBox>
+
+                                    </HBox>
                                 </f:GridListItem>
 
                                 <!-- Critical Iflows -->
                                 <f:GridListItem>
-                                    <f:Card width="100%" semanticRole="ListItem">
+                                    <!-- <f:Card width="100%" semanticRole="ListItem">
                                         <f:header>
                                             <card:NumericHeader title="Critical Iflows" number="{chart>/criticalIflows}" state="Error" iconSrc="sap-icon://status-critical" />
                                         </f:header>
-                                    </f:Card>
+                                    </f:Card> -->
+
+                                    <HBox width="100%" height="10vh" alignItems="Center" class="sapUiSmallMargin">
+
+                                        <VBox class="iconCircle redIconBg" justifyContent="Center" alignItems="Center">
+
+                                            <core:Icon src="sap-icon://status-critical" size="1.4rem" color="#DC2626"/>
+                                        </VBox>
+
+                                        <VBox class="sapUiSmallMarginBegin">
+                                            <Title text="Critical iFlows" level="H5" class="kpiTitle"/>
+                                            <Text text="{chart>/criticalIflows}" class="kpiValueRed"/>
+                                        </VBox>
+
+                                    </HBox>
                                 </f:GridListItem>
 
                                 <f:GridListItem>
-                                    <f:Card width="100%" semanticRole="ListItem">
+                                    <!-- <f:Card width="100%" semanticRole="ListItem">
                                         <f:header>
                                             <card:NumericHeader title="Clusters Resolved Today" number="{chart>/resolvedToday}" state="Good" iconSrc="sap-icon://complete" />
                                         </f:header>
-                                    </f:Card>
+                                    </f:Card> -->
+                                    <HBox width="100%" height="10vh" alignItems="Center" class="sapUiSmallMargin">
+
+                                        <VBox class="iconCircle greenIconBg" justifyContent="Center" alignItems="Center">
+
+                                            <core:Icon src="sap-icon://complete" size="1.4rem" color="#16A34A"/>
+                                        </VBox>
+
+                                        <VBox wrap="Wrap" class="sapUiSmallMarginBegin">
+                                            <Title text="Resolved Clusters Today" level="H5" wrapping="true" class="kpiTitle"/>
+                                            <Text text="{chart>/resolvedToday}" class="kpiValueGreen"/>
+                                        </VBox>
+
+                                    </HBox>
                                 </f:GridListItem>
                             </f:items>
 
                         </f:GridList>
 
-                        <f:GridList width="100%">
+                        <f:GridList class="sapUiTinyMarginBottom" width="100%">
 
                             <f:customLayout>
-                                <grid:GridBasicLayout gridTemplateColumns="repeat(auto-fit, minmax(16rem, 1fr))" gridGap="0.5rem" />
+                                <grid:GridBasicLayout gridTemplateColumns="repeat(auto-fit, minmax(16rem, 1fr))" gridGap="1rem" />
                             </f:customLayout>
 
                             <f:items>
@@ -175,11 +187,12 @@
                 'visible': true
             },
             'colorPalette': [
-                '#bb0000',
-                '#e9730c',
-                '#0a6ed1',
-                '#16bd5b'
-            ]
+                                                            '#e60000',
+                                                            '#f28c00',
+                                                            '#f4c20d',
+                                                            '#00a651'
+                                                        ],
+              'drawingEffect': 'glossy'
         }
     }" width="100%" height="18rem">
 
@@ -286,7 +299,8 @@
                 '#0a6ed1',
                 '#16bd5b',
                 'rgb(241, 76, 213)'
-            ]
+            ],
+            'drawingEffect': 'glossy'
                                                 }
                                             }">
 
@@ -329,13 +343,13 @@
 
                         <f:Card semanticRole="ListItem" width="100%">
 
-                            <f:header>
-                                <card:Header title="Top 5 Critical iFlows" />
-                            </f:header>
+                            <!-- <f:header>
+                                <card:Header title="Top 5 Critical iFlows" level="H1"/>
+                            </f:header> -->
 
                             <f:content>
 
-                                <Table id="idMonitoredArtifacts1" items="{topIflows>/topIflows}" autoPopinMode="true" sticky="ColumnHeaders">
+                                <Table  headerText="Top 5 Critical iFlows" id="idMonitoredArtifacts1" items="{topIflows>/topIflows}" autoPopinMode="true" sticky="ColumnHeaders">
 
                                     <columns>
                                         <Column width="3rem" hAlign="Center" />
@@ -412,8 +426,6 @@
 
             </f:DynamicPage>
 
-        </tnt:mainContents>
-
-    </tnt:ToolPage>
+        
 
 </mvc:View>
