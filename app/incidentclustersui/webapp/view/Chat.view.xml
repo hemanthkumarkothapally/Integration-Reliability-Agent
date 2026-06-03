@@ -5,21 +5,21 @@
     xmlns:core="sap.ui.core" displayBlock="true">
 
     <mvc:dependents>
-        <ResponsivePopover id="activeClusterPopover" placement="Top" title="Attached Cluster" class="sapUiContentPadding">
+        <ResponsivePopover id="activeClusterPopover" placement="Top" title="{i18n>activeClusterPopover.title}" class="sapUiContentPadding">
 
             <VBox alignItems="Center">
-                <MessageStrip text="{chatJSONModel>/clusterName}" type="Warning" showIcon="true" customIcon="sap-icon://chain-link" class="sapUiSmallMarginBottom" />
-                <!-- <Button type="Attention" text="{chatJSONModel>/clusterName}" icon="sap-icon://chain-link" /> -->
-                <Button text="Remove Cluster" type="Reject" icon="sap-icon://delete" press=".onRemoveClusterPress" />
+                <MessageStrip text="{chatJSONModel>/clusterName}" type="Warning" showIcon="true" customIcon="sap-icon://share-2" class="sapUiSmallMarginBottom" />
+                <!-- <Button type="Attention" text="{chatJSONModel>/clusterName}" icon="sap-icon://share-2" /> -->
+                <Button text="{i18n>remove.popover.cluster.button}" type="Reject" icon="sap-icon://delete" press=".onRemoveClusterPress" />
             </VBox>
 
         </ResponsivePopover>
-        <ResponsivePopover id="activeiFlowPopover" placement="Top" title="Attached iFlow" class="sapUiContentPadding">
+        <ResponsivePopover id="activeiFlowPopover" placement="Top" title="{i18n>activeiFlowPopover.title}" class="sapUiContentPadding">
 
             <VBox alignItems="Center">
                 <MessageStrip text="{chatJSONModel>/iFlowName}" type="Information" showIcon="true" customIcon="sap-icon://process" class="sapUiSmallMarginBottom" />
-                <!-- <Button type="Attention" text="{chatJSONModel>/clusterName}" icon="sap-icon://chain-link" /> -->
-                <Button text="Remove iFlow" type="Reject" icon="sap-icon://delete" press=".onRemoveiFlowPress" />
+                <!-- <Button type="Attention" text="{chatJSONModel>/clusterName}" icon="sap-icon://share-2" /> -->
+                <Button text="{i18n>remove.popover.iflow.button}" type="Reject" icon="sap-icon://delete" press=".onRemoveiFlowPress" />
             </VBox>
 
         </ResponsivePopover>
@@ -28,13 +28,13 @@
             <content>
                 <VBox class="sapUiTinyMargin">
                     <!-- <Button text="Attach Cluster" type="Ghost" icon="sap-icon://add-process" tooltip="{i18n>cluster.toggle.attach.tooltip}" visible="{= !${chatJSONModel>/clusterDataEnabled} }" press=".onToggleClusterData" width="100%" /> -->
-                    <Button text="Attach Cluster" type="Attention" icon="sap-icon://combine" tooltip="{i18n>cluster.toggle.attach.tooltip}" visible="{= !${chatJSONModel>/clusterDataEnabled} &amp;&amp; !${chatJSONModel>/iFlowDataEnabled} }" press=".onSelectClusterData" width="100%" />
+                    <Button text="{i18n>actionDataPopover.cluster.button}" type="Attention" icon="sap-icon://share-2" tooltip="{i18n>cluster.toggle.attach.tooltip}" visible="{= !${chatJSONModel>/clusterDataEnabled} &amp;&amp; !${chatJSONModel>/iFlowDataEnabled} }" press=".onSelectClusterData" width="100%" />
 
-                    <Button text="Attach iFlow" type="Neutral" icon="sap-icon://add-process" tooltip="{i18n>cluster.toggle.attach.tooltip}" visible="{= !${chatJSONModel>/clusterDataEnabled} &amp;&amp; !${chatJSONModel>/iFlowDataEnabled} }" press=".onSelectiFlowData" width="100%" />
+                    <Button text="{i18n>actionDataPopover.iflow.button}" type="Neutral" icon="sap-icon://add-process" tooltip="{i18n>cluster.toggle.attach.tooltip}" visible="{= !${chatJSONModel>/clusterDataEnabled} &amp;&amp; !${chatJSONModel>/iFlowDataEnabled} }" press=".onSelectiFlowData" width="100%" />
 
                     <!-- <Button text="Upload File" type="Ghost" icon="sap-icon://attachment" tooltip="Insert Image or Document" press=".onUploadFilePress" width="100%" /> -->
 
-                    <Button text="Voice Input" type="Ghost" icon="sap-icon://microphone" tooltip="Record Audio" press=".onVoiceInputPress" width="100%" />
+                    <!-- <Button text="Voice Input" type="Ghost" icon="sap-icon://microphone" tooltip="Record Audio" press=".onVoiceInputPress" width="100%" /> -->
 
                 </VBox>
             </content>
@@ -55,7 +55,7 @@
             </content>
         </ResponsivePopover>
 
-        <ResponsivePopover id="iFlowPopover" placement="Right" title="Monitored iFlows">
+        <ResponsivePopover id="iFlowPopover" placement="Right" title="{i18n>iFlowPopover.title}">
             <content>
                 <List id="iFlowList" mode="SingleSelectMaster" width="300px" selectionChange=".oniFlowSelect" items="{
                 path: '/MonitoredArtifacts', 
@@ -94,7 +94,7 @@
             </content>
         </ResponsivePopover>
 
-        <ResponsivePopover id="clusterPopover" placement="Right" title="Incident Clusters">
+        <ResponsivePopover id="clusterPopover" placement="Right" title="{i18n>clusterPopover.title}">
             <content>
                 <List id="clusterList" mode="SingleSelectMaster" selectionChange=".onClusterSelect" items="{
               path: '/IncidentClusters',
@@ -146,7 +146,7 @@
                 </Button>
                 <Title id="_IDGenTitle3" text="{i18n>toolHeader.title}" wrapping="true"/>
                 <ToolbarSpacer id="_IDGenToolbarSpacer2" />
-                <Button id="_IDGenButton1" icon="sap-icon://add" press=".onNewChat" tooltip="{i18n>newChat.tooltip}" type="Ghost">
+                <Button id="_IDGenButton1" icon="sap-icon://add" press=".onNewChat" tooltip="{i18n>newChat.tooltip}"  type="Ghost">
                     <layoutData>
                         <OverflowToolbarLayoutData id="_IDGenOverflowToolbarLayoutData1" priority="NeverOverflow" />
                     </layoutData>
@@ -204,12 +204,12 @@
 
                             <OverflowToolbar id="chatFooter" style="Clear" height="auto">
 
-                                <Button id="addActionsBtn" icon="sap-icon://add" type="Transparent" press=".onOpenActionsPopover" tooltip="More options">
+                                <Button id="addActionsBtn" icon="sap-icon://add" visible="{= !${chatJSONModel>/clusterDataEnabled} &amp;&amp; !${chatJSONModel>/iFlowDataEnabled} }" type="Transparent" press=".onOpenActionsPopover" tooltip="More options">
                                     <layoutData>
                                         <OverflowToolbarLayoutData priority="NeverOverflow" />
                                     </layoutData>
                                 </Button>
-                                <Button type="Attention" icon="sap-icon://chain-link" tooltip="{i18n>cluster.toggle.detach.tooltip}" visible="{chatJSONModel>/clusterDataEnabled}" press=".onClusterInfoPopover">
+                                <Button type="Attention" icon="sap-icon://share-2" tooltip="{i18n>cluster.toggle.detach.tooltip}" visible="{chatJSONModel>/clusterDataEnabled}" press=".onClusterInfoPopover">
                                     <layoutData>
                                         <OverflowToolbarLayoutData priority="NeverOverflow" />
                                     </layoutData>
