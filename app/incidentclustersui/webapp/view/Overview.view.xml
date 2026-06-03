@@ -28,6 +28,18 @@
                     <!-- ===================================================== -->
 
                     <VBox class="sapUiNoMargin">
+                    <Text text="Tenant:"></Text>
+               <Select
+    id="tenantSelect"
+    selectedKey="ALL"
+    change=".onTenantChange"
+    items="{tenantModel>/tenants}">
+
+    <core:Item
+        key="{tenantModel>ID}"
+        text="{tenantModel>tenantName}" />
+
+</Select>
                         <f:GridList id="kpiGridList" class="sapUiTinyMarginBottom" width="100%" growing="false">
 
                             <f:customLayout>
@@ -55,7 +67,7 @@
                                         <!-- KPI Content -->
                                         <VBox class="sapUiSmallMarginBegin">
                                             <Title text="Monitored iFlows" level="H5" class="kpiTitle"/>
-
+                                                
                                             <Text text="{chart>/monitoredIflows}" class="kpiValueBlue"/>
                                         </VBox>
 
@@ -231,45 +243,58 @@
                                         </f:header> -->
 
                                         <f:content>
-                                            <viz:VizFrame id="idLineChart" vizType="dual_line" uiConfig="{applicationSet:'fiori'}" width="100%" height="18rem" vizProperties="{'title': {
-                                                    'visible': true,
-                                                    'text': 'Incidents Over Time'
-                                                },
-                                                'legend': {
-                                                    'visible': true
-                                                },
-                                                'plotArea': {
-                                                    'dataLabel': {
-                                                        'visible': true
-                                                    }
-                                                }
-                                            }">
+                                            <viz:VizFrame id="idLineChart" 
+    vizType="area" 
+    uiConfig="{applicationSet:'fiori'}" 
+    width="100%" 
+    height="18rem" 
+    vizProperties="{
+        'title': {
+            'visible': true,
+            'text': 'Incidents Over Time'
+        },
+        'legend': {
+            'visible': true,
+            'position': 'top',
+            'alignment': 'start'
+        },
+        'plotArea': {
+            'dataLabel': {
+                'visible': true
+            },
+            'colorPalette': ['#1565C0', '#E53935'],
+            'drawingEffect': 'glossy',
+            'window': {
+                'start': 'firstDataPoint',
+                'end': 'lastDataPoint'
+            }
+        },
+        'valueAxis': {
+            'title': { 'visible': false }
+        },
+        'categoryAxis': {
+            'title': { 'visible': false }
+        }
+    }">
 
-                                                <viz:dataset>
-                                                    <viz.data:FlattenedDataset data="{chart>/incidentTrend}">
+    <viz:dataset>
+        <viz.data:FlattenedDataset data="{chart>/incidentTrend}">
+            <viz.data:dimensions>
+                <viz.data:DimensionDefinition name="Time" value="{chart>hour}" />
+            </viz.data:dimensions>
+            <viz.data:measures>
+                <viz.data:MeasureDefinition name="Total Incidents" value="{chart>totalIncidents}" />
+                <viz.data:MeasureDefinition name="Open Incidents" value="{chart>openIncidents}" />
+            </viz.data:measures>
+        </viz.data:FlattenedDataset>
+    </viz:dataset>
 
-                                                        <viz.data:dimensions>
-                                                            <viz.data:DimensionDefinition name="Time" value="{chart>hour}" />
-                                                        </viz.data:dimensions>
+    <viz:feeds>
+        <viz.feeds:FeedItem uid="valueAxis" type="Measure" values="Total Incidents,Open Incidents"/>
+        <viz.feeds:FeedItem uid="categoryAxis" type="Dimension" values="Time"/>
+    </viz:feeds>
 
-                                                        <viz.data:measures>
-                                                            <viz.data:MeasureDefinition name="Total Incidents" value="{chart>totalIncidents}" />
-
-                                                            <viz.data:MeasureDefinition name="Open Incidents" value="{chart>openIncidents}" />
-                                                        </viz.data:measures>
-
-                                                    </viz.data:FlattenedDataset>
-                                                </viz:dataset>
-
-                                                <viz:feeds>
-                                                    <viz.feeds:FeedItem uid="valueAxis" type="Measure" values="Total Incidents"/>
-
-                                                    <viz.feeds:FeedItem uid="valueAxis2" type="Measure" values="Open Incidents"/>
-
-                                                    <viz.feeds:FeedItem uid="categoryAxis" type="Dimension" values="Time"/>
-                                                </viz:feeds>
-
-                                            </viz:VizFrame>
+</viz:VizFrame>
                                         </f:content>
                                     </f:Card>
                                 </f:GridListItem>
