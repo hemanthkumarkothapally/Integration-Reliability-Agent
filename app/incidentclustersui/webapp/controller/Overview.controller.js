@@ -7,10 +7,30 @@ sap.ui.define([
 
   return BaseController.extend("com.cytechies.integration.reliability.incidentclustersui.controller.Overview", {
     formatter: formatter,
-    onInit() {
+    onInit:async function() {
       //  this.byId("sideNavigation")
       //   .setSelectedKey("overview");
 
+      const aTenants = [
+        {
+          ID: "ALL",
+          tenantName: "All Tenants"
+        }
+      ];
+
+      const aBackendTenants = await this.getOwnerComponent().getModel().bindList("/Tenants").requestContexts();
+
+      aBackendTenants.forEach(oContext => {
+        aTenants.push(oContext.getObject());
+      });
+      console.log("Tenants",aTenants)
+      this.getView().setModel(
+        new JSONModel({
+          tenants: aTenants
+        }),
+        "tenantModel"
+      );
+      console.log(this.getView().getModel("tenantModel").getData())
       this.loadDashboardCharts();
       this.loadTopCriticalIflows();
 
@@ -86,7 +106,7 @@ sap.ui.define([
       try {
 
         const oContext = oModel.bindContext("/getTopCriticalIflows(...)");
-        if (sSelectedTenant !== "") {
+        if (sSelectedTenant !== "ALL") {
           oContext.setParameter(
             "tenantId",
             sSelectedTenant
@@ -122,11 +142,11 @@ sap.ui.define([
       debugger
       const sSelectedTenant = this.getView().byId("tenantSelect").getSelectedKey();
       console.log("Selected Tenant:", sSelectedTenant);
-     
+
       try {
 
         const oContext = oModel.bindContext("/getDashboardCharts(...)");
-       if (sSelectedTenant !== "") {
+        if (sSelectedTenant !== "ALL") {
           oContext.setParameter(
             "tenantId",
             sSelectedTenant
