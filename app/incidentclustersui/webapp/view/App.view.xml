@@ -1,7 +1,43 @@
-<mvc:View controllerName="com.cytechies.integration.reliability.incidentclustersui.controller.App"
-    displayBlock="true"
+<mvc:View controllerName="com.cytechies.integration.reliability.incidentclustersui.controller.App" displayBlock="true"
     xmlns:mvc="sap.ui.core.mvc"
+    xmlns:tnt="sap.tnt"
     xmlns="sap.m">
-    <App id="app" >
-    </App>
+    <tnt:ToolPage id="toolPage1" sideExpanded="false">
+
+        <tnt:header>
+            <tnt:ToolHeader>
+                <Button icon="sap-icon://menu2" press=".onSideNavButtonPress"/>
+
+                <Title text="Integration Monitoring Overview"/>
+
+            </tnt:ToolHeader>
+        </tnt:header>
+
+        <tnt:sideContent>
+
+            <tnt:SideNavigation id="sideNavigation">
+
+                <tnt:NavigationList itemSelect=".onSideNavigationSelect">
+
+                    <tnt:NavigationListItem key="overview" text="Overview" icon="sap-icon://home"/>
+
+                    <tnt:NavigationListItem key="iflows" text="iFlows" icon="sap-icon://process"/>
+
+                    <tnt:NavigationListItem key="clusters" text="Clusters" icon="sap-icon://share-2"/>
+
+                    <tnt:NavigationListItem key="incidents" text="Incidents" icon="sap-icon://alert"/>
+
+                </tnt:NavigationList>
+
+            </tnt:SideNavigation>
+
+        </tnt:sideContent>
+
+        <tnt:mainContents>
+
+            <NavContainer id="app"/>
+
+        </tnt:mainContents>
+
+    </tnt:ToolPage>
 </mvc:View>
