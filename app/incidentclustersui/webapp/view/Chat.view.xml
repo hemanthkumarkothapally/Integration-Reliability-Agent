@@ -57,34 +57,35 @@
 
         <ResponsivePopover id="iFlowPopover" placement="Right" title="Monitored iFlows">
             <content>
-                <List id="iFlowList" mode="SingleSelectMaster" selectionChange=".oniFlowSelect" items="{
-                        path: '/MonitoredArtifacts', 
-                        sorter: {
-                            path: 'lastPollTimestamp',
-                            descending: true
-                        }
-                    }">
+                <List id="iFlowList" mode="SingleSelectMaster" width="300px" selectionChange=".oniFlowSelect" items="{
+                path: '/MonitoredArtifacts', 
+                sorter: {
+                    path: 'lastPollTimestamp',
+                    descending: true
+                }
+            }">
                     <headerToolbar>
                         <Toolbar>
-                            <SearchField id="iFlowSearchField" placeholder="Search iFlows..." liveChange=".oniFlowSearch" search=".oniFlowSearch" />
+                            <SearchField id="iFlowSearchField" width="100%" placeholder="Search iFlows..." liveChange=".oniFlowSearch" search=".oniFlowSearch" />
                         </Toolbar>
                     </headerToolbar>
                     <items>
                         <CustomListItem type="Active">
-                            <VBox class="sapUiSmallMargin">
-                                <!-- Top Row: Name and Active Clusters Count -->
-                                <HBox justifyContent="SpaceBetween" alignItems="Center">
-                                    <Title text="{iFlowName}" wrapping="true" class="sapMTitleStyleH6" />
-                                    <ObjectNumber number="{openClusterCount}" unit="Clusters" emphasized="true" state="{path: 'overallSeverity', formatter: '.formatter.formatSeverityState'}" />
-                                </HBox>
+                            <VBox class="sapUiSmallMargin" width="100%">
 
-                                <!-- Middle Row: Severity and Activity Status -->
-                                <HBox justifyContent="SpaceBetween" class="sapUiTinyMarginTop">
-                                    <ObjectStatus text="{overallSeverity}" state="{path: 'overallSeverity', formatter: '.formatter.formatSeverityState'}" />
-                                    <ObjectStatus text="{= ${isActive} === 'Yes' ? 'ACTIVE' : 'INACTIVE' }" state="{= ${isActive} === 'Yes' ? 'Success' : 'Error' }" />
+                                <HBox justifyContent="SpaceBetween" alignItems="Center" width="90%">
+                                    <items>
+                                        <Title text="{iFlowName}" wrapping="true" width="100%" class="sapMTitleStyleH6 sapUiTinyMarginEnd" tooltip="{iFlowName}">
+                                            <layoutData>
+                                                <FlexItemData growFactor="1" minWidth="0" />
+                                            </layoutData>
+                                        </Title>
+                                    </items>
                                 </HBox>
+                                <ObjectNumber number="{openClusterCount}" unit="Clusters" emphasized="true" state="{path: 'overallSeverity', formatter: '.formatter.formatSeverityState'}">
 
-                                <!-- Bottom Row: Last Poll Timestamp -->
+                                </ObjectNumber>
+                                <ObjectStatus text="{overallSeverity}" state="{path: 'overallSeverity', formatter: '.formatter.formatSeverityState'}" />
                                 <Text text="{path: 'lastPollTimestamp', formatter: '.formatter.formatDateTime'}" class="sapUiTinyMarginTop" />
                             </VBox>
                         </CustomListItem>

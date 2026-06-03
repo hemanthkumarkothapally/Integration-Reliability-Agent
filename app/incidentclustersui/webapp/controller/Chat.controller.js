@@ -359,7 +359,7 @@ sap.ui.define([
 
             if (!sCurrentConvId) {
                 try {
-                    sCurrentConvId = await this._executeCreateConversation(sQuery.substring(0, 20).replace(/[\r\n]+/g, " ") + "...");
+                    sCurrentConvId = await this._executeCreateConversation(sQuery.substring(0, 150).replace(/[\r\n]+/g, " ") + "...");
                 } catch (e) {
                     this.showToast("Failed to create conversation");
                     return;
@@ -858,6 +858,13 @@ sap.ui.define([
             let sQuery = oEvent.getParameter("newValue") || oEvent.getParameter("query") || "";
             this.applyListSearch("clusterList", sQuery, ["errorType", "severity", "status"]);
         },
+
+        oniFlowSearch: function (oEvent) {
+            let sQuery = oEvent.getParameter("newValue") || oEvent.getParameter("query") || "";
+            console.log("Searching iFlows with query:", sQuery);
+            this.applyListSearch("iFlowList", sQuery, ["iFlowName"]);
+        },
+
         onHistorySearch: function (oEvent) {
             let sQuery = oEvent.getParameter("newValue") || oEvent.getParameter("query") || "";
             this.applyListSearch("historyList", sQuery, ["title"]);
