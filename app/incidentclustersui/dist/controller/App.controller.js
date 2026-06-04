@@ -1,2 +1,2 @@
-sap.ui.define(["sap/ui/core/mvc/Controller"],e=>{"use strict";return e.extend("com.cytechies.integration.reliability.incidentclustersui.controller.App",{onInit(){}})});
+sap.ui.define(["sap/ui/core/mvc/Controller"],e=>{"use strict";return e.extend("com.cytechies.integration.reliability.incidentclustersui.controller.App",{onInit(){},onSideNavigationSelect:function(e){const t=e.getParameter("item").getKey();const i=this.getOwnerComponent().getRouter();switch(t){case"overview":i.navTo("RouteOverview");break;case"iflows":i.navTo("Routemonitored_iflows");break;case"incidents":break}}})});
 //# sourceMappingURL=App.controller.js.map

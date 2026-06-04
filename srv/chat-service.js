@@ -49,7 +49,7 @@ export default cds.service.impl(async function () {
         if (text) title = text.trim();
         const newConv = {
             ID: cds.utils.uuid(),
-            title: title|| UserQuery,
+            title: title || UserQuery,
         };
         await srv.run(INSERT.into(ChatSessions).entries(newConv));
         return newConv;
@@ -60,6 +60,8 @@ export default cds.service.impl(async function () {
 
     this.on('chat', async (req) => {
         const { conversationId, referiFlowID, referClusterID, userMessage } = req.data;
+        // Max allowed input tokens for your model context window constraint
+        const maxInputLimit = 1524;
         console.log("Received chat request for conversationId:", conversationId, "with iFlow reference:", referiFlowID, "and cluster reference:", referClusterID);
 
         if (!conversationId || !userMessage) {
@@ -79,14 +81,14 @@ export default cds.service.impl(async function () {
 
         try {
             // 2. Load full history (includes the message we just inserted)
-            // const history = await SELECT
-            //     .from('com.cytechies.integration.reliability.Messages')
-            //     .where({ conversation_ID: conversationId })
-            //     .orderBy('createdAt asc');
+            const history = await SELECT
+                .from('com.cytechies.integration.reliability.Messages')
+                .where({ conversation_ID: conversationId })
+                .orderBy('createdAt desc').limit(5); // Load last 11 messages to stay within token limits (including current)
 
             let systemPrompt = `You are an AI assistant for SAP Integration Suite incident management.
-[TASK] Answer questions specifically about this cluster. Be concise and technical.
-[OUTPUT RULES] Always output raw valid HTML only, wrapped in a single <div></div> root. No Markdown. Use <p></p>, <ul></ul>, <li></li>, <strong></strong>, <br></br>. Never use code blocks.`;
+                [TASK] Answer questions specifically about this cluster. Be concise and technical.
+                [OUTPUT RULES] Always output raw valid HTML only, wrapped in a single <div></div> root. No Markdown. Use <p></p>, <ul></ul>, <li></li>, <strong></strong>, <br></br>. Never use code blocks.`;
 
             if (referClusterID) {
                 // Fetch recent incidents for the cluster
@@ -159,12 +161,41 @@ export default cds.service.impl(async function () {
             }
 
             // 5. Build messages array from history
-            const messages = [{
-                role: "user",
-                content: userMessage
-            }];
-            //{ text: systemPrompt,tokenCount: 1234,inputTokens: 1234,outputTokens: 1234};
-            const { text, tokenCount, inputTokens, outputTokens } = await callAI(destination, messages, systemPrompt, 1524);
+            // const messages = [{
+            //     role: "user",
+            //     content: userMessage
+            // }];
+
+
+            // Reverse the array in-place so it's back in chronological order (oldest to newest)
+            history.reverse();
+
+            // Map directly to the format required by your LLM client
+            const messages = history.map(msg => ({
+                role: msg.role,
+                content: msg.content
+            }));
+
+            const systemPromptChars = systemPrompt.length;
+            const messagesChars = messages.reduce((sum, msg) => sum + (msg.content?.length || 0), 0);
+            const estimatedInputTokens = Math.ceil((systemPromptChars + messagesChars) / 4);
+
+
+
+            // 3. Fallback: If tokens breach limits, drop history and send ONLY the current message
+            let finalMessages = messages;
+            if (estimatedInputTokens > maxInputLimit-50) {
+                console.warn(`Token limit exceeded (${estimatedInputTokens}/${maxInputLimit}). Dropping history context.`);
+
+                // Keep only the very last item in the array (the user's current query)
+                finalMessages = [messages[messages.length - 1]];
+            }
+            // const fullPayloadText = systemPrompt + finalMessages.map(m => `\n[${m.role}]: ${m.content}`).join('');
+
+            
+
+            //{ text: systemPrompt+ fullPayloadText,tokenCount: 1234,inputTokens: 1234,outputTokens: 1234};//
+            const { text, tokenCount, inputTokens, outputTokens } = await callAI(destination, finalMessages, systemPrompt, maxInputLimit);
             console.log("AI Response:", text);
             const aiText = text ?? 'Failed to generate AI response.';
 
@@ -189,7 +220,7 @@ export default cds.service.impl(async function () {
             const fallback = {
                 conversation_ID: conversationId,
                 role: 'assistant',
-                content: 'Failed to generate AI response.',
+                content: "Chat AI error:"+ err.reason?.response?.body ?? err.message,
                 tokenCount: null
             };
 

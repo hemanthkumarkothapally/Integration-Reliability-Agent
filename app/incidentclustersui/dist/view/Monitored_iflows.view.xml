@@ -13,7 +13,7 @@
                 <f:heading>
                     <HBox alignItems="Center" class="sapUiSmallMarginBottom">
                         <items>
-                            <Button icon="sap-icon://nav-back" type="Ghost" press=".onNavBackToOverview" class="sapUiSmallMarginEnd"/>
+                            <!-- <Button icon="sap-icon://nav-back" type="Ghost" press=".onNavBackToOverview" class="sapUiSmallMarginEnd"/> -->
                             <Title text="Monitoring IFlows" wrapping="true" />
                         </items>
                     </HBox>

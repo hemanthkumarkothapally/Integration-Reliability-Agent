@@ -14,6 +14,89 @@
 .unclickableTag {
     pointer-events: none !important;
 }
+/* TextArea styling */
+.noBorderTextArea .sapMInputBaseContentWrapper,
+.noBorderTextArea .sapMTextAreaInner {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+}
+
+/* Remove Horizon focus line */
+.noBorderTextArea .sapMInputBaseContentWrapper::before,
+.noBorderTextArea .sapMInputBaseContentWrapper::after,
+.noBorderTextArea .sapMInputBase::before,
+.noBorderTextArea .sapMInputBase::after {
+    display: none !important;
+}
+
+/* Chat input alignment */
+.chatInput .sapMTextAreaInner {
+    min-height: 2.5rem !important;
+    line-height: 1.5rem !important;
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+    resize: none !important;
+    overflow-y: auto !important;
+}
+
+/* Toolbar cleanup */
+#chatFooter,
+#chatFooter.sapMTB,
+#chatFooter.sapMOTB {
+    border: none !important;
+    box-shadow: none !important;
+    background-image: none !important;
+}
+/* 1. Base VizFrame Styling: Transparent, no borders (INTERACTIVITY RESTORED) */
+.noBorderVizFrame.sapVizFrame,
+li.clickableCardItem .sapVizFrame {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+    
+    /* pointer-events: none HAS BEEN REMOVED - Chart is clickable again! */
+}
+
+/* 2. Kill focus outlines on the chart and ALL its internal SVG elements when clicked */
+li.clickableCardItem .sapVizFrame:focus,
+li.clickableCardItem .sapVizFrame:active,
+li.clickableCardItem .sapVizFrame *:focus,
+li.clickableCardItem .sapVizFrame *:active {
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* 3. Kill Horizon Focus/Active Lines for VizFrame pseudo-elements */
+.noBorderVizFrame.sapVizFrame::before,
+.noBorderVizFrame.sapVizFrame::after,
+.noBorderVizFrame .sapVizFrame > div::before,
+.noBorderVizFrame .sapVizFrame > div::after,
+li.clickableCardItem .sapVizFrame::before,
+li.clickableCardItem .sapVizFrame::after {
+    display: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+}
+
+/* 4. Enforce the rounded corners and clip paths on the containers */
+li.clickableCardItem .sapVizFrame,
+li.clickableCardItem .sapVizFrame > div,
+li.clickableCardItem .sapFCardContent,
+li.clickableCardItem .sapVizFrame svg {
+    border-radius: 0.97rem !important;
+    overflow: hidden !important;
+    background: transparent !important;
+    
+    /* Force the clip-path so nothing bleeds past the curve */
+    clip-path: inset(0 round 0.97rem) !important;
+    -webkit-clip-path: inset(0 round 0.97rem) !important;
+}
 /* User Message Bubble Layout Styling */
 .userChatBubbleNew {
     background: linear-gradient(-90deg, rgba(249, 115, 22, 0.08) 0%, rgba(255, 255, 255, 0) 100%) !important;
