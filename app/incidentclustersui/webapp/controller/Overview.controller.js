@@ -43,7 +43,6 @@ sap.ui.define([
       oPopover.connect(this.byId("idLineChart").getVizUid());
 
 
-
     },
     onTenantChange: function (oEvent) {
 
@@ -63,33 +62,35 @@ sap.ui.define([
 
     },
 
-    onSideNavigationSelect: function (oEvent) {
+    // onSideNavigationSelect: function (oEvent) {
 
-      const sKey = oEvent.getParameter("item").getKey();
+    //   const sKey = oEvent.getParameter("item").getKey();
 
-      switch (sKey) {
+    //   switch (sKey) {
 
-        case "overview":
-          this.getOwnerComponent()
-            .getRouter()
-            .navTo("RouteOverview");
-          break;
+    //     case "overview":
+    //       this.getOwnerComponent()
+    //         .getRouter()
+    //         .navTo("RouteOverview");
+    //       break;
 
-        case "iflows":
-          this.getOwnerComponent()
-            .getRouter()
-            .navTo("Routemonitored_iflows");
-          break;
+    //     case "iflows":
+    //       this.getOwnerComponent()
+    //         .getRouter()
+    //         .navTo("Routemonitored_iflows");
+    //       break;
 
-        case "incidents":
-          // Future page
-          break;
+    //     case "incidents":
+    //       // Future page
+    //       break;
 
-        case "clusters":
-          // Future page
-          break;
-      }
-    },
+    //     case "clusters":
+    //       // Future page
+    //       break;
+    //   }
+    // },
+
+    
     // onSideNavButtonPress: function () {
     //   const oToolPage = this.byId("toolPage1");
 
@@ -97,6 +98,8 @@ sap.ui.define([
     //     !oToolPage.getSideExpanded()
     //   )
     // },
+
+    
     loadTopCriticalIflows: async function () {
 
       const oModel = this.getOwnerComponent().getModel();

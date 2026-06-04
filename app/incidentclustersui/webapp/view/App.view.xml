@@ -7,36 +7,34 @@
         <tnt:header>
             <tnt:ToolHeader>
                 <Button icon="sap-icon://menu2" press=".onSideNavButtonPress"/>
-
                 <Title text="Integration Monitoring Overview"/>
-
             </tnt:ToolHeader>
         </tnt:header>
 
         <tnt:sideContent>
-
             <tnt:SideNavigation id="sideNavigation">
-
+                
+                <!-- Main scrollable navigation items -->
                 <tnt:NavigationList itemSelect=".onSideNavigationSelect">
-
                     <tnt:NavigationListItem key="overview" text="Overview" icon="sap-icon://home"/>
-
                     <tnt:NavigationListItem key="iflows" text="iFlows" icon="sap-icon://process"/>
-
                     <tnt:NavigationListItem key="clusters" text="Clusters" icon="sap-icon://share-2"/>
-
+                    <tnt:NavigationListItem key="ai" text="AI Assistant" icon="sap-icon://ai"/>
                     <tnt:NavigationListItem key="incidents" text="Incidents" icon="sap-icon://alert"/>
-
                 </tnt:NavigationList>
 
-            </tnt:SideNavigation>
+                <!-- CORRECTED: Fixed bottom item aggregation inside SideNavigation -->
+                <tnt:fixedItem>
+                    <tnt:NavigationList itemSelect=".onSideNavigationSelect">
+                        <tnt:NavigationListItem key="settings" text="Settings" icon="sap-icon://action-settings" />
+                    </tnt:NavigationList>
+                </tnt:fixedItem>
 
+            </tnt:SideNavigation>
         </tnt:sideContent>
 
         <tnt:mainContents>
-
             <NavContainer id="app"/>
-
         </tnt:mainContents>
 
     </tnt:ToolPage>
