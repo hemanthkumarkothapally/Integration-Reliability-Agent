@@ -38,7 +38,7 @@ sap.ui.define([
 
             oRouter.getRoute("RouteAIAssistant")
                 .attachPatternMatched(function () {
-                    console.log("AIAssistant route matched!");
+                    // console.log("AIAssistant route matched!");
 
                     this._resetToWelcomePage();
                     // this.onBackPress();
@@ -63,7 +63,7 @@ sap.ui.define([
                     .getRouter()
                     .navTo("Routemonitored_iflows");
             }
-            console.log("Closing chat side panel");
+            // console.log("Closing chat side panel");
         },
 
         onRemoveClusterPress: function (oEvent) {
@@ -142,7 +142,7 @@ sap.ui.define([
             var oList = this.byId("clusterList");
             var oPopover = this.byId("clusterPopover");
 
-            console.log("Selected cluster data with iFlow ID:", sIflowId);
+            // console.log("Selected cluster data with iFlow ID:", sIflowId);
 
             if (oList && oPopover) {
                 var oBinding = oList.getBinding("items");
@@ -170,10 +170,10 @@ sap.ui.define([
 
                         // Popover now opens safely with 100% freshly rendered rows
                         oPopover.openBy(oSource);
-                        console.log("Opening cluster data popover with updated data for iFlow:", sIflowId);
+                        // console.log("Opening cluster data popover with updated data for iFlow:", sIflowId);
                     }.bind(this)).catch(function (oError) {
                         this.getView().setBusy(false);
-                        console.error("Error updating popover OData V4 dataset:", oError);
+                        // console.error("Error updating popover OData V4 dataset:", oError);
                     }.bind(this));
 
                     return; // Exit execution early; the popover is managed inside the Promise resolution
@@ -195,7 +195,7 @@ sap.ui.define([
             var oList = this.byId("iFlowList");
             var oPopover = this.byId("iFlowPopover");
 
-            console.log("Selected iFlow data with iFlow ID:", sIflowId);
+            // console.log("Selected iFlow data with iFlow ID:", sIflowId);
 
             if (oList && oPopover) {
                 var oBinding = oList.getBinding("items");
@@ -217,10 +217,10 @@ sap.ui.define([
                         this.getView().setBusy(false);
 
                         oPopover.openBy(oSource);
-                        console.log("Opening cluster data popover with updated data for iFlow:", sIflowId);
+                        // console.log("Opening cluster data popover with updated data for iFlow:", sIflowId);
                     }.bind(this)).catch(function (oError) {
                         this.getView().setBusy(false);
-                        console.error("Error updating popover OData V4 dataset:", oError);
+                        // console.error("Error updating popover OData V4 dataset:", oError);
                     }.bind(this));
 
                     return;
@@ -234,7 +234,7 @@ sap.ui.define([
 
         _resetToWelcomePage: function () {
             let oJsonModel = this.getModel("chatJSONModel");
-            console.log("oJsonModel before reset:", oJsonModel.getData());
+            // console.log("oJsonModel before reset:", oJsonModel.getData());
 
             oJsonModel.setProperty("/currentConversationId", null);
             oJsonModel.setProperty("/currentConversationTitle", "New Chat");
@@ -248,7 +248,7 @@ sap.ui.define([
             this.byId("historyPopover").close();
             this.byId("chatContainer").removeAllItems();
             this.byId("welcomePage").setVisible(true);
-            console.log("oJsonModel after reset:", oJsonModel.getData());
+            // console.log("oJsonModel after reset:", oJsonModel.getData());
 
 
         },
@@ -262,7 +262,7 @@ sap.ui.define([
             let oListItem = oEvent.getParameter("listItem");
             let oCtx = oListItem.getBindingContext("chatModel");
             let sKey = oCtx.getProperty("ID");
-            console.log("Selected conversation ID:", sKey);
+            // console.log("Selected conversation ID:", sKey);
             let oPopover = this.byId("historyPopover"); // Ensure this ID matches your view/fragment
             if (oPopover) {
                 oPopover.close();
@@ -309,7 +309,7 @@ sap.ui.define([
                 emphasizedAction: MessageBox.Action.DELETE,
                 onClose: (sAction) => {
                     if (sAction === MessageBox.Action.DELETE) {
-                        console.log("Deleting conversation with ID:", sConvId);
+                        // console.log("Deleting conversation with ID:", sConvId);
                         let oModel = this.getView().getModel("chatModel");
                         let sPath = "/ChatSessions('" + sConvId + "')";
                         let oContextBinding = oModel.bindContext(sPath);
@@ -357,9 +357,9 @@ sap.ui.define([
 
             if (!sQuery) return;
 
-            if (!sCurrentConvId) {
+            if (!sCurrentConvId) {  
                 try {
-                    sCurrentConvId = await this._executeCreateConversation(sQuery.substring(0, 20).replace(/[\r\n]+/g, " ") + "...");
+                    sCurrentConvId = await this._executeCreateConversation(sQuery.substring(0, 150).replace(/[\r\n]+/g, " ") + "...");
                 } catch (e) {
                     this.showToast("Failed to create conversation");
                     return;
@@ -414,7 +414,7 @@ sap.ui.define([
                 this._appendMessage(oResult.content, "assistant", oResult, true);
                 this._updateTotalSessionTokens();
             } catch (oError) {
-                console.error("Chat action failed", oError);
+                // console.error("Chat action failed", oError);
                 this._updateUserTokenCount("No");
                 this._appendMessage("Sorry, I encountered an error processing your request.", "assistant", {}, true);
             } finally {
@@ -424,7 +424,6 @@ sap.ui.define([
         },
 
         _executeCreateConversation: async function (sTitle) {
-            debugger; // Execution stops here. Press F10 to step line-by-line.
 
             this.showBusy();
 
@@ -450,7 +449,7 @@ sap.ui.define([
                 return sNewId;
 
             } catch (oError) {
-                console.error("Conversation creation failed:", oError);
+                // console.error("Conversation creation failed:", oError);
                 throw oError; // This automatically rejects the async function's promise
 
             } finally {
@@ -469,15 +468,15 @@ sap.ui.define([
             oSessionContextBinding.requestObject().then(function (oSession) {
                 if (oSession) {
                     oJsonModel.setProperty("/currentConversationTokens", oSession.totalSessionTokenUsage);
-                    console.log("Tokens loaded:", oSession.totalSessionTokenUsage);
+                    // console.log("Tokens loaded:", oSession.totalSessionTokenUsage);
                 }
             }).catch(function (oError) {
-                console.error("Failed to load session details:", oError);
+                // console.error("Failed to load session details:", oError);
             });
         },
 
         _loadConversationMessages: function (sConversationId) {
-            console.log("Loading conversation with ID:", sConversationId);
+            // console.log("Loading conversation with ID:", sConversationId);
             this.showBusy();
 
             let oJsonModel = this.getModel("chatJSONModel");
@@ -516,11 +515,11 @@ sap.ui.define([
             });
 
             oListBinding.requestContexts(nSkip, PAGE_SIZE).then(function (aContexts) {
-                debugger
+                // debugger
                 // ✅ Stale check: if conversation changed or reset happened, discard results
                 let sActiveId = oJsonModel.getProperty("/currentConversationId");
                 if (sActiveId !== sConversationId) {
-                    console.log("Discarding stale batch for:", sConversationId);
+                    // console.log("Discarding stale batch for:", sConversationId);
                     return;
                 }
 
@@ -571,7 +570,7 @@ sap.ui.define([
                 }
 
             }.bind(this)).catch((err) => {
-                console.error("Failed to load messages for conversation:", sConversationId, err);
+                // console.error("Failed to load messages for conversation:", sConversationId, err);
                 this.showToast("Error loading conversation history.");
             }).finally(() => {
                 this._bLoadingMessages = false;
@@ -620,13 +619,13 @@ sap.ui.define([
             text: isCluster ? oRefData.errorType : oRefData.iFlowName ,
             type: isCluster ? sap.ui.core.MessageType.Warning : sap.ui.core.MessageType.Information,
             showIcon: true,
-            customIcon: isCluster ? "sap-icon://chain-link" : "sap-icon://process"
+            customIcon: isCluster ? "sap-icon://share-2" : "sap-icon://process"
         }).addStyleClass("sapUiTinyMarginBottom")
 }
 ,
 
         _buildMessageItem: function (sText, sSender, oData, bStream = false) {
-            console.log("Building message item. Sender:", sSender, "Data:", oData);
+            // console.log("Building message item. Sender:", sSender, "Data:", oData);
 
             const isAssistant = sSender === "assistant";
             if (this.byId("welcomePage")) {
@@ -700,7 +699,7 @@ sap.ui.define([
                 });
             } else {
 
-                console.log("AI response data for message item:", oData);
+                // console.log("AI response data for message item:", oData);
 
                 const oAiTokenInfo =
                     new ObjectStatus({
@@ -758,7 +757,7 @@ sap.ui.define([
         },
 
         _appendMessage: function (sText, sSender, oData, bStream = false) {
-            debugger
+            // debugger
             const oContainer = this.byId("chatContainer");
             if (this.byId("welcomePage")) {
                 this.byId("welcomePage").setVisible(false);
@@ -774,7 +773,7 @@ sap.ui.define([
             if (this._lastUserTokenStatus && !this._lastUserTokenStatus.bIsDestroyed) {
                 this._lastUserTokenStatus.setText(iCount + " tokens");
             } else {
-                console.warn("Could not find the last user token status control.");
+                // console.warn("Could not find the last user token status control.");
             }
         },
 
@@ -791,7 +790,7 @@ sap.ui.define([
 
             // 2. Trigger your file upload logic here
             // (e.g., opening a sap.ui.unified.FileUploader dialog)
-            console.log("File upload triggered");
+            // console.log("File upload triggered");
         },
 
         onVoiceInputPress: function (oEvent) {
@@ -858,6 +857,13 @@ sap.ui.define([
             let sQuery = oEvent.getParameter("newValue") || oEvent.getParameter("query") || "";
             this.applyListSearch("clusterList", sQuery, ["errorType", "severity", "status"]);
         },
+
+        oniFlowSearch: function (oEvent) {
+            let sQuery = oEvent.getParameter("newValue") || oEvent.getParameter("query") || "";
+            // console.log("Searching iFlows with query:", sQuery);
+            this.applyListSearch("iFlowList", sQuery, ["iFlowName"]);
+        },
+
         onHistorySearch: function (oEvent) {
             let sQuery = oEvent.getParameter("newValue") || oEvent.getParameter("query") || "";
             this.applyListSearch("historyList", sQuery, ["title"]);
@@ -870,7 +876,7 @@ sap.ui.define([
                 return;
             }
             let oCtx = oEvent.getParameter("listItem").getBindingContext();
-            console.log("Selected iFlow context data : ", oCtx);
+            // console.log("Selected iFlow context data : ", oCtx);
             let sKey = oCtx.getProperty("ID");
 
             let oJsonModel = this.getModel("chatJSONModel");
@@ -905,7 +911,7 @@ sap.ui.define([
                 return;
             }
             let oCtx = oEvent.getParameter("listItem").getBindingContext();
-            console.log("Selected cluster context data : ", oCtx);
+            // console.log("Selected cluster context data : ", oCtx);
             let sKey = oCtx.getProperty("ID");
 
             let oJsonModel = this.getModel("chatJSONModel");

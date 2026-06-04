@@ -40,6 +40,20 @@
           "odataVersion": "4.01"
         }
       }
+    },
+    "crossNavigation": {
+      "inbounds": {
+        "IRAgent-monitor": {
+          "semanticObject": "IRAgent",
+          "action": "monitor",
+          "title": "{{IRAgent-monitor.flpTitle}}",
+          "subTitle": "{{IRAgent-monitor.flpSubtitle}}",
+          "signature": {
+            "parameters": {},
+            "additionalParameters": "allowed"
+          }
+        }
+      }
     }
   },
   "sap.cloud": {
@@ -164,7 +178,6 @@
             "TargetOverview"
           ]
         },
-        
         {
           "name": "Routemonitored_iflows",
           "pattern": "Monitored_iflows/:?query:",
@@ -226,7 +239,6 @@
           "id": "IC",
           "name": "IC"
         }
-       
       }
     },
     "rootView": {

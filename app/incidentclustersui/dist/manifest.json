@@ -45,6 +45,20 @@
 					"odataVersion": "4.01"
 				}
 			}
+		},
+		"crossNavigation": {
+			"inbounds": {
+				"IRAgent-monitor": {
+					"semanticObject": "IRAgent",
+					"action": "monitor",
+					"title": "{{IRAgent-monitor.flpTitle}}",
+					"subTitle": "{{IRAgent-monitor.flpSubtitle}}",
+					"signature": {
+						"parameters": {},
+						"additionalParameters": "allowed"
+					}
+				}
+			}
 		}
 	},
 	"sap.cloud": {
