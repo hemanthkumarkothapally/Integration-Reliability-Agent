@@ -223,7 +223,7 @@
                                 <BusyIndicator id="_IDGenBusyIndicator1" visible="false" />
 
 
-                                <TextArea id="chatInput1" class="noBorderTextArea" growing="true" growingMaxLines="3" rows="2" width="100%" wrapping="Soft" placeholder="{= ${chatJSONModel>/clusterDataEnabled} ? ${i18n>input.placeholder.clusterActive} : ${i18n>input.placeholder.default} }">
+                                <TextArea id="chatInput1" class="noBorderTextArea" growing="true" growingMaxLines="3" rows="1" width="100%" wrapping="Soft" placeholder="{= ${chatJSONModel>/clusterDataEnabled} ? ${i18n>input.placeholder.clusterActive} : ${i18n>input.placeholder.default} }">
                                     <layoutData>
                                         <OverflowToolbarLayoutData shrinkable="true" minWidth="100px" priority="Low" />
                                     </layoutData>

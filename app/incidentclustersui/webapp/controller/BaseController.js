@@ -50,33 +50,33 @@ sap.ui.define([
 
 
         onListSearch: function (oEvent) {
-            var oSource = oEvent.getSource();
-            var sQuery = oEvent.getParameter("newValue") || oEvent.getParameter("query") || "";
+            let oSource = oEvent.getSource();
+            let sQuery = oEvent.getParameter("newValue") || oEvent.getParameter("query") || "";
 
             // Read configuration from custom data on the SearchField
-            var sListId = oSource.data("listId");
-            var sFields = oSource.data("searchFields");
+            let sListId = oSource.data("listId");
+            let sFields = oSource.data("searchFields");
 
             if (!sListId || !sFields) {
                 console.warn("onListSearch: missing listId or searchFields custom data");
                 return;
             }
 
-            var aFields = sFields.split(",").map(function (s) { return s.trim(); });
+            let aFields = sFields.split(",").map(function (s) { return s.trim(); });
             this.applyListSearch(sListId, sQuery, aFields);
         },
 
 
         applyCentralBindingFilter: function (sControlId, sAggregation, aFilters) {
             sAggregation = sAggregation || "items";
-            var oControl = this.byId(sControlId);
+            let oControl = this.byId(sControlId);
 
             if (!oControl) {
                 console.warn("BaseController: Control target element not found: " + sControlId);
                 return;
             }
 
-            var oBinding = oControl.getBinding(sAggregation);
+            let oBinding = oControl.getBinding(sAggregation);
             if (!oBinding) {
                 console.warn("BaseController: No binding found on aggregation context: " + sAggregation);
                 return;
@@ -90,20 +90,20 @@ sap.ui.define([
         applyListSearch: function (sListId, sQuery, aFields, sAggregation) {
             sAggregation = sAggregation || "items";
 
-            var oControl = this.byId(sListId);
+            let oControl = this.byId(sListId);
             if (!oControl) {
                 console.warn("applyListSearch: control not found - " + sListId);
                 return;
             }
 
-            var oBinding = oControl.getBinding(sAggregation);
+            let oBinding = oControl.getBinding(sAggregation);
             if (!oBinding) {
                 console.warn("applyListSearch: no binding on aggregation " + sAggregation);
                 return;
             }
 
             if (sQuery) {
-                var aFilters = aFields.map(function (sField) {
+                let aFilters = aFields.map(function (sField) {
                     return new Filter({
                         path: sField,
                         operator: FilterOperator.Contains,
@@ -112,7 +112,7 @@ sap.ui.define([
                     });
                 });
 
-                var oCombinedFilter = new Filter({
+                let oCombinedFilter = new Filter({
                     filters: aFilters,
                     and: false
                 });
@@ -125,20 +125,20 @@ sap.ui.define([
 
 
         applyFilterBarSearch: function (sTargetControlId, sAggregationName, aFilterConfigs) {
-            var oTargetControl = this.byId(sTargetControlId);
+            let oTargetControl = this.byId(sTargetControlId);
             if (!oTargetControl) { return; }
 
-            var oBinding = oTargetControl.getBinding(sAggregationName);
+            let oBinding = oTargetControl.getBinding(sAggregationName);
             if (!oBinding) { return; }
 
-            var aRootFilters = [];
+            let aRootFilters = [];
 
             aFilterConfigs.forEach(function (oConfig) {
-                var oMultiCombo = this.byId(oConfig.controlId);
+                let oMultiCombo = this.byId(oConfig.controlId);
                 if (oMultiCombo) {
-                    var aSelectedKeys = oMultiCombo.getSelectedKeys();
+                    let aSelectedKeys = oMultiCombo.getSelectedKeys();
                     if (aSelectedKeys && aSelectedKeys.length > 0) {
-                        var aSubFilters = aSelectedKeys.map(function (sKey) {
+                        let aSubFilters = aSelectedKeys.map(function (sKey) {
                             return new Filter(oConfig.bindingPath, FilterOperator.EQ, sKey);
                         });
                         // Items within the same multi-combobox get grouped with OR
