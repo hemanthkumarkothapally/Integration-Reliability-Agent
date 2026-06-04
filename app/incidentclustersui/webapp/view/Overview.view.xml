@@ -179,14 +179,14 @@
                             <f:items>
 
                                 <!-- Top Error Types -->
-                                <f:GridListItem>
+                                <f:GridListItem type="Active" class="clickableCardItem">
                                     <f:Card width="100%" semanticRole="ListItem" height="100%">
                                         <!-- <f:header>
                                             <card:Header title="Incidents by Error Type" subtitle="Top 5 Clusters in the last 24 hours" iconSrc="sap-icon://donut-chart" />
                                         </f:header> -->
 
                                         <f:content >
-                                            <viz:VizFrame id="topErrorTypesChart" uiConfig="{applicationSet:'fiori'}" vizType="donut" vizProperties="{
+                                            <viz:VizFrame class="noBorderVizFrame" id="topErrorTypesChart" uiConfig="{applicationSet:'fiori'}" vizType="donut" vizProperties="{
         'title': {
             'visible': true,
             'text': 'Clusters by Severity'
@@ -236,14 +236,14 @@
                                 </f:GridListItem>
 
                                 <!-- Incident Trend -->
-                                <f:GridListItem >
+                                <f:GridListItem type="Active" class="clickableCardItem">
                                     <f:Card width="100%" semanticRole="ListItem" height="100%">
                                         <!-- <f:header>
                                             <card:Header title="Incidents Trend" subtitle="Last 7 Days" iconSrc="sap-icon://line-chart" />
                                         </f:header> -->
 
                                         <f:content>
-                                            <viz:VizFrame id="idLineChart" 
+                                            <viz:VizFrame class="noBorderVizFrame" id="idLineChart" 
     vizType="area" 
     uiConfig="{applicationSet:'fiori'}" 
     width="100%" 
@@ -299,14 +299,14 @@
                                     </f:Card>
                                 </f:GridListItem>
 
-                                <f:GridListItem>
-                                    <f:Card width="100%" semanticRole="ListItem" height="100%">
+                                <f:GridListItem type="Active" class="clickableCardItem">
+                                    <f:Card width="100%"   semanticRole="ListItem" height="18rem">
                                         <!-- <f:header>
                                             <card:Header title="Severity Distribution" subtitle="Current Open Clusters" iconSrc="sap-icon://pie-chart" />
                                         </f:header> -->
 
                                         <f:content>
-                                            <viz:VizFrame id="severityChart" vizType="donut" width="100%" height="18rem" uiConfig="{applicationSet:'fiori'}" vizProperties="{
+                                            <viz:VizFrame class="noBorderVizFrame" id="severityChart" vizType="donut" width="100%" height="18rem" uiConfig="{applicationSet:'fiori'}" vizProperties="{
                                                 'title': {
                                                     'visible': true,
                                                     'text': 'IFlows by Severity'
