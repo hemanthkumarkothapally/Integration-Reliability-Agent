@@ -168,7 +168,6 @@
     line-height: 2.2rem;
     color: var(--sapTextColor);
 }
-    
-
-
-
+.onclickclass{
+    outline: #D97706 solid 2px !important;
+}

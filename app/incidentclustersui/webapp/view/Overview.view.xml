@@ -306,7 +306,7 @@
                                         </f:header> -->
 
                                         <f:content>
-                                            <viz:VizFrame id="severityChart" vizType="donut" width="100%" height="18rem" uiConfig="{applicationSet:'fiori'}" vizProperties="{
+                                            <viz:VizFrame id="severityChart" class="onclickclass" vizType="donut" width="100%" height="18rem" uiConfig="{applicationSet:'fiori'}" vizProperties="{
                                                 'title': {
                                                     'visible': true,
                                                     'text': 'IFlows by Severity'
@@ -326,7 +326,13 @@
                 'rgb(241, 76, 213)'
             ],
             'drawingEffect': 'glossy'
-                                                }
+                                                },
+                                                'interaction': {
+            'selectability': {
+                'mode': 'NONE'
+            },
+            'nonSelectionMode': 'none'
+        }
                                             }">
 
                                                 <viz:dataset>
