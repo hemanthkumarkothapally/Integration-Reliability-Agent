@@ -201,6 +201,13 @@
 					]
 				},
 				{
+					"name": "RouteClusters",
+					"pattern": "Clusters",
+					"target": [
+						"TargetClusters"
+					]
+				},
+				{
 					"name": "RouteAIAssistant",
 					"pattern": "AIAssistant",
 					"target": [
@@ -231,6 +238,10 @@
 				"TargetIncidentDetails": {
 					"id": "IncidentDetails",
 					"name": "IncidentDetails"
+				},
+				"TargetClusters": {
+					"id": "Clusters",
+					"name": "Clusters"
 				},
 				"TargetIC": {
 					"id": "IC",

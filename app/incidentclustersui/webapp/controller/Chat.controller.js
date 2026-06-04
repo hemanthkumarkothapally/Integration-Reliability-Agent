@@ -73,7 +73,7 @@ sap.ui.define([
             }
 
             // 2. Clear the cluster data from your model to hide the main button
-            var oModel = this.getView().getModel("chatJSONModel");
+            let oModel = this.getView().getModel("chatJSONModel");
 
             oModel.setProperty("/clusterName", "");
             oModel.setProperty("/clusterDataEnabled", false);
@@ -91,7 +91,7 @@ sap.ui.define([
             }
 
             // 2. Clear the cluster data from your model to hide the main button
-            var oModel = this.getView().getModel("chatJSONModel");
+            let oModel = this.getView().getModel("chatJSONModel");
 
             oModel.setProperty("/iFlowName", "");
             oModel.setProperty("/iFlowDataEnabled", false);
@@ -134,25 +134,25 @@ sap.ui.define([
         },
 
         onSelectClusterData: function (oEvent) {
-            var oGlobalModel = this.getView().getModel("globalModel");
-            var sIflowId = oGlobalModel ? oGlobalModel.getProperty("/iflowId") : null;
+            let oGlobalModel = this.getView().getModel("globalModel");
+            let sIflowId = oGlobalModel ? oGlobalModel.getProperty("/iflowId") : null;
 
             // Save the event source control immediately (oEvent falls out of scope inside async functions)
-            var oSource = oEvent.getSource();
-            var oList = this.byId("clusterList");
-            var oPopover = this.byId("clusterPopover");
+            let oSource = oEvent.getSource();
+            let oList = this.byId("clusterList");
+            let oPopover = this.byId("clusterPopover");
 
             // console.log("Selected cluster data with iFlow ID:", sIflowId);
 
             if (oList && oPopover) {
-                var oBinding = oList.getBinding("items");
+                let oBinding = oList.getBinding("items");
 
                 if (oBinding) {
                     // Set global app view or parent view to busy so user knows a click action is running
                     this.getView().setBusy(true);
 
                     // 1. Create a promise that resolves ONLY when the backend returns the updated V4 payload
-                    var oDataLoadPromise = new Promise(function (resolve) {
+                    let oDataLoadPromise = new Promise(function (resolve) {
                         oBinding.attachEventOnce("dataReceived", function () {
                             resolve();
                         });
@@ -187,23 +187,23 @@ sap.ui.define([
         },
 
         onSelectiFlowData(oEvent) {
-            var oGlobalModel = this.getView().getModel("globalModel");
-            var sIflowId = oGlobalModel ? oGlobalModel.getProperty("/iflowId") : null;
+            let oGlobalModel = this.getView().getModel("globalModel");
+            let sIflowId = oGlobalModel ? oGlobalModel.getProperty("/iflowId") : null;
 
             // Save the event source control immediately (oEvent falls out of scope inside async functions)
-            var oSource = oEvent.getSource();
-            var oList = this.byId("iFlowList");
-            var oPopover = this.byId("iFlowPopover");
+            let oSource = oEvent.getSource();
+            let oList = this.byId("iFlowList");
+            let oPopover = this.byId("iFlowPopover");
 
             // console.log("Selected iFlow data with iFlow ID:", sIflowId);
 
             if (oList && oPopover) {
-                var oBinding = oList.getBinding("items");
+                let oBinding = oList.getBinding("items");
 
                 if (oBinding) {
                     this.getView().setBusy(true);
 
-                    var oDataLoadPromise = new Promise(function (resolve) {
+                    let oDataLoadPromise = new Promise(function (resolve) {
                         oBinding.attachEventOnce("dataReceived", function () {
                             resolve();
                         });

@@ -138,6 +138,8 @@ sap.ui.define([], function () {
             }
 
         },
+
+    
         formatDateTime: function (sDate) {
 
             if (!sDate) {
@@ -154,6 +156,13 @@ sap.ui.define([], function () {
                 .format(oDate);
 
         },
+
+        formatArtifactCount: function(aArtifacts) {
+    if (!aArtifacts || !Array.isArray(aArtifacts)) {
+        return 0;
+    }
+    return aArtifacts.length;
+}
 
       
 

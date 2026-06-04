@@ -1,0 +1,2 @@
+sap.ui.define(["sap/ui/core/mvc/Controller","../model/formatter"],(e,t)=>{"use strict";return e.extend("com.cytechies.integration.reliability.incidentclustersui.controller.Clusters",{formatter:t,onInit(){},onRefreshPress:function(){var e=this.byId("idClusters");if(e&&e.getBinding("items")){e.getBinding("items").refresh()}}})});
+//# sourceMappingURL=Clusters.controller.js.map
