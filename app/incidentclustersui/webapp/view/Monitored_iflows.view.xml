@@ -23,9 +23,9 @@
                     <Label text="Monitor your iFlows &amp; Associated Clusters" class="sapUiSmallMarginBegin" />
                 </f:expandedContent> -->
 
-                <f:actions>
+                <!-- <f:actions>
                     <Button icon="sap-icon://ai" text="Ai Assistant" type="Ghost" press=".onAipress" tooltip="AI Assistant"/>
-                </f:actions>
+                </f:actions> -->
             </f:DynamicPageTitle>
         </f:title>
 

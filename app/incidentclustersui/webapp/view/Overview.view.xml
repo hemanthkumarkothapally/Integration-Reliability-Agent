@@ -244,7 +244,7 @@
 
                                         <f:content>
                                             <viz:VizFrame class="noBorderVizFrame" id="idLineChart" 
-    vizType="area" 
+    vizType="column" 
     uiConfig="{applicationSet:'fiori'}" 
     width="100%" 
     height="18rem" 
