@@ -7,7 +7,7 @@ sap.ui.define([
 
   return BaseController.extend("com.cytechies.integration.reliability.incidentclustersui.controller.Overview", {
     formatter: formatter,
-    onInit:async function() {
+    onInit: async function () {
       //  this.byId("sideNavigation")
       //   .setSelectedKey("overview");
 
@@ -23,7 +23,7 @@ sap.ui.define([
       aBackendTenants.forEach(oContext => {
         aTenants.push(oContext.getObject());
       });
-      console.log("Tenants",aTenants)
+      console.log("Tenants", aTenants)
       this.getView().setModel(
         new JSONModel({
           tenants: aTenants
@@ -33,16 +33,25 @@ sap.ui.define([
       console.log(this.getView().getModel("tenantModel").getData())
       this.loadDashboardCharts();
       this.loadTopCriticalIflows();
+    },
 
-      var oPopover = this.byId("idPopOver");
+    onAfterRendering: function () {
+      setTimeout(function () {
+        var oPopover = this.byId("idPopOver");
+        var oLineChart = this.byId("idLineChart");
+        var oSeverityChart = this.byId("severityChart");
+        var oTopErrorChart = this.byId("topErrorTypesChart");
 
-      oPopover.connect(this.byId("topErrorTypesChart").getVizUid());
+        console.log("idLineChart:", oLineChart);
+        console.log("severityChart:", oSeverityChart);
+        console.log("topErrorTypesChart:", oTopErrorChart);
+        console.log("idPopOver:", oPopover);
 
-      oPopover.connect(this.byId("severityChart").getVizUid());
+        if (oPopover && oLineChart) oPopover.connect(oLineChart.getVizUid());
+        if (oPopover && oSeverityChart) oPopover.connect(oSeverityChart.getVizUid());
+        if (oPopover && oTopErrorChart) oPopover.connect(oTopErrorChart.getVizUid());
 
-      oPopover.connect(this.byId("idLineChart").getVizUid());
-
-
+      }.bind(this), 500);
     },
     onTenantChange: function (oEvent) {
 
@@ -61,6 +70,7 @@ sap.ui.define([
         .navTo("Routemonitored_iflows");
 
     },
+
 
     // onSideNavigationSelect: function (oEvent) {
 
@@ -90,7 +100,7 @@ sap.ui.define([
     //   }
     // },
 
-    
+
     // onSideNavButtonPress: function () {
     //   const oToolPage = this.byId("toolPage1");
 
@@ -99,7 +109,7 @@ sap.ui.define([
     //   )
     // },
 
-    
+
     loadTopCriticalIflows: async function () {
 
       const oModel = this.getOwnerComponent().getModel();

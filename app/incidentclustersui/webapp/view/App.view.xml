@@ -20,12 +20,12 @@
                     <tnt:NavigationListItem key="iflows" text="iFlows" icon="sap-icon://process"/>
                     <tnt:NavigationListItem key="clusters" text="Clusters" icon="sap-icon://share-2"/>
                     <tnt:NavigationListItem key="ai" text="AI Assistant" icon="sap-icon://ai"/>
-                    <tnt:NavigationListItem key="incidents" text="Incidents" icon="sap-icon://alert"/>
+                    <!-- <tnt:NavigationListItem key="incidents" text="Incidents" icon="sap-icon://alert"/> -->
                 </tnt:NavigationList>
 
                 <!-- CORRECTED: Fixed bottom item aggregation inside SideNavigation -->
                 <tnt:fixedItem>
-                    <tnt:NavigationList itemSelect=".onSideNavigationSelect">
+                    <tnt:NavigationList itemSelect=".onSideNavigationSetting">
                         <tnt:NavigationListItem key="settings" text="Settings" icon="sap-icon://action-settings" />
                     </tnt:NavigationList>
                 </tnt:fixedItem>
