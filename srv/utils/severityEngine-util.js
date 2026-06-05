@@ -135,20 +135,20 @@ export async function refreshClusterSeverity(
                 tenant.ID
         });
 
-        console.log(
-            cluster.errorType,
-            {
-                incidentCount:
-                    count,
+        // console.log(
+        //     cluster.errorType,
+        //     {
+        //         incidentCount:
+        //             count,
 
-                zScore:
-                    Number(
-                        zScore.toFixed(2)
-                    ),
+        //         zScore:
+        //             Number(
+        //                 zScore.toFixed(2)
+        //             ),
 
-                severity
-            }
-        );
+        //         severity
+        //     }
+        // );
     }
 
     console.log(

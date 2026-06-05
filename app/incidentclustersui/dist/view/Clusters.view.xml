@@ -183,7 +183,7 @@
                     <items>
                         <ColumnListItem >
                             <cells>
-                                <core:Icon src="sap-icon://share-2" size="1.25rem" color="{path: 'severity', formatter: '.formatter.severityIconColor'}"/>
+                                <core:Icon src="sap-icon://chain-link" size="1.25rem" color="{path: 'severity', formatter: '.formatter.severityIconColor'}"/>
 
                                 <Title text="{errorType}" titleStyle="H6" wrapping="true" />
                                 <!-- Associated Monitored Artifacts Count -->

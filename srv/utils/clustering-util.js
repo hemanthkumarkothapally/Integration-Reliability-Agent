@@ -710,14 +710,14 @@ export async function refreshArtifactDashboard(
             variance
         );
 
-    console.log({
-        tenant:
-            tenant.tenantName,
-        mean:
-            mean.toFixed(2),
-        stdDev:
-            stdDev.toFixed(2)
-    });
+    // console.log({
+    //     tenant:
+    //         tenant.tenantName,
+    //     mean:
+    //         mean.toFixed(2),
+    //     stdDev:
+    //         stdDev.toFixed(2)
+    // });
 
     /*
      * ----------------------------------------
@@ -813,20 +813,20 @@ export async function refreshArtifactDashboard(
                     stat.artifact.ID
             });
 
-        console.log(
-            stat.artifact.iFlowName,
-            {
-                openClusterCount:
-                    count,
-                zScore:
-                    Number(
-                        zScore.toFixed(
-                            2
-                        )
-                    ),
-                severity
-            }
-        );
+        // console.log(
+        //     stat.artifact.iFlowName,
+        //     {
+        //         openClusterCount:
+        //             count,
+        //         zScore:
+        //             Number(
+        //                 zScore.toFixed(
+        //                     2
+        //                 )
+        //             ),
+        //         severity
+        //     }
+        // );
     }
 
     await refreshClusterSeverity(

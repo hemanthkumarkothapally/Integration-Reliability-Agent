@@ -11,7 +11,7 @@ sap.ui.define([
 
         onInit: function () {
             this._updateRefreshTime();
-            var iFiveMinutes = 50000; // 5 minutes in milliseconds
+            let iFiveMinutes = 50000; // 5 minutes in milliseconds
             this._refreshInterval = setInterval(function () {
                 this.onRefreshPress();
             }.bind(this), iFiveMinutes);
@@ -38,11 +38,11 @@ sap.ui.define([
             }
             this._bInitialized = true;
 
-            var oDateRange = this.byId("idDateRangeFilter");
+            let oDateRange = this.byId("idDateRangeFilter");
             if (oDateRange) {
-                var oFromDate = new Date();
+                let oFromDate = new Date();
                 oFromDate.setHours(0, 0, 0, 0);
-                var oToDate = new Date();
+                let oToDate = new Date();
                 oDateRange.setDateValue(oFromDate);
                 oDateRange.setSecondDateValue(oToDate);
                 this.onFilteriFlow();
@@ -50,7 +50,7 @@ sap.ui.define([
         },
 
         onRefreshPress: function () {
-            var oTable = this.byId("idMonitoredArtifacts");
+            let oTable = this.byId("idMonitoredArtifacts");
             if (oTable && oTable.getBinding("items")) {
                 oTable.getBinding("items").refresh();
             }
@@ -58,8 +58,8 @@ sap.ui.define([
         },
 
         _updateRefreshTime: function () {
-            var oModel = this.getOwnerComponent().getModel("globalModel");
-            var sCurrentTime = new Date().toLocaleTimeString();
+            let oModel = this.getOwnerComponent().getModel("globalModel");
+            let sCurrentTime = new Date().toLocaleTimeString();
             oModel.setProperty("/lastRefreshTime", sCurrentTime);
 
         },
@@ -78,7 +78,7 @@ sap.ui.define([
         },
 
         // onRowPress: async function (oEvent) {
-           
+
         //     debugger;
         //     const oItem = oEvent.getParameter("listItem");
         //     const oContext = oItem.getBindingContext();
@@ -102,40 +102,40 @@ sap.ui.define([
         //     } catch (oError) {
         //         console.error("Failed to fetch ID from OData cache:", oError);
         //     }
-            
+
         // },
 
         onRowPress: async function (oEvent) {
-    debugger;
-    const oItem = oEvent.getParameter("listItem");
-    const oContext = oItem.getBindingContext();
+            debugger;
+            const oItem = oEvent.getParameter("listItem");
+            const oContext = oItem.getBindingContext();
 
-    if (!oContext) return;
+            if (!oContext) return;
 
-    // Show busy indicator before async operation
-    sap.ui.core.BusyIndicator.show(5000);
+            // Show busy indicator before async operation
+            sap.ui.core.BusyIndicator.show(5000);
 
-    try {
-        // requestProperty ensures the data is there before moving forward
-        const sID = await oContext.requestProperty("ID");
+            try {
+                // requestProperty ensures the data is there before moving forward
+                const sID = await oContext.requestProperty("ID");
 
-        if (sID) {
-            const oGlobalModel = this.getOwnerComponent().getModel("globalModel");
-            oGlobalModel.setProperty("/iflowId", sID);
+                if (sID) {
+                    const oGlobalModel = this.getOwnerComponent().getModel("globalModel");
+                    oGlobalModel.setProperty("/iflowId", sID);
 
-            this.getOwnerComponent().getRouter().navTo("RouteIC", {
-                ID: sID
-            });
-        } else {
-            console.error("ID is physically missing from the backend response.");
-        }
-    } catch (oError) {
-        console.error("Failed to fetch ID from OData cache:", oError);
-    } finally {
-        // Always hide the busy indicator, even if an error occurred
-        sap.ui.core.BusyIndicator.hide();
-    }
-},
+                    this.getOwnerComponent().getRouter().navTo("RouteIC", {
+                        ID: sID
+                    });
+                } else {
+                    console.error("ID is physically missing from the backend response.");
+                }
+            } catch (oError) {
+                console.error("Failed to fetch ID from OData cache:", oError);
+            } finally {
+                // Always hide the busy indicator, even if an error occurred
+                sap.ui.core.BusyIndicator.hide();
+            }
+        },
 
 
         // onRowPress: async function (oEvent) {
@@ -164,10 +164,10 @@ sap.ui.define([
         },
 
         onTagPress: function (oEvent) {
-            var oPressedTag = oEvent.getSource();
+            let oPressedTag = oEvent.getSource();
             this._sCurrentSeverityFilter = oPressedTag.data("severity") || "ALL";
-            var oButtonContainer = oPressedTag.getParent();
-            var aButtons = oButtonContainer.getItems();
+            let oButtonContainer = oPressedTag.getParent();
+            let aButtons = oButtonContainer.getItems();
             aButtons.forEach(function (oButton) {
                 oButton.setEnabled(true);
             });
@@ -176,14 +176,14 @@ sap.ui.define([
         },
 
         onFilteriFlow: function () {
-            var aFilters = [];
-            var oMultiCombo = this.byId("idIFlowFilter");
-            if (oMultiCombo) {
-                var aSelectedKeys = oMultiCombo.getSelectedKeys();
+            let aFilters = [];
+            let oMultiiFlowCombo = this.byId("idIFlowFilter");
+            if (oMultiiFlowCombo) {
+                let aSelectedKeys = oMultiiFlowCombo.getSelectedKeys();
                 console.log(aSelectedKeys)
 
                 if (aSelectedKeys && aSelectedKeys.length > 0) {
-                    var aComboFilters = aSelectedKeys.map(function (sKey) {
+                    let aComboFilters = aSelectedKeys.map(function (sKey) {
                         return new Filter({
                             path: "iFlowName",
                             operator: FilterOperator.EQ,
@@ -197,14 +197,14 @@ sap.ui.define([
                     }));
                 }
             }
+            let oMultiTenantCombo = this.byId("idTenantFilter");
 
-            var oMultiCombo = this.byId("idTenantFilter");
-            if (oMultiCombo) {
-                var aSelectedKeys = oMultiCombo.getSelectedKeys();
+            if (oMultiTenantCombo) {
+                let aSelectedKeys = oMultiTenantCombo.getSelectedKeys();
                 console.log(aSelectedKeys)
 
                 if (aSelectedKeys && aSelectedKeys.length > 0) {
-                    var aComboFilters = aSelectedKeys.map(function (sKey) {
+                    let aComboFilters = aSelectedKeys.map(function (sKey) {
                         return new Filter({
                             path: "tenant_ID",
                             operator: FilterOperator.EQ,
@@ -219,13 +219,13 @@ sap.ui.define([
                 }
             }
 
-            var oPackageMultiCombo = this.byId("idpackageFilter");
+            let oPackageMultiCombo = this.byId("idpackageFilter");
             if (oPackageMultiCombo) {
-                var aSelectedKeys = oPackageMultiCombo.getSelectedKeys();
+                let aSelectedKeys = oPackageMultiCombo.getSelectedKeys();
                 console.log(aSelectedKeys)
 
                 if (aSelectedKeys && aSelectedKeys.length > 0) {
-                    var aComboFilters = aSelectedKeys.map(function (sKey) {
+                    let aComboFilters = aSelectedKeys.map(function (sKey) {
                         return new Filter({
                             path: "PackageName",
                             operator: FilterOperator.EQ,
@@ -248,15 +248,15 @@ sap.ui.define([
             }
 
 
-            var oDateRange = this.byId("idDateRangeFilter");
+            let oDateRange = this.byId("idDateRangeFilter");
             if (oDateRange) {
-                var oFromDate = oDateRange.getDateValue();
-                var oSecondDate = oDateRange.getSecondDateValue();
+                let oFromDate = oDateRange.getDateValue();
+                let oSecondDate = oDateRange.getSecondDateValue();
                 if (oFromDate && oSecondDate) {
-                    var oToDate = new Date(oSecondDate.getTime());
+                    let oToDate = new Date(oSecondDate.getTime());
                     oToDate.setHours(23, 59, 59, 999);
-                    var sFromDate = oFromDate.toISOString();
-                    var sToDate = oToDate.toISOString();
+                    let sFromDate = oFromDate.toISOString();
+                    let sToDate = oToDate.toISOString();
 
                     aFilters.push(new Filter({
                         path: "lastErrorAt",
@@ -266,11 +266,11 @@ sap.ui.define([
                     }));
                 }
             }
-            var oniFlowTable = this.byId("idMonitoredArtifacts");
+            let oniFlowTable = this.byId("idMonitoredArtifacts");
             console.log(aFilters);
             if (oniFlowTable) {
                 // CHANGED: Get binding for 'items' instead of 'content'
-                var oBinding = oniFlowTable.getBinding("items");
+                let oBinding = oniFlowTable.getBinding("items");
                 if (oBinding) {
                     oBinding.filter(aFilters);
                 } else {
@@ -281,8 +281,8 @@ sap.ui.define([
         },
         // onTableUpdateFinished: function (oEvent) {
         //     // This parameter is provided natively by the updateFinished event
-        //     var iTotalItems = oEvent.getParameter("total");
-        //     var oTitleControl = this.byId("idTableTitle");
+        //     let iTotalItems = oEvent.getParameter("total");
+        //     let oTitleControl = this.byId("idTableTitle");
 
         //     if (oTitleControl) {
         //         oTitleControl.setText("Monitored Artifacts (" + iTotalItems + ")");
@@ -291,24 +291,24 @@ sap.ui.define([
         onClearFilters: function (oEvent) {
 
             // Clear iFlow filter
-            var oIFlowFilter = this.byId("idIFlowFilter");
+            let oIFlowFilter = this.byId("idIFlowFilter");
             if (oIFlowFilter) {
                 oIFlowFilter.removeAllSelectedItems();
             }
 
             // Clear Package filter
-            var oPackageFilter = this.byId("idpackageFilter");
+            let oPackageFilter = this.byId("idpackageFilter");
             if (oPackageFilter) {
                 oPackageFilter.removeAllSelectedItems();
             }
 
-            var oTenantFilter = this.byId("idTenantFilter");
+            let oTenantFilter = this.byId("idTenantFilter");
             if (oTenantFilter) {
                 oTenantFilter.removeAllSelectedItems();
             }
 
             // Clear date range
-            var oDateRange = this.byId("idDateRangeFilter");
+            let oDateRange = this.byId("idDateRangeFilter");
             if (oDateRange) {
                 oDateRange.setDateValue(null);
                 oDateRange.setSecondDateValue(null);
@@ -316,10 +316,10 @@ sap.ui.define([
             }
 
             // Reset severity filter
-            var oPressedTag = oEvent.getSource();
+            let oPressedTag = oEvent.getSource();
             this._sCurrentSeverityFilter = oPressedTag.data("severity") || "ALL";
-            var oButtonContainer = oPressedTag.getParent();
-            var aButtons = oButtonContainer.getItems();
+            let oButtonContainer = oPressedTag.getParent();
+            let aButtons = oButtonContainer.getItems();
             aButtons.forEach(function (oButton) {
                 oButton.setEnabled(true);
             });

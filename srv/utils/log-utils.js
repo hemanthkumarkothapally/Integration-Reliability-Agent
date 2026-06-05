@@ -797,14 +797,14 @@ export async function upsertMonitoredArtifacts(
         a
       ])
     );
-  console.log(
-    "latestMap:",
-    latestMap
-  );
-  console.log(
-    "existingMap:",
-    existingMap
-  );
+  // console.log(
+  //   "latestMap:",
+  //   latestMap
+  // );
+  // console.log(
+  //   "existingMap:",
+  //   existingMap
+  // );
   /*
    * ----------------------------------------
    * UPSERT ARTIFACTS
@@ -838,11 +838,11 @@ export async function upsertMonitoredArtifacts(
     }
     const results =
       iflowDetails?.d || {};
-    console.log(
-      "Fetched iFlow details:",
-      iFlowName,
-      results
-    );
+    // console.log(
+    //   "Fetched iFlow details:",
+    //   iFlowName,
+    //   results
+    // );
     /*
      * ----------------------------------------
      * EXISTING ARTIFACT
@@ -888,9 +888,9 @@ export async function upsertMonitoredArtifacts(
           tenant_ID: tenant.ID
         });
 
-      console.log(
-        `Updated artifact: ${iFlowName}`
-      );
+      // console.log(
+      //   `Updated artifact: ${iFlowName}`
+      // );
     }
 
     /*

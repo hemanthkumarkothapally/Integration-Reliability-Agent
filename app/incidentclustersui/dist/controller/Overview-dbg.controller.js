@@ -7,43 +7,91 @@ sap.ui.define([
 
   return BaseController.extend("com.cytechies.integration.reliability.incidentclustersui.controller.Overview", {
     formatter: formatter,
-    onInit:async function() {
-      //  this.byId("sideNavigation")
-      //   .setSelectedKey("overview");
-
-      const aTenants = [
-        {
-          ID: "ALL",
-          tenantName: "All Tenants"
-        }
-      ];
-
-      const aBackendTenants = await this.getOwnerComponent().getModel().bindList("/Tenants").requestContexts();
-
-      aBackendTenants.forEach(oContext => {
-        aTenants.push(oContext.getObject());
-      });
-      console.log("Tenants",aTenants)
+    onInit: function() {
+      // Set an initial empty/default state so the UI doesn't crash while loading
       this.getView().setModel(
         new JSONModel({
-          tenants: aTenants
+          tenants: [{ ID: "ALL", tenantName: "All Tenants" }]
         }),
         "tenantModel"
       );
-      console.log(this.getView().getModel("tenantModel").getData())
-      this.loadDashboardCharts();
-      this.loadTopCriticalIflows();
+
+      // Call your async initialization separately (do NOT use await here)
+      this._initializeAsyncData();
+      
+      // ❌ Do not call this.onAfterRendering() manually!
 
       var oPopover = this.byId("idPopOver");
+      var oTopErrorChart = this.byId("topErrorTypesChart");
+      var oSeverityChart = this.byId("severityChart");
+      var oLineChart = this.byId("idLineChart");
 
-      oPopover.connect(this.byId("topErrorTypesChart").getVizUid());
+      if (oPopover) {
+        // Wait for each chart to fully draw before connecting the popover
+        if (oTopErrorChart) {
+          oTopErrorChart.attachRenderComplete(function() {
+            oPopover.connect(oTopErrorChart.getVizUid());
+          });
+        }
 
-      oPopover.connect(this.byId("severityChart").getVizUid());
+        if (oSeverityChart) {
+          oSeverityChart.attachRenderComplete(function() {
+            oPopover.connect(oSeverityChart.getVizUid());
+          });
+        }
 
-      oPopover.connect(this.byId("idLineChart").getVizUid());
-
-
+        if (oLineChart) {
+          oLineChart.attachRenderComplete(function() {
+            oPopover.connect(oLineChart.getVizUid());
+          });
+        }
+      }
     },
+
+    // 2. New custom helper method for the async work
+    _initializeAsyncData: async function() {
+      try {
+        const aTenants = [
+          {
+            ID: "ALL",
+            tenantName: "All Tenants"
+          }
+        ];
+
+        const aBackendTenants = await this.getOwnerComponent().getModel().bindList("/Tenants").requestContexts();
+
+        aBackendTenants.forEach(oContext => {
+          aTenants.push(oContext.getObject());
+        });
+        
+        console.log("Tenants", aTenants);
+        
+        // Update the model we created in onInit
+        this.getView().getModel("tenantModel").setProperty("/tenants", aTenants);
+        console.log(this.getView().getModel("tenantModel").getData());
+        
+        this.loadDashboardCharts();
+        this.loadTopCriticalIflows();
+      } catch (oError) {
+        console.error("Failed to initialize backend data", oError);
+      }
+    },
+
+    // 3. The framework will automatically call this when the UI is drawn
+    onAfterRendering: function () {
+      var oPopover = this.byId("idPopOver");
+      
+      if (oPopover) {
+        var oTopErrorChart = this.byId("topErrorTypesChart");
+        var oSeverityChart = this.byId("severityChart");
+        var oLineChart = this.byId("idLineChart");
+
+        if (oTopErrorChart) oPopover.connect(oTopErrorChart.getVizUid());
+        if (oSeverityChart) oPopover.connect(oSeverityChart.getVizUid());
+        if (oLineChart) oPopover.connect(oLineChart.getVizUid());
+      }
+    },
+
     onTenantChange: function (oEvent) {
 
       const sKey =
