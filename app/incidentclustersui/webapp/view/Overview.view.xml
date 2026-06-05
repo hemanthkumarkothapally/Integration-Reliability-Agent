@@ -383,7 +383,7 @@
                                             <Text text="iFlow Name" />
                                         </Column>
 
-                                        <Column minScreenWidth="Tablet">
+                                        <Column width="20%" minScreenWidth="Tablet">
                                             <Text text="Package Name" />
                                         </Column>
 
@@ -399,7 +399,7 @@
                                             <Text text="Open Incidents" />
                                         </Column>
 
-                                        <Column minScreenWidth="Desktop">
+                                        <Column width="15%" hAlign="End" minScreenWidth="Desktop">
                                             <Text text="Last Failure" />
                                         </Column>
 
