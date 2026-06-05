@@ -39,7 +39,7 @@ export async function runPoll({
       const latestArtifact = await SELECT.one.from(MonitoredArtifacts)
         .orderBy({ lastPollTimestamp: 'desc' });
 
-      console.log("Latest Artifact:", latestArtifact);
+    //  console.log("Latest Artifact:", latestArtifact);
 
       const fallback = new Date(Date.now() - 5 * 60 * 1000);
       const rawTimestamp =
@@ -70,8 +70,8 @@ export async function runPoll({
         path
       });
 
-      console.log("CPI Response:");
-      console.log(JSON.stringify(response, null, 2));
+      // console.log("CPI Response:");
+      // console.log(JSON.stringify(response, null, 2));
 
       if (!response) {
 
@@ -100,7 +100,7 @@ export async function runPoll({
         const guid = log.MessageGuid;
 
         console.log("------------------------------------------------");
-        console.log("Processing GUID:", guid);
+        // console.log("Processing GUID:", guid);
 
         try {
 

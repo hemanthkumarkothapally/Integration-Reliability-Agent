@@ -8,8 +8,8 @@
         <ResponsivePopover id="activeClusterPopover" placement="Top" title="{i18n>activeClusterPopover.title}" class="sapUiContentPadding">
 
             <VBox alignItems="Center">
-                <MessageStrip text="{chatJSONModel>/clusterName}" type="Warning" showIcon="true" customIcon="sap-icon://share-2" class="sapUiSmallMarginBottom" />
-                <!-- <Button type="Attention" text="{chatJSONModel>/clusterName}" icon="sap-icon://share-2" /> -->
+                <MessageStrip text="{chatJSONModel>/clusterName}" type="Warning" showIcon="true" customIcon="sap-icon://chain-link" class="sapUiSmallMarginBottom" />
+                <!-- <Button type="Attention" text="{chatJSONModel>/clusterName}" icon="sap-icon://chain-link" /> -->
                 <Button text="{i18n>remove.popover.cluster.button}" type="Reject" icon="sap-icon://delete" press=".onRemoveClusterPress" />
             </VBox>
 
@@ -18,7 +18,7 @@
 
             <VBox alignItems="Center">
                 <MessageStrip text="{chatJSONModel>/iFlowName}" type="Information" showIcon="true" customIcon="sap-icon://process" class="sapUiSmallMarginBottom" />
-                <!-- <Button type="Attention" text="{chatJSONModel>/clusterName}" icon="sap-icon://share-2" /> -->
+                <!-- <Button type="Attention" text="{chatJSONModel>/clusterName}" icon="sap-icon://chain-link" /> -->
                 <Button text="{i18n>remove.popover.iflow.button}" type="Reject" icon="sap-icon://delete" press=".onRemoveiFlowPress" />
             </VBox>
 
@@ -28,7 +28,7 @@
             <content>
                 <VBox class="sapUiTinyMargin">
                     <!-- <Button text="Attach Cluster" type="Ghost" icon="sap-icon://add-process" tooltip="{i18n>cluster.toggle.attach.tooltip}" visible="{= !${chatJSONModel>/clusterDataEnabled} }" press=".onToggleClusterData" width="100%" /> -->
-                    <Button text="{i18n>actionDataPopover.cluster.button}" type="Attention" icon="sap-icon://share-2" tooltip="{i18n>cluster.toggle.attach.tooltip}" visible="{= !${chatJSONModel>/clusterDataEnabled} &amp;&amp; !${chatJSONModel>/iFlowDataEnabled} }" press=".onSelectClusterData" width="100%" />
+                    <Button text="{i18n>actionDataPopover.cluster.button}" type="Attention" icon="sap-icon://chain-link" tooltip="{i18n>cluster.toggle.attach.tooltip}" visible="{= !${chatJSONModel>/clusterDataEnabled} &amp;&amp; !${chatJSONModel>/iFlowDataEnabled} }" press=".onSelectClusterData" width="100%" />
 
                     <Button text="{i18n>actionDataPopover.iflow.button}" type="Neutral" icon="sap-icon://add-process" tooltip="{i18n>cluster.toggle.attach.tooltip}" visible="{= !${chatJSONModel>/clusterDataEnabled} &amp;&amp; !${chatJSONModel>/iFlowDataEnabled} }" press=".onSelectiFlowData" width="100%" />
 
@@ -209,7 +209,7 @@
                                         <OverflowToolbarLayoutData priority="NeverOverflow" />
                                     </layoutData>
                                 </Button>
-                                <Button type="Attention" icon="sap-icon://share-2" tooltip="{i18n>cluster.toggle.detach.tooltip}" visible="{chatJSONModel>/clusterDataEnabled}" press=".onClusterInfoPopover">
+                                <Button type="Attention" icon="sap-icon://chain-link" tooltip="{i18n>cluster.toggle.detach.tooltip}" visible="{chatJSONModel>/clusterDataEnabled}" press=".onClusterInfoPopover">
                                     <layoutData>
                                         <OverflowToolbarLayoutData priority="NeverOverflow" />
                                     </layoutData>

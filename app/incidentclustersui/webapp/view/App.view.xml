@@ -18,7 +18,7 @@
                 <tnt:NavigationList itemSelect=".onSideNavigationSelect">
                     <tnt:NavigationListItem key="overview" text="Overview" icon="sap-icon://home"/>
                     <tnt:NavigationListItem key="iflows" text="iFlows" icon="sap-icon://process"/>
-                    <tnt:NavigationListItem key="clusters" text="Clusters" icon="sap-icon://share-2"/>
+                    <tnt:NavigationListItem key="clusters" text="Clusters" icon="sap-icon://chain-link"/>
                     <tnt:NavigationListItem key="ai" text="AI Assistant" icon="sap-icon://ai"/>
                     <!-- <tnt:NavigationListItem key="incidents" text="Incidents" icon="sap-icon://alert"/> -->
                 </tnt:NavigationList>

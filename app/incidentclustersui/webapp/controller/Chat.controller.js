@@ -619,7 +619,7 @@ sap.ui.define([
             text: isCluster ? oRefData.errorType : oRefData.iFlowName ,
             type: isCluster ? sap.ui.core.MessageType.Warning : sap.ui.core.MessageType.Information,
             showIcon: true,
-            customIcon: isCluster ? "sap-icon://share-2" : "sap-icon://process"
+            customIcon: isCluster ? "sap-icon://chain-link" : "sap-icon://process"
         }).addStyleClass("sapUiTinyMarginBottom")
 }
 ,

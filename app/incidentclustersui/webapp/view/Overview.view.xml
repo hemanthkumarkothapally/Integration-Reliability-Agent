@@ -260,7 +260,7 @@
         },
         'plotArea': {
             'dataLabel': {
-                'visible': true
+                'visible': false
             },
             'colorPalette': ['#1565C0', '#E53935'],
             'drawingEffect': 'glossy',

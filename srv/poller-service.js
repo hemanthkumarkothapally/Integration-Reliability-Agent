@@ -60,35 +60,42 @@ export default cds.service.impl(async function () {
     console.error(err);
     console.error(err.stack);
   }
-  this.on('getFailedLogs', async () => {
-    console.log("========== getFailedLogs START ==========");
+ this.on('getFailedLogs', async (req) => {
+  
+  // 1. Instantly respond to BTP Job Scheduler to prevent the 15-second timeout
+  if (req._ && req._.res) {
+    req._.res.status(202).send('Job accepted and running in background');
+  } else {
+    req.reply('Job accepted');
+  }
+
+  // 2. Use CAP's native background worker (cds.spawn)
+  // This safely detaches the process while keeping your database connection alive
+  cds.spawn({ tenant: req.tenant, user: req.user }, async (tx) => {
+    console.log("========== getFailedLogs BACKGROUND START ==========");
+    
     try {
-      const tenants =
-        await SELECT.from(Tenants)
-          .where({ isActive: true });
+      // Note: Use 'tx.run' or 'tx.read' inside cds.spawn to ensure proper DB connection
+      const tenants = await tx.read('Tenants').where({ isActive: true });
       const allResults = [];
+      
       for (const tenant of tenants) {
-        console.log(
-          `Processing Tenant: ${tenant.tenantName}`
-        );
-        const tenantResults =
-          await runPoll(tenant);
+       // console.log(`Processing Tenant: ${tenant.tenantName}`);
+        // Ensure runPoll is available in this scope
+        const tenantResults = await runPoll(tenant); 
         allResults.push(...tenantResults);
       }
+      
       console.log(`Total Failed Logs Processed: ${allResults.length}`);
-      console.log("========== getFailedLogs SUCCESS ==========");
-      return allResults;
-      // console.log("getFailedLogs SUCCESS");
-      // console.log("Returned Records:", enrichedResults?.length || 0);
-      // return enrichedResults;
+      console.log("========== getFailedLogs BACKGROUND SUCCESS ==========");
+      
     } catch (err) {
-      console.error("getFailedLogs FAILED");
+      console.error("========== getFailedLogs BACKGROUND FAILED ==========");
       console.error(err);
-      return {
-        error: err.message
-      };
     }
   });
+
+});
 
   async function runPoll(tenant) {
     console.log("========== runPoll START ==========");
@@ -106,7 +113,7 @@ export default cds.service.impl(async function () {
       const latestArtifact = await SELECT.one.from(MonitoredArtifacts)
   .orderBy({ lastPollTimestamp: 'desc' });
 
-console.log("Latest Artifact:", latestArtifact);
+//console.log("Latest Artifact:", latestArtifact);
 
 // 1. Fallback to 5 minutes ago if no previous polling record exists
 const dateFiveMinAgo = new Date(Date.now() - 5 * 60 * 1000);
@@ -137,8 +144,8 @@ console.log("Generated Filter:", filter);
         path
       });
 
-      console.log("CPI Response:");
-      console.log(JSON.stringify(response, null, 2));
+      // console.log("CPI Response:");
+      // console.log(JSON.stringify(response, null, 2));
 
       if (!response) {
 
@@ -166,8 +173,8 @@ console.log("Generated Filter:", filter);
 
         const guid = log.MessageGuid;
 
-        console.log("------------------------------------------------");
-        console.log("Processing GUID:", guid);
+        // console.log("------------------------------------------------");
+        // console.log("Processing GUID:", guid);
 
         try {
 
@@ -175,33 +182,33 @@ console.log("Generated Filter:", filter);
 
           const errorPath = `/api/v1/MessageProcessingLogs('${guid}')/ErrorInformation/$value`;
 
-          console.log("Calling ErrorInformation API:", errorPath);
+          // console.log("Calling ErrorInformation API:", errorPath);
 
           const errorMessage = await ApiCall(IS_API, {
             method: 'GET',
             path: errorPath
           });
 
-          console.log("Error Message Response:");
-          console.log(errorMessage);
+          // console.log("Error Message Response:");
+          // console.log(errorMessage);
 
           /* ADAPTER ATTRIBUTES */
 
           const adapterPath = `/api/v1/MessageProcessingLogs('${guid}')/AdapterAttributes`;
 
-          console.log("Calling AdapterAttributes API:", adapterPath);
+          // console.log("Calling AdapterAttributes API:", adapterPath);
 
           const adapterRes = await ApiCall(IS_API, {
             method: 'GET',
             path: adapterPath
           });
 
-          console.log("Adapter Response:");
-          console.log(JSON.stringify(adapterRes, null, 2));
+          // console.log("Adapter Response:");
+          // console.log(JSON.stringify(adapterRes, null, 2));
 
           const adapterType = extractAdapter(adapterRes);
 
-          console.log("Extracted Adapter:", adapterType);
+          // console.log("Extracted Adapter:", adapterType);
 
           /* SAFE ERROR HANDLING */
 
@@ -210,22 +217,22 @@ console.log("Generated Filter:", filter);
               ? errorMessage
               : JSON.stringify(errorMessage);
 
-          console.log("Safe Error Message:");
-          console.log(safeErrorMessage);
+          // console.log("Safe Error Message:");
+          // console.log(safeErrorMessage);
 
           const normalized =
             normalizeCpiError(safeErrorMessage.trim());
 
-          console.log("Normalized Message:");
-          console.log(normalized);
+          // console.log("Normalized Message:");
+          // console.log(normalized);
           const analysed =
             normaliseLog({
               errorMessage:
                 normalized
             });
 
-          console.log("Analysed Result:");
-          console.log(analysed);
+          // console.log("Analysed Result:");
+          // console.log(analysed);
 
           return {
             tenant_ID: tenant.ID,
