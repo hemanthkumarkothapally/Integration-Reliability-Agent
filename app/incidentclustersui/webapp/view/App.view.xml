@@ -12,7 +12,7 @@
         </tnt:header>
 
         <tnt:sideContent>
-            <tnt:SideNavigation id="sideNavigation">
+            <tnt:SideNavigation id="sideNavigation" selectedKey="overview">
                 
                 <!-- Main scrollable navigation items -->
                 <tnt:NavigationList itemSelect=".onSideNavigationSelect">

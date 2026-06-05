@@ -1,5 +1,5 @@
 sap.ui.define([
-  "sap/ui/core/mvc/Controller",
+  "./BaseController",
   "../model/formatter",
   "sap/ui/model/json/JSONModel"
 ], (BaseController, formatter, JSONModel) => {
@@ -30,11 +30,26 @@ sap.ui.define([
         }),
         "tenantModel"
       );
+
+      const oRouter =
+        this.getOwnerComponent().getRouter();
+
+      oRouter.getRoute("RouteOverview")
+        .attachPatternMatched(
+          this._onRouteMatched,
+          this
+        );
+
       console.log(this.getView().getModel("tenantModel").getData())
       this.loadDashboardCharts();
       this.loadTopCriticalIflows();
     },
-
+    _onRouteMatched: async function () {
+      //this.showBusy();
+      await this.loadDashboardCharts();
+      await this.loadTopCriticalIflows();
+      //this.hideBusy();
+    },
     onAfterRendering: function () {
       setTimeout(function () {
         var oPopover = this.byId("idPopOver");
@@ -183,23 +198,21 @@ sap.ui.define([
     },
     onTopIflowPress: function (oEvent) {
 
-      const oItem = oEvent.getSource();
+      this.showBusy();
+       console.log("showBusy() called");
 
+      const oItem = oEvent.getSource();
       const oContext = oItem.getBindingContext("topIflows");
 
       if (!oContext) {
+        this.hideBusy();
         console.error("No binding context found");
         return;
       }
 
-      // Debug - check what data is available in the selected row
-      console.log("Selected Row Data:", oContext.getObject());
-
-      // If your service returns ID use this
       const sID = oContext.getProperty("ID");
 
       if (sID) {
-
         const oGlobalModel = this.getOwnerComponent().getModel("globalModel");
 
         if (oGlobalModel) {
@@ -213,13 +226,14 @@ sap.ui.define([
           });
 
       } else {
-
+         this.hideBusy();
+        console.log("hideBusy() called");
         console.error(
           "ID field not found in row data. Available data:",
           oContext.getObject()
         );
-
       }
+      
     }
   });
 });
