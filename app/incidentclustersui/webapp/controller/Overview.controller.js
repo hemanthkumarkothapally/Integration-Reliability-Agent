@@ -11,26 +11,6 @@ sap.ui.define([
       //  this.byId("sideNavigation")
       //   .setSelectedKey("overview");
 
-      const aTenants = [
-        {
-          ID: "ALL",
-          tenantName: "All Tenants"
-        }
-      ];
-
-      const aBackendTenants = await this.getOwnerComponent().getModel().bindList("/Tenants").requestContexts();
-
-      aBackendTenants.forEach(oContext => {
-        aTenants.push(oContext.getObject());
-      });
-      console.log("Tenants", aTenants)
-      this.getView().setModel(
-        new JSONModel({
-          tenants: aTenants
-        }),
-        "tenantModel"
-      );
-      console.log(this.getView().getModel("tenantModel").getData())
       this.loadDashboardCharts();
       this.loadTopCriticalIflows();
     },
@@ -53,16 +33,7 @@ sap.ui.define([
 
       }.bind(this), 500);
     },
-    onTenantChange: function (oEvent) {
-
-      const sKey =
-        oEvent.getSource().getSelectedKey();
-
-      console.log("Selected Key:", sKey);
-      this.loadDashboardCharts();
-      this.loadTopCriticalIflows();
-
-    },
+   
     onIFlowBtn: function () {
 
       this.getOwnerComponent()
@@ -113,7 +84,7 @@ sap.ui.define([
     loadTopCriticalIflows: async function () {
 
       const oModel = this.getOwnerComponent().getModel();
-      const sSelectedTenant = this.getView().byId("tenantSelect").getSelectedKey();
+      const sSelectedTenant = this.getOwnerComponent().getModel("globalModel").getProperty("/settings/DEFAULT_TENANT");
       console.log("Selected Tenant:", sSelectedTenant);
 
       try {
@@ -153,7 +124,7 @@ sap.ui.define([
 
       const oModel = this.getOwnerComponent().getModel();
       debugger
-      const sSelectedTenant = this.getView().byId("tenantSelect").getSelectedKey();
+      const sSelectedTenant = this.getOwnerComponent().getModel("globalModel").getProperty("/settings/DEFAULT_TENANT");
       console.log("Selected Tenant:", sSelectedTenant);
 
       try {

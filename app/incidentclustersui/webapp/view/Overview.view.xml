@@ -16,7 +16,16 @@
 
             <f:DynamicPage id="dynamicPage" fitContent="false" toggleHeaderOnTitleClick="false">
 
-
+<f:title>
+            <f:DynamicPageTitle>
+                <f:heading>                         
+                  <Title text="Integration Monitoring Overview" wrapping="true"/>       
+                </f:heading>
+                <f:expandedHeading>
+                <Text text="Manage tenant configuration and data retention policies"></Text>
+                </f:expandedHeading>
+            </f:DynamicPageTitle>
+        </f:title>
                 <!-- ===================================================== -->
                 <!-- PAGE CONTENT -->
                 <!-- ===================================================== -->
@@ -28,18 +37,7 @@
                     <!-- ===================================================== -->
 
                     <VBox class="sapUiNoMargin">
-                    <Text text="Tenant:"></Text>
-               <Select
-    id="tenantSelect"
-    selectedKey="ALL"
-    change=".onTenantChange"
-    items="{tenantModel>/tenants}">
-
-    <core:Item
-        key="{tenantModel>ID}"
-        text="{tenantModel>tenantName}" />
-
-</Select>
+                    
                         <f:GridList id="kpiGridList" class="sapUiTinyMarginBottom" width="100%" growing="false">
 
                             <f:customLayout>

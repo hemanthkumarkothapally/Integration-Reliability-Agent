@@ -116,3 +116,13 @@ entity TokenUsages : cuid, managed {
     calledAt          : Timestamp;
     purpose           : String(255);
 }
+
+
+entity ApplicationSettings :cuid, managed {
+    settingKey  : String(100);
+    settingValue : LargeString;
+    category : String(50);
+    description : String(500);
+    dataType : String(20);
+    isEditable : Boolean default true;
+}

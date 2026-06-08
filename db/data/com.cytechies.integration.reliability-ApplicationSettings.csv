@@ -1,0 +1,5 @@
+ID,settingKey,settingValue,category,description,dataType,isEditable
+1,DEFAULT_TENANT,ALL,Tenant,Default tenant loaded on dashboard,STRING,true
+2,INCIDENT_RETENTION_DAYS,1,Retention,Incident retention period in days,NUMBER,true
+3,CLUSTER_RETENTION_DAYS,1,Retention,Cluster retention period in days,NUMBER,true
+4,MONITORING_RETENTION_DAYS,1,Retention,Monitoring retention period in days,NUMBER,true

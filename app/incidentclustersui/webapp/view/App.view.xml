@@ -1,13 +1,16 @@
-<mvc:View controllerName="com.cytechies.integration.reliability.incidentclustersui.controller.App" displayBlock="true"
+<mvc:View xmlns:core="sap.ui.core" controllerName="com.cytechies.integration.reliability.incidentclustersui.controller.App" displayBlock="true"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns:tnt="sap.tnt"
     xmlns="sap.m">
-    <tnt:ToolPage id="toolPage1" sideExpanded="false">
+    <tnt:ToolPage id="toolPage1" sideExpanded="false" >
 
         <tnt:header>
             <tnt:ToolHeader>
                 <Button icon="sap-icon://menu2" press=".onSideNavButtonPress"/>
-                <Title text="Integration Monitoring Overview"/>
+                
+<core:Icon src="sap-icon://connected" size="1.5rem" color="#0a6ed1"
+             class="sapUiTinyMarginEnd"/>
+                <Title text="Integration Reliability Agent"/>
             </tnt:ToolHeader>
         </tnt:header>
 
@@ -25,8 +28,8 @@
 
                 <!-- CORRECTED: Fixed bottom item aggregation inside SideNavigation -->
                 <tnt:fixedItem>
-                    <tnt:NavigationList itemSelect=".onSideNavigationSetting">
-                        <tnt:NavigationListItem key="settings" text="Settings" icon="sap-icon://action-settings" />
+                    <tnt:NavigationList itemSelect=".onSideNavigationSelect">
+                        <tnt:NavigationListItem key="Settings" text="Settings" icon="sap-icon://action-settings" />
                     </tnt:NavigationList>
                 </tnt:fixedItem>
 
