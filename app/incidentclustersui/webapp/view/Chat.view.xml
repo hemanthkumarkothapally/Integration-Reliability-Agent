@@ -14,7 +14,7 @@
             </VBox>
 
         </ResponsivePopover>
-        <ResponsivePopover id="activeiFlowPopover" placement="Top" title="{i18n>activeiFlowPopover.title}" class="sapUiContentPadding">
+        <ResponsivePopover  id="activeiFlowPopover" placement="Top" title="{i18n>activeiFlowPopover.title}" class="sapUiContentPadding">
 
             <VBox alignItems="Center">
                 <MessageStrip text="{chatJSONModel>/iFlowName}" type="Information" showIcon="true" customIcon="sap-icon://process" class="sapUiSmallMarginBottom" />
