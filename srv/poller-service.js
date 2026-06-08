@@ -45,7 +45,8 @@ export default cds.service.impl(async function () {
     TokenUsages,
     ClusterArtifacts,
     Playbooks,
-    Tenants
+    Tenants,
+    ApplicationSettings
   } = db.entities;
   const { IncidentClusters } = srv.entities;
    try {

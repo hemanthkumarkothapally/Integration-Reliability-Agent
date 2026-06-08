@@ -22,21 +22,21 @@
                     <Label text="Monitor your iFlows &amp; Associated Clusters" class="sapUiSmallMarginBegin" />
                 </f:expandedContent> -->
 
-                <f:actions>
+                <!-- <f:actions>
                     <Button icon="sap-icon://ai" text="Ai Assistant" type="Ghost" press=".onAipress" tooltip="AI Assistant"/>
-                </f:actions>
+                </f:actions> -->
             </f:DynamicPageTitle>
         </f:title>
 
         <f:header>
             <f:DynamicPageHeader pinnable="true">
                 <f:content>
-                    <FlexBox alignItems="Start" justifyContent="SpaceBetween" wrap="Wrap" width="100%" class="sapUiSmallMarginTop">
+                    <FlexBox alignItems="Start" justifyContent="Start" wrap="Wrap" width="100%" class="sapUiSmallMarginTop">
                         <items>
 
-                            <VBox width="auto" class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
+                            <VBox width="250px" class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
                                 <layoutData>
-                                    <FlexItemData growFactor="1" />
+                                    <FlexItemData growFactor="0" />
                                 </layoutData>
                                 <items>
                                     <MultiComboBox showClearIcon="true" id="idClustersCombo" width="100%" placeholder="Filter by Error Type" items="{path:'/IncidentClusters'}" selectionChange=".onclusterFilterChange">
@@ -44,15 +44,15 @@
                                     </MultiComboBox>
                                 </items>
                             </VBox>
-                            <VBox width="auto" class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
+                            <VBox width="250px" class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
                                 <layoutData>
-                                    <FlexItemData growFactor="1" />
+                                    <FlexItemData growFactor="0" />
                                 </layoutData>
                                 <items>
-                                    <DateRangeSelection id="idDateRangeFilterC" width="100%" placeholder="Select Date Range" change=".onFilterChange" />
+                                    <DateRangeSelection id="idDateRangeFilterC" width="100%" placeholder="Select Date Range" change=".onClusterDateChange" />
                                 </items>
                             </VBox>
-                            <VBox width="auto" class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
+                            <!-- <VBox width="auto" class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
                                 <layoutData>
                                     <FlexItemData growFactor="1" />
                                 </layoutData>
@@ -66,20 +66,20 @@
                                         <core:Item key="{PackageName}" text="{PackageName}" />
                                     </MultiComboBox>
                                 </items>
-                            </VBox>
-                            <VBox width="auto" class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
+                            </VBox> -->
+                            <!-- <VBox width="250px" class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
                                 <layoutData>
-                                    <FlexItemData growFactor="1" />
+                                    <FlexItemData growFactor="0" />
                                 </layoutData>
                                 <items>
                                     <MultiComboBox id="idTenantFilterC" width="100%" placeholder="Filter by Tenant" items="{path:'/Tenants'}" selectionChange=".onFilterChange">
                                         <core:Item key="{ID}" text="{tenantName}" />
                                     </MultiComboBox>
                                 </items>
-                            </VBox>
+                            </VBox> -->
 
 
-                            <FlexBox wrap="Wrap" justifyContent="Start" class="sapUiTinyMarginBottom">
+                            <!-- <FlexBox wrap="Wrap" justifyContent="Start" class="sapUiTinyMarginBottom">
                                 <layoutData>
                                     <FlexItemData growFactor="0" />
                                 </layoutData>
@@ -116,7 +116,9 @@
                                     </Button>
                                     <Button text="Clear Filters" icon="sap-icon://clear-filter" type="Transparent" press=".onClearFilters" />
                                 </items>
-                            </FlexBox>
+                            </FlexBox> -->
+                            <ToolbarSpacer ></ToolbarSpacer>
+                            <Button text="Clear Filters" icon="sap-icon://clear-filter" type="Transparent" press=".onClearClusterFilters" />
 
                         </items>
                     </FlexBox>
@@ -127,84 +129,108 @@
 
         <f:content>
             <layout:VerticalLayout width="100%">
-                <!-- <MessageStrip enableFormattedText="true" text="Click any &lt;strong&gt;iFlow row&lt;/strong&gt; to open the &lt;strong&gt;Detail View&lt;/strong&gt; with all associated clusters and recent incidents." type="Information" showIcon="true" showCloseButton="true" class="sapUiSmallMarginBottom" /> -->
 
-                <Table id="idClusters" updateFinished=".onTableUpdateFinished" growing="true" growingThreshold="30" growingScrollToLoad="true" mode="SingleSelectMaster" itemPress=".onRowPress" items="{
-    path: '/IncidentClusters',
-    parameters: {
-        $count: true,
-        $expand: {
-            'monitoredArtifacts': {
-                '$count': true
-            }
-        }
-    },
-    sorter: {
-        path: 'lastSeen',
-        descending: true
-    }
-}">
+                <Panel width="100%">
 
-                    <headerToolbar>
-                        <OverflowToolbar>
-                            <Title id = "idTableTitleC" text="{= 'Clusters (' + ${/IncidentClusters/$count} + ')' }" level="H4"/>
+                    <!-- Severity Tabs -->
+                    <IconTabHeader id="idSeverityTabBar" select=".onSeverityTabSelect" class="sapUiResponsiveContentPadding">
 
-                            <ToolbarSpacer />
+                        <items>
+                            <IconTabFilter key="ALL" text="All" count="{/IncidentClusters/$count}" icon="sap-icon://list" iconColor="Neutral" />
 
-                            <!-- <Text text="Last updated: {globalModel>/lastRefreshTime}" class="sapUiSmallMarginEnd" /> -->
+                            <IconTabFilter key="CRITICAL" text="Critical" count="{path: '/IncidentClusters/$count', parameters: {$filter: 'severity eq \'CRITICAL\''}}" icon="sap-icon://error" iconColor="Negative" />
 
-                            <Button icon="sap-icon://refresh" tooltip="Refresh Data" press=".onRefreshPress" type="Transparent" />
-                        </OverflowToolbar>
-                    </headerToolbar>
+                            <IconTabFilter key="HIGH" text="High" count="{path: '/IncidentClusters/$count', parameters: {$filter: 'severity eq \'HIGH\''}}" icon="sap-icon://alert" iconColor="Critical" />
 
-                    <columns>
-                        <Column width="3rem" hAlign="Center" />
-                        <Column width="30%" demandPopin="true">
-                            <Text text="Error Type" />
-                        </Column>
-                        <Column width="10%" hAlign="Center" demandPopin="true" minScreenWidth="Tablet">
-                            <Text text="Artifacts" />
-                        </Column>
-                        <Column width="20%" hAlign="Begin" demandPopin="true" minScreenWidth="Tablet">
-                            <Text text="Severity" />
-                        </Column>
-                        <Column width="10%" hAlign="Center" demandPopin="true" minScreenWidth="Desktop">
-                            <Text text="Incident Count" />
-                        </Column>
-                        <Column width="10%" hAlign="Center" demandPopin="true" minScreenWidth="Tablet">
-                            <Text text="Status" />
-                        </Column>
-                        <Column width="20%" hAlign="End" demandPopin="true" minScreenWidth="Desktop">
-                            <Text text="Last Failure" />
-                        </Column>
+                            <IconTabFilter key="MEDIUM" text="Medium" count="{path: '/IncidentClusters/$count', parameters: {$filter: 'severity eq \'MEDIUM\''}}" icon="sap-icon://information" iconColor="Default" />
 
-                    </columns>
+                            <IconTabFilter key="LOW" text="Low" count="{path: '/IncidentClusters/$count', parameters: {$filter: 'severity eq \'LOW\''}}" icon="sap-icon://sys-help-2" iconColor="Positive" />
+                        </items>
 
-                    <items>
-                        <ColumnListItem >
-                            <cells>
-                                <core:Icon src="sap-icon://chain-link" size="1.25rem" color="{path: 'severity', formatter: '.formatter.severityIconColor'}"/>
+                    </IconTabHeader>
 
-                                <Title text="{errorType}" titleStyle="H6" wrapping="true" />
-                                <!-- Associated Monitored Artifacts Count -->
-                           <ObjectNumber number="{monitoredArtifacts/$count}" />
-                                <Button text="{path: 'severity', formatter: '.formatter.formatButtonText'}" type="{path: 'severity', formatter: '.formatter.formatButtonState'}" icon="{path: 'severity', formatter: '.formatter.formatSeverityIcon'}" class="unclickableTag">
-                                    <customData>
-                                        <core:CustomData key="severity" value="{severity}" />
-                                    </customData>
-                                </Button>
-                                <Text text="{incidentCount}" />
-                                <ObjectStatus text="{path: 'globalStatus', formatter: '.formatter.formatStatusText'}" state="{path: 'globalStatus', formatter: '.formatter.formatStatusState'}" />
+                    <!-- Clusters Table -->
+                    <Table id="idClusters" updateFinished=".onTableUpdateFinished" growing="true" sticky="HeaderToolbar,ColumnHeaders" growingThreshold="30" growingScrollToLoad="true" mode="SingleSelectMaster" itemPress=".onRowPress" items="{
+                    path: '/IncidentClusters',
+                    parameters: {
+                        $count: true,
+                        $expand: {
+                            'monitoredArtifacts': {
+                                '$count': true
+                            }
+                        }
+                    },
+                    sorter: {
+                        path: 'lastSeen',
+                        descending: true
+                    }
+                }">
 
-                                <!-- <ObjectNumber number="{openClusterCount}" emphasized="true" state="{path: 'overallSeverity', formatter: '.formatter.formatSeverityState'}"/> -->
-                                <Text text="{path: 'lastSeen', formatter: '.formatter.formatDateTime'}" />
+                        <!-- <headerToolbar>
+                    <OverflowToolbar>
+                        <Title id="idTableTitleC" text="{= 'Clusters (' + ${/IncidentClusters/$count} + ')' }" level="H4"/>
 
-                            </cells>
-                        </ColumnListItem>
-                    </items>
-                </Table>
+                        <ToolbarSpacer/>
+
+                        <Button icon="sap-icon://refresh" tooltip="Refresh Data" press=".onRefreshPress" type="Transparent"/>
+                    </OverflowToolbar>
+                </headerToolbar> -->
+
+                        <columns>
+                            <Column width="3rem" hAlign="Center"/>
+                            <Column width="30%" demandPopin="true">
+                                <Text text="Error Type"/>
+                            </Column>
+                            <Column width="10%" hAlign="Center" demandPopin="true" minScreenWidth="Tablet">
+                                <Text text="Artifacts"/>
+                            </Column>
+                            <Column width="20%" hAlign="Begin" demandPopin="true" minScreenWidth="Tablet">
+                                <Text text="Severity"/>
+                            </Column>
+                            <Column width="10%" hAlign="Center" demandPopin="true" minScreenWidth="Desktop">
+                                <Text text="Incident Count"/>
+                            </Column>
+                            <Column width="20%" hAlign="Begin" demandPopin="true" minScreenWidth="Tablet">
+                                <Text text="Status"/>
+                            </Column>
+                            <Column width="20%" hAlign="End" demandPopin="true" minScreenWidth="Desktop">
+                                <Text text="Last Failure"/>
+                            </Column>
+                        </columns>
+
+                        <items>
+                            <ColumnListItem >
+                                <cells>
+
+                                    <core:Icon src="sap-icon://chain-link" size="1.25rem" color="{path:'severity', formatter:'.formatter.severityIconColor'}"/>
+
+                                    <Title text="{errorType}" titleStyle="H6" wrapping="true"/>
+
+                                    <ObjectNumber number="{monitoredArtifacts/$count}"/>
+
+                                    <Button text="{path:'severity', formatter:'.formatter.formatButtonText'}" type="{path:'severity', formatter:'.formatter.formatButtonState'}" icon="{path:'severity', formatter:'.formatter.formatSeverityIcon'}" class="unclickableTag">
+
+                                        <customData>
+                                            <core:CustomData key="severity" value="{severity}"/>
+                                        </customData>
+
+                                    </Button>
+
+                                    <Text text="{incidentCount}"/>
+
+                                    <ObjectStatus text="{path:'globalStatus', formatter:'.formatter.formatStatusText'}" state="{path:'globalStatus', formatter:'.formatter.formatStatusState'}"/>
+
+                                    <Text text="{path:'lastSeen', formatter:'.formatter.formatDateTime'}"/>
+
+                                </cells>
+                            </ColumnListItem>
+                        </items>
+
+                    </Table>
+
+                </Panel>
+
             </layout:VerticalLayout>
-
         </f:content>
 
     </f:DynamicPage>

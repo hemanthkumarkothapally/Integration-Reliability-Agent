@@ -7,34 +7,25 @@ sap.ui.define([
 
   return BaseController.extend("com.cytechies.integration.reliability.incidentclustersui.controller.Overview", {
     formatter: formatter,
-
-
     onInit: async function () {
       //  this.byId("sideNavigation")
       //   .setSelectedKey("overview");
- 
-      const oRouter =
-        this.getOwnerComponent().getRouter();
- 
-      oRouter.getRoute("RouteOverview")
-        .attachPatternMatched(
-          this._onRouteMatched,
-          this
-        );
- 
-      console.log(this.getView().getModel("tenantModel").getData())
+
+      this.loadDashboardCharts();
+      this.loadTopCriticalIflows();
+       const oRouter =
+                this.getOwnerComponent().getRouter();
+
+            oRouter.getRoute("RouteOverview")
+                .attachPatternMatched(
+                    this._onRouteMatched,
+                    this
+                );
+    },
+    _onRouteMatched: function (oEvent) {
       this.loadDashboardCharts();
       this.loadTopCriticalIflows();
     },
-    _onRouteMatched: async function () {
-      //this.showBusy();
-      await this.loadDashboardCharts();
-      await this.loadTopCriticalIflows();
-      //this.hideBusy();
-    },
- 
- 
-
     onAfterRendering: function () {
       setTimeout(function () {
         var oPopover = this.byId("idPopOver");

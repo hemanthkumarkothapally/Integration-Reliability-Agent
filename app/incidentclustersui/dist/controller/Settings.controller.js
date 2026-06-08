@@ -1,0 +1,2 @@
+sap.ui.define(["sap/ui/core/mvc/Controller","sap/ui/model/json/JSONModel","sap/m/Popover","sap/m/List","sap/m/StandardListItem"],(e,t,n,o,s)=>{"use strict";return e.extend("com.cytechies.integration.reliability.incidentclustersui.controller.Settings",{async onInit(){},onTenantChange:function(e){const t=e.getSource().getSelectedKey();this.getOwnerComponent().getModel("globalModel").setProperty("/settings/DEFAULT_TENANT",t);console.log("Selected Key:",t)}})});
+//# sourceMappingURL=Settings.controller.js.map

@@ -7,101 +7,33 @@ sap.ui.define([
 
   return BaseController.extend("com.cytechies.integration.reliability.incidentclustersui.controller.Overview", {
     formatter: formatter,
-    onInit: function() {
-      // Set an initial empty/default state so the UI doesn't crash while loading
-      this.getView().setModel(
-        new JSONModel({
-          tenants: [{ ID: "ALL", tenantName: "All Tenants" }]
-        }),
-        "tenantModel"
-      );
+    onInit: async function () {
+      //  this.byId("sideNavigation")
+      //   .setSelectedKey("overview");
 
-      // Call your async initialization separately (do NOT use await here)
-      this._initializeAsyncData();
-      
-      // ❌ Do not call this.onAfterRendering() manually!
-
-      var oPopover = this.byId("idPopOver");
-      var oTopErrorChart = this.byId("topErrorTypesChart");
-      var oSeverityChart = this.byId("severityChart");
-      var oLineChart = this.byId("idLineChart");
-
-      if (oPopover) {
-        // Wait for each chart to fully draw before connecting the popover
-        if (oTopErrorChart) {
-          oTopErrorChart.attachRenderComplete(function() {
-            oPopover.connect(oTopErrorChart.getVizUid());
-          });
-        }
-
-        if (oSeverityChart) {
-          oSeverityChart.attachRenderComplete(function() {
-            oPopover.connect(oSeverityChart.getVizUid());
-          });
-        }
-
-        if (oLineChart) {
-          oLineChart.attachRenderComplete(function() {
-            oPopover.connect(oLineChart.getVizUid());
-          });
-        }
-      }
-    },
-
-    // 2. New custom helper method for the async work
-    _initializeAsyncData: async function() {
-      try {
-        const aTenants = [
-          {
-            ID: "ALL",
-            tenantName: "All Tenants"
-          }
-        ];
-
-        const aBackendTenants = await this.getOwnerComponent().getModel().bindList("/Tenants").requestContexts();
-
-        aBackendTenants.forEach(oContext => {
-          aTenants.push(oContext.getObject());
-        });
-        
-        console.log("Tenants", aTenants);
-        
-        // Update the model we created in onInit
-        this.getView().getModel("tenantModel").setProperty("/tenants", aTenants);
-        console.log(this.getView().getModel("tenantModel").getData());
-        
-        this.loadDashboardCharts();
-        this.loadTopCriticalIflows();
-      } catch (oError) {
-        console.error("Failed to initialize backend data", oError);
-      }
-    },
-
-    // 3. The framework will automatically call this when the UI is drawn
-    onAfterRendering: function () {
-      var oPopover = this.byId("idPopOver");
-      
-      if (oPopover) {
-        var oTopErrorChart = this.byId("topErrorTypesChart");
-        var oSeverityChart = this.byId("severityChart");
-        var oLineChart = this.byId("idLineChart");
-
-        if (oTopErrorChart) oPopover.connect(oTopErrorChart.getVizUid());
-        if (oSeverityChart) oPopover.connect(oSeverityChart.getVizUid());
-        if (oLineChart) oPopover.connect(oLineChart.getVizUid());
-      }
-    },
-
-    onTenantChange: function (oEvent) {
-
-      const sKey =
-        oEvent.getSource().getSelectedKey();
-
-      console.log("Selected Key:", sKey);
       this.loadDashboardCharts();
       this.loadTopCriticalIflows();
-
     },
+
+    onAfterRendering: function () {
+      setTimeout(function () {
+        var oPopover = this.byId("idPopOver");
+        var oLineChart = this.byId("idLineChart");
+        var oSeverityChart = this.byId("severityChart");
+        var oTopErrorChart = this.byId("topErrorTypesChart");
+
+        console.log("idLineChart:", oLineChart);
+        console.log("severityChart:", oSeverityChart);
+        console.log("topErrorTypesChart:", oTopErrorChart);
+        console.log("idPopOver:", oPopover);
+
+        if (oPopover && oLineChart) oPopover.connect(oLineChart.getVizUid());
+        if (oPopover && oSeverityChart) oPopover.connect(oSeverityChart.getVizUid());
+        if (oPopover && oTopErrorChart) oPopover.connect(oTopErrorChart.getVizUid());
+
+      }.bind(this), 500);
+    },
+   
     onIFlowBtn: function () {
 
       this.getOwnerComponent()
@@ -109,6 +41,7 @@ sap.ui.define([
         .navTo("Routemonitored_iflows");
 
     },
+
 
     // onSideNavigationSelect: function (oEvent) {
 
@@ -138,7 +71,7 @@ sap.ui.define([
     //   }
     // },
 
-    
+
     // onSideNavButtonPress: function () {
     //   const oToolPage = this.byId("toolPage1");
 
@@ -147,11 +80,11 @@ sap.ui.define([
     //   )
     // },
 
-    
+
     loadTopCriticalIflows: async function () {
 
       const oModel = this.getOwnerComponent().getModel();
-      const sSelectedTenant = this.getView().byId("tenantSelect").getSelectedKey();
+      const sSelectedTenant = this.getOwnerComponent().getModel("globalModel").getProperty("/settings/DEFAULT_TENANT");
       console.log("Selected Tenant:", sSelectedTenant);
 
       try {
@@ -191,7 +124,7 @@ sap.ui.define([
 
       const oModel = this.getOwnerComponent().getModel();
       debugger
-      const sSelectedTenant = this.getView().byId("tenantSelect").getSelectedKey();
+      const sSelectedTenant = this.getOwnerComponent().getModel("globalModel").getProperty("/settings/DEFAULT_TENANT");
       console.log("Selected Tenant:", sSelectedTenant);
 
       try {

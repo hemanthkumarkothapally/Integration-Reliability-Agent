@@ -220,6 +220,13 @@
 					"target": [
 						"TargetIC"
 					]
+				},
+				{
+					"name": "RouteSettings",
+					"pattern": "Settings",
+					"target": [
+						"TargetSettings"
+					]
 				}
 			],
 			"targets": {
@@ -246,6 +253,10 @@
 				"TargetIC": {
 					"id": "IC",
 					"name": "IC"
+				},
+				"TargetSettings": {
+					"id": "Settings",
+					"name": "Settings"
 				}
 			}
 		},
