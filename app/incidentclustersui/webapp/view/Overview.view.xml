@@ -158,7 +158,7 @@
                                         </VBox>
 
                                         <VBox wrap="Wrap" class="sapUiSmallMarginBegin">
-                                            <Title text="Resolved Clusters Today" level="H5" wrapping="true" class="kpiTitle"/>
+                                            <Title text="Resolved Clusters" level="H5" wrapping="true" class="kpiTitle"/>
                                             <Text text="{chart>/resolvedToday}" class="kpiValueGreen"/>
                                         </VBox>
 

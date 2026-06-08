@@ -32,7 +32,7 @@ sap.ui.define([
         },
 
         _onRouteMatched: async function () {
-            
+            this._applyTenantToCounts();
             // Only set defaults the very first time
             if (this._bInitialized) {
                 return;
@@ -49,7 +49,25 @@ sap.ui.define([
                 this.onFilteriFlow();
             }
         },
+_applyTenantToCounts: function () {
+  const sTenant = this.getView().getModel("globalModel").getProperty("/settings/DEFAULT_TENANT");
+  const oITB = this.byId("idIFLowSeverityTabBar");
 
+  oITB.getItems().forEach((oTab) => {
+    const sSev = oTab.getKey();                    // "CRITICAL", "LOW", ...
+    if (!sSev || sSev === "ALL") { return; }       // skip a non-severity tab if you have one
+
+    let sFilter = `overallSeverity eq '${sSev}'`;
+    if (sTenant && sTenant !== "ALL") {            // "All Tenants" -> no tenant clause
+      sFilter += ` and tenant_ID eq '${sTenant}'`;
+    }
+
+    oTab.bindProperty("count", {
+      path: "/MonitoredArtifacts/$count",
+      parameters: { $filter: sFilter }
+    });
+  });
+},
         onRefreshPress: function () {
             let oTable = this.byId("idMonitoredArtifacts");
             if (oTable && oTable.getBinding("items")) {

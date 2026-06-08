@@ -90,7 +90,7 @@
 
                                 </VBox>
 
-                                <StepInput step="1" textAlign="Center" value="{globalModel>/settings/INCIDENT_RETENTION_DAYS}" />
+                                <StepInput enabled="{globalModel>/editMode}" step="1" textAlign="Center" value="{globalModel>/settings/INCIDENT_RETENTION_DAYS}" />
 
                             </HBox>
 
@@ -107,7 +107,7 @@
 
                                 </VBox>
 
-                                <StepInput step="1" textAlign="Center" value="{globalModel>/settings/CLUSTER_RETENTION_DAYS}" />
+                                <StepInput enabled="{globalModel>/editMode}" step="1" textAlign="Center" value="{globalModel>/settings/CLUSTER_RETENTION_DAYS}" />
 
                             </HBox>
 
@@ -126,7 +126,7 @@
 
                                 </VBox>
 
-                                <StepInput step="1" textAlign="Center" value="{globalModel>/settings/MONITORING_RETENTION_DAYS}" />
+                                <StepInput enabled="{globalModel>/editMode}" step="1" textAlign="Center" value="{globalModel>/settings/MONITORING_RETENTION_DAYS}" />
 
                             </HBox>
 
@@ -147,25 +147,31 @@
     
     </f:content>
     <f:footer>
-    <Toolbar>
+  <Toolbar>
 
-                <ToolbarSpacer />
+    <ToolbarSpacer />
 
-                <Button
-                    text="Reset"
-                    type="Transparent"
-                    icon="sap-icon://reset"
-                    press=".onReset" />
-                <Button text="Edit Settings" press=".onEdit" icon="sap-icon://edit" type="Neutral"/>
+    <Button
+        text="Edit"
+        icon="sap-icon://edit"
+        type="Emphasized"
+        visible="{= !${globalModel>/editMode} }"
+        press=".onEdit" />
 
-                <Button
-                    text="Save Settings"
-                    type="Emphasized"
-                    icon="sap-icon://save"
-                    press=".onSave" />
+    <Button
+        text="Cancel"
+        icon="sap-icon://decline"
+        visible="{globalModel>/editMode}"
+        press=".onCancel" />
 
-            </Toolbar>
+    <Button
+        text="Save"
+        icon="sap-icon://save"
+        type="Accept"
+        visible="{globalModel>/editMode}"
+        press=".onSave" />
 
+</Toolbar>
     </f:footer>
 </f:DynamicPage>
 

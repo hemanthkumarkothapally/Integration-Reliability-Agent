@@ -1,7 +1,7 @@
 import {
   normaliseLog
 } from './log-utils.js';
-import { refreshClusterSeverity } from './severityEngine-util.js';
+import { refreshClusterSeverity, updateClusterSeverityForIFlow } from './severityEngine-util.js';
 // export async function upsertClusters(Incidents,IncidentClusters,Playbooks,MonitoredArtifacts,ClusterArtifacts, newLogs,srv) {
 
 //   const clusterMap = {};
@@ -833,6 +833,10 @@ export async function refreshArtifactDashboard(
         IncidentClusters,
         tenant
     );
+    await updateClusterSeverityForIFlow(
+    artifact.ID,
+    ClusterArtifacts
+);
 
     console.log(
         `Artifact dashboard refresh completed for tenant ${tenant.tenantName}`
