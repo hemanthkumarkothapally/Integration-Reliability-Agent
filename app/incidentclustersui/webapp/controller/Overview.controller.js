@@ -13,8 +13,19 @@ sap.ui.define([
 
       this.loadDashboardCharts();
       this.loadTopCriticalIflows();
-    },
+       const oRouter =
+                this.getOwnerComponent().getRouter();
 
+            oRouter.getRoute("RouteOverview")
+                .attachPatternMatched(
+                    this._onRouteMatched,
+                    this
+                );
+    },
+    _onRouteMatched: function (oEvent) {
+      this.loadDashboardCharts();
+      this.loadTopCriticalIflows();
+    },
     onAfterRendering: function () {
       setTimeout(function () {
         var oPopover = this.byId("idPopOver");

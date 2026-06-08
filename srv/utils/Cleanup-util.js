@@ -5,7 +5,7 @@ async function getSetting(key, defaultValue, ApplicationSettings) {
 
     return setting?.settingValue ?? defaultValue;
 }
-export async function cleanupData( Incidents, Clusters,ApplicationSettings) {
+export async function cleanupData( Incidents, Clusters, Recommendations,ApplicationSettings) {
 
     const incidentRetentionDays = Number(
         await getSetting(
@@ -22,15 +22,6 @@ export async function cleanupData( Incidents, Clusters,ApplicationSettings) {
             ApplicationSettings
         )
     );
-
-    const monitoringRetentionDays = Number(
-        await getSetting(
-            "MONITORING_RETENTION_DAYS",
-            1,
-            ApplicationSettings
-        )
-    );
-
     const incidentCutoff = new Date();
     incidentCutoff.setDate(
         incidentCutoff.getDate() -
@@ -43,16 +34,12 @@ export async function cleanupData( Incidents, Clusters,ApplicationSettings) {
         clusterRetentionDays
     );
 
-    const monitoringCutoff = new Date();
-    monitoringCutoff.setDate(
-        monitoringCutoff.getDate() -
-        monitoringRetentionDays
-    );
+   ;
 
     const deletedIncidents =
         await DELETE.from(Incidents)
             .where({
-                ModifiedAt: {
+                modifiedAt: {
                     "<": incidentCutoff.toISOString()
                 },
                 status: "RESOLVED"
@@ -61,7 +48,7 @@ export async function cleanupData( Incidents, Clusters,ApplicationSettings) {
     const deletedClusters =
         await DELETE.from(Clusters)
             .where({
-                ModifiedAt: {
+                modifiedAt: {
                     "<": clusterCutoff.toISOString()
                 },
                 globalStatus: "RESOLVED"

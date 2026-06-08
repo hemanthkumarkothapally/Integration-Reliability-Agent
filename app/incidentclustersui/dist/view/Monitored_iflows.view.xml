@@ -23,21 +23,21 @@
                     <Label text="Monitor your iFlows &amp; Associated Clusters" class="sapUiSmallMarginBegin" />
                 </f:expandedContent> -->
 
-                <f:actions>
+                <!-- <f:actions>
                     <Button icon="sap-icon://ai" text="Ai Assistant" type="Ghost" press=".onAipress" tooltip="AI Assistant"/>
-                </f:actions>
+                </f:actions> -->
             </f:DynamicPageTitle>
         </f:title>
 
         <f:header>
             <f:DynamicPageHeader pinnable="true">
                 <f:content>
-                    <FlexBox alignItems="Start" justifyContent="SpaceBetween" wrap="Wrap" width="100%" class="sapUiSmallMarginTop">
+                    <FlexBox alignItems="Start" justifyContent="Start" wrap="Wrap" width="100%" class="sapUiSmallMarginTop">
                         <items>
 
-                            <VBox width="auto" class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
+                            <VBox width="250px" class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
                                 <layoutData>
-                                    <FlexItemData growFactor="1" />
+                                    <FlexItemData growFactor="0" />
                                 </layoutData>
                                 <items>
                                     <MultiComboBox id="idIFlowFilter" width="100%" placeholder="Filter by IFlow Name" items="{path:'/MonitoredArtifacts'}" selectionChange=".onFilterChange">
@@ -45,17 +45,17 @@
                                     </MultiComboBox>
                                 </items>
                             </VBox>
-                            <VBox width="auto" class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
+                            <VBox width="250px" class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
                                 <layoutData>
-                                    <FlexItemData growFactor="1" />
+                                    <FlexItemData growFactor="0" />
                                 </layoutData>
                                 <items>
                                     <DateRangeSelection id="idDateRangeFilter" width="100%" placeholder="Select Date Range" change=".onFilterChange" />
                                 </items>
                             </VBox>
-                            <VBox width="auto" class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
+                            <VBox width="250px" class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
                                 <layoutData>
-                                    <FlexItemData growFactor="1" />
+                                    <FlexItemData growFactor="0" />
                                 </layoutData>
                                 <items>
                                     <MultiComboBox id="idpackageFilter" width="100%" placeholder="Filter by Package Name" items="{
@@ -68,57 +68,20 @@
                                     </MultiComboBox>
                                 </items>
                             </VBox>
-                            <VBox width="auto" class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
+                            <!-- <VBox width="250px" class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
                                 <layoutData>
-                                    <FlexItemData growFactor="1" />
+                                    <FlexItemData growFactor="0" />
                                 </layoutData>
                                 <items>
                                     <MultiComboBox id="idTenantFilter" width="100%" placeholder="Filter by Tenant" items="{path:'/Tenants'}" selectionChange=".onFilterChange">
                                         <core:Item key="{ID}" text="{tenantName}" />
                                     </MultiComboBox>
                                 </items>
-                            </VBox>
+                            </VBox> -->
 
+                            <Button text="Clear Filters" icon="sap-icon://clear-filter" type="Transparent" press=".onClearFilters" />
 
-                            <FlexBox wrap="Wrap" justifyContent="Start" class="sapUiTinyMarginBottom">
-                                <layoutData>
-                                    <FlexItemData growFactor="0" />
-                                </layoutData>
-                                <items>
-
-                                    <Button icon="sap-icon://error" text="{= 'Critical' }" type="Reject" press=".onTagPress" class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
-                                        <customData>
-                                            <core:CustomData key="severity" value="CRITICAL" />
-                                        </customData>
-                                    </Button>
-
-                                    <Button icon="sap-icon://warning" text="{= 'High' }" type="Attention" press=".onTagPress" class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
-                                        <customData>
-                                            <core:CustomData key="severity" value="HIGH" />
-                                        </customData>
-                                    </Button>
-
-                                    <Button icon="sap-icon://information" text="{= 'Medium' }" type="Neutral" press=".onTagPress" class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
-                                        <customData>
-                                            <core:CustomData key="severity" value="MEDIUM" />
-                                        </customData>
-                                    </Button>
-
-                                    <Button icon="sap-icon://incident" text="{= 'Low' }" type="Accept" press=".onTagPress" class="sapUiTinyMarginBottom sapUiTinyMarginEnd">
-                                        <customData>
-                                            <core:CustomData key="severity" value="LOW" />
-                                        </customData>
-                                    </Button>
-
-                                    <Button icon="sap-icon://process" text="{= 'All' }" type="Ghost" press=".onTagPress" class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
-                                        <customData>
-                                            <core:CustomData key="severity" value="ALL" />
-                                        </customData>
-                                    </Button>
-                                    <Button text="Clear Filters" icon="sap-icon://clear-filter" type="Transparent" press=".onClearFilters" />
-                                </items>
-                            </FlexBox>
-
+                            
                         </items>
                     </FlexBox>
                 </f:content>
@@ -128,69 +91,125 @@
 
         <f:content>
             <layout:VerticalLayout width="100%">
+
                 <MessageStrip enableFormattedText="true" text="Click any &lt;strong&gt;iFlow row&lt;/strong&gt; to open the &lt;strong&gt;Detail View&lt;/strong&gt; with all associated clusters and recent incidents." type="Information" showIcon="true" showCloseButton="true" class="sapUiSmallMarginBottom" />
 
-                <Table id="idMonitoredArtifacts" updateFinished=".onTableUpdateFinished" growing="true" growingThreshold="30" growingScrollToLoad="true" mode="SingleSelectMaster" itemPress=".onRowPress" items="{
-            path: '/MonitoredArtifacts',
-            parameters: {
-            $count: true
-        },
-            sorter: { path: 'lastErrorAt', descending: true }
-        }">
+                <Panel width="100%">
+                    <!-- <OverflowToolbar>
+                        <ToolbarSpacer/>
 
-                    <headerToolbar>
-                        <OverflowToolbar>
-                            <Title id = "idTableTitle" text="{= 'Monitored iFlows (' + ${/MonitoredArtifacts/$count} + ')' }" level="H4"/>
+                        <Text text="Last updated: {globalModel>/lastRefreshTime}" class="sapUiSmallMarginEnd"/>
 
-                            <ToolbarSpacer />
+                        <Button icon="sap-icon://refresh" tooltip="Refresh Data" press=".onRefreshPress" type="Transparent"/>
+                    </OverflowToolbar> -->
+                    <!-- Severity Tabs -->
+                    <IconTabHeader id="idIFLowSeverityTabBar" select=".onSeverityTabSelect" class="sapUiResponsiveContentPadding">
 
-                            <Text text="Last updated: {globalModel>/lastRefreshTime}" class="sapUiSmallMarginEnd" />
+                        <items>
 
-                            <Button icon="sap-icon://refresh" tooltip="Refresh Data" press=".onRefreshPress" type="Transparent" />
-                        </OverflowToolbar>
-                    </headerToolbar>
+                            <IconTabFilter key="ALL" text="All" count="{/MonitoredArtifacts/$count}" icon="sap-icon://list" iconColor="Neutral" />
 
-                    <columns>
-                        <Column width="3rem" hAlign="Center" />
-                        <Column width="40%" demandPopin="true">
-                            <Text text="iFlow Name" />
-                        </Column>
-                        <Column width="20%" hAlign="Begin" demandPopin="true" minScreenWidth="Tablet">
-                            <Text text="Package" />
-                        </Column>
-                        <Column width="10%" hAlign="Begin" demandPopin="true" minScreenWidth="Desktop">
-                            <Text text="Severity" />
-                        </Column>
-                        <Column width="10%" hAlign="Center" demandPopin="true" minScreenWidth="Tablet">
-                            <Text text="Active Clusters" />
-                        </Column>
-                        <Column width="20%" hAlign="End" demandPopin="true" minScreenWidth="Desktop">
-                            <Text text="Last Failure" />
-                        </Column>
+                            <IconTabFilter key="CRITICAL" text="Critical" count="{path:'/MonitoredArtifacts/$count', parameters: {$filter: 'overallSeverity eq \'CRITICAL\''}}" icon="sap-icon://error" iconColor="Negative" />
 
-                    </columns>
+                            <IconTabFilter key="HIGH" text="High" count="{path:'/MonitoredArtifacts/$count', parameters: {$filter: 'overallSeverity eq \'HIGH\''}}" icon="sap-icon://alert" iconColor="Critical" />
 
-                    <items>
-                        <ColumnListItem type="Navigation">
-                            <cells>
-                                <core:Icon src="sap-icon://process" size="1.25rem" color="{path: 'overallSeverity', formatter: '.formatter.severityIconColor'}"/>
+                            <IconTabFilter key="MEDIUM" text="Medium" count="{path:'/MonitoredArtifacts/$count', parameters: {$filter: 'overallSeverity eq \'MEDIUM\''}}" icon="sap-icon://information" iconColor="Default" />
 
-                                <Title text="{iFlowName}" titleStyle="H6" wrapping="true" />
-                                <Text text="{PackageName}" />
-                                <Button text="{path: 'overallSeverity', formatter: '.formatter.formatButtonText'}" type="{path: 'overallSeverity', formatter: '.formatter.formatButtonState'}" icon="{path: 'overallSeverity', formatter: '.formatter.formatSeverityIcon'}" class="unclickableTag">
-                                    <customData>
-                                        <core:CustomData key="severity" value="{overallSeverity}" />
-                                    </customData>
-                                </Button>
-                                <ObjectNumber number="{openClusterCount}" emphasized="true" state="{path: 'overallSeverity', formatter: '.formatter.formatSeverityState'}"/>
-                                <Text text="{path: 'lastErrorAt', formatter: '.formatter.formatDateTime'}" />
+                            <IconTabFilter key="LOW" text="Low" count="{path:'/MonitoredArtifacts/$count', parameters: {$filter: 'overallSeverity eq \'LOW\''}}" icon="sap-icon://sys-help-2" iconColor="Positive" />
 
-                            </cells>
-                        </ColumnListItem>
-                    </items>
-                </Table>
+                        </items>
+
+
+
+                    </IconTabHeader>
+
+                    <!-- Monitored Artifacts Table -->
+                    <Table id="idMonitoredArtifacts" updateFinished=".onTableUpdateFinished" growing="true" sticky="HeaderToolbar,ColumnHeaders" growingThreshold="30" growingScrollToLoad="true" mode="SingleSelectMaster" itemPress=".onRowPress" items="{
+                    path: '/MonitoredArtifacts',
+                    parameters: {
+                        $count: true
+                    },
+                    sorter: {
+                        path: 'lastErrorAt',
+                        descending: true
+                    }
+                }">
+
+                        <headerToolbar>
+                            <OverflowToolbar>
+
+                                <!-- <Title id="idTableTitle" text="{= 'Monitored iFlows (' + ${/MonitoredArtifacts/$count} + ')' }" level="H4"/> -->
+
+                                <ToolbarSpacer/>
+
+                                <Text text="Last updated: {globalModel>/lastRefreshTime}" class="sapUiSmallMarginEnd"/>
+
+                                <Button icon="sap-icon://refresh" tooltip="Refresh Data" press=".onRefreshPress" type="Transparent"/>
+
+                            </OverflowToolbar>
+                        </headerToolbar>
+
+                        <columns>
+
+                            <Column width="3rem" hAlign="Center"/>
+
+                            <Column width="40%" demandPopin="true">
+                                <Text text="iFlow Name"/>
+                            </Column>
+
+                            <Column width="20%" demandPopin="true" minScreenWidth="Tablet">
+                                <Text text="Package"/>
+                            </Column>
+
+                            <Column width="10%" demandPopin="true" minScreenWidth="Desktop">
+                                <Text text="Severity"/>
+                            </Column>
+
+                            <Column width="10%" hAlign="Center" demandPopin="true" minScreenWidth="Tablet">
+                                <Text text="Active Clusters"/>
+                            </Column>
+
+                            <Column width="20%" hAlign="End" demandPopin="true" minScreenWidth="Desktop">
+                                <Text text="Last Failure"/>
+                            </Column>
+
+                        </columns>
+
+                        <items>
+
+                            <ColumnListItem type="Navigation">
+
+                                <cells>
+
+                                    <core:Icon src="sap-icon://process" size="1.25rem" color="{path:'overallSeverity', formatter:'.formatter.severityIconColor'}"/>
+
+                                    <Title text="{iFlowName}" titleStyle="H6" wrapping="true"/>
+
+                                    <Text text="{PackageName}"/>
+
+                                    <Button text="{path:'overallSeverity', formatter:'.formatter.formatButtonText'}" type="{path:'overallSeverity', formatter:'.formatter.formatButtonState'}" icon="{path:'overallSeverity', formatter:'.formatter.formatSeverityIcon'}" class="unclickableTag">
+
+                                        <customData>
+                                            <core:CustomData key="severity" value="{overallSeverity}" />
+                                        </customData>
+
+                                    </Button>
+
+                                    <ObjectNumber number="{openClusterCount}" emphasized="true" state="{path:'overallSeverity', formatter:'.formatter.formatSeverityState'}"/>
+
+                                    <Text text="{path:'lastErrorAt', formatter:'.formatter.formatDateTime'}"/>
+
+                                </cells>
+
+                            </ColumnListItem>
+
+                        </items>
+
+                    </Table>
+
+                </Panel>
+
             </layout:VerticalLayout>
-
         </f:content>
 
     </f:DynamicPage>
