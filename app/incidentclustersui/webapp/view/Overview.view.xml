@@ -34,6 +34,8 @@
                     <core:Item key="{tenantModel>ID}" text="{tenantModel>tenantName}" />
 
                 </Select>
+
+                
                 <f:GridList id="kpiGridList" class="sapUiTinyMarginBottom" width="100%" growing="false">
 
                     <f:customLayout>
