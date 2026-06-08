@@ -14,7 +14,7 @@
             </VBox>
 
         </ResponsivePopover>
-        <ResponsivePopover  id="activeiFlowPopover" placement="Top" title="{i18n>activeiFlowPopover.title}" class="sapUiContentPadding">
+        <ResponsivePopover id="activeiFlowPopover" placement="Top" title="{i18n>activeiFlowPopover.title}" class="sapUiContentPadding">
 
             <VBox alignItems="Center">
                 <MessageStrip text="{chatJSONModel>/iFlowName}" type="Information" showIcon="true" customIcon="sap-icon://process" class="sapUiSmallMarginBottom" />
@@ -42,7 +42,7 @@
 
         <ResponsivePopover id="historyPopover" title="{i18n>history.popover.title}" placement="Bottom" contentWidth="auto">
             <content>
-                <List id="historyList" items="{chatModel>/ChatSessions}" mode="SingleSelectMaster" selectionChange=".onConversationSelect">
+                <List id="historyList" items="{chatModel>/ChatSessions}" mode="SingleSelectMaster" growing="true" growingScrollToLoad="true" growingThreshold="5" selectionChange=".onConversationSelect">
                     <headerToolbar>
                         <Toolbar>
                             <SearchField id="historySearchField" width="100%" placeholder="{i18n>history.search.placeholder}" liveChange=".onHistorySearch" search=".onHistorySearch" />
@@ -57,7 +57,7 @@
 
         <ResponsivePopover id="iFlowPopover" placement="Right" title="{i18n>iFlowPopover.title}">
             <content>
-                <List id="iFlowList" mode="SingleSelectMaster" width="300px" selectionChange=".oniFlowSelect" items="{
+                <List id="iFlowList" mode="SingleSelectMaster" growing="true" growingScrollToLoad="true" growingThreshold="5" width="300px" selectionChange=".oniFlowSelect" items="{
                 path: '/MonitoredArtifacts', 
                 sorter: {
                     path: 'lastPollTimestamp',
@@ -94,9 +94,9 @@
             </content>
         </ResponsivePopover>
 
-        <ResponsivePopover id="clusterPopover" placement="Right" title="{i18n>clusterPopover.title}">
+        <ResponsivePopover id="clusterPopover"  placement="Right" title="{i18n>clusterPopover.title}">
             <content>
-                <List id="clusterList" mode="SingleSelectMaster" selectionChange=".onClusterSelect" items="{
+                <List id="clusterList" mode="SingleSelectMaster" growing="true" growingScrollToLoad="true" growingThreshold="5" selectionChange=".onClusterSelect" items="{
               path: '/IncidentClusters',
               sorter: {
                   path: 'modifiedAt',
@@ -146,7 +146,7 @@
                 </Button>
                 <Title id="_IDGenTitle3" text="{i18n>toolHeader.title}" wrapping="true"/>
                 <ToolbarSpacer id="_IDGenToolbarSpacer2" />
-                <Button id="_IDGenButton1" icon="sap-icon://add" press=".onNewChat" tooltip="{i18n>newChat.tooltip}"  type="Ghost">
+                <Button id="_IDGenButton1" icon="sap-icon://add" press=".onNewChat" tooltip="{i18n>newChat.tooltip}" type="Ghost">
                     <layoutData>
                         <OverflowToolbarLayoutData id="_IDGenOverflowToolbarLayoutData1" priority="NeverOverflow" />
                     </layoutData>
