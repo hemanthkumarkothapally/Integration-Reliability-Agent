@@ -13,7 +13,7 @@ sap.ui.define([
     "sap/f/library",
     "../model/formatter"
 
-], function (BaseController, FormattedText, VBox, HBox, ObjectStatus, Avatar, AvatarSize, AvatarColor, MessageBox, library , MessageStrip, fioriLibrary, formatter) {
+], function (BaseController, FormattedText, VBox, HBox, ObjectStatus, Avatar, AvatarSize, AvatarColor, MessageBox, library, MessageStrip, fioriLibrary, formatter) {
     "use strict";
 
     return BaseController.extend("com.cytechies.integration.reliability.incidentclustersui.controller.Chat", {
@@ -136,6 +136,8 @@ sap.ui.define([
         onSelectClusterData: function (oEvent) {
             let oGlobalModel = this.getView().getModel("globalModel");
             let sIflowId = oGlobalModel ? oGlobalModel.getProperty("/iflowId") : null;
+            // let sTenantId = oGlobalModel ? oGlobalModel.getProperty("/settings/DEFAULT_TENANT/ID") : null;
+            let sTenantId = "";
 
             // Save the event source control immediately (oEvent falls out of scope inside async functions)
             let oSource = oEvent.getSource();
@@ -159,21 +161,23 @@ sap.ui.define([
                     });
 
                     // 2. Set your custom filter paths
-                    this.applyListSearch("clusterList", sIflowId, ["monitoredArtifacts/artifact_ID"]);
+                    let aFilters = [];
+                    if (sIflowId) {
+                        aFilters.push(new sap.ui.model.Filter("monitoredArtifacts/artifact_ID", sap.ui.model.FilterOperator.EQ, sIflowId));
+                    }
+                    if (sTenantId) {
+                        aFilters.push(new sap.ui.model.Filter("monitoredArtifacts/tenant_ID", sap.ui.model.FilterOperator.EQ, sTenantId));
+                    }
 
-                    // 3. Trigger the asynchronous refresh request
-                    oBinding.refresh();
+                    // 3. Delegate the actual binding update to your central helper method
+                    this.applyCentralBindingFilter("clusterList", "items", aFilters);
 
                     // 4. Wait for the data payload to land before executing UI transitions
                     oDataLoadPromise.then(function () {
                         this.getView().setBusy(false);
-
-                        // Popover now opens safely with 100% freshly rendered rows
                         oPopover.openBy(oSource);
-                        // console.log("Opening cluster data popover with updated data for iFlow:", sIflowId);
                     }.bind(this)).catch(function (oError) {
                         this.getView().setBusy(false);
-                        // console.error("Error updating popover OData V4 dataset:", oError);
                     }.bind(this));
 
                     return; // Exit execution early; the popover is managed inside the Promise resolution
@@ -233,6 +237,7 @@ sap.ui.define([
         },
 
         _resetToWelcomePage: function () {
+            this.showBusy();
             let oJsonModel = this.getModel("chatJSONModel");
             // console.log("oJsonModel before reset:", oJsonModel.getData());
 
@@ -249,8 +254,7 @@ sap.ui.define([
             this.byId("chatContainer").removeAllItems();
             this.byId("welcomePage").setVisible(true);
             // console.log("oJsonModel after reset:", oJsonModel.getData());
-
-
+            this.hideBusy();
         },
 
         onNewChat() {
@@ -357,7 +361,7 @@ sap.ui.define([
 
             if (!sQuery) return;
 
-            if (!sCurrentConvId) {  
+            if (!sCurrentConvId) {
                 try {
                     sCurrentConvId = await this._executeCreateConversation(sQuery.substring(0, 150).replace(/[\r\n]+/g, " ") + "...");
                 } catch (e) {
@@ -613,16 +617,16 @@ sap.ui.define([
             }
         },
 
-    _createReferenceData: function (oRefData, sType) {
-    const isCluster = sType === "Cluster";
-    return  new MessageStrip({
-            text: isCluster ? oRefData.errorType : oRefData.iFlowName ,
-            type: isCluster ? sap.ui.core.MessageType.Warning : sap.ui.core.MessageType.Information,
-            showIcon: true,
-            customIcon: isCluster ? "sap-icon://chain-link" : "sap-icon://process"
-        }).addStyleClass("sapUiTinyMarginBottom")
-}
-,
+        _createReferenceData: function (oRefData, sType) {
+            const isCluster = sType === "Cluster";
+            return new MessageStrip({
+                text: isCluster ? oRefData.errorType : oRefData.iFlowName,
+                type: isCluster ? sap.ui.core.MessageType.Warning : sap.ui.core.MessageType.Information,
+                showIcon: true,
+                customIcon: isCluster ? "sap-icon://chain-link" : "sap-icon://process"
+            }).addStyleClass("sapUiTinyMarginBottom")
+        }
+        ,
 
         _buildMessageItem: function (sText, sSender, oData, bStream = false) {
             // console.log("Building message item. Sender:", sSender, "Data:", oData);

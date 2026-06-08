@@ -81,7 +81,7 @@ sap.ui.define([
 
         onRowPress: async function (oEvent) {
            
-            this.showBusy(100);
+            this.showBusy();
             console.log("showBusy() called");
             const oItem = oEvent.getParameter("listItem");
             const oContext = oItem.getBindingContext();

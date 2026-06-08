@@ -6,10 +6,9 @@
 
         <tnt:header>
             <tnt:ToolHeader>
-                <Button icon="sap-icon://menu2" press=".onSideNavButtonPress"/>
+                <!-- <Button icon="sap-icon://menu2" press=".onSideNavButtonPress"/> -->
                 
-<core:Icon src="sap-icon://connected" size="1.5rem" color="#0a6ed1"
-             class="sapUiTinyMarginEnd"/>
+
                 <Title text="Integration Reliability Agent"/>
             </tnt:ToolHeader>
         </tnt:header>
