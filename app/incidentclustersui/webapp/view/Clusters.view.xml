@@ -67,7 +67,7 @@
                                     </MultiComboBox>
                                 </items>
                             </VBox> -->
-                            <VBox width="250px" class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
+                            <!-- <VBox width="250px" class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
                                 <layoutData>
                                     <FlexItemData growFactor="0" />
                                 </layoutData>
@@ -76,7 +76,7 @@
                                         <core:Item key="{ID}" text="{tenantName}" />
                                     </MultiComboBox>
                                 </items>
-                            </VBox>
+                            </VBox> -->
 
 
                             <!-- <FlexBox wrap="Wrap" justifyContent="Start" class="sapUiTinyMarginBottom">
@@ -202,7 +202,7 @@
                             <ColumnListItem >
                                 <cells>
 
-                                    <core:Icon src="sap-icon://share-2" size="1.25rem" color="{path:'severity', formatter:'.formatter.severityIconColor'}"/>
+                                    <core:Icon src="sap-icon://chain-link" size="1.25rem" color="{path:'severity', formatter:'.formatter.severityIconColor'}"/>
 
                                     <Title text="{errorType}" titleStyle="H6" wrapping="true"/>
 

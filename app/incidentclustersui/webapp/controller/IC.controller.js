@@ -20,6 +20,7 @@ sap.ui.define([
                     this._onObjectMatched,
                     this
                 );
+            
         },
 
 
@@ -194,7 +195,7 @@ sap.ui.define([
         // }
 
         _onObjectMatched: async function (oEvent) {
-           
+            //this.showBusy();
             let sID = oEvent.getParameter("arguments").ID;
             let oDetailsView = this.byId("beginView");
             this.getView().getModel("globalModel").setProperty("/iflowId", sID);
@@ -318,9 +319,11 @@ sap.ui.define([
                         } catch (err) {
                             console.error("Error:", err);
                         }
+                       
                     }
                 }
             });
+             this.hideBusy();
            
         }
     });

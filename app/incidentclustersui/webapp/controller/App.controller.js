@@ -1,5 +1,5 @@
 sap.ui.define([
-  "sap/ui/core/mvc/Controller",
+  "./BaseController",
   "sap/ui/model/json/JSONModel",
   "sap/m/Popover",            // 6th dependency
     "sap/m/List",               // 7th dependency
@@ -30,7 +30,7 @@ var aStaticTenants = [
 
     },
     onSideNavigationSelect: function (oEvent) {
-
+    
       const sKey = oEvent.getParameter("item").getKey();
       const oRouter = this.getOwnerComponent().getRouter();
 
