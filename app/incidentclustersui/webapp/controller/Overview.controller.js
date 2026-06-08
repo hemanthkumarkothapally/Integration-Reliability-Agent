@@ -1,5 +1,5 @@
 sap.ui.define([
-  "sap/ui/core/mvc/Controller",
+    "./BaseController",
   "../model/formatter",
   "sap/ui/model/json/JSONModel"
 ], (BaseController, formatter, JSONModel) => {
@@ -10,7 +10,7 @@ sap.ui.define([
     onInit: async function () {
       //  this.byId("sideNavigation")
       //   .setSelectedKey("overview");
-
+this.getSettingsData();
       this.loadDashboardCharts();
       this.loadTopCriticalIflows();
        const oRouter =
@@ -23,6 +23,7 @@ sap.ui.define([
                 );
     },
     _onRouteMatched: function (oEvent) {
+      
       this.loadDashboardCharts();
       this.loadTopCriticalIflows();
     },

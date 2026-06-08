@@ -77,24 +77,40 @@ export default cds.service.impl(async function () {
     console.log("========== getFailedLogs BACKGROUND START ==========");
     
     try {
-      // Note: Use 'tx.run' or 'tx.read' inside cds.spawn to ensure proper DB connection
-      const tenants = await tx.read('Tenants').where({ isActive: true });
-      const allResults = [];
-      
-      for (const tenant of tenants) {
-       // console.log(`Processing Tenant: ${tenant.tenantName}`);
-        // Ensure runPoll is available in this scope
-        const tenantResults = await runPoll(tenant); 
-        allResults.push(...tenantResults);
-      }
-      
-      console.log(`Total Failed Logs Processed: ${allResults.length}`);
-      console.log("========== getFailedLogs BACKGROUND SUCCESS ==========");
-      
-    } catch (err) {
-      console.error("========== getFailedLogs BACKGROUND FAILED ==========");
-      console.error(err);
+    const tenants = await tx.read('Tenants').where({ isActive: true });
+
+    const allResults = [];
+
+    for (const tenant of tenants) {
+
+        try {
+
+            console.log(`Processing Tenant: ${tenant.tenantName}`);
+
+            const tenantResults = await runPoll(tenant);
+
+            allResults.push(...tenantResults);
+
+        } catch (err) {
+
+            console.error(
+                `Polling failed for tenant ${tenant.tenantName}`,
+                err
+            );
+
+            // Continue with next tenant
+        }
     }
+
+    console.log(`Total Failed Logs Processed: ${allResults.length}`);
+    console.log("========== getFailedLogs BACKGROUND SUCCESS ==========");
+
+} catch (err) {
+
+    console.error("========== getFailedLogs BACKGROUND FAILED ==========");
+    console.error(err);
+
+}
   });
 
 });

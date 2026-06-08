@@ -9,15 +9,7 @@ sap.ui.define([
 
   return BaseController.extend("com.cytechies.integration.reliability.incidentclustersui.controller.App", {
     onInit() {
-      var aStaticTenants = [
-        { id: "T1", name: "Tenant 1 (Development)", region: "US East" },
-        { id: "T2", name: "Tenant 2 (Staging)", region: "Europe West" },
-        { id: "T3", name: "Tenant 3 (Production)", region: "US West" }
-      ];
-
-      // Set it to a JSON model named "tenants"
-      var oTenantModel = new JSONModel({ Tenants: aStaticTenants });
-      this.getView().setModel(oTenantModel, "tenants");
+      
       this.getSettingsData();
     },
     async getSettingsData() {

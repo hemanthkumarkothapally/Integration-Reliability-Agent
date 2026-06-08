@@ -155,3 +155,83 @@ export async function refreshClusterSeverity(
         `Cluster severity refresh completed for tenant ${tenant.tenantName}`
     );
 }
+
+export async function updateClusterSeverityForIFlow(
+    artifactId,
+    ClusterArtifacts
+) {
+
+    const relations = await SELECT
+        .from(ClusterArtifacts)
+        .columns(
+            'ID',
+            'incidentCount'
+        )
+        .where({
+            artifact_ID: artifactId,
+            resolutionStatus: 'OPEN'
+        });
+
+    if (!relations.length) {
+        return;
+    }
+
+    const counts = relations.map(
+        r => r.incidentCount || 0
+    );
+
+    const mean =
+        counts.reduce(
+            (sum, count) => sum + count,
+            0
+        ) / counts.length;
+
+    const variance =
+        counts.reduce(
+            (sum, count) =>
+                sum +
+                Math.pow(
+                    count - mean,
+                    2
+                ),
+            0
+        ) / counts.length;
+
+    const stdDev =
+        Math.sqrt(variance);
+
+    for (const relation of relations) {
+
+        const incidentCount =
+            relation.incidentCount || 0;
+
+        let severity = "LOW";
+
+        if (incidentCount > 0) {
+
+            const zScore =
+                stdDev === 0
+                    ? 0
+                    : (incidentCount - mean) / stdDev;
+
+            if (zScore >= 2) {
+                severity = "CRITICAL";
+            }
+            else if (zScore >= 1.5) {
+                severity = "HIGH";
+            }
+            else if (zScore >= 1) {
+                severity = "MEDIUM";
+            }
+        }
+
+        await UPDATE(ClusterArtifacts)
+            .set({
+                iflowClusterSeverity:
+                    severity
+            })
+            .where({
+                ID: relation.ID
+            });
+    }
+}

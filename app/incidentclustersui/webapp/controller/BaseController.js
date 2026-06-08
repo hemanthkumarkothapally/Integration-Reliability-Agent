@@ -153,7 +153,46 @@ sap.ui.define([
             } else {
                 oBinding.filter([]); // Clear all filters if nothing is selected
             }
-        }
+        },
+        async getSettingsData() {
+
+      const oODataModel = this.getOwnerComponent().getModel();
+      const oGlobalModel = this.getOwnerComponent().getModel("globalModel");
+
+      // Load Tenants
+      const aTenants = [{
+        ID: "ALL",
+        tenantName: "All Tenants"
+      }];
+
+      const aBackendTenants = await oODataModel
+        .bindList("/Tenants")
+        .requestContexts();
+
+      aBackendTenants.forEach(oContext => {
+        aTenants.push(oContext.getObject());
+      });
+
+      oGlobalModel.setProperty("/tenants", aTenants);
+
+      // Load Settings
+      const aSettingsContexts = await oODataModel
+        .bindList("/ApplicationSettings")
+        .requestContexts();
+
+      const mSettings = {};
+
+      aSettingsContexts.forEach(oContext => {
+        const oSetting = oContext.getObject();
+
+        mSettings[oSetting.settingKey] =
+          oSetting.settingValue;
+      });
+
+      oGlobalModel.setProperty("/settings", mSettings);
+      console.log("Default Tenant: " + oGlobalModel.getProperty("/settings/DEFAULT_TENANT"));
+
+    }
 
     });
 });
