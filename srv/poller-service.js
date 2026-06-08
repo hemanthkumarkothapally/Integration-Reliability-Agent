@@ -19,6 +19,7 @@ import {
   generateClusterRecommendation
 } from './utils/ai-recommendation-util.js';
 
+import { cleanupData } from './utils/Cleanup-util.js';
 export default cds.service.impl(async function () {
 
   const srv = this;
@@ -627,6 +628,15 @@ console.log("Generated Filter:", filter);
         500,
         'Recommendation generation failed'
       );
+    }
+  });
+  this.on('cleanupRetentionData', async (req) => {
+    try {
+      const result = await cleanupData(Incidents, IncidentClusters, ClusterRecommendations,ApplicationSettings);
+      return { message: result };
+    } catch (error) {
+      console.error('Data cleanup failed:', error);
+      req.error(500, 'Data cleanup failed');
     }
   });
 

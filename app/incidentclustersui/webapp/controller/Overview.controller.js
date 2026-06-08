@@ -1,5 +1,5 @@
 sap.ui.define([
-  "./BaseController",
+  "sap/ui/core/mvc/Controller",
   "../model/formatter",
   "sap/ui/model/json/JSONModel"
 ], (BaseController, formatter, JSONModel) => {
@@ -11,45 +11,10 @@ sap.ui.define([
       //  this.byId("sideNavigation")
       //   .setSelectedKey("overview");
 
-      const aTenants = [
-        {
-          ID: "ALL",
-          tenantName: "All Tenants"
-        }
-      ];
-
-      const aBackendTenants = await this.getOwnerComponent().getModel().bindList("/Tenants").requestContexts();
-
-      aBackendTenants.forEach(oContext => {
-        aTenants.push(oContext.getObject());
-      });
-      console.log("Tenants", aTenants)
-      this.getView().setModel(
-        new JSONModel({
-          tenants: aTenants
-        }),
-        "tenantModel"
-      );
-
-      const oRouter =
-        this.getOwnerComponent().getRouter();
-
-      oRouter.getRoute("RouteOverview")
-        .attachPatternMatched(
-          this._onRouteMatched,
-          this
-        );
-
-      console.log(this.getView().getModel("tenantModel").getData())
       this.loadDashboardCharts();
       this.loadTopCriticalIflows();
     },
-    _onRouteMatched: async function () {
-      //this.showBusy();
-      await this.loadDashboardCharts();
-      await this.loadTopCriticalIflows();
-      //this.hideBusy();
-    },
+
     onAfterRendering: function () {
       setTimeout(function () {
         var oPopover = this.byId("idPopOver");
@@ -68,16 +33,7 @@ sap.ui.define([
 
       }.bind(this), 500);
     },
-    onTenantChange: function (oEvent) {
-
-      const sKey =
-        oEvent.getSource().getSelectedKey();
-
-      console.log("Selected Key:", sKey);
-      this.loadDashboardCharts();
-      this.loadTopCriticalIflows();
-
-    },
+   
     onIFlowBtn: function () {
 
       this.getOwnerComponent()
@@ -128,7 +84,7 @@ sap.ui.define([
     loadTopCriticalIflows: async function () {
 
       const oModel = this.getOwnerComponent().getModel();
-      const sSelectedTenant = this.getView().byId("tenantSelect").getSelectedKey();
+      const sSelectedTenant = this.getOwnerComponent().getModel("globalModel").getProperty("/settings/DEFAULT_TENANT");
       console.log("Selected Tenant:", sSelectedTenant);
 
       try {
@@ -168,7 +124,7 @@ sap.ui.define([
 
       const oModel = this.getOwnerComponent().getModel();
       debugger
-      const sSelectedTenant = this.getView().byId("tenantSelect").getSelectedKey();
+      const sSelectedTenant = this.getOwnerComponent().getModel("globalModel").getProperty("/settings/DEFAULT_TENANT");
       console.log("Selected Tenant:", sSelectedTenant);
 
       try {
@@ -198,21 +154,23 @@ sap.ui.define([
     },
     onTopIflowPress: function (oEvent) {
 
-      this.showBusy();
-       console.log("showBusy() called");
-
       const oItem = oEvent.getSource();
+
       const oContext = oItem.getBindingContext("topIflows");
 
       if (!oContext) {
-        this.hideBusy();
         console.error("No binding context found");
         return;
       }
 
+      // Debug - check what data is available in the selected row
+      console.log("Selected Row Data:", oContext.getObject());
+
+      // If your service returns ID use this
       const sID = oContext.getProperty("ID");
 
       if (sID) {
+
         const oGlobalModel = this.getOwnerComponent().getModel("globalModel");
 
         if (oGlobalModel) {
@@ -226,14 +184,13 @@ sap.ui.define([
           });
 
       } else {
-         this.hideBusy();
-        console.log("hideBusy() called");
+
         console.error(
           "ID field not found in row data. Available data:",
           oContext.getObject()
         );
+
       }
-      
     }
   });
 });

@@ -1,0 +1,172 @@
+<mvc:View xmlns:cards="sap.f.cards"
+    controllerName="com.cytechies.integration.reliability.incidentclustersui.controller.Settings"
+    displayBlock="true"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+    xmlns:core="sap.ui.core">
+<f:DynamicPage showFooter="true">
+<f:title>
+            <f:DynamicPageTitle>
+                <f:heading>                         
+                   <Title text="Settings" wrapping="true" />        
+                </f:heading>
+                <f:expandedHeading>
+                <Text text="Manage tenant configuration and data retention policies"></Text>
+                </f:expandedHeading>
+            </f:DynamicPageTitle>
+        </f:title>
+        
+<f:content>
+        <VBox width="100%">
+            <HBox
+                renderType="Bare"
+                width="100%"
+                class="sapUiMediumMarginBottom">
+                <!-- Tenant Configuration -->
+                <f:Card
+                    width="35%"
+                    class="sapUiSmallMarginEnd">
+                    <f:header>
+                        <cards:Header
+                            title="Tenant Configuration"
+                            subtitle="Default Dashboard Tenant" />
+                    </f:header>
+                    <f:content>
+                        <VBox class="sapUiMediumMargin">
+                            <Label
+                                text="Default Tenant"
+                                required="true" />
+<Select
+    width="100%"
+    selectedKey="{globalModel>/settings/DEFAULT_TENANT}"
+    items="{globalModel>/tenants}"
+    change=".onTenantChange">
+
+    <core:Item
+        key="{globalModel>ID}"
+        text="{globalModel>tenantName}" />
+
+</Select>
+
+                            <MessageStrip
+                                class="sapUiMediumMarginTop"
+                                type="Information"
+                                showIcon="true"
+                                text="This tenant will be selected automatically when users open the dashboard." />
+
+                        </VBox>
+
+                    </f:content>
+
+                </f:Card>
+
+                <!-- Retention -->
+
+                <f:Card width="65%">
+
+                    <f:header>
+
+                        <cards:Header
+                            title="Data Retention"
+                            subtitle="Automatic Cleanup Configuration" />
+                    </f:header>
+
+                    <f:content>
+
+                        <VBox class="sapUiMediumMargin">
+
+                            <HBox
+                                justifyContent="SpaceBetween"
+                                alignItems="Center">
+
+                                <VBox width="70%">
+
+                                    <Label
+                                        text="Incident Retention Days" />
+
+                                    <Text
+                                        text="Number of days incident records should remain in the database." />
+
+                                </VBox>
+
+                                <StepInput step="1" textAlign="Center" value="{globalModel>/settings/INCIDENT_RETENTION_DAYS}" />
+
+                            </HBox>
+
+                            <HBox
+                                justifyContent="SpaceBetween"
+                                alignItems="Center"
+                                class="sapUiMediumMarginTop">
+
+                                <VBox width="70%">
+
+                                    <Label text="Cluster Retention Days" />
+                                    <Text
+                                        text="Number of days cluster records should remain in the database." />
+
+                                </VBox>
+
+                                <StepInput step="1" textAlign="Center" value="{globalModel>/settings/CLUSTER_RETENTION_DAYS}" />
+
+                            </HBox>
+
+                            <HBox
+                                justifyContent="SpaceBetween"
+                                alignItems="Center"
+                                class="sapUiMediumMarginTop">
+
+                                <VBox width="70%">
+
+                                    <Label
+                                        text="Monitoring Retention Days" />
+
+                                    <Text
+                                        text="Number of days monitoring and trend data should remain in the database." />
+
+                                </VBox>
+
+                                <StepInput step="1" textAlign="Center" value="{globalModel>/settings/MONITORING_RETENTION_DAYS}" />
+
+                            </HBox>
+
+                            <MessageStrip
+                                class="sapUiMediumMarginTop"
+                                type="Warning"
+                                showIcon="true"
+                                text="Records older than the configured retention period will be automatically deleted by scheduled cleanup jobs." />
+
+                        </VBox>
+
+                    </f:content>
+
+                </f:Card>
+
+            </HBox>
+        </VBox>
+    
+    </f:content>
+    <f:footer>
+    <Toolbar>
+
+                <ToolbarSpacer />
+
+                <Button
+                    text="Reset"
+                    type="Transparent"
+                    icon="sap-icon://reset"
+                    press=".onReset" />
+                <Button text="Edit Settings" press=".onEdit" icon="sap-icon://edit" type="Neutral"/>
+
+                <Button
+                    text="Save Settings"
+                    type="Emphasized"
+                    icon="sap-icon://save"
+                    press=".onSave" />
+
+            </Toolbar>
+
+    </f:footer>
+</f:DynamicPage>
+
+</mvc:View>
