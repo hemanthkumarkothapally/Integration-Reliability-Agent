@@ -77,6 +77,9 @@
     }
   },
   "sap.ui5": {
+    "icons": {
+    "favicon": "model/gemini-svg.svg"
+  },
     "flexEnabled": false,
     "dependencies": {
       "minUI5Version": "1.147.2",

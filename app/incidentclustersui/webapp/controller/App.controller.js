@@ -3,15 +3,24 @@ sap.ui.define([
   "sap/ui/model/json/JSONModel",
   "sap/m/Popover",            // 6th dependency
   "sap/m/List",               // 7th dependency
-  "sap/m/StandardListItem"
-], (BaseController, JSONModel, Popover, List, StandardListItem) => {
+  "sap/m/StandardListItem",
+  "com/cytechies/integration/reliability/incidentclustersui/controller/IRALogo"
+], (BaseController, JSONModel, Popover, List, StandardListItem, IRALogo) => {
   "use strict";
 
   return BaseController.extend("com.cytechies.integration.reliability.incidentclustersui.controller.App", {
-    onInit() {
-      
-      this.getSettingsData();
-    },
+   onInit() {
+    const oToolPage = this.byId("toolPage1");
+    const oHeader = oToolPage.getHeader();
+    
+    // Instantiate and attach the new standard 'press' event
+    const oLogo = new IRALogo({ size: 50 });
+    oLogo.attachPress(this.onSideNavButtonPress, this);
+    
+    oHeader.insertContent(oLogo, 0);
+
+    this.getSettingsData();
+},
     async getSettingsData() {
 
       const oODataModel = this.getOwnerComponent().getModel();
@@ -62,7 +71,8 @@ sap.ui.define([
 
     },
     onSideNavigationSelect: function (oEvent) {
-    
+      this.showBusy();
+
       const sKey = oEvent.getParameter("item").getKey();
       const oRouter = this.getOwnerComponent().getRouter();
 
@@ -92,6 +102,7 @@ sap.ui.define([
           // future route
           break;
       }
+      this.hideBusy();
     },
     // onSideNavigationSetting: function (oEvent) {
     //   let oItem = oEvent.getParameter("item");

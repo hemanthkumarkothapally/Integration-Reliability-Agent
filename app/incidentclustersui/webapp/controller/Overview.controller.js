@@ -27,10 +27,10 @@ sap.ui.define([
       this.loadTopCriticalIflows();
     },
     _onRouteMatched: async function () {
-      //this.showBusy();
+      this.showBusy();
       await this.loadDashboardCharts();
       await this.loadTopCriticalIflows();
-      //this.hideBusy();
+      this.hideBusy();
     },
  
  
@@ -173,6 +173,7 @@ sap.ui.define([
       }
     },
     onTopIflowPress: function (oEvent) {
+      this.showBusy();
 
       const oItem = oEvent.getSource();
 
@@ -211,6 +212,7 @@ sap.ui.define([
         );
 
       }
+      this.hideBusy();
     }
   });
 });
