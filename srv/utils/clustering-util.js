@@ -827,16 +827,17 @@ export async function refreshArtifactDashboard(
         //         severity
         //     }
         // );
+           await updateClusterSeverityForIFlow(
+     stat.artifact.ID,
+    ClusterArtifacts
+);
     }
 
     await refreshClusterSeverity(
         IncidentClusters,
         tenant
     );
-    await updateClusterSeverityForIFlow(
-    artifact.ID,
-    ClusterArtifacts
-);
+ 
 
     console.log(
         `Artifact dashboard refresh completed for tenant ${tenant.tenantName}`

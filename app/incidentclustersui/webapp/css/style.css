@@ -15,6 +15,20 @@
     pointer-events: none !important;
 }
 
+/* Target the inner text element of the SAPUI5 Button */
+.unclickableTag .sapMBtnContent {
+    white-space: normal !important;
+    word-break: break-word !important;
+    hyphens: auto; /* Optional: adds hyphens if a word breaks */
+}
+
+/* Ensure the button can expand vertically to fit the wrapped text */
+.unclickableTag.sapMBtn {
+    height: auto !important;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
 /* User Message Bubble Layout Styling */
 .userChatBubbleNew {
     background: linear-gradient(-90deg, rgba(249, 115, 22, 0.08) 0%, rgba(255, 255, 255, 0) 100%) !important;
