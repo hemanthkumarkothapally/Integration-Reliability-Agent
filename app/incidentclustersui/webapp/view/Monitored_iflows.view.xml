@@ -16,6 +16,8 @@
                             <!-- <Button icon="sap-icon://nav-back" type="Ghost" press=".onNavBackToOverview" class="sapUiSmallMarginEnd"/> -->
                             <Title text="Monitoring IFlows" wrapping="true" />
                         </items>
+                    
+
                     </HBox>
                 </f:heading>
 
@@ -81,7 +83,7 @@
 
                             <Button text="Clear Filters" icon="sap-icon://clear-filter" type="Transparent" press=".onClearFilters" />
 
-                            
+
                         </items>
                     </FlexBox>
                 </f:content>
@@ -116,6 +118,9 @@
                             <IconTabFilter key="MEDIUM" text="Medium" count="{path:'/MonitoredArtifacts/$count', parameters: {$filter: 'overallSeverity eq \'MEDIUM\''}}" icon="sap-icon://information" iconColor="Default" />
 
                             <IconTabFilter key="LOW" text="Low" count="{path:'/MonitoredArtifacts/$count', parameters: {$filter: 'overallSeverity eq \'LOW\''}}" icon="sap-icon://sys-help-2" iconColor="Positive" />
+                            <IconTabFilter key="HEALTHY" text="Healthy" count="{path:'/MonitoredArtifacts/$count', parameters: {$filter: 'overallSeverity eq \'HEALTHY\''}}" icon="sap-icon://sys-enter-2" iconColor="Neutral" />
+
+
 
                         </items>
 
@@ -157,19 +162,19 @@
                                 <Text text="iFlow Name"/>
                             </Column>
 
-                            <Column width="20%" demandPopin="true" minScreenWidth="Tablet">
+                            <Column width="20%" demandPopin="true" minScreenWidth="Desktop">
                                 <Text text="Package"/>
                             </Column>
 
-                            <Column width="10%" demandPopin="true" minScreenWidth="Desktop">
+                            <Column demandPopin="true" minScreenWidth="Desktop">
                                 <Text text="Severity"/>
                             </Column>
 
-                            <Column width="10%" hAlign="Center" demandPopin="true" minScreenWidth="Tablet">
+                            <Column hAlign="Center" demandPopin="true" minScreenWidth="Desktop">
                                 <Text text="Active Clusters"/>
                             </Column>
 
-                            <Column width="20%" hAlign="End" demandPopin="true" minScreenWidth="Desktop">
+                            <Column hAlign="End">
                                 <Text text="Last Failure"/>
                             </Column>
 
@@ -194,7 +199,7 @@
                                         </customData>
 
                                     </Button>
-
+                                    
                                     <ObjectNumber number="{openClusterCount}" emphasized="true" state="{path:'overallSeverity', formatter:'.formatter.formatSeverityState'}"/>
 
                                     <Text text="{path:'lastErrorAt', formatter:'.formatter.formatDateTime'}"/>

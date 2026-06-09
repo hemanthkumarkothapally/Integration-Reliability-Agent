@@ -91,6 +91,7 @@ sap.ui.define([
           break;
 
         case "ai":
+          this.getView().getModel("globalModel").setProperty("/iflowId",null);
           oRouter.navTo("RouteAIAssistant");
           break;
 

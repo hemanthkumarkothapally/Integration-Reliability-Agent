@@ -134,7 +134,7 @@ sap.ui.define([
     loadDashboardCharts: async function () {
 
       const oModel = this.getOwnerComponent().getModel();
-      debugger
+      // debugger
       const sSelectedTenant = this.getOwnerComponent().getModel("globalModel").getProperty("/settings/DEFAULT_TENANT");
       console.log("Selected Tenant:", sSelectedTenant);
 

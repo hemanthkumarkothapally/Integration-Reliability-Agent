@@ -181,19 +181,19 @@
                             <Column width="30%" demandPopin="true">
                                 <Text text="Error Type"/>
                             </Column>
-                            <Column width="10%" hAlign="Center" demandPopin="true" minScreenWidth="Tablet">
+                            <Column  hAlign="Center" demandPopin="true" minScreenWidth="Tablet">
                                 <Text text="Artifacts"/>
                             </Column>
-                            <Column width="20%" hAlign="Begin" demandPopin="true" minScreenWidth="Tablet">
+                            <Column  hAlign="Begin" demandPopin="true" minScreenWidth="Desktop">
                                 <Text text="Severity"/>
                             </Column>
-                            <Column width="10%" hAlign="Center" demandPopin="true" minScreenWidth="Desktop">
+                            <Column  hAlign="Center" demandPopin="true" minScreenWidth="Desktop">
                                 <Text text="Incident Count"/>
                             </Column>
-                            <Column width="20%" hAlign="Begin" demandPopin="true" minScreenWidth="Tablet">
+                            <Column  hAlign="Begin" demandPopin="true" minScreenWidth="Desktop">
                                 <Text text="Status"/>
                             </Column>
-                            <Column width="20%" hAlign="End" demandPopin="true" minScreenWidth="Desktop">
+                            <Column  hAlign="End">
                                 <Text text="Last Failure"/>
                             </Column>
                         </columns>
