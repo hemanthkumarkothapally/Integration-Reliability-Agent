@@ -1,5 +1,5 @@
 sap.ui.define([
-  "sap/ui/core/mvc/Controller",
+    "./BaseController",
   "../model/formatter",
   "sap/ui/model/json/JSONModel"
 ], (BaseController, formatter, JSONModel) => {
@@ -8,11 +8,12 @@ sap.ui.define([
   return BaseController.extend("com.cytechies.integration.reliability.incidentclustersui.controller.Overview", {
     formatter: formatter,
     onInit: async function () {
-      //  this.byId("sideNavigation")
-      //   .setSelectedKey("overview");
+                this.getOwnerComponent().getModel("globalModel").setProperty("/selectedKey","overview");
 
-      this.loadDashboardCharts();
-      this.loadTopCriticalIflows();
+this.getView().setBusy(true);      //  this.byId("sideNavigation")
+      //   .setSelectedKey("overview");
+      await this.loadDashboardCharts();
+      await this.loadTopCriticalIflows();
        const oRouter =
                 this.getOwnerComponent().getRouter();
 
@@ -21,10 +22,14 @@ sap.ui.define([
                     this._onRouteMatched,
                     this
                 );
+this.getView().setBusy(false);
     },
-    _onRouteMatched: function (oEvent) {
-      this.loadDashboardCharts();
-      this.loadTopCriticalIflows();
+    _onRouteMatched: async function (oEvent) {
+      this.getView().setBusy(true);
+      await this.loadDashboardCharts();
+      await this.loadTopCriticalIflows();
+      this.getView().setBusy(false);
+
     },
     onAfterRendering: function () {
       setTimeout(function () {

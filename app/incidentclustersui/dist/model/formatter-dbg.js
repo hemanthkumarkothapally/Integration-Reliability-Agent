@@ -19,28 +19,33 @@ sap.ui.define([], function () {
                     return "sap-icon://information"; // The 'i' icon
                 case "LOW":
                     return "sap-icon://incident";    // The green question mark/incident icon
+                case "HEALTHY":
+                    return "sap-icon://sys-enter-2"; // The 'enter' icon
                 default:
                     return "sap-icon://process";     // Fallback icon
             }
         },
 
         severityIconColor: function (sSeverity) {
-        if (!sSeverity) {
-            return sap.ui.core.IconColor.Positive; // Green
-        }
-        
-        switch (sSeverity.toUpperCase()) {
-            case "CRITICAL":
-                return "#b6121f"; // Red
-            case "HIGH":
-                return sap.ui.core.IconColor.Critical; // Orange
-            case "MEDIUM":
-                return "#0066cc";  // Blue (Theme Neutral)
-            case "LOW":
-            default:
+            if (!sSeverity) {
                 return sap.ui.core.IconColor.Positive; // Green
-        }
-    },
+            }
+
+            switch (sSeverity.toUpperCase()) {
+                case "CRITICAL":
+                    return "#b6121f"; // Red
+                case "HIGH":
+                    return sap.ui.core.IconColor.Critical; // Orange
+                case "MEDIUM":
+                    return "#0066cc";  // Blue (Theme Neutral)
+                case "LOW":
+                    return sap.ui.core.IconColor.Positive; // Green
+                case "HEALTHY":
+                    return "#6A6D70"; // Gray (Custom color for Healthy)
+                default:
+                    return sap.ui.core.IconColor.Positive; // Green
+            }
+        },
 
         formatSeverityState: function (sSeverity) {
 
@@ -58,12 +63,12 @@ sap.ui.define([], function () {
                 case "LOW":
                     return "Success";
 
-               
+
             }
 
         },
 
-         formatButtonState: function (sSeverity) {
+        formatButtonState: function (sSeverity) {
 
             switch (sSeverity) {
 
@@ -78,6 +83,9 @@ sap.ui.define([], function () {
 
                 case "LOW":
                     return "Accept";
+
+                case "HEALTHY":
+                    return "Ghost";
 
             }
 
@@ -97,8 +105,10 @@ sap.ui.define([], function () {
 
                 case "LOW":
                     return "Low";
+                case "HEALTHY":
+                    return "Healthy";
 
-              
+
             }
 
         },
@@ -119,7 +129,7 @@ sap.ui.define([], function () {
                 case "LOW":
                     return "Success";
 
-               
+
             }
 
         },
@@ -133,13 +143,13 @@ sap.ui.define([], function () {
                 case "RESOLVED":
                     return "Success";
 
-                
+
 
             }
 
         },
 
-    
+
         formatDateTime: function (sDate) {
 
             if (!sDate) {
@@ -157,14 +167,14 @@ sap.ui.define([], function () {
 
         },
 
-        formatArtifactCount: function(aArtifacts) {
-    if (!aArtifacts || !Array.isArray(aArtifacts)) {
-        return 0;
-    }
-    return aArtifacts.length;
-}
+        formatArtifactCount: function (aArtifacts) {
+            if (!aArtifacts || !Array.isArray(aArtifacts)) {
+                return 0;
+            }
+            return aArtifacts.length;
+        }
 
-      
+
 
     };
 

@@ -31,32 +31,220 @@ sap.ui.define([
             this.navTo("RouteOverview");
         },
 
+        // _onRouteMatched: async function () {
+        //     this.getOwnerComponent().getModel("globalModel").setProperty("/selectedKey","iflows");
+        //     // Only set defaults the very first time
+        //     if (this._bInitialized) {
+        //         return;
+        //     }
+        //     this._bInitialized = true;
+
+        //     let oDateRange = this.byId("idDateRangeFilter");
+        //     if (oDateRange) {
+        //         let oFromDate = new Date();
+        //         oFromDate.setHours(0, 0, 0, 0);
+        //         let oToDate = new Date();
+        //         oDateRange.setDateValue(oFromDate);
+        //         oDateRange.setSecondDateValue(oToDate);
+        //         this.onFilteriFlow();
+        //     }
+        // },
         _onRouteMatched: async function () {
-            
-            // Only set defaults the very first time
-            if (this._bInitialized) {
+            this.getOwnerComponent().getModel("globalModel").setProperty("/selectedKey", "iflows");
+
+            try {
+
+                this.getView().setBusy(true);
+                this.byId("idIFLowSeverityTabBar").setSelectedKey('ALL');
+                const oTable = this.byId("idMonitoredArtifacts");
+
+                if (!oTable) {
+                    this.getView().setBusy(false);
+                    return;
+                }
+
+                const oBinding = oTable.getBinding("items");
+
+                if (!oBinding) {
+                    this.getView().setBusy(false);
+                    return;
+                }
+
+                // Build all filters
+                const aFilters = this._getDropdownAndDateFilters();
+                // 2. Fetch the default tenant filters and combine them
+                const aTenantFilters = this.getGlobalTenantFilter();
+                const aCombinedFilters = aFilters.concat(aTenantFilters);
+                console.log(
+                    "Applying Filters:",
+                    aFilters
+                );
+
+                // Wait for filtered data
+                await new Promise((resolve) => {
+
+                    oBinding.attachEventOnce(
+                        "dataReceived",
+                        resolve
+                    );
+
+                    oBinding.filter(aCombinedFilters);
+
+                    // Optional fallback
+                    setTimeout(resolve, 3000);
+
+                });
+
+                console.log(
+                    "Tenant:",
+                    this.getSelectedTenantId()
+                );
+
+                console.log(
+                    "Data loaded successfully"
+                );
+
+                // Filter dropdowns too
+                await this._filterDropdownBindings();
+                await this._updateSeverityCounts();
+
+            } catch (oError) {
+
+                console.error(
+                    "Error during route match",
+                    oError
+                );
+
+            } finally {
+
+                this.getView().setBusy(false);
+
+            }
+        },
+        _updateSeverityCounts: async function () {
+
+            const oTable = this.byId("idMonitoredArtifacts");
+
+            if (!oTable) {
                 return;
             }
-            this._bInitialized = true;
 
-            let oDateRange = this.byId("idDateRangeFilter");
-            if (oDateRange) {
-                let oFromDate = new Date();
-                oFromDate.setHours(0, 0, 0, 0);
-                let oToDate = new Date();
-                oDateRange.setDateValue(oFromDate);
-                oDateRange.setSecondDateValue(oToDate);
-                this.onFilteriFlow();
+            const oBinding = oTable.getBinding("items");
+
+            if (!oBinding) {
+                return;
+            }
+
+            try {
+
+                // Header filters only
+                let aFilters = this._getDropdownAndDateFilters();
+
+                // Global tenant filter
+                aFilters = aFilters.concat(
+                    this.getGlobalTenantFilter()
+                );
+
+                const oModel = oBinding.getModel();
+
+                // Use same path as your table binding
+                const oCountBinding = oModel.bindList(
+                    oBinding.getPath(),
+                    null,
+                    null,
+                    aFilters
+                );
+
+                const iLength = oCountBinding.getLength();
+
+                const aContexts =
+                    await oCountBinding.requestContexts(
+                        0,
+                        iLength
+                    );
+
+                const aData = aContexts
+                    .map(oContext => oContext?.getObject?.())
+                    .filter(Boolean);
+
+                const iAll = aData.length;
+
+                const iCritical =
+                    aData.filter(
+                        o => o.overallSeverity === "CRITICAL"
+                    ).length;
+
+                const iHigh =
+                    aData.filter(
+                        o => o.overallSeverity === "HIGH"
+                    ).length;
+
+                const iMedium =
+                    aData.filter(
+                        o => o.overallSeverity === "MEDIUM"
+                    ).length;
+
+                const iLow =
+                    aData.filter(
+                        o => o.overallSeverity === "LOW"
+                    ).length;
+
+                this.byId("allTab")?.setCount(iAll);
+                this.byId("criticalTab")?.setCount(iCritical);
+                this.byId("highTab")?.setCount(iHigh);
+                this.byId("mediumTab")?.setCount(iMedium);
+                this.byId("lowTab")?.setCount(iLow);
+
+                console.log("Severity Counts:", {
+                    ALL: iAll,
+                    CRITICAL: iCritical,
+                    HIGH: iHigh,
+                    MEDIUM: iMedium,
+                    LOW: iLow
+                });
+
+            } catch (e) {
+                console.error("Count calculation failed", e);
             }
         },
+        _filterDropdownBindings: function () {
 
-        onRefreshPress: function () {
-            let oTable = this.byId("idMonitoredArtifacts");
-            if (oTable && oTable.getBinding("items")) {
-                oTable.getBinding("items").refresh();
+            const aTenantFilters =
+                this.getGlobalTenantFilter();
+
+            const oIFlowBinding =
+                this.byId("idIFlowFilter")
+                    ?.getBinding("items");
+
+            if (oIFlowBinding) {
+                oIFlowBinding.filter(aTenantFilters);
             }
+
+            const oPackageBinding =
+                this.byId("idpackageFilter")
+                    ?.getBinding("items");
+
+            if (oPackageBinding) {
+                oPackageBinding.filter(aTenantFilters);
+            }
+        },
+        onRefreshPress: function () {
+
+            this.onFilteriFlow();
+
+            this._filterDropdownBindings();
+            this._updateSeverityCounts();
             this._updateRefreshTime();
         },
+
+
+        // onRefreshPress: function () {
+        //     let oTable = this.byId("idMonitoredArtifacts");
+        //     if (oTable && oTable.getBinding("items")) {
+        //         oTable.getBinding("items").refresh();
+        //     }
+        //     this._updateRefreshTime();
+        // },
 
         _updateRefreshTime: function () {
             let oModel = this.getOwnerComponent().getModel("globalModel");
@@ -80,8 +268,8 @@ sap.ui.define([
 
 
         onRowPress: async function (oEvent) {
-           
-            this.showBusy(100);
+
+            this.showBusy();
             console.log("showBusy() called");
             const oItem = oEvent.getParameter("listItem");
             const oContext = oItem.getBindingContext();
@@ -89,7 +277,7 @@ sap.ui.define([
             if (!oContext) return;
 
             // Show busy indicator before async operation
-           
+
 
             try {
                 // requestProperty ensures the data is there before moving forward
@@ -112,53 +300,96 @@ sap.ui.define([
                 this.hideBusy();
             }
         },
-        onFilterChange: function (oEvent) {
+        onFilterChange: function () {
+
             this.showBusy();
 
-            // 1. Automatically reset the active tab selection to "ALL" when any header filter changes
-            let oIconTabHeader = this.byId("idIFLowSeverityTabBar");
+            let oIconTabHeader =
+                this.byId("idIFLowSeverityTabBar");
+
             if (oIconTabHeader) {
                 oIconTabHeader.setSelectedKey("ALL");
             }
 
-            // 2. Re-evaluate and apply the combined filters
             this.onFilteriFlow();
+
+            this._updateSeverityCounts();
+
             this.hideBusy();
         },
         onSeverityTabSelect: function (oEvent) {
-            const sKey = oEvent.getParameter("key");
-            const oTable = this.byId("idMonitoredArtifacts");
 
-            if (oTable) {
-                const oBinding = oTable.getBinding("items");
-                if (oBinding) {
-                    // Collect all master header filters (IFlow, Tenant, Package, and Date)
-                    let aMasterFilters = this._getDropdownAndDateFilters();
+    const sKey =
+        oEvent.getParameter("key");
 
-                    // Append the chosen severity tab condition if it isn't "ALL"
-                    if (sKey !== "ALL") {
-                        aMasterFilters.push(
-                            new Filter("overallSeverity", FilterOperator.EQ, sKey)
-                        );
-                    }
+    const oTable =
+        this.byId("idMonitoredArtifacts");
 
-                    oBinding.filter(aMasterFilters);
-                }
-            }
-        },
+    if (!oTable) {
+        return;
+    }
+
+    const oBinding =
+        oTable.getBinding("items");
+
+    if (!oBinding) {
+        return;
+    }
+
+    let aFilters =
+        this._getDropdownAndDateFilters();
+
+    // Add tenant filter
+    aFilters =
+        aFilters.concat(
+            this.getGlobalTenantFilter()
+        );
+
+    // Add severity filter
+    if (sKey !== "ALL") {
+
+        aFilters.push(
+            new Filter(
+                "overallSeverity",
+                FilterOperator.EQ,
+                sKey
+            )
+        );
+    }
+
+    oBinding.filter(aFilters);
+},
         onFilteriFlow: function () {
+
             let aFilters = this._getDropdownAndDateFilters();
 
+            // Always append global tenant filter
+            const aTenantFilters = this.getGlobalTenantFilter();
+            aFilters = aFilters.concat(aTenantFilters);
+
             let oTable = this.byId("idMonitoredArtifacts");
+
             if (oTable) {
                 let oBinding = oTable.getBinding("items");
+
                 if (oBinding) {
                     oBinding.filter(aFilters);
-                } else {
-                    console.warn("Table items binding context not found.");
                 }
             }
         },
+        // onFilteriFlow: function () {
+        //     let aFilters = this._getDropdownAndDateFilters();
+
+        //     let oTable = this.byId("idMonitoredArtifacts");
+        //     if (oTable) {
+        //         let oBinding = oTable.getBinding("items");
+        //         if (oBinding) {
+        //             oBinding.filter(aFilters);
+        //         } else {
+        //             console.warn("Table items binding context not found.");
+        //         }
+        //     }
+        // },
         _getDropdownAndDateFilters: function () {
             let aFilters = [];
 
@@ -278,110 +509,117 @@ sap.ui.define([
         //     this.onFilteriFlow();
         // },
 
-        onFilteriFlow: function () {
-            let aFilters = [];
-            let oMultiiFlowCombo = this.byId("idIFlowFilter");
-            if (oMultiiFlowCombo) {
-                let aSelectedKeys = oMultiiFlowCombo.getSelectedKeys();
-                console.log(aSelectedKeys)
+        // onFilteriFlow: function () {
+        //     let aFilters = [];
+        //     let oMultiiFlowCombo = this.byId("idIFlowFilter");
+        //     if (oMultiiFlowCombo) {
+        //         let aSelectedKeys = oMultiiFlowCombo.getSelectedKeys();
+        //         console.log(aSelectedKeys)
 
-                if (aSelectedKeys && aSelectedKeys.length > 0) {
-                    let aComboFilters = aSelectedKeys.map(function (sKey) {
-                        return new Filter({
-                            path: "iFlowName",
-                            operator: FilterOperator.EQ,
-                            value1: sKey
-                        });
-                    });
+        //         if (aSelectedKeys && aSelectedKeys.length > 0) {
+        //             let aComboFilters = aSelectedKeys.map(function (sKey) {
+        //                 return new Filter({
+        //                     path: "iFlowName",
+        //                     operator: FilterOperator.EQ,
+        //                     value1: sKey
+        //                 });
+        //             });
 
-                    aFilters.push(new Filter({
-                        filters: aComboFilters,
-                        and: false
-                    }));
-                }
-            }
-            let oMultiTenantCombo = this.byId("idTenantFilter");
+        //             aFilters.push(new Filter({
+        //                 filters: aComboFilters,
+        //                 and: false
+        //             }));
+        //         }
+        //     }
+        //     let oMultiTenantCombo = this.byId("idTenantFilter");
 
-            if (oMultiTenantCombo) {
-                let aSelectedKeys = oMultiTenantCombo.getSelectedKeys();
-                console.log(aSelectedKeys)
+        //     if (oMultiTenantCombo) {
+        //         let aSelectedKeys = oMultiTenantCombo.getSelectedKeys();
+        //         console.log(aSelectedKeys)
 
-                if (aSelectedKeys && aSelectedKeys.length > 0) {
-                    let aComboFilters = aSelectedKeys.map(function (sKey) {
-                        return new Filter({
-                            path: "tenant_ID",
-                            operator: FilterOperator.EQ,
-                            value1: sKey
-                        });
-                    });
+        //         if (aSelectedKeys && aSelectedKeys.length > 0) {
+        //             let aComboFilters = aSelectedKeys.map(function (sKey) {
+        //                 return new Filter({
+        //                     path: "tenant_ID",
+        //                     operator: FilterOperator.EQ,
+        //                     value1: sKey
+        //                 });
+        //             });
 
-                    aFilters.push(new Filter({
-                        filters: aComboFilters,
-                        and: false
-                    }));
-                }
-            }
+        //             aFilters.push(new Filter({
+        //                 filters: aComboFilters,
+        //                 and: false
+        //             }));
+        //         }
+        //     }
 
-            let oPackageMultiCombo = this.byId("idpackageFilter");
-            if (oPackageMultiCombo) {
-                let aSelectedKeys = oPackageMultiCombo.getSelectedKeys();
-                console.log(aSelectedKeys)
+        //     let oPackageMultiCombo = this.byId("idpackageFilter");
+        //     if (oPackageMultiCombo) {
+        //         let aSelectedKeys = oPackageMultiCombo.getSelectedKeys();
+        //         console.log(aSelectedKeys)
 
-                if (aSelectedKeys && aSelectedKeys.length > 0) {
-                    let aComboFilters = aSelectedKeys.map(function (sKey) {
-                        return new Filter({
-                            path: "PackageName",
-                            operator: FilterOperator.EQ,
-                            value1: sKey
-                        });
-                    });
+        //         if (aSelectedKeys && aSelectedKeys.length > 0) {
+        //             let aComboFilters = aSelectedKeys.map(function (sKey) {
+        //                 return new Filter({
+        //                     path: "PackageName",
+        //                     operator: FilterOperator.EQ,
+        //                     value1: sKey
+        //                 });
+        //             });
 
-                    aFilters.push(new Filter({
-                        filters: aComboFilters,
-                        and: false
-                    }));
-                }
-            }
-            if (this._sCurrentSeverityFilter && this._sCurrentSeverityFilter !== "ALL") {
-                aFilters.push(new Filter({
-                    path: "overallSeverity",
-                    operator: FilterOperator.EQ,
-                    value1: this._sCurrentSeverityFilter
-                }));
-            }
+        //             aFilters.push(new Filter({
+        //                 filters: aComboFilters,
+        //                 and: false
+        //             }));
+        //         }
+        //     }
+        //     if (this._sCurrentSeverityFilter && this._sCurrentSeverityFilter !== "ALL") {
+        //         aFilters.push(new Filter({
+        //             path: "overallSeverity",
+        //             operator: FilterOperator.EQ,
+        //             value1: this._sCurrentSeverityFilter
+        //         }));
+        //     }
 
 
-            let oDateRange = this.byId("idDateRangeFilter");
-            if (oDateRange) {
-                let oFromDate = oDateRange.getDateValue();
-                let oSecondDate = oDateRange.getSecondDateValue();
-                if (oFromDate && oSecondDate) {
-                    let oToDate = new Date(oSecondDate.getTime());
-                    oToDate.setHours(23, 59, 59, 999);
-                    let sFromDate = oFromDate.toISOString();
-                    let sToDate = oToDate.toISOString();
+        //     let oDateRange = this.byId("idDateRangeFilter");
+        //     if (oDateRange) {
+        //         let oFromDate = oDateRange.getDateValue();
+        //         let oSecondDate = oDateRange.getSecondDateValue();
+        //         if (oFromDate && oSecondDate) {
+        //             let oToDate = new Date(oSecondDate.getTime());
+        //             oToDate.setHours(23, 59, 59, 999);
+        //             let sFromDate = oFromDate.toISOString();
+        //             let sToDate = oToDate.toISOString();
 
-                    aFilters.push(new Filter({
-                        path: "lastErrorAt",
-                        operator: FilterOperator.BT,
-                        value1: sFromDate,
-                        value2: sToDate
-                    }));
-                }
-            }
-            let oniFlowTable = this.byId("idMonitoredArtifacts");
-            console.log(aFilters);
-            if (oniFlowTable) {
-                // CHANGED: Get binding for 'items' instead of 'content'
-                let oBinding = oniFlowTable.getBinding("items");
-                if (oBinding) {
-                    oBinding.filter(aFilters);
-                } else {
-                    console.warn("Table items binding context not found.");
-                }
-            }
+        //             aFilters.push(new Filter({
+        //                 path: "lastErrorAt",
+        //                 operator: FilterOperator.BT,
+        //                 value1: sFromDate,
+        //                 value2: sToDate
+        //             }));
+        //         }
+        //     }
+        //     let oniFlowTable = this.byId("idMonitoredArtifacts");
+        //     console.log(aFilters);
+        //     if (oniFlowTable) {
+        //         // CHANGED: Get binding for 'items' instead of 'content'
+        //         let oBinding = oniFlowTable.getBinding("items");
+        //         if (oBinding) {
+        //             oBinding.filter(aFilters);
+        //         } else {
+        //             console.warn("Table items binding context not found.");
+        //         }
+        //     }
 
-        },
+        // },
+        onTableUpdateFinished: function (oEvent) {
+
+
+            const iTotal = oEvent.getParameter("total");
+
+            console.log("Total records:", iTotal);
+        }
         // onTableUpdateFinished: function (oEvent) {
         //     // This parameter is provided natively by the updateFinished event
         //     let iTotalItems = oEvent.getParameter("total");

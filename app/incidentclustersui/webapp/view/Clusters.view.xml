@@ -136,16 +136,35 @@
                     <IconTabHeader id="idSeverityTabBar" select=".onSeverityTabSelect" class="sapUiResponsiveContentPadding">
 
                         <items>
-                            <IconTabFilter key="ALL" text="All" count="{/IncidentClusters/$count}" icon="sap-icon://list" iconColor="Neutral" />
+                           <IconTabFilter
+    key="ALL"
+    text="All"
+    icon="sap-icon://list"
+    iconColor="Neutral"/>
 
-                            <IconTabFilter key="CRITICAL" text="Critical" count="{path: '/IncidentClusters/$count', parameters: {$filter: 'severity eq \'CRITICAL\''}}" icon="sap-icon://error" iconColor="Negative" />
+<IconTabFilter
+    key="CRITICAL"
+    text="Critical"
+    icon="sap-icon://error"
+    iconColor="Negative"/>
 
-                            <IconTabFilter key="HIGH" text="High" count="{path: '/IncidentClusters/$count', parameters: {$filter: 'severity eq \'HIGH\''}}" icon="sap-icon://alert" iconColor="Critical" />
+<IconTabFilter
+    key="HIGH"
+    text="High"
+    icon="sap-icon://alert"
+    iconColor="Critical"/>
 
-                            <IconTabFilter key="MEDIUM" text="Medium" count="{path: '/IncidentClusters/$count', parameters: {$filter: 'severity eq \'MEDIUM\''}}" icon="sap-icon://information" iconColor="Default" />
+<IconTabFilter
+    key="MEDIUM"
+    text="Medium"
+    icon="sap-icon://information"
+    iconColor="Default"/>
 
-                            <IconTabFilter key="LOW" text="Low" count="{path: '/IncidentClusters/$count', parameters: {$filter: 'severity eq \'LOW\''}}" icon="sap-icon://sys-help-2" iconColor="Positive" />
-                        </items>
+<IconTabFilter
+    key="LOW"
+    text="Low"
+    icon="sap-icon://sys-help-2"
+    iconColor="Positive"/></items>
 
                     </IconTabHeader>
 

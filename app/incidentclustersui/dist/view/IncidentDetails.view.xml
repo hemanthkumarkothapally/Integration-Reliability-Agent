@@ -194,10 +194,10 @@
                                                         <m:ToolbarSpacer />
 
                                                         <!-- Severity -->
-                                                        <m:GenericTag design="StatusIconHidden" text="{view>cluster/severity}" status="{= ${view>cluster/severity} === 'CRITICAL' ? 'Error' :
+                                                        <!-- <m:GenericTag design="StatusIconHidden" text="{view>cluster/severity}" status="{= ${view>cluster/severity} === 'CRITICAL' ? 'Error' :
                      ${view>cluster/severity} === 'HIGH' ? 'Warning' :
                      ${view>cluster/severity} === 'MEDIUM' ? 'Information' :
-                     'Success' }" class="sapUiTinyMarginEnd" />
+                     'Success' }" class="sapUiTinyMarginEnd" /> -->
 
                                                         <!-- Resolution Status -->
                                                         <m:ObjectStatus text="{view>resolutionStatus}" state="{= ${view>resolutionStatus} === 'OPEN' ? 'Information' : 'Success' }" inverted="true" class="sapUiTinyMarginEnd sapUiSmallMarginBegin" />

@@ -1,4 +1,4 @@
-<mvc:View xmlns:cards="sap.f.cards"
+<mvc:View xmlns:layout="sap.ui.layout" xmlns:cards="sap.f.cards"
     controllerName="com.cytechies.integration.reliability.incidentclustersui.controller.Settings"
     displayBlock="true"
     xmlns:mvc="sap.ui.core.mvc"
@@ -19,29 +19,37 @@
         
 <f:content>
         <VBox width="100%">
-            <HBox
-                renderType="Bare"
-                width="100%"
-                class="sapUiMediumMarginBottom">
+        <layout:Grid 
+    defaultSpan="XL6 L6 M12 S12"
+    hSpacing="1"
+    vSpacing="1">
+                
                 <!-- Tenant Configuration -->
                 <f:Card
-                    width="35%"
-                    class="sapUiSmallMarginEnd">
-                    <f:header>
-                        <cards:Header
-                            title="Tenant Configuration"
-                            subtitle="Default Dashboard Tenant" />
-                    </f:header>
+                    class="sapUiMediumMarginEnd sapUiMediumMarginBottom" height="100%">
+                    <f:layoutData>
+                    
+            <FlexItemData
+                growFactor="1"
+                baseSize="250px" />
+        </f:layoutData>
+       
+                   <f:header>
+        <cards:Header
+            title="Tenant Configuration"
+            subtitle="Default Dashboard Tenant">
+        </cards:Header>
+    </f:header>
                     <f:content>
-                        <VBox class="sapUiMediumMargin">
+                        <VBox class="sapUiMediumMargin" width="100%">
                             <Label
                                 text="Default Tenant"
-                                required="true" />
+                                required="true" visible="{= !${globalModel>/editMode} }"/>
 <Select
     width="100%"
     selectedKey="{globalModel>/settings/DEFAULT_TENANT}"
     items="{globalModel>/tenants}"
-    change=".onTenantChange">
+    change=".onTenantChange" visible="{= !${globalModel>/editMode} }">
 
     <core:Item
         key="{globalModel>ID}"
@@ -53,8 +61,87 @@
                                 class="sapUiMediumMarginTop"
                                 type="Information"
                                 showIcon="true"
+                                visible="{= !${globalModel>/editMode} }"
                                 text="This tenant will be selected automatically when users open the dashboard." />
+<VBox
+    visible="{globalModel>/editMode}"
+    class="sapUiMediumMarginTop">
 
+    <Toolbar>
+        <Title text="Tenant Management" level="H5"/>
+        <ToolbarSpacer/>
+        <Button
+            text="Add Tenant"
+            icon="sap-icon://add"
+            type="Emphasized"
+            press=".onAddTenant"/>
+    </Toolbar>
+
+    <Table
+        items="{path: '/Tenants'}"
+        class="sapUiSmallMarginTop">
+
+        <columns>
+
+            <Column>
+                <Text text="Tenant Name"/>
+            </Column>
+
+            <Column>
+                <Text text="Tenant ID"/>
+            </Column>
+
+            <Column>
+                <Text text="Destination"/>
+            </Column>
+
+            <Column>
+                <Text text="Region"/>
+            </Column>
+
+            <Column hAlign="Center">
+                <Text text="Actions"/>
+            </Column>
+
+        </columns>
+
+        <items>
+
+            <ColumnListItem>
+
+                <cells>
+
+                    <Text text="{tenantName}"/>
+
+                    <Text text="{tenantId}"/>
+
+                    <Text text="{destinationName}"/>
+
+                    <Text text="{region}"/>
+
+                    <HBox justifyContent="Center">
+
+                        <Button
+                            icon="sap-icon://edit"
+                            type="Transparent"
+                            press=".onEditTenant"/>
+
+                        <Button
+                            icon="sap-icon://delete"
+                            type="Transparent"
+                            press=".onDeleteTenant"/>
+
+                    </HBox>
+
+                </cells>
+
+            </ColumnListItem>
+
+        </items>
+
+    </Table>
+
+</VBox>
                         </VBox>
 
                     </f:content>
@@ -63,8 +150,13 @@
 
                 <!-- Retention -->
 
-                <f:Card width="65%">
-
+                <f:Card height="100%">
+<f:layoutData>
+                    
+            <FlexItemData
+                growFactor="2"
+                baseSize="500px" />
+        </f:layoutData>
                     <f:header>
 
                         <cards:Header
@@ -142,7 +234,7 @@
 
                 </f:Card>
 
-            </HBox>
+           </layout:Grid>
         </VBox>
     
     </f:content>

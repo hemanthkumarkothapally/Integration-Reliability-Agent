@@ -1,0 +1,40 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+
+    <Dialog
+        title="Add Tenant"
+        contentWidth="500px">
+
+        <VBox class="sapUiMediumMargin">
+
+            <Label text="Tenant Name" required="true"/>
+            <Input id="tenantNameInput"/>
+
+            <Label text="Tenant ID" required="true"/>
+            <Input id="tenantIdInput"/>
+
+            <Label text="Destination Name" required="true"/>
+            <Input id="destinationInput"/>
+
+            <Label text="Region" required="true"/>
+            <Input id="regionInput"/>
+
+        </VBox>
+
+        <beginButton>
+            <Button
+                text="Create"
+                type="Emphasized"
+                press=".onCreateTenant"/>
+        </beginButton>
+
+        <endButton>
+            <Button
+                text="Cancel"
+                press=".onCloseTenantDialog"/>
+        </endButton>
+
+    </Dialog>
+
+</core:FragmentDefinition>

@@ -153,6 +153,82 @@ sap.ui.define([
             } else {
                 oBinding.filter([]); // Clear all filters if nothing is selected
             }
+        },
+        async getSettingsData() {
+
+      const oODataModel = this.getOwnerComponent().getModel();
+      const oGlobalModel = this.getOwnerComponent().getModel("globalModel");
+
+      // Load Tenants
+      const aTenants = [{
+        ID: "ALL",
+        tenantName: "All Tenants"
+      }];
+
+      const aBackendTenants = await oODataModel
+        .bindList("/Tenants")
+        .requestContexts();
+
+      aBackendTenants.forEach(oContext => {
+        aTenants.push(oContext.getObject());
+      });
+
+      oGlobalModel.setProperty("/tenants", aTenants);
+    },
+    getSelectedTenantId: function () {
+ 
+            return this.getOwnerComponent()
+                .getModel("globalModel")
+                .getProperty("/settings/DEFAULT_TENANT");
+        },
+ 
+        getSelectedTenantName: function () {
+ 
+            return this.getOwnerComponent()
+                .getModel("globalModel")
+                .getProperty("/selectedTenantName");
+        },
+ 
+        setSelectedTenant: function (sTenantId, sTenantName) {
+ 
+            const oGlobalModel =
+                this.getOwnerComponent().getModel("globalModel");
+ 
+ 
+            oGlobalModel.setProperty(
+                "/selectedTenant",
+                sTenantId
+            );
+ 
+            oGlobalModel.setProperty(
+                "/settings/DEFAULT_TENANT",
+                sTenantId
+            );
+ 
+            oGlobalModel.setProperty(
+                "/selectedTenantName",
+                sTenantName
+            );
+ 
+            console.log("Tenant Changed");
+            console.log("Tenant ID:", sTenantId);
+            console.log("Tenant Name:", sTenantName);
+        },
+        getGlobalTenantFilter: function () {
+ 
+            const sTenantId = this.getSelectedTenantId();
+ 
+            if (!sTenantId || sTenantId === "ALL") {
+                return [];
+            }
+ 
+            return [
+                new Filter(
+                    "tenant_ID",
+                    FilterOperator.EQ,
+                    sTenantId
+                )
+            ];
         }
 
     });
