@@ -1,5 +1,5 @@
 sap.ui.define([
-  "sap/ui/core/mvc/Controller",
+  "./BaseController",
   "sap/ui/model/json/JSONModel",
   "sap/m/Popover",
   "sap/m/List",
@@ -13,11 +13,28 @@ sap.ui.define([
     async onInit() {
       const oGlobalModel = this.getOwnerComponent().getModel("globalModel");
       oGlobalModel.setProperty("/editMode", false);
+                  this.getOwnerComponent().getModel("globalModel").setProperty("/selectedKey","settings");
+      const oRouter =
+                this.getOwnerComponent().getRouter();
+
+            oRouter.getRoute("RouteSettings")
+                .attachPatternMatched(
+                    this._onRouteMatched,
+                    this
+                );
     },
+    _onRouteMatched: async function (oEvent) {
+      await this.getSettingsData();
+
+                      this.getOwnerComponent().getModel("globalModel").setProperty("/selectedKey","Settings");
+console.log("global model data:", this.getOwnerComponent().getModel("globalModel").getData());
+        },
     onTenantChange: function (oEvent) {
       const sKey = oEvent.getSource().getSelectedKey();
       this.getOwnerComponent().getModel("globalModel").setProperty("/settings/DEFAULT_TENANT", sKey);
       console.log("Selected Key:", sKey);
+      
+      this.setSelectedTenant(sKey, oEvent.getSource().getSelectedItem().getProperty('text'));
     },
     onEdit() {
       this.getOwnerComponent()
@@ -37,18 +54,18 @@ sap.ui.define([
 
       try {
 
-        aContexts.forEach(oContext => {
+        // aContexts.forEach(oContext => {
 
-          const sKey =
-            oContext.getObject().settingKey;
+        //   const sKey =
+        //     oContext.getObject().settingKey;
 
-          oContext.setProperty(
-            "settingValue",
-            String(mSettings[sKey])
-          );
-        });
+        //   oContext.setProperty(
+        //     "settingValue",
+        //     String(mSettings[sKey])
+        //   );
+        // });
 
-        await oModel.submitBatch("$auto");
+        // await oModel.submitBatch("$auto");
 
         oGlobalModel.setProperty(
           "/editMode",

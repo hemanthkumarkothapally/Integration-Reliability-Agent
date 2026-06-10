@@ -6,20 +6,22 @@
 
         <tnt:header>
             <tnt:ToolHeader>
-                <Button icon="sap-icon://menu2" press=".onSideNavButtonPress"/>
+                <!-- <Button icon="sap-icon://menu2" press=".onSideNavButtonPress"/> -->
                 
-<core:Icon src="sap-icon://connected" size="1.5rem" color="#0a6ed1"
-             class="sapUiTinyMarginEnd"/>
+
                 <Title text="Integration Reliability Agent"/>
-            </tnt:ToolHeader>
+                <ToolbarSpacer ></ToolbarSpacer>
+<Title
+    level="H5"
+    text="Tenant: {=${globalModel>/selectedTenantName} || 'ALL'}"/>            </tnt:ToolHeader>
         </tnt:header>
 
         <tnt:sideContent>
-            <tnt:SideNavigation id="sideNavigation" selectedKey="overview">
+            <tnt:SideNavigation selectedKey="{globalModel>/selectedKey}" id="sideNavigation" >
                 
                 <!-- Main scrollable navigation items -->
                 <tnt:NavigationList itemSelect=".onSideNavigationSelect">
-                    <tnt:NavigationListItem key="overview" text="Overview" icon="sap-icon://home"/>
+                    <tnt:NavigationListItem  key="overview" text="Overview" icon="sap-icon://home"/>
                     <tnt:NavigationListItem key="iflows" text="iFlows" icon="sap-icon://process"/>
                     <tnt:NavigationListItem key="clusters" text="Clusters" icon="sap-icon://chain-link"/>
                     <tnt:NavigationListItem key="ai" text="AI Assistant" icon="sap-icon://ai"/>

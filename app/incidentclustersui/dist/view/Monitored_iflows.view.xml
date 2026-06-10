@@ -16,6 +16,8 @@
                             <!-- <Button icon="sap-icon://nav-back" type="Ghost" press=".onNavBackToOverview" class="sapUiSmallMarginEnd"/> -->
                             <Title text="Monitoring IFlows" wrapping="true" />
                         </items>
+                    
+
                     </HBox>
                 </f:heading>
 
@@ -59,11 +61,11 @@
                                 </layoutData>
                                 <items>
                                     <MultiComboBox id="idpackageFilter" width="100%" placeholder="Filter by Package Name" items="{
-                                        path: '/MonitoredArtifacts',
-                                        parameters: {
-                                            $apply: 'groupby((PackageName))'
-                                        }
-                                    }" selectionChange=".onFilterChange">
+        path:'/MonitoredArtifacts',
+        parameters:{
+            $apply:'groupby((PackageName,tenant_ID))'
+        }
+    }" selectionChange=".onFilterChange">
                                         <core:Item key="{PackageName}" text="{PackageName}" />
                                     </MultiComboBox>
                                 </items>
@@ -81,7 +83,7 @@
 
                             <Button text="Clear Filters" icon="sap-icon://clear-filter" type="Transparent" press=".onClearFilters" />
 
-                            
+
                         </items>
                     </FlexBox>
                 </f:content>
@@ -103,28 +105,29 @@
                         <Button icon="sap-icon://refresh" tooltip="Refresh Data" press=".onRefreshPress" type="Transparent"/>
                     </OverflowToolbar> -->
                     <!-- Severity Tabs -->
-                    <IconTabHeader id="idIFLowSeverityTabBar" select=".onSeverityTabSelect" class="sapUiResponsiveContentPadding">
-
+                    <IconTabHeader id="idIFLowSeverityTabBar"  select=".onSeverityTabSelect" class="sapUiResponsiveContentPadding">
+ 
                         <items>
-
-                            <IconTabFilter key="ALL" text="All" count="{/MonitoredArtifacts/$count}" icon="sap-icon://list" iconColor="Neutral" />
-
-                            <IconTabFilter key="CRITICAL" text="Critical" count="{path:'/MonitoredArtifacts/$count', parameters: {$filter: 'overallSeverity eq \'CRITICAL\''}}" icon="sap-icon://error" iconColor="Negative" />
-
-                            <IconTabFilter key="HIGH" text="High" count="{path:'/MonitoredArtifacts/$count', parameters: {$filter: 'overallSeverity eq \'HIGH\''}}" icon="sap-icon://alert" iconColor="Critical" />
-
-                            <IconTabFilter key="MEDIUM" text="Medium" count="{path:'/MonitoredArtifacts/$count', parameters: {$filter: 'overallSeverity eq \'MEDIUM\''}}" icon="sap-icon://information" iconColor="Default" />
-
-                            <IconTabFilter key="LOW" text="Low" count="{path:'/MonitoredArtifacts/$count', parameters: {$filter: 'overallSeverity eq \'LOW\''}}" icon="sap-icon://sys-help-2" iconColor="Positive" />
-
+ 
+                            <IconTabFilter  id="allTab" key="ALL" text="All"  icon="sap-icon://list" iconColor="Neutral" />
+ 
+                            <IconTabFilter  id="criticalTab" key="CRITICAL" text="Critical"  icon="sap-icon://error" iconColor="Negative" />
+ 
+                            <IconTabFilter  id="highTab" key="HIGH" text="High"  icon="sap-icon://alert" iconColor="Critical" />
+ 
+                            <IconTabFilter id="mediumTab" key="MEDIUM" text="Medium"  icon="sap-icon://information" iconColor="Default" />
+ 
+                            <IconTabFilter   id="lowTab" key="LOW" text="Low"  icon="sap-icon://sys-help-2" iconColor="Positive" />
+ 
                         </items>
-
-
-
+ 
+ 
+ 
                     </IconTabHeader>
+ 
 
                     <!-- Monitored Artifacts Table -->
-                    <Table id="idMonitoredArtifacts" updateFinished=".onTableUpdateFinished" growing="true" sticky="HeaderToolbar,ColumnHeaders" growingThreshold="30" growingScrollToLoad="true" mode="SingleSelectMaster" itemPress=".onRowPress" items="{
+                    <Table id="idMonitoredArtifacts" updateFinished=".onTableUpdateFinished" growing="true" sticky="HeaderToolbar,ColumnHeaders" growingThreshold="20" growingScrollToLoad="true" mode="SingleSelectMaster" itemPress=".onRowPress" items="{
                     path: '/MonitoredArtifacts',
                     parameters: {
                         $count: true
@@ -157,19 +160,19 @@
                                 <Text text="iFlow Name"/>
                             </Column>
 
-                            <Column width="20%" demandPopin="true" minScreenWidth="Tablet">
+                            <Column width="20%" demandPopin="true" minScreenWidth="Desktop">
                                 <Text text="Package"/>
                             </Column>
 
-                            <Column width="10%" demandPopin="true" minScreenWidth="Desktop">
+                            <Column demandPopin="true" minScreenWidth="Desktop">
                                 <Text text="Severity"/>
                             </Column>
 
-                            <Column width="10%" hAlign="Center" demandPopin="true" minScreenWidth="Tablet">
+                            <Column hAlign="Center" demandPopin="true" minScreenWidth="Desktop">
                                 <Text text="Active Clusters"/>
                             </Column>
 
-                            <Column width="20%" hAlign="End" demandPopin="true" minScreenWidth="Desktop">
+                            <Column hAlign="End">
                                 <Text text="Last Failure"/>
                             </Column>
 
@@ -194,7 +197,7 @@
                                         </customData>
 
                                     </Button>
-
+                                    
                                     <ObjectNumber number="{openClusterCount}" emphasized="true" state="{path:'overallSeverity', formatter:'.formatter.formatSeverityState'}"/>
 
                                     <Text text="{path:'lastErrorAt', formatter:'.formatter.formatDateTime'}"/>

@@ -13,7 +13,7 @@ sap.ui.define([
     "sap/f/library",
     "../model/formatter"
 
-], function (BaseController, FormattedText, VBox, HBox, ObjectStatus, Avatar, AvatarSize, AvatarColor, MessageBox, library , MessageStrip, fioriLibrary, formatter) {
+], function (BaseController, FormattedText, VBox, HBox, ObjectStatus, Avatar, AvatarSize, AvatarColor, MessageBox, library, MessageStrip, fioriLibrary, formatter) {
     "use strict";
 
     return BaseController.extend("com.cytechies.integration.reliability.incidentclustersui.controller.Chat", {
@@ -39,7 +39,7 @@ sap.ui.define([
             oRouter.getRoute("RouteAIAssistant")
                 .attachPatternMatched(function () {
                     // console.log("AIAssistant route matched!");
-
+                                this.getOwnerComponent().getModel("globalModel").setProperty("/selectedKey","ai");
                     this._resetToWelcomePage();
                     // this.onBackPress();
                 }, this);
@@ -133,106 +133,206 @@ sap.ui.define([
 
         },
 
+        // onSelectClusterData: function (oEvent) {
+        //     let oGlobalModel = this.getView().getModel("globalModel");
+        //     let sIflowId = oGlobalModel ? oGlobalModel.getProperty("/iflowId") : null;
+        //     // let sTenantId = oGlobalModel ? oGlobalModel.getProperty("/settings/DEFAULT_TENANT/ID") : null;
+        //     // let sTenantId = "22222222-2222-2222-2222-222222222222";
+        //     let sTenantId = null
+        //     // Save the event source control immediately (oEvent falls out of scope inside async functions)
+
+        //     let oSource = oEvent.getSource();
+        //     let oList = this.byId("clusterList");
+        //     let oPopover = this.byId("clusterPopover");
+
+        //     // console.log("Selected cluster data with iFlow ID:", sIflowId);
+        //     if (sIflowId || sTenantId !== "ALL") {
+        //         if (oList && oPopover) {
+        //             let oBinding = oList.getBinding("items");
+
+        //             if (oBinding) {
+        //                 // Set global app view or parent view to busy so user knows a click action is running
+        //                 this.getView().setBusy(true);
+
+        //                 // 1. Create a promise that resolves ONLY when the backend returns the updated V4 payload
+        //                 let oDataLoadPromise = new Promise(function (resolve) {
+        //                     oBinding.attachEventOnce("dataReceived", function () {
+        //                         resolve();
+        //                     });
+        //                 });
+
+        //                 // 2. Set your custom filter paths
+        //                 let aFilters = [];
+        //                 if (sIflowId) {
+        //                     aFilters.push(new sap.ui.model.Filter("monitoredArtifacts/artifact_ID", sap.ui.model.FilterOperator.EQ, sIflowId));
+        //                 }
+        //                 if (sTenantId) {
+        //                     aFilters.push(new sap.ui.model.Filter("tenant_ID", sap.ui.model.FilterOperator.EQ, sTenantId));
+        //                 }
+        //                 // 3. Delegate the actual binding update to your central helper method
+        //                 this.applyCentralBindingFilter("clusterList", "items", aFilters);
+
+        //                 // 4. Wait for the data payload to land before executing UI transitions
+        //                 oDataLoadPromise.then(function () {
+        //                     this.getView().setBusy(false);
+        //                     oPopover.openBy(oSource);
+        //                 }.bind(this)).catch(function (oError) {
+        //                     this.getView().setBusy(false);
+        //                 }.bind(this));
+        //             }
+        //         }
+        //     }
+        //     return; // Exit execution early; the popover is managed inside the Promise resolution
+
+        //     // Fallback if list components or bindings aren't loaded into view context yet
+        //     if (oPopover) {
+        //         oPopover.openBy(oSource);
+        //     }
+        // },
+
         onSelectClusterData: function (oEvent) {
             let oGlobalModel = this.getView().getModel("globalModel");
             let sIflowId = oGlobalModel ? oGlobalModel.getProperty("/iflowId") : null;
+            let sTenantId = oGlobalModel ? oGlobalModel.getProperty("/tenantId") : null; // Included for multi-tenant safety
 
-            // Save the event source control immediately (oEvent falls out of scope inside async functions)
             let oSource = oEvent.getSource();
             let oList = this.byId("clusterList");
             let oPopover = this.byId("clusterPopover");
 
-            // console.log("Selected cluster data with iFlow ID:", sIflowId);
+            if (!oList || !oPopover) {
+                return; // Exit if UI elements are missing
+            }
 
-            if (oList && oPopover) {
-                let oBinding = oList.getBinding("items");
+            let oBinding = oList.getBinding("items");
+            if (!oBinding) {
+                oPopover.openBy(oSource); // Fallback
+                return;
+            }
 
-                if (oBinding) {
-                    // Set global app view or parent view to busy so user knows a click action is running
-                    this.getView().setBusy(true);
+            // 1. Build the exact filter array
+            let aFilters = [];
+            if (sIflowId) {
+                aFilters.push(new sap.ui.model.Filter("monitoredArtifacts/artifact_ID", sap.ui.model.FilterOperator.EQ, sIflowId));
+            }
+            if (sTenantId && sTenantId !== "ALL") {
+                aFilters.push(new sap.ui.model.Filter("tenant_ID", sap.ui.model.FilterOperator.EQ, sTenantId));
+            }
 
-                    // 1. Create a promise that resolves ONLY when the backend returns the updated V4 payload
-                    let oDataLoadPromise = new Promise(function (resolve) {
-                        oBinding.attachEventOnce("dataReceived", function () {
-                            resolve();
-                        });
-                    });
+            // 2. Set UI to Busy
+            this.getView().setBusy(true);
 
-                    // 2. Set your custom filter paths
-                    this.applyListSearch("clusterList", sIflowId, ["monitoredArtifacts/artifact_ID"]);
+            // 3. Create a SAFE Promise with a Timeout Fallback
+            let oDataLoadPromise = new Promise(function (resolve) {
+                // Option A: The network request fires and succeeds
+                let fnDataReceived = function () {
+                    resolve("network_success");
+                };
+                oBinding.attachEventOnce("dataReceived", fnDataReceived);
 
-                    // 3. Trigger the asynchronous refresh request
-                    oBinding.refresh();
+                // Option B: The timeout catches the cache/no-network scenario.
+                // 500ms is usually enough time for UI5 to decide if it needs to make a network call.
+                setTimeout(function () {
+                    // Detach the event just in case it fires way later
+                    oBinding.detachEvent("dataReceived", fnDataReceived);
+                    resolve("timeout_or_cached");
+                }, 800);
+            });
 
-                    // 4. Wait for the data payload to land before executing UI transitions
-                    oDataLoadPromise.then(function () {
-                        this.getView().setBusy(false);
+            // 4. Apply Filters via your central method
+            this.applyCentralBindingFilter("clusterList", "items", aFilters);
 
-                        // Popover now opens safely with 100% freshly rendered rows
-                        oPopover.openBy(oSource);
-                        // console.log("Opening cluster data popover with updated data for iFlow:", sIflowId);
-                    }.bind(this)).catch(function (oError) {
-                        this.getView().setBusy(false);
-                        // console.error("Error updating popover OData V4 dataset:", oError);
-                    }.bind(this));
-
-                    return; // Exit execution early; the popover is managed inside the Promise resolution
+            // 5. Force the refresh as requested
+            // Note: Calling refresh() immediately after filter() might abort the filter request
+            // in some OData V4 implementations. We wrap it in a micro-delay to ensure the filter registers first.
+            setTimeout(function () {
+                if (oBinding.isSuspended && oBinding.isSuspended()) {
+                    oBinding.resume();
                 }
-            }
+                oBinding.refresh();
+            }, 50);
 
-            // Fallback if list components or bindings aren't loaded into view context yet
-            if (oPopover) {
+            // 6. Handle the Promise Resolution
+            oDataLoadPromise.then(function (sStatus) {
+                // console.log("Promise resolved via:", sStatus);
+                this.getView().setBusy(false);
                 oPopover.openBy(oSource);
-            }
+            }.bind(this)).catch(function (oError) {
+                this.getView().setBusy(false);
+                // Fallback open even on error so user doesn't think the button is broken
+                oPopover.openBy(oSource);
+            }.bind(this));
         },
-
-        onSelectiFlowData(oEvent) {
+        onSelectiFlowData: function (oEvent) {
             let oGlobalModel = this.getView().getModel("globalModel");
             let sIflowId = oGlobalModel ? oGlobalModel.getProperty("/iflowId") : null;
-
-            // Save the event source control immediately (oEvent falls out of scope inside async functions)
+            let sTenantId = oGlobalModel ? oGlobalModel.getProperty("/tenantId") : null; // Included for multi-tenant safety
+            // let sTenantId = "22222222-2222-2222-2222-222222222222"; // Testing condition
+            // let sTenantId = "11111111-1111-1111-1111-111111111111"; // Testing condition
+            // Save the event source control immediately
             let oSource = oEvent.getSource();
             let oList = this.byId("iFlowList");
             let oPopover = this.byId("iFlowPopover");
 
-            // console.log("Selected iFlow data with iFlow ID:", sIflowId);
+            if (!oList || !oPopover) {
+                return; // Exit if UI elements are missing
+            }
 
-            if (oList && oPopover) {
-                let oBinding = oList.getBinding("items");
+            let oBinding = oList.getBinding("items");
+            if (!oBinding) {
+                oPopover.openBy(oSource); // Fallback
+                return;
+            }
 
-                if (oBinding) {
-                    this.getView().setBusy(true);
+            // 1. Build the exact filter array
+            let aFilters = [];
+            if (sIflowId) {
+                // Your original code used ["ID"] as the field
+                aFilters.push(new sap.ui.model.Filter("ID", sap.ui.model.FilterOperator.EQ, sIflowId));
+            }
+            if (sTenantId && sTenantId !== "ALL") {
+                aFilters.push(new sap.ui.model.Filter("tenant_ID", sap.ui.model.FilterOperator.EQ, sTenantId));
+            }
 
-                    let oDataLoadPromise = new Promise(function (resolve) {
-                        oBinding.attachEventOnce("dataReceived", function () {
-                            resolve();
-                        });
-                    });
+            // 2. Set UI to Busy
+            this.getView().setBusy(true);
 
-                    this.applyListSearch("iFlowList", sIflowId, ["ID"]);
+            // 3. Create a SAFE Promise with a Timeout Fallback (Prevents the Promise Trap)
+            let oDataLoadPromise = new Promise(function (resolve) {
+                let fnDataReceived = function () {
+                    resolve("network_success");
+                };
+                oBinding.attachEventOnce("dataReceived", fnDataReceived);
 
-                    oBinding.refresh();
+                // 800ms race condition. If no network request fires, this forces the popover to open.
+                setTimeout(function () {
+                    oBinding.detachEvent("dataReceived", fnDataReceived);
+                    resolve("timeout_or_cached");
+                }, 800);
+            });
 
-                    oDataLoadPromise.then(function () {
-                        this.getView().setBusy(false);
+            // 4. Apply Filters via your central method (replaces applyListSearch)
+            this.applyCentralBindingFilter("iFlowList", "items", aFilters);
 
-                        oPopover.openBy(oSource);
-                        // console.log("Opening cluster data popover with updated data for iFlow:", sIflowId);
-                    }.bind(this)).catch(function (oError) {
-                        this.getView().setBusy(false);
-                        // console.error("Error updating popover OData V4 dataset:", oError);
-                    }.bind(this));
-
-                    return;
+            // 5. Force the refresh as requested
+            setTimeout(function () {
+                if (oBinding.isSuspended && oBinding.isSuspended()) {
+                    oBinding.resume();
                 }
-            }
+                oBinding.refresh();
+            }, 50);
 
-            if (oPopover) {
+            // 6. Handle the Promise Resolution
+            oDataLoadPromise.then(function (sStatus) {
+                this.getView().setBusy(false);
                 oPopover.openBy(oSource);
-            }
+            }.bind(this)).catch(function (oError) {
+                this.getView().setBusy(false);
+                // Fallback open even on error so user doesn't think the button is broken
+                oPopover.openBy(oSource);
+            }.bind(this));
         },
-
         _resetToWelcomePage: function () {
+            this.showBusy();
             let oJsonModel = this.getModel("chatJSONModel");
             // console.log("oJsonModel before reset:", oJsonModel.getData());
 
@@ -249,8 +349,7 @@ sap.ui.define([
             this.byId("chatContainer").removeAllItems();
             this.byId("welcomePage").setVisible(true);
             // console.log("oJsonModel after reset:", oJsonModel.getData());
-
-
+            this.hideBusy();
         },
 
         onNewChat() {
@@ -357,7 +456,7 @@ sap.ui.define([
 
             if (!sQuery) return;
 
-            if (!sCurrentConvId) {  
+            if (!sCurrentConvId) {
                 try {
                     sCurrentConvId = await this._executeCreateConversation(sQuery.substring(0, 150).replace(/[\r\n]+/g, " ") + "...");
                 } catch (e) {
@@ -613,16 +712,16 @@ sap.ui.define([
             }
         },
 
-    _createReferenceData: function (oRefData, sType) {
-    const isCluster = sType === "Cluster";
-    return  new MessageStrip({
-            text: isCluster ? oRefData.errorType : oRefData.iFlowName ,
-            type: isCluster ? sap.ui.core.MessageType.Warning : sap.ui.core.MessageType.Information,
-            showIcon: true,
-            customIcon: isCluster ? "sap-icon://chain-link" : "sap-icon://process"
-        }).addStyleClass("sapUiTinyMarginBottom")
-}
-,
+        _createReferenceData: function (oRefData, sType) {
+            const isCluster = sType === "Cluster";
+            return new MessageStrip({
+                text: isCluster ? oRefData.errorType : oRefData.iFlowName,
+                type: isCluster ? sap.ui.core.MessageType.Warning : sap.ui.core.MessageType.Information,
+                showIcon: true,
+                customIcon: isCluster ? "sap-icon://chain-link" : "sap-icon://process"
+            }).addStyleClass("sapUiTinyMarginBottom")
+        }
+        ,
 
         _buildMessageItem: function (sText, sSender, oData, bStream = false) {
             // console.log("Building message item. Sender:", sSender, "Data:", oData);

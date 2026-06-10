@@ -9,7 +9,9 @@ sap.ui.define([
   "use strict";
 
   return BaseController.extend("com.cytechies.integration.reliability.incidentclustersui.controller.App", {
-   onInit() {
+   async onInit() {
+          this.getView().setBusy(true);
+
     const oToolPage = this.byId("toolPage1");
     const oHeader = oToolPage.getHeader();
     
@@ -18,49 +20,22 @@ sap.ui.define([
     oLogo.attachPress(this.onSideNavButtonPress, this);
     
     oHeader.insertContent(oLogo, 0);
+          this.getOwnerComponent().getModel("globalModel").setProperty("/selectedKey","overview");
+console.log("selectedKey:", this.getOwnerComponent().getModel("globalModel").getProperty("/selectedKey"));
+    this.getView().setBusy(false);
+    const oRouter =
+                this.getOwnerComponent().getRouter();
 
-    this.getSettingsData();
+            oRouter.getRoute("RouteOverview")
+                .attachPatternMatched(
+                    this._onRouteMatched,
+                    this
+                );
+
 },
-    async getSettingsData() {
-
-      const oODataModel = this.getOwnerComponent().getModel();
-      const oGlobalModel = this.getOwnerComponent().getModel("globalModel");
-
-      // Load Tenants
-      const aTenants = [{
-        ID: "ALL",
-        tenantName: "All Tenants"
-      }];
-
-      const aBackendTenants = await oODataModel
-        .bindList("/Tenants")
-        .requestContexts();
-
-      aBackendTenants.forEach(oContext => {
-        aTenants.push(oContext.getObject());
-      });
-
-      oGlobalModel.setProperty("/tenants", aTenants);
-
-      // Load Settings
-      const aSettingsContexts = await oODataModel
-        .bindList("/ApplicationSettings")
-        .requestContexts();
-
-      const mSettings = {};
-
-      aSettingsContexts.forEach(oContext => {
-        const oSetting = oContext.getObject();
-
-        mSettings[oSetting.settingKey] =
-          oSetting.settingValue;
-      });
-
-      oGlobalModel.setProperty("/settings", mSettings);
-      console.log("Default Tenant: " + oGlobalModel.getProperty("/settings/DEFAULT_TENANT"));
-
-    },
-
+_onRouteMatched: async function (oEvent) {
+      await this.getSettingsData();
+},
     onSideNavButtonPress: function () {
 
       const oSideNav = this.byId("sideNavigation");
@@ -72,7 +47,6 @@ sap.ui.define([
     },
     onSideNavigationSelect: function (oEvent) {
       this.showBusy();
-
       const sKey = oEvent.getParameter("item").getKey();
       const oRouter = this.getOwnerComponent().getRouter();
 
@@ -104,6 +78,8 @@ sap.ui.define([
           break;
       }
       this.hideBusy();
+      console.log("selectedKey:", this.getOwnerComponent().getModel("globalModel").getProperty("/selectedKey"));
+
     },
     // onSideNavigationSetting: function (oEvent) {
     //   let oItem = oEvent.getParameter("item");

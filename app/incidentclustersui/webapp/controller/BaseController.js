@@ -174,25 +174,62 @@ sap.ui.define([
       });
 
       oGlobalModel.setProperty("/tenants", aTenants);
-
-      // Load Settings
-      const aSettingsContexts = await oODataModel
-        .bindList("/ApplicationSettings")
-        .requestContexts();
-
-      const mSettings = {};
-
-      aSettingsContexts.forEach(oContext => {
-        const oSetting = oContext.getObject();
-
-        mSettings[oSetting.settingKey] =
-          oSetting.settingValue;
-      });
-
-      oGlobalModel.setProperty("/settings", mSettings);
-      console.log("Default Tenant: " + oGlobalModel.getProperty("/settings/DEFAULT_TENANT"));
-
-    }
+    },
+    getSelectedTenantId: function () {
+ 
+            return this.getOwnerComponent()
+                .getModel("globalModel")
+                .getProperty("/settings/DEFAULT_TENANT");
+        },
+ 
+        getSelectedTenantName: function () {
+ 
+            return this.getOwnerComponent()
+                .getModel("globalModel")
+                .getProperty("/selectedTenantName");
+        },
+ 
+        setSelectedTenant: function (sTenantId, sTenantName) {
+ 
+            const oGlobalModel =
+                this.getOwnerComponent().getModel("globalModel");
+ 
+ 
+            oGlobalModel.setProperty(
+                "/selectedTenant",
+                sTenantId
+            );
+ 
+            oGlobalModel.setProperty(
+                "/settings/DEFAULT_TENANT",
+                sTenantId
+            );
+ 
+            oGlobalModel.setProperty(
+                "/selectedTenantName",
+                sTenantName
+            );
+ 
+            console.log("Tenant Changed");
+            console.log("Tenant ID:", sTenantId);
+            console.log("Tenant Name:", sTenantName);
+        },
+        getGlobalTenantFilter: function () {
+ 
+            const sTenantId = this.getSelectedTenantId();
+ 
+            if (!sTenantId || sTenantId === "ALL") {
+                return [];
+            }
+ 
+            return [
+                new Filter(
+                    "tenant_ID",
+                    FilterOperator.EQ,
+                    sTenantId
+                )
+            ];
+        }
 
     });
 });

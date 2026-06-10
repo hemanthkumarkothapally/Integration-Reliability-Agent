@@ -1,5 +1,5 @@
 sap.ui.define([
-    "sap/ui/core/mvc/Controller",
+    "./BaseController",
     "../model/formatter",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator"
@@ -9,9 +9,93 @@ sap.ui.define([
     return BaseController.extend("com.cytechies.integration.reliability.incidentclustersui.controller.Clusters", {
         formatter: formatter,
         onInit() {
+                      this.getOwnerComponent().getModel("globalModel").setProperty("/selectedKey","clusters");
+                      const oRouter =
+                this.getOwnerComponent().getRouter();
 
+            oRouter.getRoute("RouteClusters")
+                .attachPatternMatched(
+                    this._onRouteMatched,
+                    this
+                );
         },
+        _onRouteMatched: async function () {
+                      this.getOwnerComponent().getModel("globalModel").setProperty("/selectedKey","clusters");
 
+    try {
+
+        this.getView().setBusy(true);
+                this.byId("idSeverityTabBar").setSelectedKey('ALL');
+
+        const oTable =
+            this.byId("idClusters");
+
+        if (!oTable) {
+            return;
+        }
+
+        const oBinding =
+            oTable.getBinding("items");
+
+        if (!oBinding) {
+            return;
+        }
+
+        let aFilters =
+            this._getDropdownAndDateFilters();
+
+        aFilters =
+            aFilters.concat(
+                this.getGlobalTenantFilter()
+            );
+this.getView().setBusy(true);
+
+        await new Promise((resolve) => {
+
+    oBinding.attachEventOnce(
+        "dataReceived",
+        resolve
+    );
+
+    oBinding.filter(aFilters);
+
+    setTimeout(resolve, 3000);
+});
+
+await this._filterDropdownBindings();
+await this._updateSeverityCounts();
+    this.getView().setBusy(false);
+
+    } catch (oError) {
+
+        console.error(
+            "Route Match Error",
+            oError
+        );
+
+    } finally {
+
+        this.getView().setBusy(false);
+    }
+    this.getView().setBusy(false);
+
+},
+        getGlobalTenantFilter: function () {
+
+    const sTenantId = this.getSelectedTenantId();
+
+    if (!sTenantId || sTenantId === "ALL") {
+        return [];
+    }
+
+    return [
+        new Filter(
+            "tenant_ID",
+            FilterOperator.EQ,
+            sTenantId
+        )
+    ];
+},
         // onSeverityTabSelect: function (oEvent) {
         //     const sKey = oEvent.getParameter("key");
         //     const oTable = this.byId("idClusters");
@@ -34,26 +118,53 @@ sap.ui.define([
         // },
 
         onSeverityTabSelect: function (oEvent) {
-            const sKey = oEvent.getParameter("key");
-            const oTable = this.byId("idClusters");
-            const oBinding = oTable.getBinding("items");
 
-            let aFilters = [];
+    const sKey =
+        oEvent.getParameter("key");
 
-            // Read the master MultiCombo and Date values to maintain overall filters
-            let aMasterFilters = this._getDropdownAndDateFilters();
+    const oTable =
+        this.byId("idClusters");
 
-            if (sKey !== "ALL") {
-                aMasterFilters.push(
-                    new Filter("severity", FilterOperator.EQ, sKey)
-                );
-            }
+    if (!oTable) {
+        return;
+    }
 
-            if (oBinding) {
-                oBinding.filter(aMasterFilters);
-            }
-        },
+    const oBinding =
+        oTable.getBinding("items");
 
+    if (!oBinding) {
+        return;
+    }
+
+    let aFilters =
+        this._getDropdownAndDateFilters();
+
+    if (sKey !== "ALL") {
+
+        aFilters.push(
+            new Filter(
+                "severity",
+                FilterOperator.EQ,
+                sKey
+            )
+        );
+    }
+
+    oBinding.filter(aFilters);
+},
+_filterDropdownBindings: function () {
+
+    const aTenantFilters =
+        this.getGlobalTenantFilter();
+
+    const oClusterBinding =
+        this.byId("idClustersCombo")
+            ?.getBinding("items");
+
+    if (oClusterBinding) {
+        oClusterBinding.filter(aTenantFilters);
+    }
+},
         onRefreshPress: function () {
             var oTable = this.byId("idClusters");
             if (oTable && oTable.getBinding("items")) {
@@ -144,25 +255,164 @@ sap.ui.define([
         onClusterDateChange: function () {
             this._applyMasterFilters();
         },
-        _applyMasterFilters: function() {
-            // 1. Reset the IconTabHeader selection back to "ALL"
-            let oIconTabHeader = this.byId("idSeverityTabBar");
-            if (oIconTabHeader) {
-                oIconTabHeader.setSelectedKey("ALL");
-            }
+        _applyMasterFilters: function () {
 
-            // 2. Fetch all filters combined (Combo + Date)
-            let aCombinedFilters = this._getDropdownAndDateFilters();
+    let oIconTabHeader =
+        this.byId("idSeverityTabBar");
 
-            // 3. Apply everything to the table
-            let oTable = this.byId("idClusters");
-            if (oTable) {
-                let oBinding = oTable.getBinding("items");
-                if (oBinding) {
-                    oBinding.filter(aCombinedFilters);
-                }
-            }
-        },
+    if (oIconTabHeader) {
+        oIconTabHeader.setSelectedKey("ALL");
+    }
+
+    let aCombinedFilters =
+        this._getDropdownAndDateFilters();
+
+    aCombinedFilters =
+        aCombinedFilters.concat(
+            this.getGlobalTenantFilter()
+        );
+
+    let oTable =
+        this.byId("idClusters");
+
+    if (oTable) {
+
+        let oBinding =
+            oTable.getBinding("items");
+
+        if (oBinding) {
+
+            oBinding.filter(
+                aCombinedFilters
+            );
+        }
+    }
+
+    this._updateSeverityCounts();
+},
+_updateSeverityCounts: async function () {
+
+    const oTable =
+        this.byId("idClusters");
+
+    if (!oTable) {
+        return;
+    }
+
+    const oBinding =
+        oTable.getBinding("items");
+
+    if (!oBinding) {
+        return;
+    }
+
+    try {
+
+        let aFilters =
+            this._getDropdownAndDateFilters();
+
+        aFilters =
+            aFilters.concat(
+                this.getGlobalTenantFilter()
+            );
+
+        const oModel =
+            oBinding.getModel();
+
+        const oCountBinding =
+            oModel.bindList(
+                oBinding.getPath(),
+                null,
+                null,
+                aFilters
+            );
+
+        const iLength =
+            oCountBinding.getLength();
+
+        const aContexts =
+            await oCountBinding.requestContexts(
+                0,
+                iLength
+            );
+
+        const aData =
+            aContexts
+                .map(
+                    oContext =>
+                        oContext?.getObject?.()
+                )
+                .filter(Boolean);
+
+        const iAll =
+            aData.length;
+
+        const iCritical =
+            aData.filter(
+                o =>
+                    o.severity ===
+                    "CRITICAL"
+            ).length;
+
+        const iHigh =
+            aData.filter(
+                o =>
+                    o.severity ===
+                    "HIGH"
+            ).length;
+
+        const iMedium =
+            aData.filter(
+                o =>
+                    o.severity ===
+                    "MEDIUM"
+            ).length;
+
+        const iLow =
+            aData.filter(
+                o =>
+                    o.severity ===
+                    "LOW"
+            ).length;
+
+        this.byId("idSeverityTabBar")
+            .getItems()[0]
+            .setCount(iAll);
+
+        this.byId("idSeverityTabBar")
+            .getItems()[1]
+            .setCount(iCritical);
+
+        this.byId("idSeverityTabBar")
+            .getItems()[2]
+            .setCount(iHigh);
+
+        this.byId("idSeverityTabBar")
+            .getItems()[3]
+            .setCount(iMedium);
+
+        this.byId("idSeverityTabBar")
+            .getItems()[4]
+            .setCount(iLow);
+
+    } catch (oError) {
+
+        console.error(
+            "Severity Count Error",
+            oError
+        );
+    }
+},
+onTableUpdateFinished: function (oEvent) {
+
+    const iTotal =
+        oEvent.getParameter("total");
+
+    console.log(
+        "Cluster records:",
+        iTotal
+    );
+},
         _getDropdownAndDateFilters: function() {
             let aFilters = [];
 
@@ -206,7 +456,11 @@ sap.ui.define([
                     }));
                 }
             }
+            const aTenantFilters = this.getGlobalTenantFilter();
 
+if (aTenantFilters.length > 0) {
+    aFilters = aFilters.concat(aTenantFilters);
+}
             return aFilters;
         },
         onClearClusterFilters: function () {

@@ -39,11 +39,13 @@ sap.ui.define([
             // this.getView().getModel("incidentsModel").setData({
             //     incidents: []
             // });
+            this.showBusy();
 
             this.getOwnerComponent()
                 .getRouter()
                 .navTo("Routemonitored_iflows");
             this.getView().getModel("globalModel").setProperty("/iflowId", null);
+            this.hideBusy();
 
         },
         onAipress: function () {

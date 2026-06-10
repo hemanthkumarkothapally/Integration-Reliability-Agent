@@ -39,7 +39,7 @@ sap.ui.define([
             oRouter.getRoute("RouteAIAssistant")
                 .attachPatternMatched(function () {
                     // console.log("AIAssistant route matched!");
-
+                                this.getOwnerComponent().getModel("globalModel").setProperty("/selectedKey","ai");
                     this._resetToWelcomePage();
                     // this.onBackPress();
                 }, this);

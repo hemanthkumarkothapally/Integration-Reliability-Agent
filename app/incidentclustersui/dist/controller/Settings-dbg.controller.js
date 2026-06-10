@@ -1,22 +1,40 @@
 sap.ui.define([
-  "sap/ui/core/mvc/Controller",
+  "./BaseController",
   "sap/ui/model/json/JSONModel",
   "sap/m/Popover",
   "sap/m/List",
   "sap/m/StandardListItem",
-  "sap/m/MessageToast"
-], (BaseController, JSONModel, Popover, List, StandardListItem, MessageToast) => {
+  "sap/m/MessageToast",
+  "sap/ui/core/Fragment"
+], (BaseController, JSONModel, Popover, List, StandardListItem, MessageToast,Fragment) => {
   "use strict";
 
   return BaseController.extend("com.cytechies.integration.reliability.incidentclustersui.controller.Settings", {
     async onInit() {
       const oGlobalModel = this.getOwnerComponent().getModel("globalModel");
       oGlobalModel.setProperty("/editMode", false);
+                  this.getOwnerComponent().getModel("globalModel").setProperty("/selectedKey","settings");
+      const oRouter =
+                this.getOwnerComponent().getRouter();
+
+            oRouter.getRoute("RouteSettings")
+                .attachPatternMatched(
+                    this._onRouteMatched,
+                    this
+                );
     },
+    _onRouteMatched: async function (oEvent) {
+      await this.getSettingsData();
+
+                      this.getOwnerComponent().getModel("globalModel").setProperty("/selectedKey","Settings");
+console.log("global model data:", this.getOwnerComponent().getModel("globalModel").getData());
+        },
     onTenantChange: function (oEvent) {
       const sKey = oEvent.getSource().getSelectedKey();
       this.getOwnerComponent().getModel("globalModel").setProperty("/settings/DEFAULT_TENANT", sKey);
       console.log("Selected Key:", sKey);
+      
+      this.setSelectedTenant(sKey, oEvent.getSource().getSelectedItem().getProperty('text'));
     },
     onEdit() {
       this.getOwnerComponent()
@@ -36,18 +54,18 @@ sap.ui.define([
 
       try {
 
-        aContexts.forEach(oContext => {
+        // aContexts.forEach(oContext => {
 
-          const sKey =
-            oContext.getObject().settingKey;
+        //   const sKey =
+        //     oContext.getObject().settingKey;
 
-          oContext.setProperty(
-            "settingValue",
-            String(mSettings[sKey])
-          );
-        });
+        //   oContext.setProperty(
+        //     "settingValue",
+        //     String(mSettings[sKey])
+        //   );
+        // });
 
-        await oModel.submitBatch("$auto");
+        // await oModel.submitBatch("$auto");
 
         oGlobalModel.setProperty(
           "/editMode",
@@ -109,6 +127,73 @@ sap.ui.define([
 
       oGlobalModel.setProperty("/settings", mSettings);
       console.log("Default Tenant: " + oGlobalModel.getProperty("/settings/DEFAULT_TENANT"));
+    },
+    async onAddTenant() {
+
+    if (!this._oTenantDialog) {
+
+        this._oTenantDialog = await Fragment.load({
+    name: "com.cytechies.integration.reliability.incidentclustersui.fragments.AddTenant",
+    controller: this
+});
+
+        this.getView().addDependent(
+            this._oTenantDialog
+        );
     }
+
+    this._oTenantDialog.open();
+},
+async onCreateTenant() {
+
+    // const oModel =
+    //     this.getOwnerComponent().getModel();
+
+    // const oBinding =
+    //     oModel.bindList("/Tenants");
+
+    // const oContext =
+    //     oBinding.create({
+
+    //         tenantName:
+    //             Fragment.byId(
+    //                 this._oTenantDialog.getId(),
+    //                 "tenantNameInput"
+    //             ).getValue(),
+
+    //         tenantId:
+    //             Fragment.byId(
+    //                 this._oTenantDialog.getId(),
+    //                 "tenantIdInput"
+    //             ).getValue(),
+
+    //         destinationName:
+    //             Fragment.byId(
+    //                 this._oTenantDialog.getId(),
+    //                 "destinationInput"
+    //             ).getValue(),
+
+    //         region:
+    //             Fragment.byId(
+    //                 this._oTenantDialog.getId(),
+    //                 "regionInput"
+    //             ).getValue(),
+
+    //         isActive: true
+    //     });
+
+    // await oContext.created();
+
+    MessageToast.show(
+        "Tenant created successfully"
+    );
+
+    this._oTenantDialog.close();
+
+    await this._loadTenants();
+},
+onCloseTenantDialog:function(){
+  this._oTenantDialog.close();
+}
   });
 });
