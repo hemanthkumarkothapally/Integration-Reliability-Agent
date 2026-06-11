@@ -1,0 +1,275 @@
+<mvc:View controllerName="com.cytechies.integration.reliability.incidentclustersui.controller.UsageAnalytics"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:l="sap.ui.layout"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:suite="sap.suite.ui.microchart"
+    xmlns:core="sap.ui.core"
+    xmlns:html="http://www.w3.org/1999/xhtml" displayBlock="true">
+
+    <Page id="usageAnalyticsPage" showHeader="true" backgroundDesign="Solid">
+
+        <!-- ─── Top Navigation Bar ─── -->
+       <customHeader>
+    <OverflowToolbar style="Clear" height="auto">
+    
+        <!-- Title: Critical info, always keep visible on screen -->
+        <Title text="Usage analytics" class="sapUiTinyMarginBegin" wrapping="true">
+            <layoutData>
+                <OverflowToolbarLayoutData priority="NeverOverflow" />
+            </layoutData>
+        </Title>
+        
+        <!-- Label description: Can safely disappear/hide on mobile screens -->
+        <Label text="Token usage · HANA storage · Incidents · Clusters" wrapping="true" class="sapUiSmallMarginBegin">
+            <layoutData>
+                <OverflowToolbarLayoutData priority="Disappear" />
+            </layoutData>
+        </Label>
+        
+        <ToolbarSpacer />
+        
+        <!-- DateRange Filter: Drops gracefully into the '...' overflow menu on tiny viewports -->
+        <DateRangeSelection id="idAnalyticsDateRangeFilter" width="20rem" placeholder="Select Date Range" change=".onFilterChange">
+            <layoutData>
+                <OverflowToolbarLayoutData  priority="NeverOverflow"/>
+            </layoutData>
+        </DateRangeSelection>
+        
+        <!-- Export Button: Drops into the '...' overflow menu first when space shrinks -->
+        <Button id="exportBtn" text="Export" icon="sap-icon://download" press=".onExport" type="Ghost">
+            <layoutData>
+                <OverflowToolbarLayoutData  priority="NeverOverflow"/>
+            </layoutData>
+        </Button>
+
+    </OverflowToolbar>
+</customHeader>
+
+        <content>
+            <l:VerticalLayout id="mainLayout" width="100%" class="sapUiResponsiveMargin">
+
+                <!-- ─── Page Title ─── -->
+                <Title id="pageTitle" text="Usage analytics" level="H2" class="sapUiMediumMarginTop sapUiSmallMarginBegin" />
+                <Text text="Token usage · HANA storage · Incidents · Clusters" class="sapUiTinyMarginTop sapUiSmallMarginBegin sapUiMediumMarginBottom" wrapping="false" />
+
+                <!-- ─── Period / Date Filters ─── -->
+                <Panel id="filterPanel" class="sapUiSmallMarginBottom" backgroundDesign="Transparent">
+                    <Toolbar id="filterToolbar">
+                        <Label text="Period" />
+                        <ToolbarSpacer width="12px" />
+                        <SegmentedButton id="periodSegment" selectedKey="{/selectedPeriod}" selectionChange=".onPeriodChange">
+                            <items>
+                                <SegmentedButtonItem key="1D" text="1D" />
+                                <SegmentedButtonItem key="7D" text="7D" />
+                                <SegmentedButtonItem key="30D" text="30D" />
+                                <SegmentedButtonItem key="90D" text="90D" />
+                                <SegmentedButtonItem key="YTD" text="YTD" />
+                            </items>
+                        </SegmentedButton>
+                        <ToolbarSpacer width="24px" />
+                        <DatePicker id="startDate" value="{/startDate}" valueFormat="dd-MM-yyyy" displayFormat="dd-MM-yyyy" change=".onDateChange" />
+                        <core:Icon src="sap-icon://arrow-right" class="sapUiSmallMarginBeginEnd" />
+                        <DatePicker id="endDate" value="{/endDate}" valueFormat="dd-MM-yyyy" displayFormat="dd-MM-yyyy" change=".onDateChange" />
+                    </Toolbar>
+                </Panel>
+
+                <!-- ─── Summary Cards ─── -->
+                <l:HorizontalLayout id="summarySection" allowWrapping="true" class="sapUiSmallMarginBottom">
+                    <Title text="SUMMARY" level="H6" class="sapUiSmallMarginBegin sapUiTinyMarginBottom" />
+                </l:HorizontalLayout>
+
+                <l:Grid id="summaryGrid" defaultSpan="XL3 L3 M6 S12" hSpacing="1" vSpacing="1" class="sapUiSmallMarginBottom">
+
+                    <!-- Token Consumption -->
+                    <GenericTile id="tokenTile" header="Token consumption" subheader="vs 4.29M prev period" press=".onTilePress">
+                        <tileContent>
+                            <TileContent>
+                                <content>
+                                    <NumericContent value="{/summary/tokenConsumption/value}" scale="{/summary/tokenConsumption/scale}" indicator="{/summary/tokenConsumption/indicator}" valueColor="{/summary/tokenConsumption/valueColor}" withMargin="false" />
+                                </content>
+                            </TileContent>
+                        </tileContent>
+                    </GenericTile>
+
+                    <!-- HANA Storage -->
+                    <GenericTile id="hanaTile" header="HANA storage used" subheader="vs 1.27 GB prev period" press=".onTilePress">
+                        <tileContent>
+                            <TileContent>
+                                <content>
+                                    <NumericContent value="{/summary/hanaStorage/value}" scale="{/summary/hanaStorage/scale}" indicator="{/summary/hanaStorage/indicator}" valueColor="{/summary/hanaStorage/valueColor}" withMargin="false" />
+                                </content>
+                            </TileContent>
+                        </tileContent>
+                    </GenericTile>
+
+                    <!-- Total Incidents -->
+                    <GenericTile id="incidentsTile" header="Total incidents" subheader="vs 29,384 prev period" press=".onTilePress">
+                        <tileContent>
+                            <TileContent>
+                                <content>
+                                    <NumericContent value="{/summary/totalIncidents/value}" scale="{/summary/totalIncidents/scale}" indicator="{/summary/totalIncidents/indicator}" valueColor="{/summary/totalIncidents/valueColor}" withMargin="false" />
+                                </content>
+                            </TileContent>
+                        </tileContent>
+                    </GenericTile>
+
+                    <!-- Open / Resolved Clusters -->
+                    <GenericTile id="clustersTile" header="Open / resolved clusters" subheader="14 resolved this period" press=".onTilePress">
+                        <tileContent>
+                            <TileContent>
+                                <content>
+                                    <NumericContent value="{/summary/clusters/value}" indicator="{/summary/clusters/indicator}" valueColor="{/summary/clusters/valueColor}" withMargin="false" />
+                                </content>
+                            </TileContent>
+                        </tileContent>
+                    </GenericTile>
+
+                </l:Grid>
+
+                <!-- ─── Trend Charts ─── -->
+                <Title text="TRENDS" level="H6" class="sapUiSmallMarginBegin sapUiTinyMarginBottom" />
+
+                <l:Grid id="trendsGrid" defaultSpan="XL6 L6 M12 S12" hSpacing="1" vSpacing="1" class="sapUiSmallMarginBottom">
+
+                    <!-- Token Usage Chart (placeholder panel — bind to VizFrame or Chart.js via HTML island) -->
+                    <Panel id="tokenChartPanel" headerText="Token usage" backgroundDesign="Solid" expandable="false">
+                        <content>
+                            <html:div id="tokenChartContainer" style="width:100%; height:260px;" />
+                        </content>
+                    </Panel>
+
+                    <!-- HANA Storage Chart -->
+                    <Panel id="hanaChartPanel" headerText="HANA storage" backgroundDesign="Solid" expandable="false">
+                        <content>
+                            <html:div id="hanaChartContainer" style="width:100%; height:260px;" />
+                        </content>
+                    </Panel>
+
+                </l:Grid>
+
+                <!-- ─── Breakdown ─── -->
+                <Title text="BREAKDOWN" level="H6" class="sapUiSmallMarginBegin sapUiTinyMarginBottom" />
+
+                <l:Grid id="breakdownGrid" defaultSpan="XL6 L6 M12 S12" hSpacing="1" vSpacing="1" class="sapUiMediumMarginBottom">
+
+                    <!-- Top Token Consumers -->
+                    <Panel id="consumersPanel" headerText="Top token consumers" backgroundDesign="Solid" expandable="false">
+                        <content>
+                            <List id="consumersList" items="{/topConsumers}" showSeparators="Inner" backgroundDesign="Transparent">
+                                <items>
+                                    <CustomListItem>
+                                        <l:HorizontalLayout allowWrapping="false">
+                                            <!-- Rank -->
+                                            <Text text="{rank}" class="sapUiSmallMarginBeginEnd" width="20px" />
+                                            <!-- Avatar -->
+                                            <Avatar initials="{initials}" backgroundColor="{avatarColor}" displaySize="XS" class="sapUiSmallMarginEnd" />
+                                            <!-- Name + Role -->
+                                            <l:VerticalLayout width="160px" class="sapUiSmallMarginEnd">
+                                                <Text text="{name}" class="sapUiSmallMarginBottom" />
+                                                <Text text="{role}" class="sapUiTinyText" />
+                                            </l:VerticalLayout>
+                                            <!-- Progress Bar -->
+                                            <ProgressIndicator percentValue="{percentValue}" displayValue=" " width="120px" state="{barState}" class="sapUiSmallMarginBeginEnd" />
+                                            <!-- Amount -->
+                                            <ObjectNumber number="{amount}" unit="{unit}" state="None" />
+                                        </l:HorizontalLayout>
+                                    </CustomListItem>
+                                </items>
+                            </List>
+                        </content>
+                    </Panel>
+
+                    <!-- Supporting Metrics + HANA by Schema -->
+                    <Panel id="metricsPanel" headerText="Supporting metrics" backgroundDesign="Solid" expandable="false">
+                        <content>
+                            <l:Grid defaultSpan="XL6 L6 M6 S12" hSpacing="1" vSpacing="1" class="sapUiSmallMargin">
+
+                                <!-- 6 Supporting Metric Tiles -->
+                                <GenericTile header="Avg tokens / incident" press=".onMetricPress">
+                                    <tileContent>
+                                        <TileContent>
+                                            <content>
+                                                <NumericContent value="{/supportingMetrics/tokensPerIncident/value}" scale="{/supportingMetrics/tokensPerIncident/scale}" indicator="{/supportingMetrics/tokensPerIncident/indicator}" valueColor="{/supportingMetrics/tokensPerIncident/valueColor}" withMargin="false" />
+                                            </content>
+                                        </TileContent>
+                                    </tileContent>
+                                </GenericTile>
+
+                                <GenericTile header="Avg tokens / cluster" press=".onMetricPress">
+                                    <tileContent>
+                                        <TileContent>
+                                            <content>
+                                                <NumericContent value="{/supportingMetrics/tokensPerCluster/value}" scale="{/supportingMetrics/tokensPerCluster/scale}" indicator="{/supportingMetrics/tokensPerCluster/indicator}" valueColor="{/supportingMetrics/tokensPerCluster/valueColor}" withMargin="false" />
+                                            </content>
+                                        </TileContent>
+                                    </tileContent>
+                                </GenericTile>
+
+                                <GenericTile header="Avg HANA growth / day" press=".onMetricPress">
+                                    <tileContent>
+                                        <TileContent>
+                                            <content>
+                                                <NumericContent value="{/supportingMetrics/hanaGrowth/value}" scale="{/supportingMetrics/hanaGrowth/scale}" indicator="{/supportingMetrics/hanaGrowth/indicator}" valueColor="{/supportingMetrics/hanaGrowth/valueColor}" withMargin="false" />
+                                            </content>
+                                        </TileContent>
+                                    </tileContent>
+                                </GenericTile>
+
+                                <GenericTile header="Avg cluster resolution" press=".onMetricPress">
+                                    <tileContent>
+                                        <TileContent>
+                                            <content>
+                                                <NumericContent value="{/supportingMetrics/clusterResolution/value}" scale="{/supportingMetrics/clusterResolution/scale}" indicator="{/supportingMetrics/clusterResolution/indicator}" valueColor="{/supportingMetrics/clusterResolution/valueColor}" withMargin="false" />
+                                            </content>
+                                        </TileContent>
+                                    </tileContent>
+                                </GenericTile>
+
+                                <GenericTile header="Incidents / day avg" press=".onMetricPress">
+                                    <tileContent>
+                                        <TileContent>
+                                            <content>
+                                                <NumericContent value="{/supportingMetrics/incidentsPerDay/value}" scale="{/supportingMetrics/incidentsPerDay/scale}" indicator="{/supportingMetrics/incidentsPerDay/indicator}" valueColor="{/supportingMetrics/incidentsPerDay/valueColor}" withMargin="false" />
+                                            </content>
+                                        </TileContent>
+                                    </tileContent>
+                                </GenericTile>
+
+                                <GenericTile header="Tokens / active iFlow" press=".onMetricPress">
+                                    <tileContent>
+                                        <TileContent>
+                                            <content>
+                                                <NumericContent value="{/supportingMetrics/tokensPerIflow/value}" scale="{/supportingMetrics/tokensPerIflow/scale}" indicator="{/supportingMetrics/tokensPerIflow/indicator}" valueColor="{/supportingMetrics/tokensPerIflow/valueColor}" withMargin="false" />
+                                            </content>
+                                        </TileContent>
+                                    </tileContent>
+                                </GenericTile>
+
+                            </l:Grid>
+
+                            <!-- HANA Storage by Schema -->
+                            <Title text="HANA storage by schema" level="H6" class="sapUiSmallMarginBegin sapUiTinyMarginBottom" />
+                            <List id="schemaList" items="{/hanaBySchema}" showSeparators="Inner" backgroundDesign="Transparent" class="sapUiSmallMarginBottom">
+                                <items>
+                                    <CustomListItem>
+                                        <l:HorizontalLayout allowWrapping="false">
+                                            <Text text="{rank}" class="sapUiSmallMarginBeginEnd" width="20px" />
+                                            <Text text="{schema}" width="200px" class="sapUiSmallMarginEnd" />
+                                            <ProgressIndicator percentValue="{percentValue}" displayValue=" " width="120px" state="Information" class="sapUiSmallMarginEnd" />
+                                            <ObjectNumber number="{size}" unit="GB" state="None" />
+                                        </l:HorizontalLayout>
+                                    </CustomListItem>
+                                </items>
+                            </List>
+
+                        </content>
+                    </Panel>
+
+                </l:Grid>
+
+            </l:VerticalLayout>
+        </content>
+
+    </Page>
+</mvc:View>
