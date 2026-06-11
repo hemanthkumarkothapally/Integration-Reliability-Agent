@@ -1,270 +1,468 @@
-<mvc:View xmlns:layout="sap.ui.layout" xmlns:cards="sap.f.cards"
+<mvc:View xmlns:form="sap.ui.layout.form"
     controllerName="com.cytechies.integration.reliability.incidentclustersui.controller.Settings"
     displayBlock="true"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
     xmlns:f="sap.f"
+    xmlns:cards="sap.f.cards"
+    xmlns:layout="sap.ui.layout"
     xmlns:core="sap.ui.core">
-<f:DynamicPage showFooter="true">
-<f:title>
+
+    <f:DynamicPage showFooter="true">
+
+        <f:title>
             <f:DynamicPageTitle>
-                <f:heading>                         
-                   <Title text="Settings" wrapping="true" />        
+                <f:heading>
+                    <Title text="Settings" wrapping="true"/>
                 </f:heading>
                 <f:expandedHeading>
-                <Text text="Manage tenant configuration and data retention policies"></Text>
+                    <Text text="Manage tenant configuration and data retention policies"/>
                 </f:expandedHeading>
             </f:DynamicPageTitle>
         </f:title>
-        
-<f:content>
-        <VBox width="100%">
-        <layout:Grid 
-    defaultSpan="XL6 L6 M12 S12"
-    hSpacing="1"
-    vSpacing="1">
-                
-                <!-- Tenant Configuration -->
-                <f:Card
-                    class="sapUiMediumMarginEnd sapUiMediumMarginBottom" height="100%">
-                    <f:layoutData>
-                    
-            <FlexItemData
-                growFactor="1"
-                baseSize="250px" />
-        </f:layoutData>
-       
-                   <f:header>
-        <cards:Header
-            title="Tenant Configuration"
-            subtitle="Default Dashboard Tenant">
-        </cards:Header>
-    </f:header>
-                    <f:content>
-                        <VBox class="sapUiMediumMargin" width="100%">
-                            <Label
-                                text="Default Tenant"
-                                required="true" visible="{= !${globalModel>/editMode} }"/>
-<Select
-    width="100%"
-    selectedKey="{globalModel>/settings/DEFAULT_TENANT}"
-    items="{globalModel>/tenants}"
-    change=".onTenantChange" visible="{= !${globalModel>/editMode} }">
 
-    <core:Item
-        key="{globalModel>ID}"
-        text="{globalModel>tenantName}" />
+        <f:content>
+                        <layout:Grid
+                            defaultSpan="XL4 L4 M6 S12"
+                            hSpacing="1"
+                            vSpacing="1">
 
-</Select>
+                            <!-- ============================================ -->
+                            <!-- 1. TENANT CONFIGURATION                      -->
+                            <!-- ============================================ -->
+                            <f:Card height="100%" class="sapUiMediumMarginEnd sapUiMediumMarginBottom">
+                                <f:header>
+                                    <cards:Header
+                                        iconSrc="sap-icon://building"
+                                        title="1. Tenant Configuration"
+                                        subtitle="Default Dashboard Tenant"/>
+                                </f:header>
+                                <f:content>
+                                    <VBox class="sapUiMediumMargin">
+                                        <Label text="Default Dashboard Tenant"/>
+                                        <Select
+                                            width="100%"
+                                            selectedKey="{settingsModel>/DEFAULT_TENANT/settingValue}"
+                                            items="{globalModel>/tenants}"
+                                            enabled="{= !${globalModel>/editMode}}"
+                                            change=".onTenantChange">
+                                            <core:Item
+                                                key="{globalModel>ID}"
+                                                text="{globalModel>tenantName}"/>
+                                        </Select>
+                                        <MessageStrip
+                                            class="sapUiMediumMarginTop"
+                                            type="Information"
+                                            showIcon="true"
+                                            text="This tenant will be selected automatically when users open the dashboard."/>
+                                            <VBox
+                            visible="{globalModel>/editMode}"
+                            class="sapUiMediumMarginTop">
 
-                            <MessageStrip
-                                class="sapUiMediumMarginTop"
-                                type="Information"
-                                showIcon="true"
-                                visible="{= !${globalModel>/editMode} }"
-                                text="This tenant will be selected automatically when users open the dashboard." />
-<VBox
-    visible="{globalModel>/editMode}"
-    class="sapUiMediumMarginTop">
+                            <Toolbar>
+                                <Title text="Tenant Management" level="H5"/>
+                                <ToolbarSpacer/>
+                                <Button
+                                    text="Add Tenant"
+                                    icon="sap-icon://add"
+                                    type="Emphasized"
+                                    press=".onAddTenant"/>
+                            </Toolbar>
 
-    <Toolbar>
-        <Title text="Tenant Management" level="H5"/>
-        <ToolbarSpacer/>
-        <Button
-            text="Add Tenant"
-            icon="sap-icon://add"
-            type="Emphasized"
-            press=".onAddTenant"/>
-    </Toolbar>
-
-    <Table
-        items="{path: '/Tenants'}"
-        class="sapUiSmallMarginTop">
-
-        <columns>
-
-            <Column>
-                <Text text="Tenant Name"/>
-            </Column>
-
-            <Column>
-                <Text text="Tenant ID"/>
-            </Column>
-
-            <Column>
-                <Text text="Destination"/>
-            </Column>
-
-            <Column>
-                <Text text="Region"/>
-            </Column>
-
-            <Column hAlign="Center">
-                <Text text="Actions"/>
-            </Column>
-
-        </columns>
-
-        <items>
-
-            <ColumnListItem>
-
-                <cells>
-
-                    <Text text="{tenantName}"/>
-
-                    <Text text="{tenantId}"/>
-
-                    <Text text="{destinationName}"/>
-
-                    <Text text="{region}"/>
-
-                    <HBox justifyContent="Center">
-
-                        <Button
-                            icon="sap-icon://edit"
-                            type="Transparent"
-                            press=".onEditTenant"/>
-
-                        <Button
-                            icon="sap-icon://delete"
-                            type="Transparent"
-                            press=".onDeleteTenant"/>
-
-                    </HBox>
-
-                </cells>
-
-            </ColumnListItem>
-
-        </items>
-
-    </Table>
-
-</VBox>
+                            <Table
+                                items="{path: '/Tenants'}"
+                                class="sapUiSmallMarginTop">
+                                <columns>
+                                    <Column>
+                                        <Text text="Tenant Name"/>
+                                    </Column>
+                                    <Column>
+                                        <Text text="Tenant ID"/>
+                                    </Column>
+                                    <Column>
+                                        <Text text="Destination"/>
+                                    </Column>
+                                    <Column>
+                                        <Text text="Region"/>
+                                    </Column>
+                                    <Column hAlign="Center">
+                                        <Text text="Actions"/>
+                                    </Column>
+                                </columns>
+                                <items>
+                                    <ColumnListItem>
+                                        <cells>
+                                            <Text text="{tenantName}"/>
+                                            <Text text="{tenantId}"/>
+                                            <Text text="{destinationName}"/>
+                                            <Text text="{region}"/>
+                                            <HBox justifyContent="Center">
+                                                <Button
+                                                    icon="sap-icon://edit"
+                                                    type="Transparent"
+                                                    press=".onEditTenant"/>
+                                                <Button
+                                                    icon="sap-icon://delete"
+                                                    type="Transparent"
+                                                    press=".onDeleteTenant"/>
+                                            </HBox>
+                                        </cells>
+                                    </ColumnListItem>
+                                </items>
+                            </Table>
                         </VBox>
+                                    </VBox>
+                                </f:content>
+                            </f:Card>
 
-                    </f:content>
+                            <!-- ============================================ -->
+                            <!-- 2. AI CONFIGURATION                          -->
+                            <!-- ============================================ -->
+                            <f:Card height="100%" class="sapUiMediumMarginEnd sapUiMediumMarginBottom">
+                                <f:header>
+                                    <cards:Header
+                                        iconSrc="sap-icon://artificial-intelligence"
+                                        title="2. AI Configuration"
+                                        subtitle="Recommendation Engine Settings"/>
+                                </f:header>
+                                <f:content>
+                                    <VBox class="sapUiMediumMargin">
+                                    <form:SimpleForm layout="ColumnLayout" editable="true">
+                                    <form:content>
+                                                <Label text="AI Provider"/>
+                                                <Select
+                                                    width="100%"
+                                                    selectedKey="{settingsModel>/AI_PROVIDER/settingValue}"
+                                                    enabled="{globalModel>/editMode}">
+                                                    <core:Item key="SAP_AI_CORE" text="SAP AI Core"/>
+                                                    <core:Item key="OPENAI" text="OpenAI"/>
+                                                    <core:Item key="AZURE_OPENAI" text="Azure OpenAI"/>
+                                                </Select>
+                                                <Label text="Model"/>
+                                                <Select
+                                                    width="100%"
+                                                    selectedKey="{settingsModel>/AI_MODEL/settingValue}"
+                                                    enabled="{globalModel>/editMode}">
+                                                    <core:Item key="gpt-4o" text="gpt-4o"/>
+                                                    <core:Item key="gpt-4o-mini" text="gpt  -4o-mini"/>
+                                                    <core:Item key="gpt-4-turbo" text="gpt-4-turbo"/>
+                                                </Select>
+                                                <Label text="Max Incidents Sent to AI"/>
+                                                <StepInput
+                                                    width="100%"
+                                                    description="Count"
+                                                    textAlign="Center"
+                                                    min="1"
+                                                    max="100"
+                                                    value="{settingsModel>/MAX_INCIDENTS_FOR_AI/settingValue}"
+                                                    enabled="{globalModel>/editMode}"/>
+                                                <Label text="Historical Messages Count"/>
+                                                <StepInput
+                                                    width="100%"
+                                                    description="Count"
+                                                    textAlign="Center"
+                                                    min="0"
+                                                    max="100"
+                                                    value="{settingsModel>/HISTORY_MESSAGE_COUNT/settingValue}"
+                                                    enabled="{globalModel>/editMode}"/>
+                                                <Label text="Auto Generate Recommendations"/>
+                                                <Label text="Automatically generate recommendations after clustering."/>
+                                                <Switch
+                                                    state="{settingsModel>/AUTO_GENERATE_RECOMMENDATIONS/settingValue}"
+                                                    enabled="{globalModel>/editMode}"/> 
+                                    </form:content>
+                                    </form:SimpleForm>
+                                    </VBox>
+                                </f:content>
+                            </f:Card>
 
-                </f:Card>
+                            <!-- ============================================ -->
+                            <!-- 3. POLLING CONFIGURATION                     -->
+                            <!-- ============================================ -->
+                            <f:Card height="100%" class="sapUiMediumMarginBottom">
+                                <f:header>
+                                    <cards:Header
+                                        iconSrc="sap-icon://refresh"
+                                        title="3. Polling Configuration"
+                                        subtitle="Monitoring Schedule"/>
+                                </f:header>
+                                <f:content>
+                                    <VBox class="sapUiMediumMargin">
+                                         <form:SimpleForm layout="ColumnLayout" editable="true">
+                                    <form:content>
+                                    <Label text="Polling Mode"></Label>
+                                     <RadioButtonGroup
+                                                columns="2"
+                                                enabled="{globalModel>/editMode}"
+                                                selectedIndex="{
+                                                    path: 'settingsModel>/POLLING_MODE/settingValue',
+                                                    formatter: '.formatPollingModeIndex'
+                                                }"
+                                                select=".onPollingModeChange">
+                                                <RadioButton text="Automatic"/>
+                                                <RadioButton text="Manual"/>
+                                            </RadioButtonGroup>
+                                             <Label text="Polling Frequency"/>
+                                             <StepInput
+                                                    width="100%"
+                                                    description="Mins"
+                                                    textAlign="Center"
+                                                    min="5"
+                                                    max="180"
+                                                    step="5"
+                                                    value="{settingsModel>/POLLING_INTERVAL_MINUTES/settingValue}"
+                                                    enabled="{globalModel>/editMode}"/>
+                                                    <Label text="Max Messages Per Poll"/>
+                                            <StepInput
+                                                width="100%"
+                                                description="Count"
+                                                textAlign="Center"
+                                                min="1000"
+                                                max="10000"
+                                                step="100"
+                                                value="{settingsModel>/MAX_MESSAGES_PER_POLL/settingValue}"
+                                                enabled="{globalModel>/editMode}"/>
+                                                <Label text="Enable Scheduler"/>
+                                            <Switch
+                                                state="{settingsModel>/ENABLE_SCHEDULER/settingValue}"
+                                                enabled="{globalModel>/editMode}"/>
+                                    </form:content>
+                                    </form:SimpleForm>
 
-                <!-- Retention -->
+                                        <!-- Poll Now -->
+                                        <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiMediumMarginTop">
+                                            <Button
+                                                text="Poll Now"
+                                                icon="sap-icon://play"
+                                                press=".onPollNow"/>
+                                            <Text text="Last Poll: {globalModel>/lastPoll}"/>
+                                        </HBox>
+                                    </VBox>
+                                </f:content>
+                            </f:Card>
 
-                <f:Card height="100%">
-<f:layoutData>
+                            <!-- ============================================ -->
+                            <!-- 4. CHAT & HISTORY CONFIGURATION              -->
+                            <!-- ============================================ -->
+                            <f:Card height="100%" class="sapUiMediumMarginEnd sapUiMediumMarginBottom">
+                                <f:header>
+                                    <cards:Header
+                                        iconSrc="sap-icon://discussion"
+                                        title="4. Chat &amp; History Configuration"
+                                        subtitle="Conversation Settings"/>
+                                </f:header>
+                                <f:content>
+                                    <VBox class="sapUiMediumMargin">
+                                    <form:SimpleForm layout="ColumnLayout" editable="true">
+                                    <form:content>
+                                  
+                                            <Label text="Enable Chat History"/>
+                                            <Switch
+                                                state="{settingsModel>/CHAT_HISTORY_ENABLED/settingValue}"
+                                                enabled="{globalModel>/editMode}"/>
+                                            <Label text="Retain Chat History (Days)"/>
+                                            <StepInput
+                                               width="100%"
+                                                description="Count"
+                                                textAlign="Center"
+                                                min="1"
+                                                max="365"
+                                                value="{settingsModel>/CHAT_RETENTION_DAYS/settingValue}"
+                                                enabled="{globalModel>/editMode}"/>
+                                            <Label text="Max Messages Per Session"/>
+                                            <StepInput
+                                               width="100%"
+                                                description="Count"
+                                                textAlign="Center"
+                                                min="10"
+                                                max="1000"
+                                                value="{settingsModel>/MAX_MESSAGES_PER_SESSION/settingValue}"
+                                                enabled="{globalModel>/editMode}"/>
+                                            <Label text="Max Context Messages Sent to AI"/>
+                                            <StepInput
+                                              width="100%"
+                                                description="Count"
+                                                textAlign="Center"
+                                                min="1"
+                                                max="100"
+                                                value="{settingsModel>/MAX_CONTEXT_MESSAGES/settingValue}"
+                                                enabled="{globalModel>/editMode}"/>
+                                            <Label text="Include Cluster Context in Chat"/>
+                                            <Switch
+                                                state="{settingsModel>/INCLUDE_CLUSTER_CONTEXT/settingValue}"
+                                                enabled="{globalModel>/editMode}"/>
+                                          </form:content>
+                                    </form:SimpleForm>
+                                    </VBox>
+                                </f:content>
+                            </f:Card>
+
+                            <!-- ============================================ -->
+                            <!-- 5. TOKEN USAGE & COST CONTROL                -->
+                            <!-- ============================================ -->
+                            <!-- <f:Card height="100%" class="sapUiMediumMarginEnd sapUiMediumMarginBottom">
+                                <f:header>
+                                    <cards:Header
+                                        iconSrc="sap-icon://money-bills"
+                                        title="5. Token Usage &amp; Cost Control"
+                                        subtitle="Budget and Limits"/>
+                                </f:header>
+                                <f:content>
+                                    <VBox class="sapUiMediumMargin">
+
+                                        <HBox justifyContent="SpaceBetween" alignItems="Center">
+                                            <Label text="Daily Token Limit"/>
+                                            <StepInput
+                                                width="45%"
+                                                min="1000"
+                                                max="10000000"
+                                                step="1000"
+                                                value="{settingsModel>/DAILY_TOKEN_LIMIT/settingValue}"
+                                                enabled="{globalModel>/editMode}"/>
+                                        </HBox>
+
+                                        <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiMediumMarginTop">
+                                            <Label text="Monthly Token Limit"/>
+                                            <StepInput
+                                                width="45%"
+                                                min="10000"
+                                                max="100000000"
+                                                step="10000"
+                                                value="{settingsModel>/MONTHLY_TOKEN_LIMIT/settingValue}"
+                                                enabled="{globalModel>/editMode}"/>
+                                        </HBox>
+
+                                        <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiMediumMarginTop">
+                                            <Label text="Alert Threshold (%)"/>
+                                            <StepInput
+                                                width="45%"
+                                                min="1"
+                                                max="100"
+                                                value="{settingsModel>/TOKEN_ALERT_THRESHOLD/settingValue}"
+                                                enabled="{globalModel>/editMode}"/>
+                                        </HBox>
+
+                                        <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiMediumMarginTop">
+                                            <Label text="Block AI When Limit Exceeded"/>
+                                            <Switch
+                                                state="{settingsModel>/BLOCK_AI_WHEN_LIMIT_EXCEEDED/settingValue}"
+                                                enabled="{globalModel>/editMode}"/>
+                                        </HBox>
+
+                                        <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiMediumMarginTop">
+                                            <Label text="Monthly Cost Budget (USD)"/>
+                                            <StepInput
+                                                width="45%"
+                                                min="1"
+                                                max="100000"
+                                                value="{settingsModel>/MONTHLY_COST_BUDGET_USD/settingValue}"
+                                                enabled="{globalModel>/editMode}"/>
+                                        </HBox>
+
+                                        <MessageStrip
+                                            class="sapUiMediumMarginTop"
+                                            type="Information"
+                                            showIcon="true"
+                                            text="You will be notified when token usage reaches the alert threshold."/>
+                                    </VBox>
+                                </f:content>
+                            </f:Card> -->
+
+                            <!-- ============================================ -->
+                            <!-- 6. DATA RETENTION                            -->
+                            <!-- ============================================ -->
+                            <f:Card height="100%" class="sapUiMediumMarginBottom">
+                                <f:header>
+                                    <cards:Header
+                                        iconSrc="sap-icon://database"
+                                        title="6. Data Retention"
+                                        subtitle="Automatic Cleanup Configuration"/>
+                                </f:header>
+                                <f:content>
+                                    <VBox class="sapUiMediumMargin">
+  <form:SimpleForm layout="ColumnLayout" editable="true">
+                                    <form:content>
+                                            <Label text="Incident Retention Days"/>
+                                            <StepInput
+                                               width="100%"
+                                                description="Count"
+                                                textAlign="Center"
+                                                min="1"
+                                                max="3650"
+                                                value="{settingsModel>/INCIDENT_RETENTION_DAYS/settingValue}"
+                                                enabled="{globalModel>/editMode}"/>
+                                            <Label text="Cluster Retention Days"/>
+                                            <StepInput
+                                               width="100%"
+                                                description="Count"
+                                                textAlign="Center"
+                                                min="1"
+                                                max="3650"
+                                                value="{settingsModel>/CLUSTER_RETENTION_DAYS/settingValue}"
+                                                enabled="{globalModel>/editMode}"/>
+                                            <Label text="Monitoring Iflows Retention Days"/>
+                                            <StepInput
+                                               width="100%"
+                                                description="Count"
+                                                textAlign="Center"
+                                                min="1"
+                                                max="3650"
+                                                value="{settingsModel>/MONITORING_RETENTION_DAYS/settingValue}"
+                                                enabled="{globalModel>/editMode}"/>
+                                                </form:content>
+                                    </form:SimpleForm>
+
+                                        <MessageStrip
+                                            class="sapUiMediumMarginTop"
+                                            type="Warning"
+                                            showIcon="true"
+                                            text="Records older than the configured retention period will be automatically deleted by scheduled cleanup jobs."/>
+                                    </VBox>
+                                  
+                                </f:content>
+                            </f:Card>
+
+                        </layout:Grid>
                     
-            <FlexItemData
-                growFactor="2"
-                baseSize="500px" />
-        </f:layoutData>
-                    <f:header>
 
-                        <cards:Header
-                            title="Data Retention"
-                            subtitle="Automatic Cleanup Configuration" />
-                    </f:header>
+        </f:content>
 
-                    <f:content>
+        <!-- ====================================================== -->
+        <!-- FOOTER: Edit / Cancel / Save + Reset                   -->
+        <!-- ====================================================== -->
+        <f:footer>
+            <Toolbar>
+                <Button
+                    text="Reset to Defaults"
+                    icon="sap-icon://reset"
+                    type="Transparent"
+                    visible="{globalModel>/editMode}"
+                    press=".onResetDefaults"/>
 
-                        <VBox class="sapUiMediumMargin">
+                <ToolbarSpacer/>
 
-                            <HBox
-                                justifyContent="SpaceBetween"
-                                alignItems="Center">
+                <Button
+                    text="Edit"
+                    icon="sap-icon://edit"
+                    type="Emphasized"
+                    visible="{= !${globalModel>/editMode} }"
+                    press=".onEdit"/>
 
-                                <VBox width="70%">
+                <Button
+                    text="Cancel"
+                    icon="sap-icon://decline"
+                    visible="{globalModel>/editMode}"
+                    press=".onCancel"/>
 
-                                    <Label
-                                        text="Incident Retention Days" />
+                <Button
+                    text="Save Settings"
+                    icon="sap-icon://save"
+                    type="Accept"
+                    visible="{globalModel>/editMode}"
+                    press=".onSave"/>
+            </Toolbar>
+        </f:footer>
 
-                                    <Text
-                                        text="Number of days incident records should remain in the database." />
-
-                                </VBox>
-
-                                <StepInput enabled="{globalModel>/editMode}" step="1" textAlign="Center" value="{globalModel>/settings/INCIDENT_RETENTION_DAYS}" />
-
-                            </HBox>
-
-                            <HBox
-                                justifyContent="SpaceBetween"
-                                alignItems="Center"
-                                class="sapUiMediumMarginTop">
-
-                                <VBox width="70%">
-
-                                    <Label text="Cluster Retention Days" />
-                                    <Text
-                                        text="Number of days cluster records should remain in the database." />
-
-                                </VBox>
-
-                                <StepInput enabled="{globalModel>/editMode}" step="1" textAlign="Center" value="{globalModel>/settings/CLUSTER_RETENTION_DAYS}" />
-
-                            </HBox>
-
-                            <HBox
-                                justifyContent="SpaceBetween"
-                                alignItems="Center"
-                                class="sapUiMediumMarginTop">
-
-                                <VBox width="70%">
-
-                                    <Label
-                                        text="Monitoring Retention Days" />
-
-                                    <Text
-                                        text="Number of days monitoring and trend data should remain in the database." />
-
-                                </VBox>
-
-                                <StepInput enabled="{globalModel>/editMode}" step="1" textAlign="Center" value="{globalModel>/settings/MONITORING_RETENTION_DAYS}" />
-
-                            </HBox>
-
-                            <MessageStrip
-                                class="sapUiMediumMarginTop"
-                                type="Warning"
-                                showIcon="true"
-                                text="Records older than the configured retention period will be automatically deleted by scheduled cleanup jobs." />
-
-                        </VBox>
-
-                    </f:content>
-
-                </f:Card>
-
-           </layout:Grid>
-        </VBox>
-    
-    </f:content>
-    <f:footer>
-  <Toolbar>
-
-    <ToolbarSpacer />
-
-    <Button
-        text="Edit"
-        icon="sap-icon://edit"
-        type="Emphasized"
-        visible="{= !${globalModel>/editMode} }"
-        press=".onEdit" />
-
-    <Button
-        text="Cancel"
-        icon="sap-icon://decline"
-        visible="{globalModel>/editMode}"
-        press=".onCancel" />
-
-    <Button
-        text="Save"
-        icon="sap-icon://save"
-        type="Accept"
-        visible="{globalModel>/editMode}"
-        press=".onSave" />
-
-</Toolbar>
-    </f:footer>
-</f:DynamicPage>
+    </f:DynamicPage>
 
 </mvc:View>

@@ -34,8 +34,8 @@
         <f:header>
             <f:DynamicPageHeader pinnable="true">
                 <f:content>
-                    <FlexBox alignItems="Start" justifyContent="Start" wrap="Wrap" width="100%" class="sapUiSmallMarginTop">
-                        <items>
+                        <FlexBox alignItems="Start" justifyContent="Start" wrap="Wrap" width="100%" class="sapUiSmallMarginTop">
+                            <items>
 
                             <VBox width="250px" class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
                                 <layoutData>

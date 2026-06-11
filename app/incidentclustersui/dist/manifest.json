@@ -230,6 +230,13 @@
 					"target": [
 						"TargetSettings"
 					]
+				},
+				{
+					"name": "RouteUsageAnalytics",
+					"pattern": "UsageAnalytics",
+					"target": [
+						"TargetUsageAnalytics"
+					]
 				}
 			],
 			"targets": {
@@ -260,6 +267,10 @@
 				"TargetSettings": {
 					"id": "Settings",
 					"name": "Settings"
+				},
+				"TargetUsageAnalytics": {
+					"id": "UsageAnalytics",
+					"name": "UsageAnalytics"
 				}
 			}
 		},

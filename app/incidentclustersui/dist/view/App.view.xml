@@ -26,6 +26,7 @@
                     <tnt:NavigationListItem key="clusters" text="Clusters" icon="sap-icon://chain-link"/>
                     <tnt:NavigationListItem key="ai" text="AI Assistant" icon="sap-icon://ai"/>
                     <!-- <tnt:NavigationListItem key="incidents" text="Incidents" icon="sap-icon://alert"/> -->
+                    <tnt:NavigationListItem key="UsageAnalytics" text="Usage Analytics" icon="sap-icon://business-objects-experience"/>
                 </tnt:NavigationList>
 
                 <!-- CORRECTED: Fixed bottom item aggregation inside SideNavigation -->

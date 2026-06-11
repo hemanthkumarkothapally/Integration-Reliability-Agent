@@ -1,0 +1,2 @@
+sap.ui.define(["./BaseController"],t=>{"use strict";return t.extend("com.cytechies.integration.reliability.incidentclustersui.controller.UsageAnalytics",{async onInit(){this.getView().setBusy(true);this.getView().setBusy(false);const t=this.getOwnerComponent().getRouter();t.getRoute("RouteOverview").attachPatternMatched(this._onRouteMatched,this)},_onRouteMatched:async function(t){await this.getSettingsData()}})});
+//# sourceMappingURL=UsageAnalytics.controller.js.map
