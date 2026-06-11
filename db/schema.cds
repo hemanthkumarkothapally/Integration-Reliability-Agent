@@ -118,11 +118,20 @@ entity TokenUsages : cuid, managed {
 }
 
 
-entity ApplicationSettings :cuid, managed {
-    settingKey  : String(100);
-    settingValue : LargeString;
-    category : String(50);
-    description : String(500);
-    dataType : String(20);
-    isEditable : Boolean default true;
+entity ApplicationSettings : cuid, managed {
+    settingKey     : String(100);
+    settingValue   : LargeString;
+    category       : String(50);
+    description    : String(500);
+    dataType       : String(20);
+
+    defaultValue   : LargeString;
+
+    minValue       : Decimal(15,2);
+    maxValue       : Decimal(15,2);
+
+    isEditable     : Boolean default true;
+    isEncrypted    : Boolean default false;
+
+    displayOrder   : Integer;
 }
