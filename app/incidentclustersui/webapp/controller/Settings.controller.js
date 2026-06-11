@@ -6,34 +6,44 @@ sap.ui.define([
   "sap/m/StandardListItem",
   "sap/m/MessageToast",
   "sap/ui/core/Fragment"
-], (BaseController, JSONModel, Popover, List, StandardListItem, MessageToast,Fragment) => {
+], (BaseController, JSONModel, Popover, List, StandardListItem, MessageToast, Fragment) => {
   "use strict";
 
   return BaseController.extend("com.cytechies.integration.reliability.incidentclustersui.controller.Settings", {
     async onInit() {
       const oGlobalModel = this.getOwnerComponent().getModel("globalModel");
       oGlobalModel.setProperty("/editMode", false);
-                  this.getOwnerComponent().getModel("globalModel").setProperty("/selectedKey","settings");
-      const oRouter =
-                this.getOwnerComponent().getRouter();
+      this.getOwnerComponent().getModel("globalModel").setProperty("/selectedKey", "settings");
+      const oRouter = this.getOwnerComponent().getRouter();
 
-            oRouter.getRoute("RouteSettings")
-                .attachPatternMatched(
-                    this._onRouteMatched,
-                    this
-                );
+      oRouter.getRoute("RouteSettings")
+        .attachPatternMatched(
+          this._onRouteMatched,
+          this
+        );
+
+
+      const oModel = this.getOwnerComponent().getModel();
+      const oBinding = oModel.bindList("/ApplicationSettings");
+      const aContexts = await oBinding.requestContexts();
+      const mSettings = {};
+      aContexts.forEach(oContext => {
+        const oSetting = oContext.getObject();
+        mSettings[oSetting.settingKey] = oContext;
+      });
+      this._mSettings = mSettings;
     },
     _onRouteMatched: async function (oEvent) {
       await this.getSettingsData();
 
-                      this.getOwnerComponent().getModel("globalModel").setProperty("/selectedKey","Settings");
-console.log("global model data:", this.getOwnerComponent().getModel("globalModel").getData());
-        },
+      this.getOwnerComponent().getModel("globalModel").setProperty("/selectedKey", "Settings");
+      console.log("global model data:", this.getOwnerComponent().getModel("globalModel").getData());
+    },
     onTenantChange: function (oEvent) {
       const sKey = oEvent.getSource().getSelectedKey();
       this.getOwnerComponent().getModel("globalModel").setProperty("/settings/DEFAULT_TENANT", sKey);
       console.log("Selected Key:", sKey);
-      
+
       this.setSelectedTenant(sKey, oEvent.getSource().getSelectedItem().getProperty('text'));
     },
     onEdit() {
@@ -130,70 +140,70 @@ console.log("global model data:", this.getOwnerComponent().getModel("globalModel
     },
     async onAddTenant() {
 
-    if (!this._oTenantDialog) {
+      if (!this._oTenantDialog) {
 
         this._oTenantDialog = await Fragment.load({
-    name: "com.cytechies.integration.reliability.incidentclustersui.fragments.AddTenant",
-    controller: this
-});
+          name: "com.cytechies.integration.reliability.incidentclustersui.fragments.AddTenant",
+          controller: this
+        });
 
         this.getView().addDependent(
-            this._oTenantDialog
+          this._oTenantDialog
         );
-    }
+      }
 
-    this._oTenantDialog.open();
-},
-async onCreateTenant() {
+      this._oTenantDialog.open();
+    },
+    async onCreateTenant() {
 
-    // const oModel =
-    //     this.getOwnerComponent().getModel();
+      // const oModel =
+      //     this.getOwnerComponent().getModel();
 
-    // const oBinding =
-    //     oModel.bindList("/Tenants");
+      // const oBinding =
+      //     oModel.bindList("/Tenants");
 
-    // const oContext =
-    //     oBinding.create({
+      // const oContext =
+      //     oBinding.create({
 
-    //         tenantName:
-    //             Fragment.byId(
-    //                 this._oTenantDialog.getId(),
-    //                 "tenantNameInput"
-    //             ).getValue(),
+      //         tenantName:
+      //             Fragment.byId(
+      //                 this._oTenantDialog.getId(),
+      //                 "tenantNameInput"
+      //             ).getValue(),
 
-    //         tenantId:
-    //             Fragment.byId(
-    //                 this._oTenantDialog.getId(),
-    //                 "tenantIdInput"
-    //             ).getValue(),
+      //         tenantId:
+      //             Fragment.byId(
+      //                 this._oTenantDialog.getId(),
+      //                 "tenantIdInput"
+      //             ).getValue(),
 
-    //         destinationName:
-    //             Fragment.byId(
-    //                 this._oTenantDialog.getId(),
-    //                 "destinationInput"
-    //             ).getValue(),
+      //         destinationName:
+      //             Fragment.byId(
+      //                 this._oTenantDialog.getId(),
+      //                 "destinationInput"
+      //             ).getValue(),
 
-    //         region:
-    //             Fragment.byId(
-    //                 this._oTenantDialog.getId(),
-    //                 "regionInput"
-    //             ).getValue(),
+      //         region:
+      //             Fragment.byId(
+      //                 this._oTenantDialog.getId(),
+      //                 "regionInput"
+      //             ).getValue(),
 
-    //         isActive: true
-    //     });
+      //         isActive: true
+      //     });
 
-    // await oContext.created();
+      // await oContext.created();
 
-    MessageToast.show(
+      MessageToast.show(
         "Tenant created successfully"
-    );
+      );
 
-    this._oTenantDialog.close();
+      this._oTenantDialog.close();
 
-    await this._loadTenants();
-},
-onCloseTenantDialog:function(){
-  this._oTenantDialog.close();
-}
+      await this._loadTenants();
+    },
+    onCloseTenantDialog: function () {
+      this._oTenantDialog.close();
+    }
   });
 });
