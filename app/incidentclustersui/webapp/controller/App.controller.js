@@ -64,6 +64,10 @@ _onRouteMatched: async function (oEvent) {
           oRouter.navTo("RouteClusters");
           break;
 
+        case "UsageAnalytics":
+          oRouter.navTo("RouteUsageAnalytics");
+          break;
+
         case "ai":
           this.getView().getModel("globalModel").setProperty("/iflowId",null);
           oRouter.navTo("RouteAIAssistant");

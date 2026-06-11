@@ -78,8 +78,8 @@
   },
   "sap.ui5": {
     "icons": {
-    "favicon": "model/gemini-svg.svg"
-  },
+      "favicon": "model/gemini-svg.svg"
+    },
     "flexEnabled": false,
     "dependencies": {
       "minUI5Version": "1.147.2",
@@ -222,6 +222,13 @@
           "target": [
             "TargetSettings"
           ]
+        },
+        {
+          "name": "RouteUsageAnalytics",
+          "pattern": "UsageAnalytics",
+          "target": [
+            "TargetUsageAnalytics"
+          ]
         }
       ],
       "targets": {
@@ -241,7 +248,7 @@
           "id": "IncidentDetails",
           "name": "IncidentDetails"
         },
-         "TargetClusters": {
+        "TargetClusters": {
           "id": "Clusters",
           "name": "Clusters"
         },
@@ -249,9 +256,13 @@
           "id": "IC",
           "name": "IC"
         },
-         "TargetSettings": {
+        "TargetSettings": {
           "id": "Settings",
           "name": "Settings"
+        },
+        "TargetUsageAnalytics": {
+          "id": "UsageAnalytics",
+          "name": "UsageAnalytics"
         }
       }
     },
