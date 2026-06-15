@@ -1,46 +1,34 @@
 export async function generateClusterRecommendation(
     payload
 ) {
-
     console.log(
         "AI recommendation started"
     );
-
     const {
         cluster,
         incidents
     } = payload;
-
-
     const destination = await cds.connect.to('GenAIHubDestination');
-
     /*
      * --------------------------------------------------
      * BUILD INCIDENT SUMMARY
      * --------------------------------------------------
      */
-
     const incidentSummary =
         incidents.map((i, index) => ({
-
             index: index + 1,
-
             errorMessage:
                 i.errorMessage,
-
             adapter:
                 i.adapter,
-
             logEnd:
                 i.logEnd
         }));
-
     /*
      * --------------------------------------------------
      * AI PROMPT
      * --------------------------------------------------
      */
-
     let prompt = `
 You are an SAP Integration Suite reliability expert.
 
@@ -100,7 +88,6 @@ ${JSON.stringify(playbooks, null, 2)}
 
         const response =
             await destination.send({
-
                 method: 'POST',
                 path: '/inference/deployments/d2f31ccfd2765c35/invoke',
                 headers: {
@@ -119,13 +106,11 @@ ${JSON.stringify(playbooks, null, 2)}
                     ]
                 }
             });
-
         /*
          * --------------------------------------------------
          * EXTRACT CONTENT
          * --------------------------------------------------
          */
-
         console.log(
             "Raw AI response:",
             JSON.stringify(
@@ -134,36 +119,27 @@ ${JSON.stringify(playbooks, null, 2)}
                 2
             )
         );
-
-        const content =
-            response?.content?.[0]?.text;
-
+        const content = response?.content?.[0]?.text;
         if (!content) {
-
             throw new Error(
-                `Unexpected response shape:
-${JSON.stringify(response)}`
+                `Unexpected response shape: ${JSON.stringify(response)}`
             );
         }
-
         /*
          * --------------------------------------------------
          * CLEAN MARKDOWN
          * --------------------------------------------------
          */
-
         const cleaned =
             content
                 .replace(/```json\n?/g, '')
                 .replace(/```/g, '')
                 .trim();
-
         /*
          * --------------------------------------------------
          * PARSE JSON
          * --------------------------------------------------
          */
-
         const parsed =
             JSON.parse(cleaned);
         console.log(
@@ -174,72 +150,41 @@ ${JSON.stringify(response)}`
                 2
             )
         );
-        const usage =
-            response?.usage || {};
-
-        const inputTokens =
-            usage.input_tokens || 0;
-
-        const outputTokens =
-            usage.output_tokens || 0;
-
-        /*
-         * Claude Sonnet pricing example
-         */
-
-        const estimatedCostUSD =
-            Number(
-                (
-                    ((inputTokens / 1_000_000) * 3) +
-                    ((outputTokens / 1_000_000) * 15)
-                ).toFixed(4)
-            );
-
+        const usage = response?.usage || {};
+        const inputTokens = usage.input_tokens || 0;
+        const outputTokens = usage.output_tokens || 0;
         return {
-
             recommendation: {
-
                 rootCause:
                     parsed.rootCause ||
                     'Unknown root cause',
-
                 businessImpact:
                     parsed.businessImpact ||
                     'Unknown business impact',
-
                 remediationSteps:
                     Array.isArray(
                         parsed.remediationSteps
                     )
                         ? parsed.remediationSteps
                         : [],
-
                 affectedAdapter:
                     parsed.affectedAdapter ||
                     cluster.adapter ||
                     'UNKNOWN',
-
                 confidenceScore:
                     Number(
                         parsed.confidenceScore || 50
                     )
             },
-
             audit: {
-
                 model:
                     response.model ||
                     'claude-sonnet',
-
                 inputTokens,
-
                 outputTokens,
-
-                estimatedCostUSD,
-
+                estimatedCostUSD: null,
                 calledAt:
                     new Date(),
-
                 purpose:
                     'CLUSTER_RCA'
             },
@@ -248,12 +193,10 @@ ${JSON.stringify(response)}`
         };
 
     } catch (err) {
-
         console.error(
             "AI Error status:",
             err.reason?.response?.status
         );
-
         console.error(
             "AI Error body:",
             JSON.stringify(
@@ -262,52 +205,29 @@ ${JSON.stringify(response)}`
                 2
             )
         );
-
-        /*
-         * --------------------------------------------------
-         * SAFE FALLBACK
-         * --------------------------------------------------
-         */
-
         return {
-
             recommendation: {
-
                 rootCause:
                     `Repeated ${cluster.errorSignature} failures detected in ${cluster.iFlowName}.`,
-
                 businessImpact:
-                    'Potential message processing disruption.',
-
+             'Potential message processing disruption.',
                 remediationSteps: [
-
                     'Inspect integration flow logs',
-
                     'Validate endpoint connectivity',
-
                     'Review payload structure and credentials'
                 ],
-
                 affectedAdapter:
                     'UNKNOWN',
-
                 confidenceScore: 40
             },
-
             audit: {
-
                 model:
                     'claude-sonnet',
-
                 inputTokens: 0,
-
                 outputTokens: 0,
-
                 estimatedCostUSD: 0,
-
                 calledAt:
                     new Date(),
-
                 purpose:
                     'CLUSTER_RCA'
             }

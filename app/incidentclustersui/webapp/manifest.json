@@ -39,6 +39,14 @@
           "annotations": [],
           "odataVersion": "4.01"
         }
+      },
+       "AdminService": {
+        "uri": "/Admin/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "odataVersion": "4.01"
+        }
       }
     },
     "crossNavigation": {
@@ -120,6 +128,15 @@
       },
       "PollerModel": {
         "dataSource": "PollerService",
+        "preload": true,
+        "settings": {
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true
+        }
+      },
+       "AdminModel": {
+        "dataSource": "AdminService",
         "preload": true,
         "settings": {
           "operationMode": "Server",

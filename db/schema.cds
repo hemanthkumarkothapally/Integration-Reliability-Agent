@@ -5,7 +5,7 @@ entity Tenants : cuid, managed {
     tenantName      : String(255);
     tenantId        : String(255);
     destinationName : String(255);
-    region          : String(100);
+    url             : String(250);
     isActive        : Boolean default true;
 }
 entity Incidents : cuid, managed {
@@ -36,12 +36,10 @@ entity IncidentClusters : cuid, managed {
     globalStatus           : String(50);
     incidents              : Composition of many Incidents
                            on incidents.cluster = $self;
-    chatSessions : Association to many ChatSessions on chatSessions.cluster = $self;
     totalTokenUsage : Integer;
     monitoredArtifacts   : Composition of many ClusterArtifacts on monitoredArtifacts.cluster = $self;
     recommendations     : Composition of one ClusterRecommendations
                             on recommendations.cluster = $self;
-    messages : Association to many Messages on messages.referCluster = $self;
 }
 entity ClusterRecommendations : cuid, managed {
     cluster             : Association to IncidentClusters;
@@ -69,7 +67,6 @@ entity MonitoredArtifacts : cuid, managed {
     totalBusinessImpactEUR : Decimal(15,2) default 0;
     clusters : Association to many ClusterArtifacts
                on clusters.artifact = $self;
-    messages : Association to many Messages on messages.referiFlow = $self;
 }
 entity ClusterArtifacts : cuid, managed{
     cluster             : Association to IncidentClusters;
@@ -88,7 +85,6 @@ entity Playbooks :cuid, managed {
 }
 entity ChatSessions : cuid, managed {
     title       : String(255);
-    cluster  : Association to IncidentClusters;
     messages : Composition of many Messages on messages.conversation = $self;
     totalSessionTokenUsage : Integer;
 }
@@ -98,8 +94,7 @@ entity Messages : cuid{
    content  : LargeString;
    createdAt : Timestamp @cds.on.insert : $now;
    tokenCount : Integer;    
-   referiFlow : Association to one MonitoredArtifacts;
-   referCluster: Association to one IncidentClusters;
+   reference : String;
 }
 entity AccessLogs : cuid, managed {
     action     : String(255);
@@ -129,9 +124,42 @@ entity ApplicationSettings : cuid, managed {
 
     minValue       : Decimal(15,2);
     maxValue       : Decimal(15,2);
-
     isEditable     : Boolean default true;
     isEncrypted    : Boolean default false;
-
     displayOrder   : Integer;
+}
+entity DailyMetrics : cuid, managed {
+    metricDate              : Date;
+    tenant                  : Association to Tenants;
+    // Incidents
+    newIncidents            : Integer default 0;
+    resolvedIncidents       : Integer default 0;
+    // Clusters
+    newClusters             : Integer default 0;
+    resolvedClusters        : Integer default 0;
+    resolvedIflowClusters        : Integer default 0;
+    // Recommendations
+    recommendationsGenerated : Integer default 0;
+    // Monitoring
+    monitoredArtifacts      : Integer default 0;
+    healthyArtifacts      : Integer default 0;
+    criticalArtifacts       : Integer default 0;
+    
+    // Polling
+    pollRuns                : Integer default 0;
+    pollFailures            : Integer default 0;
+    // Reliability
+    averageResolutionHours  : Decimal(10,2);
+}
+entity DailyAIMetrics : cuid, managed {
+    metricDate              : Date;
+    recommendationsGenerated : Integer default 0;
+    aiRequests              : Integer default 0;
+    totalChatSessions       : Integer default 0;
+    totalUserMessages           : Integer default 0;
+    totalAIMessages            : Integer default 0;
+    totalInputTokens        : Integer default 0;
+    totalOutputTokens       : Integer default 0;
+    totalTokens             : Integer default 0;
+    estimatedCostUSD        : Decimal(15,4) default 0;
 }

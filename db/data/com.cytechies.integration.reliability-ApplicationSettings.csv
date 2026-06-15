@@ -6,7 +6,7 @@ ID,settingKey,settingValue,category,description,dataType,defaultValue,minValue,m
 
 5,AI_ENABLED,true,AI,Enable AI recommendations,BOOLEAN,true,,,true,false,10,,,,
 6,AI_PROVIDER,SAP_AI_CORE,AI,AI provider used for recommendations,STRING,SAP_AI_CORE,,,true,false,11,,,,
-7,AI_MODEL,gpt-4o,AI,LLM model used for RCA generation,STRING,gpt-4o,,,true,false,12,,,,
+7,AI_MODEL,claude-4-sonnet,AI,LLM model used for RCA generation,STRING,claude-4-sonnet,,,true,false,12,,,,
 8,MAX_INCIDENTS_FOR_AI,10,AI,Maximum incidents sent for AI analysis,NUMBER,10,1,100,true,false,13,,,,
 9,HISTORY_MESSAGE_COUNT,20,AI,Number of historical messages included in context,NUMBER,20,0,100,true,false,14,,,,
 10,CONFIDENCE_THRESHOLD,75,AI,Minimum confidence score required to save recommendation,NUMBER,75,0,100,true,false,15,,,,

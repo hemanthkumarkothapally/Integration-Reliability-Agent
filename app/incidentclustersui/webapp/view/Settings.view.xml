@@ -1,4 +1,4 @@
-<mvc:View xmlns:form="sap.ui.layout.form"
+<mvc:View xmlns:cssgrid="sap.ui.layout.cssgrid" xmlns:form="sap.ui.layout.form"
     controllerName="com.cytechies.integration.reliability.incidentclustersui.controller.Settings"
     displayBlock="true"
     xmlns:mvc="sap.ui.core.mvc"
@@ -22,14 +22,17 @@
         </f:title>
 
         <f:content>
-                        <layout:Grid
-                            defaultSpan="XL4 L4 M6 S12"
-                            hSpacing="1"
-                            vSpacing="1">
+        
 
                             <!-- ============================================ -->
                             <!-- 1. TENANT CONFIGURATION                      -->
                             <!-- ============================================ -->
+                            <f:GridList >
+                            <f:customLayout>
+                                <cssgrid:GridBasicLayout gridTemplateColumns="repeat(auto-fit, minmax(30rem, 2fr))" gridGap="1rem" />
+                            </f:customLayout>
+                            <f:items>
+                            <f:GridListItem >
                             <f:Card height="100%" class="sapUiMediumMarginEnd sapUiMediumMarginBottom">
                                 <f:header>
                                     <cards:Header
@@ -56,64 +59,67 @@
                                             showIcon="true"
                                             text="This tenant will be selected automatically when users open the dashboard."/>
                                             <VBox
-                            visible="{globalModel>/editMode}"
-                            class="sapUiMediumMarginTop">
+                                        visible="{globalModel>/editMode}"
+                                        class="sapUiMediumMarginTop">
 
-                            <Toolbar>
-                                <Title text="Tenant Management" level="H5"/>
-                                <ToolbarSpacer/>
-                                <Button
-                                    text="Add Tenant"
-                                    icon="sap-icon://add"
-                                    type="Emphasized"
-                                    press=".onAddTenant"/>
-                            </Toolbar>
+                                        <Toolbar>
+                                            <Title text="Tenant Management" level="H5"/>
+                                            <ToolbarSpacer/>
+                                            <Button
+                                                text="Add Tenant"
+                                                icon="sap-icon://add"
+                                                type="Emphasized"
+                                                press=".onAddTenant"/>
+                                        </Toolbar>
 
-                            <Table
-                                items="{path: '/Tenants'}"
-                                class="sapUiSmallMarginTop">
-                                <columns>
-                                    <Column>
-                                        <Text text="Tenant Name"/>
-                                    </Column>
-                                    <Column>
-                                        <Text text="Tenant ID"/>
-                                    </Column>
-                                    <Column>
-                                        <Text text="Destination"/>
-                                    </Column>
-                                    <Column>
-                                        <Text text="Region"/>
-                                    </Column>
-                                    <Column hAlign="Center">
-                                        <Text text="Actions"/>
-                                    </Column>
-                                </columns>
-                                <items>
-                                    <ColumnListItem>
-                                        <cells>
-                                            <Text text="{tenantName}"/>
-                                            <Text text="{tenantId}"/>
-                                            <Text text="{destinationName}"/>
-                                            <Text text="{region}"/>
-                                            <HBox justifyContent="Center">
-                                                <Button
-                                                    icon="sap-icon://edit"
-                                                    type="Transparent"
-                                                    press=".onEditTenant"/>
-                                                <Button
-                                                    icon="sap-icon://delete"
-                                                    type="Transparent"
-                                                    press=".onDeleteTenant"/>
-                                            </HBox>
-                                        </cells>
-                                    </ColumnListItem>
-                                </items>
-                            </Table>
-                        </VBox>
+                                        <Table
+                                        id="tenantTable"
+                                            items="{path: '/Tenants'}"
+                                            class="sapUiSmallMarginTop" autoPopinMode="true">
+                                            <columns>
+                                                <Column demandPopin="true">
+                                                    <Text text="Tenant Name"/>
+                                                </Column>
+                                                <Column>
+                                                    <Text text="Tenant ID"/>
+                                                </Column>
+                                                <Column>
+                                                    <Text text="Destination"/>
+                                                </Column>
+                                                <Column>
+                                                    <Text text="URL"/>
+                                                </Column>
+                                                <Column hAlign="Center">
+                                                    <Text text="Actions"/>
+                                                </Column>
+                                            </columns>
+                                            <items>
+                                                <ColumnListItem>
+                                                    <cells>
+                                                        <Text text="{tenantName}"/>
+                                                        <Text text="{tenantId}"/>
+                                                        <Text text="{destinationName}"/>
+                                                        <Text text="{url}"/>
+                                                        <HBox justifyContent="Center">
+                                                            <Button
+                                                                icon="sap-icon://edit"
+                                                                type="Transparent"
+                                                                press=".onEditTenant"/>
+                                                            <Button
+                                                                icon="sap-icon://delete"
+                                                                type="Transparent"
+                                                                press=".onDeleteTenant"/>
+                                                        </HBox>
+                                                    </cells>
+                                                </ColumnListItem>
+                                            </items>
+                                        </Table>
                                     </VBox>
+                                                </VBox>
                                 </f:content>
                             </f:Card>
+</f:GridListItem>
+<f:GridListItem>
 
                             <!-- ============================================ -->
                             <!-- 2. AI CONFIGURATION                          -->
@@ -130,23 +136,9 @@
                                     <form:SimpleForm layout="ColumnLayout" editable="true">
                                     <form:content>
                                                 <Label text="AI Provider"/>
-                                                <Select
-                                                    width="100%"
-                                                    selectedKey="{settingsModel>/AI_PROVIDER/settingValue}"
-                                                    enabled="{globalModel>/editMode}">
-                                                    <core:Item key="SAP_AI_CORE" text="SAP AI Core"/>
-                                                    <core:Item key="OPENAI" text="OpenAI"/>
-                                                    <core:Item key="AZURE_OPENAI" text="Azure OpenAI"/>
-                                                </Select>
+                                                <Text text="{globalModel>/settings/AI_PROVIDER}" />
                                                 <Label text="Model"/>
-                                                <Select
-                                                    width="100%"
-                                                    selectedKey="{settingsModel>/AI_MODEL/settingValue}"
-                                                    enabled="{globalModel>/editMode}">
-                                                    <core:Item key="gpt-4o" text="gpt-4o"/>
-                                                    <core:Item key="gpt-4o-mini" text="gpt  -4o-mini"/>
-                                                    <core:Item key="gpt-4-turbo" text="gpt-4-turbo"/>
-                                                </Select>
+                                                <Text text="{globalModel>/settings/AI_MODEL}"></Text>
                                                 <Label text="Max Incidents Sent to AI"/>
                                                 <StepInput
                                                     width="100%"
@@ -154,7 +146,7 @@
                                                     textAlign="Center"
                                                     min="1"
                                                     max="100"
-                                                    value="{settingsModel>/MAX_INCIDENTS_FOR_AI/settingValue}"
+                                                    value="{globalModel>/settings/MAX_INCIDENTS_FOR_AI}"
                                                     enabled="{globalModel>/editMode}"/>
                                                 <Label text="Historical Messages Count"/>
                                                 <StepInput
@@ -163,18 +155,20 @@
                                                     textAlign="Center"
                                                     min="0"
                                                     max="100"
-                                                    value="{settingsModel>/HISTORY_MESSAGE_COUNT/settingValue}"
+                                                    value="{globalModel>/settings/HISTORY_MESSAGE_COUNT}"
                                                     enabled="{globalModel>/editMode}"/>
                                                 <Label text="Auto Generate Recommendations"/>
                                                 <Label text="Automatically generate recommendations after clustering."/>
                                                 <Switch
-                                                    state="{settingsModel>/AUTO_GENERATE_RECOMMENDATIONS/settingValue}"
+                                                   
                                                     enabled="{globalModel>/editMode}"/> 
                                     </form:content>
                                     </form:SimpleForm>
                                     </VBox>
                                 </f:content>
                             </f:Card>
+</f:GridListItem>
+<f:GridListItem>
 
                             <!-- ============================================ -->
                             <!-- 3. POLLING CONFIGURATION                     -->
@@ -212,20 +206,6 @@
                                                     step="5"
                                                     value="{settingsModel>/POLLING_INTERVAL_MINUTES/settingValue}"
                                                     enabled="{globalModel>/editMode}"/>
-                                                    <Label text="Max Messages Per Poll"/>
-                                            <StepInput
-                                                width="100%"
-                                                description="Count"
-                                                textAlign="Center"
-                                                min="1000"
-                                                max="10000"
-                                                step="100"
-                                                value="{settingsModel>/MAX_MESSAGES_PER_POLL/settingValue}"
-                                                enabled="{globalModel>/editMode}"/>
-                                                <Label text="Enable Scheduler"/>
-                                            <Switch
-                                                state="{settingsModel>/ENABLE_SCHEDULER/settingValue}"
-                                                enabled="{globalModel>/editMode}"/>
                                     </form:content>
                                     </form:SimpleForm>
 
@@ -240,11 +220,13 @@
                                     </VBox>
                                 </f:content>
                             </f:Card>
+</f:GridListItem>
+<f:GridListItem>
 
                             <!-- ============================================ -->
                             <!-- 4. CHAT & HISTORY CONFIGURATION              -->
                             <!-- ============================================ -->
-                            <f:Card height="100%" class="sapUiMediumMarginEnd sapUiMediumMarginBottom">
+                            <!-- <f:Card height="100%" class="sapUiMediumMarginEnd sapUiMediumMarginBottom">
                                 <f:header>
                                     <cards:Header
                                         iconSrc="sap-icon://discussion"
@@ -295,7 +277,7 @@
                                     </form:SimpleForm>
                                     </VBox>
                                 </f:content>
-                            </f:Card>
+                            </f:Card> -->
 
                             <!-- ============================================ -->
                             <!-- 5. TOKEN USAGE & COST CONTROL                -->
@@ -375,12 +357,12 @@
                                 <f:header>
                                     <cards:Header
                                         iconSrc="sap-icon://database"
-                                        title="6. Data Retention"
+                                        title="4. Data Retention"
                                         subtitle="Automatic Cleanup Configuration"/>
                                 </f:header>
                                 <f:content>
                                     <VBox class="sapUiMediumMargin">
-  <form:SimpleForm layout="ColumnLayout" editable="true">
+                                <form:SimpleForm layout="ColumnLayout" editable="true">
                                     <form:content>
                                             <Label text="Incident Retention Days"/>
                                             <StepInput
@@ -421,8 +403,10 @@
                                   
                                 </f:content>
                             </f:Card>
-
-                        </layout:Grid>
+</f:GridListItem>
+                            </f:items>
+                            </f:GridList>
+                      
                     
 
         </f:content>
