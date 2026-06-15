@@ -93,10 +93,10 @@
 }
 
 .vboxborderclass {
-    border: 1px solid #e0e0e0 !important;
-    border-radius: 8px !important;
+    border: 1px solid #b4d2ff  !important; /* Made thicker, changed to dashed for better visibility, and darkened color */
+    border-radius: 16px !important;
     padding: 16px !important;
-    background-color: #fafafa !important;
+    /* background-color: #fafafa !important; */
 }
 
 .sapUiSizeCompact .sapFCard .sapFCardContent .sapMListTbl {

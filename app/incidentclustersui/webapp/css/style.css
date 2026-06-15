@@ -270,6 +270,27 @@ li.clickableCardItem .sapVizFrame svg {
 }
 
 
+/* 1. Makes the Card a Flex column so the internal content area can grow */
+.stretchCardContainer {
+    display: flex !important;
+    flex-direction: column;
+}
+
+/* 2. Forces the invisible UI5 content wrapper to fill the remaining vertical space */
+.stretchCardContainer .sapFCardContent {
+    flex: 1 1 0px; 
+    display: flex;
+    flex-direction: column;
+    min-height: 0; 
+}
+
+/* 3. Makes the ScrollContainer fill the newly expanded wrapper */
+.stretchScrollArea {
+    flex: 1 1 0px !important;
+    min-height: 0;
+    overflow-y: auto;
+}
+
 
 
 

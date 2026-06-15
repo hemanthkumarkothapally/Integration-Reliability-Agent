@@ -90,6 +90,44 @@ sap.ui.define([], function () {
             }
 
         },
+
+        formatRoles: function (aRoles) {
+            if (!aRoles || !aRoles.length) {
+                return "";
+            }
+            return aRoles.join(" · ");
+        },
+        formatInitials: function (sName) {
+            if (!sName) {
+                return "";
+            }
+            var aParts = sName.trim().split(/\s+/);
+            if (aParts.length > 1) {
+                return (aParts[0][0] + aParts[aParts.length - 1][0]).toUpperCase();
+            }
+            return sName.substring(0, 2).toUpperCase();
+        },
+        formatLargeNumber: function (iNum) {
+            // if (!iNum) {
+            //     return "0";
+            // }
+            // For Billions
+            if (iNum >= 1000000000) {
+                return (iNum / 1000000000).toFixed(0) + "B";
+            }
+            // For Millions
+            if (iNum >= 1000000) {
+                return (iNum / 1000000).toFixed(0) + "M";
+            }
+            // For Thousands
+            if (iNum >= 1000) {
+                return (iNum / 1000).toFixed(0) + "k";
+            }
+
+            return iNum.toString();
+        },
+
+
         formatButtonText: function (sSeverity) {
 
             switch (sSeverity) {
