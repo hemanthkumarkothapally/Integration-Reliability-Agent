@@ -37,6 +37,7 @@ sap.ui.define([
       await this.getSettingsData();
 
       this.getOwnerComponent().getModel("globalModel").setProperty("/selectedKey", "Settings");
+      this._loadSettings();
       console.log("global model data:", this.getOwnerComponent().getModel("globalModel").getData());
     },
     onTenantChange: function (oEvent) {
@@ -139,7 +140,23 @@ sap.ui.define([
       console.log("Default Tenant: " + oGlobalModel.getProperty("/settings/DEFAULT_TENANT"));
     },
     async onAddTenant() {
-
+      let oGlobalModel = this.getOwnerComponent().getModel("globalModel");
+      if (!this._aDestinations) {
+        const oModel = this.getOwnerComponent().getModel("AdminModel");
+        const oContext = oModel.bindContext("/getDestinations(...)");
+        await oContext.execute();
+        const aData = oContext.getBoundContext().getObject().value;
+        this._aDestinations = aData;
+        oGlobalModel.setProperty("/destinations", aData);
+        console.log("Destinations: ", aData);
+      }
+      oGlobalModel.setProperty("/TenantDetails", {
+        tenantName: "",
+        tenantId: "",
+        destinationName: "",
+        url: "",
+        isActive: true
+      });
       if (!this._oTenantDialog) {
 
         this._oTenantDialog = await Fragment.load({
@@ -154,56 +171,122 @@ sap.ui.define([
 
       this._oTenantDialog.open();
     },
+    onDestinationChange: function (oEvent) {
+      const sSelectedKey = oEvent.getSource().getSelectedKey();
+      const oSelectedDestination = this._aDestinations.find(dest => dest.Name === sSelectedKey);
+      if (oSelectedDestination) {
+        this.getOwnerComponent().getModel("globalModel")
+          .setProperty(
+            "/TenantDetails/destinationName",
+            oSelectedDestination.Name
+          ); this.getOwnerComponent().getModel("globalModel").setProperty("/TenantDetails/url", oSelectedDestination.URL);
+      }
+    },
     async onCreateTenant() {
 
-      // const oModel =
-      //     this.getOwnerComponent().getModel();
+      const oModel =
+        this.getOwnerComponent()
+          .getModel("AdminModel");
 
-      // const oBinding =
-      //     oModel.bindList("/Tenants");
+      const oPayload =
+        this.getOwnerComponent()
+          .getModel("globalModel")
+          .getProperty("/TenantDetails");
 
-      // const oContext =
-      //     oBinding.create({
+      try {
 
-      //         tenantName:
-      //             Fragment.byId(
-      //                 this._oTenantDialog.getId(),
-      //                 "tenantNameInput"
-      //             ).getValue(),
+        if (!oPayload.ID) {
 
-      //         tenantId:
-      //             Fragment.byId(
-      //                 this._oTenantDialog.getId(),
-      //                 "tenantIdInput"
-      //             ).getValue(),
+          const oBinding =
+            oModel.bindList("/Tenants");
 
-      //         destinationName:
-      //             Fragment.byId(
-      //                 this._oTenantDialog.getId(),
-      //                 "destinationInput"
-      //             ).getValue(),
+          const oContext =
+            oBinding.create(oPayload);
 
-      //         region:
-      //             Fragment.byId(
-      //                 this._oTenantDialog.getId(),
-      //                 "regionInput"
-      //             ).getValue(),
+          await oContext.created();
 
-      //         isActive: true
-      //     });
+          MessageToast.show(
+            "Tenant created successfully"
+          );
 
-      // await oContext.created();
+        } else {
 
-      MessageToast.show(
-        "Tenant created successfully"
-      );
+          Object.keys(oPayload).forEach(key => {
 
-      this._oTenantDialog.close();
+            this._oEditContext.setProperty(
+              key,
+              oPayload[key]
+            );
 
-      await this._loadTenants();
+          });
+
+          await oModel.submitBatch("$auto");
+
+          MessageToast.show(
+            "Tenant updated successfully"
+          );
+
+        }
+
+        this._oTenantDialog.close();
+
+        await this.getSettingsData();
+        this.byId("tenantTable").getBinding("items").refresh();
+
+      } catch (err) {
+
+        sap.m.MessageBox.error(
+          err.message
+        );
+
+        console.error(err);
+      }
     },
     onCloseTenantDialog: function () {
       this._oTenantDialog.close();
+    },
+
+    onDeleteTenant: async function (oEvent) {
+      const oContext = oEvent.getSource().getBindingContext();
+      try {
+        await oContext.delete();
+        sap.m.MessageToast.show(
+          "Tenant deleted successfully"
+        );
+      } catch (err) {
+        sap.m.MessageBox.error(
+          "Failed to delete tenant"
+        );
+        console.error(err);
+      }
+    },
+    onEditTenant: async function (oEvent) {
+      let oGlobalModel = this.getOwnerComponent().getModel("globalModel");
+      if (!this._aDestinations) {
+        const oModel = this.getOwnerComponent().getModel("AdminModel");
+        const oContext = oModel.bindContext("/getDestinations(...)");
+        await oContext.execute();
+        const aData = oContext.getBoundContext().getObject().value;
+        this._aDestinations = aData;
+        oGlobalModel.setProperty("/destinations", aData);
+        console.log("Destinations: ", aData);
+      }
+      const oContext = oEvent.getSource().getBindingContext();
+      this._oEditContext = oContext;
+      const oTenantData = oContext.getObject();
+      this.getOwnerComponent().getModel("globalModel").setProperty("/TenantDetails", oTenantData);
+      if (!this._oTenantDialog) {
+        Fragment.load({
+          name: "com.cytechies.integration.reliability.incidentclustersui.fragments.AddTenant",
+          controller: this
+        }).then(oDialog => {
+          this._oTenantDialog = oDialog;
+          this.getView().addDependent(this._oTenantDialog);
+          this._oTenantDialog.open();
+        });
+      } else {
+        this._oTenantDialog.open();
+      }
     }
   });
 });

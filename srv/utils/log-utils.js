@@ -1,4 +1,7 @@
 // utils/log-utils.js
+import { getDestination } from '@sap-cloud-sdk/connectivity';
+import { executeHttpRequest } from '@sap-cloud-sdk/http-client';
+import { updateDailyMetrics ,updateDailyAIMetrics} from './daily-metrics.js';
 
 /**
  * -------------------------------------------------------
@@ -700,36 +703,56 @@ export function extractAdapter(adapterRes) {
  * -------------------------------------------------------
  */
 
-export async function ApiCall(
-  api,
-  options,
-  retries = 2
-) {
+// export async function ApiCall(
+//   api,
+//   options,
+//   retries = 2
+// ) {
+
+//   try {
+
+//     return await api.send(options);
+
+//   } catch (err) {
+
+//     console.error(
+//       `API Error (${options.path}):`,
+//       err.message
+//     );
+
+//     if (retries > 0) {
+
+//       console.warn(
+//         `Retrying: ${options.path}`
+//       );
+
+//       return ApiCall(
+//         api,
+//         options,
+//         retries - 1
+//       );
+//     }
+
+//     throw err;
+//   }
+// }
+export async function ApiCall(tenant, path) {
 
   try {
-
-    return await api.send(options);
-
+    const destination = await getDestination({ destinationName: tenant.destinationName });
+      if (!destination) throw new Error(`Destination "${tenant.destinationName}" not found`);
+    const res = await executeHttpRequest(destination, {
+        method: 'get',
+        url: path,
+      });
+    console.log("CPI raw body:", JSON.stringify(res.data));
+    return res.data;
   } catch (err) {
 
     console.error(
       `API Error (${options.path}):`,
       err.message
     );
-
-    if (retries > 0) {
-
-      console.warn(
-        `Retrying: ${options.path}`
-      );
-
-      return ApiCall(
-        api,
-        options,
-        retries - 1
-      );
-    }
-
     throw err;
   }
 }
@@ -740,7 +763,6 @@ export async function ApiCall(
 export async function upsertMonitoredArtifacts(
   entity,
   logs,
-  IS_API,
   tenant
 ) {
   /*
@@ -785,10 +807,10 @@ export async function upsertMonitoredArtifacts(
 
   const existingArtifacts =
     await SELECT
-    .from(entity)
-    .where({
-      tenant_ID: tenant.ID
-    });
+      .from(entity)
+      .where({
+        tenant_ID: tenant.ID
+      });
 
   const existingMap =
     new Map(
@@ -825,11 +847,7 @@ export async function upsertMonitoredArtifacts(
     let iflowDetails = null;
     try {
       iflowDetails =
-        await ApiCall(IS_API, {
-          method: 'GET',
-          path:
-            `/api/v1/IntegrationRuntimeArtifacts('${iFlowName}')`
-        });
+        await ApiCall(tenant, `/api/v1/IntegrationRuntimeArtifacts('${iFlowName}')`);
     } catch (err) {
       console.error(
         `Failed to fetch iFlow details: ${iFlowName}`
@@ -838,11 +856,11 @@ export async function upsertMonitoredArtifacts(
     }
     const results =
       iflowDetails?.d || {};
-    // console.log(
-    //   "Fetched iFlow details:",
-    //   iFlowName,
-    //   results
-    // );
+    console.log(
+      "Fetched iFlow details:",
+      iFlowName,
+      results
+    );
     /*
      * ----------------------------------------
      * EXISTING ARTIFACT
@@ -916,7 +934,7 @@ export async function upsertMonitoredArtifacts(
             packageName,
           isActive:
             results.Status ===
-            'STARTED',  
+            'STARTED',
           lastPollTimestamp:
             latestTimestamp,
           lastErrorAt: latestTimestamp,
@@ -933,7 +951,12 @@ export async function upsertMonitoredArtifacts(
           totalBusinessImpactEUR:
             0
         });
-
+         await updateDailyMetrics(
+            tenant.ID,
+            {
+                monitoredArtifacts: 1
+            }
+        );
       console.log(
         `Inserted new artifact: ${iFlowName}`
       );

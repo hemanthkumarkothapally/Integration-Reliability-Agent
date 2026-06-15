@@ -51,8 +51,6 @@ service IncidentService {
     entity Playbook           as projection on IRA.Playbooks;
     entity Tenants as projection on IRA.Tenants;
     entity ApplicationSettings as projection on IRA.ApplicationSettings;
-    // @requires: 'Admin'
-    function triggerPoll() returns array of Map;
     function onReDiagnoseIncidentCluster(
     cluster_ID : UUID
     ) returns {

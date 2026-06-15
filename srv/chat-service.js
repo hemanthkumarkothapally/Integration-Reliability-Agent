@@ -1,5 +1,5 @@
 import cds from '@sap/cds';
-
+import { updateDailyMetrics ,updateDailyAIMetrics} from './utils/daily-metrics.js';
 async function callAI(destination, messages, system = null, maxTokens = 256) {
     const payload = {
         anthropic_version: "bedrock-2023-05-31",
@@ -18,7 +18,16 @@ async function callAI(destination, messages, system = null, maxTokens = 256) {
         },
         data: payload
     });
+    console.log("Received AI Response:", JSON.stringify(response, null, 2));
 
+     await updateDailyAIMetrics(
+        {
+          aiRequests: 1,
+          totalInputTokens: response?.usage?.input_tokens ?? null,
+          totalOutputTokens: response?.usage?.output_tokens ?? null,
+          totalTokens: (response?.usage?.input_tokens ?? null) + (response?.usage?.output_tokens ?? null)
+        }
+      );
     return {
         text: response?.content?.[0]?.text ?? null,
         tokenCount: (response?.usage?.output_tokens ?? null) + (response?.usage?.input_tokens ?? null),
@@ -52,6 +61,11 @@ export default cds.service.impl(async function () {
             title: title || UserQuery,
         };
         await srv.run(INSERT.into(ChatSessions).entries(newConv));
+        await updateDailyAIMetrics(
+        {
+         totalChatSessions: 1
+        }
+      );
         return newConv;
     });
 
@@ -68,16 +82,20 @@ export default cds.service.impl(async function () {
             return req.error(400, "Missing conversationId or userMessage");
         }
         let uid = cds.utils.uuid();
+        let reference = null;
         // 1. Save user message first
         await INSERT.into('com.cytechies.integration.reliability.Messages').entries({
             ID: uid,
             conversation_ID: conversationId,
             role: 'user',
-            referiFlow_ID: referiFlowID || null,
-            referCluster_ID: referClusterID || null,
             content: userMessage,
 
         });
+         await updateDailyAIMetrics(
+        {
+         totalUserMessages: 1
+        }
+        );
 
         try {
             // 2. Load full history (includes the message we just inserted)
@@ -92,6 +110,12 @@ export default cds.service.impl(async function () {
 
             if (referClusterID) {
                 // Fetch recent incidents for the cluster
+                const clusterData = await SELECT.one
+                    .from('com.cytechies.integration.reliability.IncidentClusters').where({
+                        ID: referClusterID
+                    });
+                reference = `Cluster:${clusterData.errorType}`;
+
                 const incidents = await SELECT
                     .from('com.cytechies.integration.reliability.Incidents')
                     .where({
@@ -133,6 +157,8 @@ export default cds.service.impl(async function () {
                                     })
                             })
                     });
+
+                reference = `iFlow:${iflowData.iFlowName}`;
 
                 if (iflowData) {
                     // 3. Fetch latest 2 raw incidents tied directly to this specific iFlow name
@@ -204,12 +230,17 @@ export default cds.service.impl(async function () {
                 conversation_ID: conversationId,
                 role: 'assistant',
                 content: aiText,
+                reference: reference,
                 tokenCount: outputTokens
             };
             await srv.run(UPDATE(Messages)
-                .set({ tokenCount: inputTokens })
+                .set({ tokenCount: inputTokens , reference: reference})
                 .where({ ID: uid }));
             await srv.run(INSERT.into(Messages).entries(newAiMessage));
+
+            await updateDailyAIMetrics({
+                totalAIMessages: 1
+            });
             newAiMessage.inputTokens = inputTokens;
             newAiMessage.outputTokens = outputTokens;
             return newAiMessage;

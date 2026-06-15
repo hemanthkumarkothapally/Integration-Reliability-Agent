@@ -1,4 +1,3 @@
-
 import cds from '@sap/cds';
 import {
   normalizeCpiError,
@@ -18,7 +17,7 @@ import {
 import {
   generateClusterRecommendation
 } from './utils/ai-recommendation-util.js';
-
+import { updateDailyMetrics ,updateDailyAIMetrics} from './utils/daily-metrics.js';
 import { cleanupData } from './utils/Cleanup-util.js';
 export default cds.service.impl(async function () {
 
@@ -26,7 +25,7 @@ export default cds.service.impl(async function () {
   console.log("========== POLLER SERVICE STARTED ==========");
   let IS_API;
   let db;
- 
+
   try {
     db = await cds.connect.to('db');
     console.log("Connected to DB");
@@ -49,7 +48,7 @@ export default cds.service.impl(async function () {
     ApplicationSettings
   } = db.entities;
   const { IncidentClusters } = srv.entities;
-   try {
+  try {
     const tenants =
       await SELECT.from(Tenants)
         .where({ isActive: true });
@@ -62,94 +61,99 @@ export default cds.service.impl(async function () {
     console.error(err);
     console.error(err.stack);
   }
- this.on('getFailedLogs', async (req) => {
-  
-  // 1. Instantly respond to BTP Job Scheduler to prevent the 15-second timeout
-  if (req._ && req._.res) {
-    req._.res.status(202).send('Job accepted and running in background');
-  } else {
-    req.reply('Job accepted');
-  }
+  this.on('getFailedLogs', async (req) => {
 
-  // 2. Use CAP's native background worker (cds.spawn)
-  // This safely detaches the process while keeping your database connection alive
-  cds.spawn({ tenant: req.tenant, user: req.user }, async (tx) => {
-    console.log("========== getFailedLogs BACKGROUND START ==========");
-    
-    try {
-    const tenants = await tx.read('Tenants').where({ isActive: true });
+    // 1. Instantly respond to BTP Job Scheduler to prevent the 15-second timeout
+    if (req._ && req._.res) {
+      req._.res.status(202).send('Job accepted and running in background');
+    } else {
+      req.reply('Job accepted');
+    }
 
-    const allResults = [];
+    // 2. Use CAP's native background worker (cds.spawn)
+    // This safely detaches the process while keeping your database connection alive
+    cds.spawn({ tenant: req.tenant, user: req.user }, async (tx) => {
+      console.log("========== getFailedLogs BACKGROUND START ==========");
 
-    for (const tenant of tenants) {
+      try {
+        const tenants = await tx.read('Tenants').where({ isActive: true });
 
-        try {
+        const allResults = [];
 
-            console.log(`Processing Tenant: ${tenant.tenantName}`);
+        for (const tenant of tenants) {
+
+          try {
 
             const tenantResults = await runPoll(tenant);
 
             allResults.push(...tenantResults);
 
-        } catch (err) {
+          } catch (err) {
 
             console.error(
-                `Polling failed for tenant ${tenant.tenantName}`,
-                err
+              `Polling failed for tenant ${tenant.tenantName}`,
+              err
             );
 
             // Continue with next tenant
+          }
         }
-    }
 
-    console.log(`Total Failed Logs Processed: ${allResults.length}`);
-    console.log("========== getFailedLogs BACKGROUND SUCCESS ==========");
+        console.log(`Total Failed Logs Processed: ${allResults.length}`);
+        console.log("========== getFailedLogs BACKGROUND SUCCESS ==========");
+        return { status: 'success', processedLogs: allResults.length };
 
-} catch (err) {
+      } catch (err) {
 
-    console.error("========== getFailedLogs BACKGROUND FAILED ==========");
-    console.error(err);
+        console.error("========== getFailedLogs BACKGROUND FAILED ==========");
+        console.error(err);
+        return { status: 'error', message: err.message || 'An error occurred during manual polling.' };
+      }
+    });
 
-}
   });
-
-});
 
   async function runPoll(tenant) {
     console.log("========== runPoll START ==========");
     // await DELETE.from(Incidents);
     try {
-      const IS_API =
-        await cds.connect.to(
-          tenant.destinationName
-        );
-      console.log(
-        `Connected to ${tenant.destinationName}`
-      );
+      // const IS_API =
+      //   await cds.connect.to(
+      //     tenant.destinationName
+      //   );
+      // console.log(
+      //   `Connected to ${tenant.destinationName}`
+      // );
       /* LAST POLL TIMESTAMP */
+      await updateDailyMetrics(
+        tenant.ID,
+        {
+          pollRuns: 1
+        }
+      );
       console.log("Fetching latest artifact timestamp...");
       const latestArtifact = await SELECT.one.from(MonitoredArtifacts)
-  .orderBy({ lastPollTimestamp: 'desc' });
+        .orderBy({ lastPollTimestamp: 'desc' });
 
-//console.log("Latest Artifact:", latestArtifact);
+      //console.log("Latest Artifact:", latestArtifact);
 
-// 1. Fallback to 5 minutes ago if no previous polling record exists
-const dateFiveMinAgo = new Date(Date.now() - 5 * 60 * 1000);
+      // 1. Fallback to 5 minutes ago if no previous polling record exists
+      const dateFiveMinAgo = new Date(Date.now() - 5 * 60 * 1000);
 
-// 2. CRITICAL FIX: Ensure rawTimestamp is evaluated as a Date instance
-const rawTimestamp = latestArtifact ? new Date(latestArtifact.lastPollTimestamp) : dateFiveMinAgo;
+      // 2. CRITICAL FIX: Ensure rawTimestamp is evaluated as a Date instance
+      const rawTimestamp = latestArtifact ? new Date(latestArtifact.lastPollTimestamp) : dateFiveMinAgo;
 
-console.log("Raw Timestamp:", rawTimestamp);
+      console.log("Raw Timestamp:", rawTimestamp);
 
-// 3. Strip out milliseconds/Z characters to satisfy SAP CPI's OData parser
-const lastPollTimestamp = rawTimestamp.toISOString().split('.')[0];
+      // 3. Strip out milliseconds/Z characters to satisfy SAP CPI's OData parser
+      const lastPollTimestamp = rawTimestamp.toISOString().split('.')[0];
 
-console.log("Formatted Timestamp:", lastPollTimestamp);
+      console.log("Formatted Timestamp:", lastPollTimestamp);
 
-/* CPI logs Filter */
-const filter = `Status eq 'FAILED' and LogEnd gt datetime'${lastPollTimestamp}'`;
+      /* CPI logs Filter */
+      const filter = `Status eq 'FAILED' and LogEnd lt datetime'${lastPollTimestamp}'`;
 
-console.log("Generated Filter:", filter);
+      console.log("Generated Filter:", filter);
 
 
       // const path = `/api/v1/MessageProcessingLogs?$filter=${encodeURIComponent(filter)}`;
@@ -157,14 +161,10 @@ console.log("Generated Filter:", filter);
       console.log("CPI API Path:", path);
       console.log("Calling CPI MessageProcessingLogs API...");
 
-      const response = await ApiCall(IS_API, {
-        method: 'GET',
-        path
-      });
+      const response = await ApiCall(tenant, path);
 
-      // console.log("CPI Response:");
-      // console.log(JSON.stringify(response, null, 2));
-
+      console.log("CPI Response:");
+      console.log(JSON.stringify(response, null, 2));
       if (!response) {
 
         console.error("CPI Response is NULL");
@@ -202,10 +202,7 @@ console.log("Generated Filter:", filter);
 
           // console.log("Calling ErrorInformation API:", errorPath);
 
-          const errorMessage = await ApiCall(IS_API, {
-            method: 'GET',
-            path: errorPath
-          });
+          const errorMessage = await ApiCall(tenant, errorPath);
 
           // console.log("Error Message Response:");
           // console.log(errorMessage);
@@ -216,10 +213,7 @@ console.log("Generated Filter:", filter);
 
           // console.log("Calling AdapterAttributes API:", adapterPath);
 
-          const adapterRes = await ApiCall(IS_API, {
-            method: 'GET',
-            path: adapterPath
-          });
+          const adapterRes = await ApiCall(tenant, adapterPath);
 
           // console.log("Adapter Response:");
           // console.log(JSON.stringify(adapterRes, null, 2));
@@ -307,13 +301,19 @@ console.log("Generated Filter:", filter);
         console.log(`✅ Inserted ${newLogs.length} incidents`);
       }
 
+      await updateDailyMetrics(
+        tenant.ID,
+        {
+          newIncidents: newLogs.length
+        }
+      );
+
       /* UPDATE MONITORED ARTIFACTS */
 
       console.log("Updating MonitoredArtifacts...");
       await upsertMonitoredArtifacts(
         MonitoredArtifacts,
         newLogs,
-        IS_API,
         tenant
       );
       console.log(" MonitoredArtifacts Updated");
@@ -330,6 +330,12 @@ console.log("Generated Filter:", filter);
     } catch (err) {
       console.error("❌ runPoll FAILED");
       console.error(err);
+      await updateDailyMetrics(
+        tenant.ID,
+        {
+          pollFailures: 1
+        }
+      );
       throw err;
     }
   }
@@ -470,6 +476,16 @@ console.log("Generated Filter:", filter);
       /*
        * RETURN SAVED RECORD
        */
+
+      await updateDailyAIMetrics(
+        {
+          recommendationsGenerated: 1,
+          aiRequests: 1,
+          totalInputTokens: aiResult.audit.inputTokens,
+          totalOutputTokens: aiResult.audit.outputTokens,
+          totalTokens: aiResult.audit.inputTokens + aiResult.audit.outputTokens
+        }
+      );
 
       return await SELECT.one
         .from(ClusterRecommendations)
@@ -649,7 +665,7 @@ console.log("Generated Filter:", filter);
   });
   this.on('cleanupRetentionData', async (req) => {
     try {
-      const result = await cleanupData(Incidents, IncidentClusters, ClusterRecommendations,ApplicationSettings);
+      const result = await cleanupData(Incidents, IncidentClusters, ClusterRecommendations, ApplicationSettings);
       return { message: result };
     } catch (error) {
       console.error('Data cleanup failed:', error);

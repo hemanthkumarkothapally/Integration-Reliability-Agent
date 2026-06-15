@@ -2,12 +2,14 @@ import cds from '@sap/cds';
 import { generateClusterRecommendation } from './utils/ai-recommendation-util.js';
 import { runPoll } from './utils/log-helper.js';
 import { refreshArtifactDashboard } from './utils/clustering-util.js';
+import { updateDailyMetrics ,updateDailyAIMetrics} from './utils/daily-metrics.js';
+
 import { getIncidentTrend, getClusterSeverityChart, getIflowSeverityChart } from './utils/dashboard-charts.js';
 export default cds.service.impl(async function () {
 
-    const { IncidentClusters, Recommendations, Playbooks, MonitoredArtifacts, ClusterArtifacts , Tenants} = this.entities;
+    const { IncidentClusters, Recommendations, Playbooks, MonitoredArtifacts, ClusterArtifacts, Tenants } = this.entities;
 
-    const { Incidents, TokenUsages} = cds.entities('com.cytechies.integration.reliability');
+    const { Incidents, TokenUsages } = cds.entities('com.cytechies.integration.reliability');
     this.after('READ', IncidentClusters, async (data) => {
         console.log("READ Event Triggered");
 
@@ -422,7 +424,19 @@ export default cds.service.impl(async function () {
             artifactId,
             note
         } = req.data;
-
+        const artifact =
+            await SELECT.one
+                .from(MonitoredArtifacts)
+                .where({
+                    ID: artifactId
+                });
+        console.log("Artifact to update:", artifact);
+        const tenant =
+            await SELECT.one
+                .from(Tenants)
+                .where({
+                    ID: artifact.tenant_ID
+                });
         if (!clusterId) {
             req.error(400, 'clusterId is required');
         }
@@ -459,6 +473,13 @@ export default cds.service.impl(async function () {
             .where({
                 ID: relation.ID
             });
+
+         await updateDailyMetrics(
+            tenant.ID,
+            {
+                resolvedIflowClusters: 1
+            }
+        );
         const openRelations =
             await SELECT.from(ClusterArtifacts)
                 .where({
@@ -478,6 +499,12 @@ export default cds.service.impl(async function () {
                 .where({
                     ID: clusterId
                 });
+            await updateDailyMetrics(
+                tenant.ID,
+                {
+                    resolvedClusters: 1
+                }
+            );
         }
         else {
             await UPDATE(IncidentClusters)
@@ -489,15 +516,15 @@ export default cds.service.impl(async function () {
                     ID: clusterId
                 });
         }
-        const artifact =
-            await SELECT.one
-                .from(MonitoredArtifacts)
-                .where({
-                    ID: artifactId
-                });
-        console.log("Artifact to update:", artifact);
+        
         if (artifact) {
-
+            const resolvedCount = await SELECT.from(Incidents)
+                .where({
+                    cluster_ID: clusterId,
+                    iFlowName: artifact.iFlowName,
+                    status: 'OPEN'
+                })
+                .columns('ID');
             await UPDATE(Incidents)
                 .set({
                     status: 'RESOLVED'
@@ -506,19 +533,22 @@ export default cds.service.impl(async function () {
                     cluster_ID: clusterId,
                     iFlowName: artifact.iFlowName
                 });
+            await updateDailyMetrics(
+                tenant.ID,
+                {
+                    resolvedIncidents: resolvedCount.length
+                }
+            );
         }
-        const tenant =
-            await SELECT.one
-                .from(Tenants)
-                .where({
-                    ID: artifact.tenant_ID
-                });
+        
         await refreshArtifactDashboard(
             MonitoredArtifacts,
             ClusterArtifacts,
             IncidentClusters,
             tenant
         );
+
+
         return 'Cluster resolved successfully';
     }
     );
