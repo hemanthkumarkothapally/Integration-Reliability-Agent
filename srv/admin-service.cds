@@ -7,6 +7,7 @@ service AdminService{
     entity MonitoredArtifacts as projection on IRA.MonitoredArtifacts;
     entity TokenUsages as projection on IRA.TokenUsages;
     entity DailyMetrics as projection on IRA.DailyMetrics;
+    entity ApplicationSettings as projection on IRA.ApplicationSettings;
     function triggerManualPoll() returns array of Map;
     function getDestinations() returns many {
     Name        : String;
@@ -53,4 +54,5 @@ function getUsageAnalytics(
     fromDate : Date,
     toDate   : Date
 ) returns UsageAnalytics;
+function testHanaStorage() returns String;
 }

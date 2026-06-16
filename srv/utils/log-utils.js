@@ -750,7 +750,7 @@ export async function ApiCall(tenant, path) {
   } catch (err) {
 
     console.error(
-      `API Error (${options.path}):`,
+      `API Error:`,
       err.message
     );
     throw err;

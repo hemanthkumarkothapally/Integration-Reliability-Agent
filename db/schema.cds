@@ -148,8 +148,9 @@ entity DailyMetrics : cuid, managed {
     // Polling
     pollRuns                : Integer default 0;
     pollFailures            : Integer default 0;
-    // Reliability
-    averageResolutionHours  : Decimal(10,2);
+    lastPollAt              : Timestamp;
+    lastPollStatus          : String(20);
+   
 }
 entity DailyAIMetrics : cuid, managed {
     metricDate              : Date;

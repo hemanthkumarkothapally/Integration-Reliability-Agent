@@ -103,6 +103,7 @@ sap.ui.define([
         await oContext.execute();
         const aData = oContext.getBoundContext().getObject();
 console.log("Usage analytics data: ", aData);
+return aData;
             // return {
 
             //     summary: { TokenConsumption: 40000000000, hanaStorage: 1.378, totalIncidents: 27383, totalClusters: "39" },

@@ -39,7 +39,7 @@ sap.ui.define([
             oRouter.getRoute("RouteAIAssistant")
                 .attachPatternMatched(function () {
                     // console.log("AIAssistant route matched!");
-                                this.getOwnerComponent().getModel("globalModel").setProperty("/selectedKey","ai");
+                    this.getOwnerComponent().getModel("globalModel").setProperty("/selectedKey", "ai");
                     this._resetToWelcomePage();
                     // this.onBackPress();
                 }, this);
@@ -357,6 +357,7 @@ sap.ui.define([
         },
 
         onConversationSelect: function (oEvent) {
+            debugger
             this.showBusy();
             let oListItem = oEvent.getParameter("listItem");
             let oCtx = oListItem.getBindingContext("chatModel");
@@ -480,7 +481,7 @@ sap.ui.define([
                 let sIflowName = oJsonModel.getProperty("/iFlowName");
 
                 // Mock the structure expected by _buildMessageItem
-                oMessageData.referiFlow = { ID: sIflowId, iFlowName: sIflowName };
+                oMessageData.reference = `iFlow: ${sIflowName}`;
 
                 oAction.setParameter("referiFlowID", sIflowId);
                 oJsonModel.setProperty("/iFlowDataEnabled", false);
@@ -491,7 +492,7 @@ sap.ui.define([
                 let sClusterName = oJsonModel.getProperty("/clusterName");
 
                 // Mock the structure expected by _buildMessageItem
-                oMessageData.referCluster = { ID: sClusterId, errorType: sClusterName };
+                oMessageData.reference = `Cluster: ${sClusterName}`;
 
                 oAction.setParameter("referClusterID", sClusterId);
                 oJsonModel.setProperty("/clusterDataEnabled", false);
@@ -597,6 +598,7 @@ sap.ui.define([
             this.hideBusy();
         },
         _loadMessageBatch: function (sConversationId, bPrepend) {
+            debugger
             if (this._bLoadingMessages) return;
             this._bLoadingMessages = true;
 
@@ -610,11 +612,11 @@ sap.ui.define([
             ], [
                 new sap.ui.model.Filter("conversation_ID", sap.ui.model.FilterOperator.EQ, sConversationId)
             ], {
-                $expand: "referiFlow,referCluster"
+                // $expand: "referiFlow,referCluster"
             });
 
             oListBinding.requestContexts(nSkip, PAGE_SIZE).then(function (aContexts) {
-                // debugger
+                debugger
                 // ✅ Stale check: if conversation changed or reset happened, discard results
                 let sActiveId = oJsonModel.getProperty("/currentConversationId");
                 if (sActiveId !== sConversationId) {
@@ -715,7 +717,7 @@ sap.ui.define([
         _createReferenceData: function (oRefData, sType) {
             const isCluster = sType === "Cluster";
             return new MessageStrip({
-                text: isCluster ? oRefData.errorType : oRefData.iFlowName,
+                text: oRefData,
                 type: isCluster ? sap.ui.core.MessageType.Warning : sap.ui.core.MessageType.Information,
                 showIcon: true,
                 customIcon: isCluster ? "sap-icon://chain-link" : "sap-icon://process"
@@ -724,7 +726,7 @@ sap.ui.define([
         ,
 
         _buildMessageItem: function (sText, sSender, oData, bStream = false) {
-            // console.log("Building message item. Sender:", sSender, "Data:", oData);
+            console.log("Building message item. Sender:", sSender, "Data:", oData);
 
             const isAssistant = sSender === "assistant";
             if (this.byId("welcomePage")) {
@@ -766,12 +768,17 @@ sap.ui.define([
 
                 let aBubbleItems = [];
 
-                if (oData && oData.referCluster) {
-                    aBubbleItems.push(this._createReferenceData(oData.referCluster, "Cluster"));
+                if (oData && oData.reference) {
+                    let sReferenceType = "unknown";
+                    if (oData.reference && oData.reference.includes("iFlow:")) {
+                        sReferenceType = "iFlow";
+                    } else if (oData.reference && oData.reference.includes("Cluster:")) {
+                        sReferenceType = "Cluster";
+                    }
+                    let sCleanRef = oData.reference.replace("iFlow:", "").replace("Cluster:", "").trim();
+                    aBubbleItems.push(this._createReferenceData(sCleanRef, sReferenceType));
                 }
-                if (oData && oData.referiFlow) {
-                    aBubbleItems.push(this._createReferenceData(oData.referiFlow, "iFlow"));
-                }
+
 
                 // 4. Add the actual message text and token info
                 aBubbleItems.push(oUserText);

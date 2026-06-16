@@ -1,5 +1,6 @@
 import cds from '@sap/cds';
-import { updateDailyMetrics ,updateDailyAIMetrics} from './utils/daily-metrics.js';
+import { updateDailyMetrics, updateDailyAIMetrics } from './utils/daily-metrics.js';
+
 async function callAI(destination, messages, system = null, maxTokens = 256) {
     const payload = {
         anthropic_version: "bedrock-2023-05-31",
@@ -20,14 +21,14 @@ async function callAI(destination, messages, system = null, maxTokens = 256) {
     });
     console.log("Received AI Response:", JSON.stringify(response, null, 2));
 
-     await updateDailyAIMetrics(
+    await updateDailyAIMetrics(
         {
-          aiRequests: 1,
-          totalInputTokens: response?.usage?.input_tokens ?? null,
-          totalOutputTokens: response?.usage?.output_tokens ?? null,
-          totalTokens: (response?.usage?.input_tokens ?? null) + (response?.usage?.output_tokens ?? null)
+            aiRequests: 1,
+            totalInputTokens: response?.usage?.input_tokens ?? null,
+            totalOutputTokens: response?.usage?.output_tokens ?? null,
+            totalTokens: (response?.usage?.input_tokens ?? null) + (response?.usage?.output_tokens ?? null)
         }
-      );
+    );
     return {
         text: response?.content?.[0]?.text ?? null,
         tokenCount: (response?.usage?.output_tokens ?? null) + (response?.usage?.input_tokens ?? null),
@@ -40,6 +41,8 @@ export default cds.service.impl(async function () {
 
     let srv = this;
     const { ChatSessions, Messages } = this.entities;
+    const db = await cds.connect.to('db');
+    const { ApplicationSettings } = db.entities;
     const destination = await cds.connect.to('GenAIHubDestination');
 
 
@@ -62,10 +65,10 @@ export default cds.service.impl(async function () {
         };
         await srv.run(INSERT.into(ChatSessions).entries(newConv));
         await updateDailyAIMetrics(
-        {
-         totalChatSessions: 1
-        }
-      );
+            {
+                totalChatSessions: 1
+            }
+        );
         return newConv;
     });
 
@@ -90,18 +93,32 @@ export default cds.service.impl(async function () {
             content: userMessage,
 
         });
-         await updateDailyAIMetrics(
-        {
-         totalUserMessages: 1
-        }
+        await updateDailyAIMetrics(
+            {
+                totalUserMessages: 1
+            }
         );
 
         try {
             // 2. Load full history (includes the message we just inserted)
+            const historySetting = await SELECT.one
+                .from(ApplicationSettings)
+                .columns('settingValue')
+                .where({
+                    settingKey: 'HISTORY_MESSAGE_COUNT'
+                });
+
+            const historyLimit =
+                Number(historySetting?.settingValue || 5);
+
+            console.log(
+                "History message count limit:",
+                historyLimit
+            );
             const history = await SELECT
                 .from('com.cytechies.integration.reliability.Messages')
                 .where({ conversation_ID: conversationId })
-                .orderBy('createdAt desc').limit(5); // Load last 11 messages to stay within token limits (including current)
+                .orderBy('createdAt desc').limit(historyLimit);
 
             let systemPrompt = `You are an AI assistant for SAP Integration Suite incident management.
                 [TASK] Answer questions specifically about this cluster. Be concise and technical.
@@ -114,7 +131,20 @@ export default cds.service.impl(async function () {
                         ID: referClusterID
                     });
                 reference = `Cluster:${clusterData.errorType}`;
+                const incidentSetting = await SELECT.one
+                    .from(ApplicationSettings)
+                    .columns('settingValue')
+                    .where({
+                        settingKey: 'MAX_INCIDENTS_FOR_AI'
+                    });
 
+                const incidentLimit =
+                    Number(incidentSetting?.settingValue || 5);
+
+                console.log(
+                    "Incident count limit:",
+                    incidentLimit
+                );
                 const incidents = await SELECT
                     .from('com.cytechies.integration.reliability.Incidents')
                     .where({
@@ -123,7 +153,7 @@ export default cds.service.impl(async function () {
                     .orderBy({
                         logEnd: 'desc'
                     })
-                    .limit(2);
+                    .limit(incidentLimit);
 
                 // Clean up the payload to save tokens and keep the LLM focused
                 const incidentSummary = incidents.map((i, index) => ({
@@ -142,7 +172,6 @@ export default cds.service.impl(async function () {
                     ${JSON.stringify(incidentSummary, null, 2)}
                     `;
             }
-
             if (referiFlowID) {
                 // 2. Fetch iFlow details along with its associated cluster mapping links
                 const iflowData = await SELECT.one
@@ -209,7 +238,7 @@ export default cds.service.impl(async function () {
 
             // 3. Fallback: If tokens breach limits, drop history and send ONLY the current message
             let finalMessages = messages;
-            if (estimatedInputTokens > maxInputLimit-50) {
+            if (estimatedInputTokens > maxInputLimit - 50) {
                 console.warn(`Token limit exceeded (${estimatedInputTokens}/${maxInputLimit}). Dropping history context.`);
 
                 // Keep only the very last item in the array (the user's current query)
@@ -217,7 +246,7 @@ export default cds.service.impl(async function () {
             }
             // const fullPayloadText = systemPrompt + finalMessages.map(m => `\n[${m.role}]: ${m.content}`).join('');
 
-            
+
 
             //{ text: systemPrompt+ fullPayloadText,tokenCount: 1234,inputTokens: 1234,outputTokens: 1234};//
             const { text, tokenCount, inputTokens, outputTokens } = await callAI(destination, finalMessages, systemPrompt, maxInputLimit);
@@ -233,7 +262,7 @@ export default cds.service.impl(async function () {
                 tokenCount: outputTokens
             };
             await srv.run(UPDATE(Messages)
-                .set({ tokenCount: inputTokens , reference: reference})
+                .set({ tokenCount: inputTokens, reference: reference })
                 .where({ ID: uid }));
             await srv.run(INSERT.into(Messages).entries(newAiMessage));
 
@@ -250,7 +279,7 @@ export default cds.service.impl(async function () {
             const fallback = {
                 conversation_ID: conversationId,
                 role: 'assistant',
-                content: "Chat AI error:"+ err.reason?.response?.body ?? err.message,
+                content: "Chat AI error:" + err.reason?.response?.body ?? err.message,
                 tokenCount: null
             };
 

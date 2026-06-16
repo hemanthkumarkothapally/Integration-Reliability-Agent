@@ -37,10 +37,13 @@ export async function updateDailyMetrics(
     const updatePayload = {};
 
     Object.entries(updates).forEach(([k, v]) => {
+        if(k === 'lastPollAt' || k === 'lastPollStatus') {
+            updatePayload[k] = v;
+        } else {
 
         updatePayload[k] =
             (metric[k] || 0) + v;
-
+        }
     });
     const healthyArtifacts = await SELECT.from(MonitoredArtifacts)
         .where({
