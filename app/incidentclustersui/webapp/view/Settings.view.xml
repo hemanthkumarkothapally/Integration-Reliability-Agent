@@ -89,6 +89,9 @@
                                                 <Column>
                                                     <Text text="URL"/>
                                                 </Column>
+                                                <Column visible="false" >
+                                                <Text text="IsActive"></Text>
+                                                </Column>
                                                 <Column hAlign="Center">
                                                     <Text text="Actions"/>
                                                 </Column>
@@ -100,6 +103,7 @@
                                                         <Text text="{tenantId}"/>
                                                         <Text text="{destinationName}"/>
                                                         <Text text="{url}"/>
+                                                        <Text text="{isActive}" visible="false"></Text>
                                                         <HBox justifyContent="Center">
                                                             <Button
                                                                 icon="sap-icon://edit"

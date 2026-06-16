@@ -4,7 +4,7 @@ export async function updateDailyMetrics(
     tenantId,
     updates
 ) {
-    const { MouniteredArtifacts, Tenants } = cds.entities('com.cytechies.integration.reliability');
+    const { MonitoredArtifacts, Tenants } = cds.entities('com.cytechies.integration.reliability');
 
     const today =
         new Date().toISOString().split('T')[0];
@@ -42,27 +42,29 @@ export async function updateDailyMetrics(
             (metric[k] || 0) + v;
 
     });
-    const healthyArtifacts = await SELECT.from(MouniteredArtifacts)
+    const healthyArtifacts = await SELECT.from(MonitoredArtifacts)
         .where({
             tenant_ID: tenantId,
-            status: 'HEALTHY',
-            ModifiedAt: {
+            overallSeverity: 'HEALTHY',
+            modifiedAt: {
                 '>=': new Date(new Date().setHours(0, 0, 0, 0)).toISOString(),
                 '<=': new Date(new Date().setHours(23, 59, 59, 999)).toISOString()
             }
-        }).count();
-    const criticalArtifacts = await SELECT.from(MouniteredArtifacts)
+        });
+    const criticalArtifacts = await SELECT.from(MonitoredArtifacts)
         .where({
             tenant_ID: tenantId,
-            status: 'CRITICAL',
-            ModifiedAt: {
+            overallSeverity: 'CRITICAL',
+            modifiedAt: {
                 '>=': new Date(new Date().setHours(0, 0, 0, 0)).toISOString(),
                 '<=': new Date(new Date().setHours(23, 59, 59, 999)).toISOString()
             }
-        }).count();
+        });
 
-    updatePayload.healthyArtifacts = healthyArtifacts;
-    updatePayload.criticalArtifacts = criticalArtifacts;
+
+updatePayload.healthyArtifacts = healthyArtifacts.length;
+updatePayload.criticalArtifacts = criticalArtifacts.length;
+  
     await UPDATE(DailyMetrics)
         .set(updatePayload)
         .where({ ID: metric.ID });

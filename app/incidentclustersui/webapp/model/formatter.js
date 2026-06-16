@@ -108,9 +108,9 @@ sap.ui.define([], function () {
             return sName.substring(0, 2).toUpperCase();
         },
         formatLargeNumber: function (iNum) {
-            // if (!iNum) {
-            //     return "0";
-            // }
+            if (!iNum) {
+                return "0";
+            }
             // For Billions
             if (iNum >= 1000000000) {
                 return (iNum / 1000000000).toFixed(0) + "B";

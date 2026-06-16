@@ -11,9 +11,217 @@ const {
   IncidentClusters,
   Playbooks,
   MonitoredArtifacts,
-  ClusterArtifacts
+  ClusterArtifacts, DailyMetrics, DailyAIMetrics
 } = db.entities('com.cytechies.integration.reliability');
     const srv = this;
+    this.on("getUsageAnalytics", async (req) => {
+    const {
+        fromDate,
+        toDate
+    } = req.data;
+
+    const metrics = await SELECT
+    .from(DailyMetrics)
+    .where({
+        metricDate: {
+            between: fromDate,
+            and: toDate
+        }
+    })
+    .orderBy("metricDate");
+
+    const aiMetrics = await SELECT
+    .from(DailyAIMetrics)
+    .where({
+        metricDate: {
+            between: fromDate,
+            and: toDate
+        }
+    })
+    .orderBy("metricDate");
+    const summary = {
+
+        TokenConsumption:
+            aiMetrics.reduce(
+                (s, r) => s + (r.totalTokens || 0),
+                0
+            ),
+
+        hanaStorage: 0,
+
+        totalIncidents:
+            metrics.reduce(
+                (s, r) => s + (r.newIncidents || 0),
+                0
+            ),
+
+        totalClusters:
+            metrics.reduce(
+                (s, r) => s + (r.newClusters || 0),
+                0
+            )
+    };
+
+    const totalChatSessions =
+        aiMetrics.reduce(
+            (s, r) => s + (r.totalChatSessions || 0),
+            0
+        );
+
+    const days =
+        Math.max(metrics.length, 1);
+
+    const supportingMetrics = {
+
+        AverageTokensPerChatSession:
+            totalChatSessions > 0
+                ? Math.round(
+                    summary.TokenConsumption /
+                    totalChatSessions
+                )
+                : 0,
+
+        AverageTokensPerCluster:
+            summary.totalClusters > 0
+                ? Math.round(
+                    summary.TokenConsumption /
+                    summary.totalClusters
+                )
+                : 0,
+
+        AverageHANAGrowthPerDay: 0,
+
+        AverageTokensPerDay:
+            Math.round(
+                summary.TokenConsumption /
+                days
+            ),
+
+        AverageIncidentsPerDay:
+            Math.round(
+                summary.totalIncidents /
+                days
+            ),
+
+        AverageClusterResolution:
+            metrics.length
+                ? Number(
+                    (
+                        metrics.reduce(
+                            (s, r) =>
+                                s +
+                                Number(
+                                    r.averageResolutionHours || 0
+                                ),
+                            0
+                        ) / metrics.length
+                    ).toFixed(2)
+                )
+                : 0
+    };
+
+    const tokenUsage = aiMetrics.map(metric => ({
+
+        date:
+            new Date(metric.metricDate)
+                .toLocaleDateString(
+                    "en-US",
+                    {
+                        month: "short",
+                        day: "numeric"
+                    }
+                ),
+
+        input:
+            metric.totalInputTokens || 0,
+
+        output:
+            metric.totalOutputTokens || 0
+
+    }));
+
+    const hanaStorage = [];
+
+    const hanaStorageConfig = {
+        labels: {}
+    };
+
+    const topConsumers = [
+
+        {
+            name: "AI Recommendations",
+            roles: [
+                "Cluster Recommendations"
+            ],
+            amount: String(
+                aiMetrics.reduce(
+                    (s, r) =>
+                        s +
+                        (r.recommendationsGenerated || 0),
+                    0
+                )
+            )
+        },
+
+        {
+            name: "Chat Sessions",
+            roles: [
+                "AI Chat"
+            ],
+            amount: String(
+                totalChatSessions
+            )
+        },
+
+        {
+            name: "User Messages",
+            roles: [
+                "Prompt Requests"
+            ],
+            amount: String(
+                aiMetrics.reduce(
+                    (s, r) =>
+                        s +
+                        (r.totalUserMessages || 0),
+                    0
+                )
+            )
+        },
+
+        {
+            name: "AI Messages",
+            roles: [
+                "Responses"
+            ],
+            amount: String(
+                aiMetrics.reduce(
+                    (s, r) =>
+                        s +
+                        (r.totalAIMessages || 0),
+                    0
+                )
+            )
+        }
+
+    ];
+
+    return {
+
+        summary,
+
+        supportingMetrics,
+
+        tokenUsage,
+
+        hanaStorage,
+
+        hanaStorageConfig,
+
+        topConsumers
+
+    };
+
+});
     this.on('triggerManualPoll', async (req) => {
 
          try {
