@@ -10,28 +10,38 @@ sap.ui.define([
   "use strict";
 
   return BaseController.extend("com.cytechies.integration.reliability.incidentclustersui.controller.Settings", {
-    async onInit() {
+    onInit: function () { // 1. Remove 'async' from here
       const oGlobalModel = this.getOwnerComponent().getModel("globalModel");
       oGlobalModel.setProperty("/editMode", false);
-      this.getOwnerComponent().getModel("globalModel").setProperty("/selectedKey", "settings");
+      oGlobalModel.setProperty("/selectedKey", "settings");
+      
       const oRouter = this.getOwnerComponent().getRouter();
+      oRouter.getRoute("RouteSettings").attachPatternMatched(this._onRouteMatched, this);
 
-      oRouter.getRoute("RouteSettings")
-        .attachPatternMatched(
-          this._onRouteMatched,
-          this
-        );
+      // 2. Call your async logic here, but DO NOT use 'await'
+      this._loadApplicationSettings(); 
+    },
 
-
-      const oModel = this.getOwnerComponent().getModel();
-      const oBinding = oModel.bindList("/ApplicationSettings");
-      const aContexts = await oBinding.requestContexts();
-      const mSettings = {};
-      aContexts.forEach(oContext => {
-        const oSetting = oContext.getObject();
-        mSettings[oSetting.settingKey] = oContext;
-      });
-      this._mSettings = mSettings;
+    // 3. Create a new async helper method for your OData calls
+    _loadApplicationSettings: async function () {
+      try {
+        const oModel = this.getOwnerComponent().getModel();
+        const oBinding = oModel.bindList("/ApplicationSettings");
+        
+        // This is safe to await here because it's not blocking the UI5 lifecycle
+        const aContexts = await oBinding.requestContexts(); 
+        const mSettings = {};
+        
+        aContexts.forEach(oContext => {
+          const oSetting = oContext.getObject();
+          mSettings[oSetting.settingKey] = oContext;
+        });
+        
+        this._mSettings = mSettings;
+      } catch (oError) {
+        // This acts as a safety net if the backend 500s during settings load
+        console.error("Failed to load application settings:", oError);
+      }
     },
     _onRouteMatched: async function (oEvent) {
       await this.getSettingsData();

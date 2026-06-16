@@ -1,5 +1,5 @@
 sap.ui.define([
-    "./BaseController",
+  "./BaseController",
   "../model/formatter",
   "sap/ui/model/json/JSONModel"
 ], (BaseController, formatter, JSONModel) => {
@@ -7,29 +7,45 @@ sap.ui.define([
 
   return BaseController.extend("com.cytechies.integration.reliability.incidentclustersui.controller.Overview", {
     formatter: formatter,
-    onInit: async function () {
-                this.getOwnerComponent().getModel("globalModel").setProperty("/selectedKey","overview");
+    onInit: function () {
+      this.getOwnerComponent().getModel("globalModel").setProperty("/selectedKey", "overview");
 
-this.getView().setBusy(true);      //  this.byId("sideNavigation")
-      //   .setSelectedKey("overview");
-      await this.loadDashboardCharts();
-      await this.loadTopCriticalIflows();
-       const oRouter =
-                this.getOwnerComponent().getRouter();
+      // Call the async function, but do not return it or await it here
+      this._initializeDashboardData();
 
-            oRouter.getRoute("RouteOverview")
-                .attachPatternMatched(
-                    this._onRouteMatched,
-                    this
-                );
-this.getView().setBusy(false);
+      const oRouter = this.getOwnerComponent().getRouter();
+      oRouter.getRoute("RouteOverview").attachPatternMatched(this._onRouteMatched, this);
+    },
+
+    // Create a separate async helper
+    _initializeDashboardData: async function () {
+      this.getView().setBusy(true);
+      try {
+        await Promise.all([
+          this.loadDashboardCharts(),
+          this.loadTopCriticalIflows()
+        ]);
+      } catch (oError) {
+        this.showErrorDialog(oError, "Dashboard Load Failed");
+      } finally {
+        this.getView().setBusy(false);
+      }
     },
     _onRouteMatched: async function (oEvent) {
       this.getView().setBusy(true);
-      await this.loadDashboardCharts();
-      await this.loadTopCriticalIflows();
-      this.getView().setBusy(false);
 
+      try {
+        // Use standard Promise.all. If either fails, it throws immediately to the catch block.
+        await Promise.all([
+          this.loadDashboardCharts(),
+          this.loadTopCriticalIflows()
+        ]);
+      } catch (oError) {
+        // Use the NEW dialog function we built in BaseController
+        this.showErrorDialog(oError, "Dashboard Load Error");
+      } finally {
+        this.getView().setBusy(false);
+      }
     },
     onAfterRendering: function () {
       setTimeout(function () {
@@ -49,7 +65,7 @@ this.getView().setBusy(false);
 
       }.bind(this), 500);
     },
-   
+
     onIFlowBtn: function () {
 
       this.getOwnerComponent()
@@ -98,75 +114,43 @@ this.getView().setBusy(false);
 
 
     loadTopCriticalIflows: async function () {
-
       const oModel = this.getOwnerComponent().getModel();
-      const sSelectedTenant = this.getOwnerComponent().getModel("globalModel").getProperty("/settings/DEFAULT_TENANT");
-      console.log("Selected Tenant:", sSelectedTenant);
+      
+      // FIX: Add || "ALL" fallback so undefined doesn't crash the parameter assignment
+      const sSelectedTenant = this.getOwnerComponent().getModel("globalModel").getProperty("/settings/DEFAULT_TENANT") || "ALL";
+      console.log("Selected Tenant (iFlows):", sSelectedTenant);
 
-      try {
-
-        const oContext = oModel.bindContext("/getTopCriticalIflows(...)");
-        if (sSelectedTenant !== "ALL") {
-          oContext.setParameter(
-            "tenantId",
-            sSelectedTenant
-          );
-        }
-
-        await oContext.execute();
-
-        const aData =
-          oContext.getBoundContext().getObject().value;
-
-        const oTopIflowsModel = new JSONModel({
-          topIflows: aData
-        });
-
-        this.getView().setModel(
-          oTopIflowsModel,
-          "topIflows"
-        );
-
-        console.log("Top Critical iFlows:", aData);
-
-      } catch (oError) {
-        console.error(
-          "Error loading Top Critical iFlows",
-          oError
-        );
+      const oContext = oModel.bindContext("/getTopCriticalIflows(...)");
+      
+      if (sSelectedTenant !== "ALL") {
+        oContext.setParameter("tenantId", sSelectedTenant);
       }
+
+      // If the DB is down, this execute() will throw the 500 error up to _onRouteMatched
+      await oContext.execute(); 
+
+      const aData = oContext.getBoundContext().getObject().value;
+      this.getView().setModel(new JSONModel({ topIflows: aData }), "topIflows");
     },
+
     loadDashboardCharts: async function () {
-
       const oModel = this.getOwnerComponent().getModel();
-      // debugger
-      const sSelectedTenant = this.getOwnerComponent().getModel("globalModel").getProperty("/settings/DEFAULT_TENANT");
-      console.log("Selected Tenant:", sSelectedTenant);
+      
+      // FIX: Add || "ALL" fallback
+      const sSelectedTenant = this.getOwnerComponent().getModel("globalModel").getProperty("/settings/DEFAULT_TENANT") || "ALL";
+      console.log("Selected Tenant (Charts):", sSelectedTenant);
 
-      try {
-
-        const oContext = oModel.bindContext("/getDashboardCharts(...)");
-        if (sSelectedTenant !== "ALL") {
-          oContext.setParameter(
-            "tenantId",
-            sSelectedTenant
-          );
-        }
-        await oContext.execute();
-
-        const oResult = oContext.getBoundContext().getObject();
-
-        console.log("Dashboard Charts:", oResult);
-
-        const oChartModel = new sap.ui.model.json.JSONModel(oResult);
-
-        this.getView().setModel(oChartModel, "chart");
-
-      } catch (oError) {
-
-        console.error("Error loading dashboard charts", oError);
-
+      const oContext = oModel.bindContext("/getDashboardCharts(...)");
+      
+      if (sSelectedTenant !== "ALL") {
+        oContext.setParameter("tenantId", sSelectedTenant);
       }
+      
+      // If the DB is down, this execute() will throw the 500 error up to _onRouteMatched
+      await oContext.execute(); 
+      
+      const oResult = oContext.getBoundContext().getObject();
+      this.getView().setModel(new JSONModel(oResult), "chart");
     },
     onTopIflowPress: function (oEvent) {
 

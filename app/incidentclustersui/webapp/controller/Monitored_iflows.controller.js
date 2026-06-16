@@ -53,73 +53,73 @@ sap.ui.define([
             this.getOwnerComponent().getModel("globalModel").setProperty("/selectedKey", "iflows");
 
             try {
-
                 this.getView().setBusy(true);
                 this.byId("idIFLowSeverityTabBar").setSelectedKey('ALL');
+                
                 const oTable = this.byId("idMonitoredArtifacts");
-
                 if (!oTable) {
                     this.getView().setBusy(false);
                     return;
                 }
-
+                
                 const oBinding = oTable.getBinding("items");
-
                 if (!oBinding) {
                     this.getView().setBusy(false);
                     return;
                 }
 
-                // Build all filters
                 const aFilters = this._getDropdownAndDateFilters();
-                // 2. Fetch the default tenant filters and combine them
                 const aTenantFilters = this.getGlobalTenantFilter();
                 const aCombinedFilters = aFilters.concat(aTenantFilters);
-                console.log(
-                    "Applying Filters:",
-                    aFilters
-                );
 
-                // Wait for filtered data
                 await new Promise((resolve) => {
-
-                    oBinding.attachEventOnce(
-                        "dataReceived",
-                        resolve
-                    );
-
+                    oBinding.attachEventOnce("dataReceived", (oEvt) => {
+                        const oError = oEvt.getParameter("error");
+                        if (oError) {
+                            // Immediately pop the dialog on initial load failure
+                            this.showErrorDialog(oError, "Initial Data Load Failed");
+                        }
+                        resolve();
+                    });
+                    
                     oBinding.filter(aCombinedFilters);
-
-                    // Optional fallback
-                    setTimeout(resolve, 3000);
-
+                    setTimeout(resolve, 3000); // Failsafe resolve
                 });
 
-                console.log(
-                    "Tenant:",
-                    this.getSelectedTenantId()
-                );
-
-                console.log(
-                    "Data loaded successfully"
-                );
-
-                // Filter dropdowns too
                 await this._filterDropdownBindings();
                 await this._updateSeverityCounts();
 
             } catch (oError) {
-
-                console.error(
-                    "Error during route match",
-                    oError
-                );
-
+                this.showErrorDialog(oError, "Routing Error");
             } finally {
-
                 this.getView().setBusy(false);
-
             }
+        },
+
+        onRefreshPress: function () {
+            const oTable = this.byId("idMonitoredArtifacts");
+            const oBinding = oTable && oTable.getBinding("items");
+
+            if (oBinding) {
+                oBinding.attachEventOnce("dataReceived", (oEvt) => {
+                    const oError = oEvt.getParameter("error");
+                    if (oError) {
+                        this._iPollFailures = (this._iPollFailures || 0) + 1;
+                        
+                        // Fire dialog immediately if polling fails (or adjust to >= 2 to prevent network blip spam)
+                        if (this._iPollFailures >= 1) {
+                            this.showErrorDialog(oError, "Live Polling Error");
+                        }
+                    } else {
+                        this._iPollFailures = 0; // Reset counter on success
+                    }
+                });
+            }
+
+            this.onFilteriFlow();
+            this._filterDropdownBindings();
+            this._updateSeverityCounts();
+            this._updateRefreshTime();
         },
         _updateSeverityCounts: async function () {
 
@@ -228,14 +228,14 @@ sap.ui.define([
                 oPackageBinding.filter(aTenantFilters);
             }
         },
-        onRefreshPress: function () {
+        // onRefreshPress: function () {
 
-            this.onFilteriFlow();
+        //     this.onFilteriFlow();
 
-            this._filterDropdownBindings();
-            this._updateSeverityCounts();
-            this._updateRefreshTime();
-        },
+        //     this._filterDropdownBindings();
+        //     this._updateSeverityCounts();
+        //     this._updateRefreshTime();
+        // },
 
 
         // onRefreshPress: function () {

@@ -9,8 +9,8 @@ sap.ui.define([
   "use strict";
 
   return BaseController.extend("com.cytechies.integration.reliability.incidentclustersui.controller.App", {
-   async onInit() {
-          this.getView().setBusy(true);
+  onInit: function () { // Removed 'async'
+    this.getView().setBusy(true);
 
     const oToolPage = this.byId("toolPage1");
     const oHeader = oToolPage.getHeader();
@@ -20,19 +20,19 @@ sap.ui.define([
     oLogo.attachPress(this.onSideNavButtonPress, this);
     
     oHeader.insertContent(oLogo, 0);
-          this.getOwnerComponent().getModel("globalModel").setProperty("/selectedKey","overview");
-console.log("selectedKey:", this.getOwnerComponent().getModel("globalModel").getProperty("/selectedKey"));
+    this.getOwnerComponent().getModel("globalModel").setProperty("/selectedKey","overview");
+    console.log("selectedKey:", this.getOwnerComponent().getModel("globalModel").getProperty("/selectedKey"));
+    
     this.getView().setBusy(false);
-    const oRouter =
-                this.getOwnerComponent().getRouter();
+    
+    const oRouter = this.getOwnerComponent().getRouter();
 
-            oRouter.getRoute("RouteOverview")
-                .attachPatternMatched(
-                    this._onRouteMatched,
-                    this
-                );
-
-},
+    oRouter.getRoute("RouteOverview")
+        .attachPatternMatched(
+            this._onRouteMatched,
+            this
+        );
+  },
 _onRouteMatched: async function (oEvent) {
       await this.getSettingsData();
 },

@@ -6,8 +6,9 @@ sap.ui.define([
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
     "sap/f/library",
-    "../model/formatter"
-], function (Controller, MessageToast, BusyIndicator, JSONModel, Filter, FilterOperator, fioriLibrary, formatter) {
+    "../model/formatter",
+    "sap/m/MessageBox" // 1. Added to the end of the array
+], function (Controller, MessageToast, BusyIndicator, JSONModel, Filter, FilterOperator, fioriLibrary, formatter,MessageBox) {
     "use strict";
 
     return Controller.extend("com.cytechies.integration.reliability.incidentclustersui.controller.BaseController", {
@@ -229,6 +230,38 @@ sap.ui.define([
                     sTenantId
                 )
             ];
+        },
+
+        showErrorDialog: function (oError, sCustomTitle) {
+            if (!oError) return;
+
+            let oClassified = this.classifyError(oError);
+            let sTitle = sCustomTitle || (oClassified.service + " Error Detected");
+            
+            MessageBox.error(oClassified.message, {
+                title: sTitle,
+                details: oError.message || JSON.stringify(oError),
+                actions: [MessageBox.Action.CLOSE]
+            });
+        },
+
+        classifyError: function (oError) {
+            const iStatus = oError?.status || oError?.statusCode;
+            const sMsg = (oError?.message || "").toLowerCase();
+
+            if (sMsg.includes("hana") || sMsg.includes("database") || sMsg.includes("ehana")) {
+                return { service: "HANA Database", message: "The HANA database is currently unavailable or rejecting connections." };
+            }
+            if (sMsg.includes("destination") || iStatus === 502) {
+                return { service: "Destination Service", message: "A required BTP destination service is unreachable (Bad Gateway)." };
+            }
+            if (iStatus === 500 || sMsg.includes("internal")) {
+                return { service: "Internal Server", message: "The Cloud Foundry application crashed or returned an internal server error." };
+            }
+            if (iStatus === 0 || sMsg.includes("network") || sMsg.includes("failed to fetch")) {
+                return { service: "Connection", message: "Network polling failed. Cannot reach the server." };
+            }
+            return { service: "Unknown API", message: oError?.message || "An unexpected system error occurred." };
         }
 
     });
