@@ -22,16 +22,6 @@ sap.ui.define([
           this
         );
 
-
-      const oModel = this.getOwnerComponent().getModel();
-      const oBinding = oModel.bindList("/ApplicationSettings");
-      const aContexts = await oBinding.requestContexts();
-      const mSettings = {};
-      aContexts.forEach(oContext => {
-        const oSetting = oContext.getObject();
-        mSettings[oSetting.settingKey] = oContext;
-      });
-      this._mSettings = mSettings;
     },
     _onRouteMatched: async function (oEvent) {
       await this.getSettingsData();
@@ -54,43 +44,28 @@ sap.ui.define([
     },
     async onSave() {
 
-      const oModel = this.getOwnerComponent().getModel();
-      const oGlobalModel = this.getOwnerComponent().getModel("globalModel");
-
-      const mSettings =
-        oGlobalModel.getProperty("/settings");
-
-      const aContexts =
-        oGlobalModel.getProperty("/settingContexts");
-
       try {
 
-        // aContexts.forEach(oContext => {
+        const oModel =
+          this.getOwnerComponent()
+            .getModel("AdminModel");
 
-        //   const sKey =
-        //     oContext.getObject().settingKey;
+        await oModel.submitBatch("$auto");
 
-        //   oContext.setProperty(
-        //     "settingValue",
-        //     String(mSettings[sKey])
-        //   );
-        // });
+        this.getOwnerComponent()
+          .getModel("globalModel")
+          .setProperty("/editMode", false);
 
-        // await oModel.submitBatch("$auto");
-
-        oGlobalModel.setProperty(
-          "/editMode",
-          false
-        );
-
-        sap.m.MessageToast.show(
+        MessageToast.show(
           "Settings saved successfully"
         );
 
-      } catch (oError) {
+      } catch (err) {
 
-        sap.m.MessageBox.error(
-          "Error saving settings"
+        console.error(err);
+
+        MessageBox.error(
+          "Failed to save settings"
         );
       }
     },
@@ -103,41 +78,48 @@ sap.ui.define([
         .setProperty("/editMode", false);
     },
     async _loadSettings() {
-      const oODataModel = this.getOwnerComponent().getModel();
-      const oGlobalModel = this.getOwnerComponent().getModel("globalModel");
+       const oModel = this.getOwnerComponent().getModel('AdminModel');
 
-      // Load Tenants
-      const aTenants = [{
-        ID: "ALL",
-        tenantName: "All Tenants"
-      }];
-
-      const aBackendTenants = await oODataModel
-        .bindList("/Tenants")
-        .requestContexts();
-
-      aBackendTenants.forEach(oContext => {
-        aTenants.push(oContext.getObject());
-      });
-
-      oGlobalModel.setProperty("/tenants", aTenants);
-
-      // Load Settings
-      const aSettingsContexts = await oODataModel
+      const aContexts = await oModel
         .bindList("/ApplicationSettings")
         .requestContexts();
 
-      const mSettings = {};
+      this._settings = {};
 
-      aSettingsContexts.forEach(oContext => {
+      aContexts.forEach(oContext => {
         const oSetting = oContext.getObject();
-
-        mSettings[oSetting.settingKey] =
-          oSetting.settingValue;
+        this._settings[oSetting.settingKey] = oContext;
       });
+      console.log("Settings Contexts: ", this._settings);
 
-      oGlobalModel.setProperty("/settings", mSettings);
-      console.log("Default Tenant: " + oGlobalModel.getProperty("/settings/DEFAULT_TENANT"));
+      this.byId("aiProvider")
+        .setBindingContext(this._settings.AI_PROVIDER, "AdminModel");
+
+      this.byId("aiModel")
+        .setBindingContext(this._settings.AI_MODEL, "AdminModel");
+
+      this.byId("maxIncidents")
+        .setBindingContext(this._settings.MAX_INCIDENTS_FOR_AI, "AdminModel");
+
+      this.byId("historyCount")
+        .setBindingContext(this._settings.HISTORY_MESSAGE_COUNT, "AdminModel");
+
+      this.byId("pollingMode")
+        .setBindingContext(this._settings.POLLING_MODE, "AdminModel");
+
+      this.byId("pollingInterval")
+        .setBindingContext(this._settings.POLLING_INTERVAL_MINUTES, "AdminModel");
+
+      this.byId("incidentRetention")
+        .setBindingContext(this._settings.INCIDENT_RETENTION_DAYS, "AdminModel");
+
+      this.byId("clusterRetention")
+        .setBindingContext(this._settings.CLUSTER_RETENTION_DAYS, "AdminModel");
+
+      this.byId("iflowRetention")
+        .setBindingContext(this._settings.MONITORING_RETENTION_DAYS, "AdminModel");
+
+      await this.loadLastPollInfo();
     },
     async onAddTenant() {
       let oGlobalModel = this.getOwnerComponent().getModel("globalModel");
@@ -287,6 +269,101 @@ sap.ui.define([
       } else {
         this._oTenantDialog.open();
       }
+    },
+    async onPollNow() {
+
+    const oView = this.getView();
+
+    try {
+
+        oView.setBusy(true);
+        oView.setBusyIndicatorDelay(0);
+
+        const oModel =
+            this.getOwnerComponent()
+                .getModel("AdminModel");
+
+        const oAction =
+            oModel.bindContext(
+                "/triggerManualPoll(...)"
+            );
+
+        await oAction.execute();
+
+        const oResult =
+            oAction
+                .getBoundContext()
+                .getObject();
+console.log("Polling Result: ", oResult.value[0].processedLogs);
+        MessageToast.show(
+            `Polling completed. Processed ${oResult.value[0].processedLogs} logs`
+        );
+
+    } catch (err) {
+
+        MessageBox.error(
+            "Polling failed"
+        );
+
+    } finally {
+
+        oView.setBusy(false);
+
     }
+},
+onPollingModeChange: function (oEvent) {
+
+    const iIndex =
+        oEvent.getSource().getSelectedIndex();
+
+    const bAutomatic = iIndex === 0;
+
+    this.getOwnerComponent()
+        .getModel("globalModel")
+        .setProperty(
+            "/isAutomaticPolling",
+            bAutomatic
+        );
+
+},
+async loadLastPollInfo() {
+
+    const oModel =
+        this.getOwnerComponent()
+            .getModel("AdminModel");
+
+    const aContexts = await oModel
+        .bindList(
+            "/DailyMetrics",
+            undefined,
+            [
+                new sap.ui.model.Sorter(
+                    "lastPollAt",
+                    true // descending
+                )
+            ]
+        )
+        .requestContexts(0, 1);
+
+    if (aContexts.length) {
+
+        const oMetric =
+            aContexts[0].getObject();
+
+        const oGlobalModel =
+            this.getOwnerComponent()
+                .getModel("globalModel");
+
+        oGlobalModel.setProperty(
+            "/lastPollAt",
+            oMetric.lastPollAt
+        );
+
+        oGlobalModel.setProperty(
+            "/lastPollStatus",
+            oMetric.lastPollStatus
+        );
+    }
+}
   });
 });

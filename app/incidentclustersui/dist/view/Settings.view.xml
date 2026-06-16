@@ -23,16 +23,13 @@
 
         <f:content>
         
-
+<layout:Grid hSpacing="1">
                             <!-- ============================================ -->
                             <!-- 1. TENANT CONFIGURATION                      -->
                             <!-- ============================================ -->
-                            <f:GridList >
-                            <f:customLayout>
-                                <cssgrid:GridBasicLayout gridTemplateColumns="repeat(auto-fit, minmax(30rem, 2fr))" gridGap="1rem" />
-                            </f:customLayout>
+                            <!-- <f:GridList >
                             <f:items>
-                            <f:GridListItem >
+                            <f:GridListItem > -->
                             <f:Card height="100%" class="sapUiMediumMarginEnd sapUiMediumMarginBottom">
                                 <f:header>
                                     <cards:Header
@@ -122,8 +119,8 @@
                                                 </VBox>
                                 </f:content>
                             </f:Card>
-</f:GridListItem>
-<f:GridListItem>
+<!-- </f:GridListItem>
+<f:GridListItem> -->
 
                             <!-- ============================================ -->
                             <!-- 2. AI CONFIGURATION                          -->
@@ -140,39 +137,36 @@
                                     <form:SimpleForm layout="ColumnLayout" editable="true">
                                     <form:content>
                                                 <Label text="AI Provider"/>
-                                                <Text text="{globalModel>/settings/AI_PROVIDER}" />
+                                                <Text id="aiProvider" text="{AdminModel>settingValue}" />
                                                 <Label text="Model"/>
-                                                <Text text="{globalModel>/settings/AI_MODEL}"></Text>
+                                                <Text id="aiModel" text="{AdminModel>settingValue}"></Text>
                                                 <Label text="Max Incidents Sent to AI"/>
                                                 <StepInput
+                                                    id="maxIncidents"
                                                     width="100%"
                                                     description="Count"
                                                     textAlign="Center"
                                                     min="1"
                                                     max="100"
-                                                    value="{globalModel>/settings/MAX_INCIDENTS_FOR_AI}"
+                                                    value="{AdminModel>settingValue}"
                                                     enabled="{globalModel>/editMode}"/>
                                                 <Label text="Historical Messages Count"/>
                                                 <StepInput
+                                                id="historyCount"
                                                     width="100%"
                                                     description="Count"
                                                     textAlign="Center"
                                                     min="0"
                                                     max="100"
-                                                    value="{globalModel>/settings/HISTORY_MESSAGE_COUNT}"
+                                                    value="{AdminModel>settingValue}"
                                                     enabled="{globalModel>/editMode}"/>
-                                                <Label text="Auto Generate Recommendations"/>
-                                                <Label text="Automatically generate recommendations after clustering."/>
-                                                <Switch
-                                                   
-                                                    enabled="{globalModel>/editMode}"/> 
                                     </form:content>
                                     </form:SimpleForm>
                                     </VBox>
                                 </f:content>
                             </f:Card>
-</f:GridListItem>
-<f:GridListItem>
+<!-- </f:GridListItem>
+<f:GridListItem> -->
 
                             <!-- ============================================ -->
                             <!-- 3. POLLING CONFIGURATION                     -->
@@ -190,42 +184,62 @@
                                     <form:content>
                                     <Label text="Polling Mode"></Label>
                                      <RadioButtonGroup
+                                     id="pollingMode"
                                                 columns="2"
                                                 enabled="{globalModel>/editMode}"
-                                                selectedIndex="{
-                                                    path: 'settingsModel>/POLLING_MODE/settingValue',
-                                                    formatter: '.formatPollingModeIndex'
-                                                }"
+                                                selectedIndex="{AdminModel>settingValue}"
                                                 select=".onPollingModeChange">
-                                                <RadioButton text="Automatic"/>
+                                                <RadioButton  text="Automatic"/>
                                                 <RadioButton text="Manual"/>
                                             </RadioButtonGroup>
                                              <Label text="Polling Frequency"/>
                                              <StepInput
+                                                id="pollingInterval"
                                                     width="100%"
                                                     description="Mins"
                                                     textAlign="Center"
                                                     min="5"
                                                     max="180"
                                                     step="5"
-                                                    value="{settingsModel>/POLLING_INTERVAL_MINUTES/settingValue}"
+                                                    value="{AdminModel>settingValue}"
                                                     enabled="{globalModel>/editMode}"/>
                                     </form:content>
                                     </form:SimpleForm>
 
                                         <!-- Poll Now -->
-                                        <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiMediumMarginTop">
-                                            <Button
-                                                text="Poll Now"
-                                                icon="sap-icon://play"
-                                                press=".onPollNow"/>
-                                            <Text text="Last Poll: {globalModel>/lastPoll}"/>
-                                        </HBox>
+                                        <HBox
+    justifyContent="SpaceBetween"
+    alignItems="Center"
+    class="sapUiMediumMarginTop">
+
+    <Button
+        text="Poll Now"
+        icon="sap-icon://play"
+        press=".onPollNow"/>
+
+    <VBox alignItems="End">
+
+        <Text
+            text="{= 'Last Poll: ' + ${globalModel>/lastPollAt} }"/>
+
+        <ObjectStatus
+            text="{globalModel>/lastPollStatus}"
+            state="{=
+                ${globalModel>/lastPollStatus} === 'SUCCESS'
+                ? 'Success'
+                : ${globalModel>/lastPollStatus} === 'FAILED'
+                ? 'Error'
+                : 'None'
+            }"/>
+
+    </VBox>
+
+</HBox>
                                     </VBox>
                                 </f:content>
                             </f:Card>
-</f:GridListItem>
-<f:GridListItem>
+<!-- </f:GridListItem>
+<f:GridListItem> -->
 
                             <!-- ============================================ -->
                             <!-- 4. CHAT & HISTORY CONFIGURATION              -->
@@ -357,7 +371,7 @@
                             <!-- ============================================ -->
                             <!-- 6. DATA RETENTION                            -->
                             <!-- ============================================ -->
-                            <f:Card height="100%" class="sapUiMediumMarginBottom">
+                            <f:Card height="100%" width="100%" class="sapUiMediumMarginBottom">
                                 <f:header>
                                     <cards:Header
                                         iconSrc="sap-icon://database"
@@ -370,30 +384,33 @@
                                     <form:content>
                                             <Label text="Incident Retention Days"/>
                                             <StepInput
+                                            id="incidentRetention"
                                                width="100%"
                                                 description="Count"
                                                 textAlign="Center"
                                                 min="1"
                                                 max="3650"
-                                                value="{settingsModel>/INCIDENT_RETENTION_DAYS/settingValue}"
+                                                value="{AdminModel>settingValue}"
                                                 enabled="{globalModel>/editMode}"/>
                                             <Label text="Cluster Retention Days"/>
                                             <StepInput
+                                            id="clusterRetention"
                                                width="100%"
                                                 description="Count"
                                                 textAlign="Center"
                                                 min="1"
                                                 max="3650"
-                                                value="{settingsModel>/CLUSTER_RETENTION_DAYS/settingValue}"
+                                                value="{AdminModel>settingValue}"
                                                 enabled="{globalModel>/editMode}"/>
                                             <Label text="Monitoring Iflows Retention Days"/>
                                             <StepInput
+                                            id="iflowRetention"
                                                width="100%"
                                                 description="Count"
                                                 textAlign="Center"
                                                 min="1"
                                                 max="3650"
-                                                value="{settingsModel>/MONITORING_RETENTION_DAYS/settingValue}"
+                                                value="{AdminModel>settingValue}"
                                                 enabled="{globalModel>/editMode}"/>
                                                 </form:content>
                                     </form:SimpleForm>
@@ -407,9 +424,11 @@
                                   
                                 </f:content>
                             </f:Card>
-</f:GridListItem>
+
+<!-- </f:GridListItem>
                             </f:items>
-                            </f:GridList>
+                            </f:GridList> -->
+                            </layout:Grid>
                       
                     
 

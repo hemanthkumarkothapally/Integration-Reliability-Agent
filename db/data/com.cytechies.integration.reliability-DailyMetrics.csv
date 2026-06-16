@@ -1,0 +1,1 @@
+ID,metricDate,tenant_ID,newIncidents,resolvedIncidents,newClusters,resolvedClusters,resolvedIflowClusters,recommendationsGenerated,monitoredArtifacts,healthyArtifacts,criticalArtifacts,pollRuns,pollFailures,lastPollAt,lastPollStatus,createdAt,createdBy,modifiedAt,modifiedBy

@@ -384,7 +384,20 @@ export default cds.service.impl(async function () {
       /*
        * FETCH SAMPLE INCIDENTS
        */
+         const incidentSetting = await SELECT.one
+                    .from(ApplicationSettings)
+                    .columns('settingValue')
+                    .where({
+                        settingKey: 'MAX_INCIDENTS_FOR_AI'
+                    });
 
+                const incidentLimit =
+                    Number(incidentSetting?.settingValue || 5);
+
+                console.log(
+                    "Incident count limit:",
+                    incidentLimit
+                );
       const incidents =
         await SELECT
           .from(Incidents)
@@ -394,7 +407,7 @@ export default cds.service.impl(async function () {
           .orderBy({
             logEnd: 'desc'
           })
-          .limit(2);
+          .limit(incidentLimit);
 
       /*
        * GENERATE AI RECOMMENDATION
