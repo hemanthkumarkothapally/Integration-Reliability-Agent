@@ -74,7 +74,6 @@ export default cds.service.impl(async function () {
 
     this.on('chat', async (req) => {
         const { conversationId, referiFlowID, referClusterID, userMessage } = req.data;
-        // Max allowed input tokens for your model context window constraint
         const maxInputLimit = 1524;
         console.log("Received chat request for conversationId:", conversationId, "with iFlow reference:", referiFlowID, "and cluster reference:", referClusterID);
 
