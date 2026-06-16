@@ -94,116 +94,125 @@ sap.ui.define([
          * Static mock data. In a real app replace this with the result of
          * an OData/REST call and call this.getView().getModel("chart").setData(...)
          */
-        _getChartData: function () {
-            return {
+        _getChartData: async function () {
 
-                summary: { TokenConsumption: 40000000000, hanaStorage: 1.378, totalIncidents: 27383, totalClusters: "39" },
+             const oModel = this.getOwnerComponent().getModel("AdminModel");
+        const oContext = oModel.bindContext("/getUsageAnalytics(...)");
+        oContext.setParameter("fromDate", "2026-06-04");
+        oContext.setParameter("toDate", "2026-06-15");
+        await oContext.execute();
+        const aData = oContext.getBoundContext().getObject();
+console.log("Usage analytics data: ", aData);
+return aData;
+            // return {
 
-                supportingMetrics: {
-                    AverageTokensPerChatSession: 6800000,
-                    AverageTokensPerCluster: 3500000,
-                    AverageHANAGrowthPerDay: 0.05,
-                    AverageTokensPerDay: 1500000,
-                    AverageIncidentsPerDay: 120000,
-                    AverageClusterResolution: 12
+            //     summary: { TokenConsumption: 40000000000, hanaStorage: 1.378, totalIncidents: 27383, totalClusters: "39" },
 
-                },
+            //     supportingMetrics: {
+            //         AverageTokensPerChatSession: 6800000,
+            //         AverageTokensPerCluster: 3500000,
+            //         AverageHANAGrowthPerDay: 0.05,
+            //         AverageTokensPerDay: 1500000,
+            //         AverageIncidentsPerDay: 120000,
+            //         AverageClusterResolution: 12
 
-                /* ---- line: Token usage (input / output) ------------- */
-                tokenUsage: [
-                    { date: "May 11", input: 273000, output: 155000 },
-                    { date: "May 14", input: 310000, output: 170000 },
-                    { date: "May 17", input: 330000, output: 185000 },
-                    { date: "May 20", input: 362000, output: 201000 },
-                    { date: "May 23", input: 345000, output: 196000 },
-                    { date: "May 26", input: 390000, output: 220000 },
-                    { date: "May 29", input: 410000, output: 235000 },
-                    { date: "Jun 2", input: 455000, output: 260000 },
-                    { date: "Jun 5", input: 490000, output: 290000 }
-                ],
+            //     },
 
-
-                /* ---- stacked column: HANA storage (GB by schema) ---- */
-                // hanaStorage: [
-                //     { "date": "May 11", "tenant1": 0.38, "tenant2": 0.14, "tenant3": 0.06, "tenant4": 0.05, "tenant5": 0.04, "tenant6": 0.03 },
-                //     { "date": "May 14", "tenant1": 0.42, "tenant2": 0.15, "tenant3": 0.07, "tenant4": 0.06, "tenant5": 0.05, "tenant6": 0.04 },
-                //     { "date": "May 17", "tenant1": 0.45, "tenant2": 0.18, "tenant3": 0.08, "tenant4": 0.07, "tenant5": 0.06, "tenant6": 0.04 },
-                //     { "date": "May 20", "tenant1": 0.49, "tenant2": 0.19, "tenant3": 0.09, "tenant4": 0.08, "tenant5": 0.06, "tenant6": 0.05 },
-                //     { "date": "May 23", "tenant1": 0.53, "tenant2": 0.21, "tenant3": 0.10, "tenant4": 0.09, "tenant5": 0.07, "tenant6": 0.06 },
-                //     { "date": "May 26", "tenant1": 0.58, "tenant2": 0.22, "tenant3": 0.11, "tenant4": 0.10, "tenant5": 0.08, "tenant6": 0.06 },
-                //     { "date": "May 29", "tenant1": 0.63, "tenant2": 0.25, "tenant3": 0.12, "tenant4": 0.11, "tenant5": 0.09, "tenant6": 0.07 },
-                //     { "date": "Jun 2", "tenant1": 0.70, "tenant2": 0.27, "tenant3": 0.14, "tenant4": 0.13, "tenant5": 0.10, "tenant6": 0.08 },
-                //     { "date": "Jun 5", "tenant1": 0.82, "tenant2": 0.39, "tenant3": 0.17, "tenant4": 0.15, "tenant5": 0.12, "tenant6": 0.09 }
-                // ],
-
-                hanaStorage: [
-                    { "date": "May 11" },
-                    { "date": "May 14", "tenant1": 0.42, "tenant2": 0.15, "tenant3": 0.07, "tenant4": 0.06, "tenant5": 0.05 },
-                    { "date": "May 17", "tenant1": 0.45, "tenant2": 0.18, "tenant3": 0.08, "tenant4": 0.07, "tenant5": 0.06 },
-                    { "date": "May 20", "tenant1": 0.49, "tenant2": 0.19, "tenant3": 0.09, "tenant5": 0.06 },
-                    { "date": "May 23", "tenant1": 0.53, "tenant2": 0.21, "tenant3": 0.10, "tenant4": 0.09, "tenant5": 0.07 },
-                    { "date": "May 26", "tenant1": 0.58, "tenant3": 0.11, "tenant4": 0.10, "tenant5": 0.08 },
-                    { "date": "May 29", "tenant2": 0.25, "tenant3": 0.12, "tenant4": 0.11, "tenant5": 0.09 },
-                    { "date": "Jun 2", "tenant1": 0.70, "tenant2": 0.27, "tenant3": 0.14, "tenant4": 0.13, "tenant5": 0.10 },
-                    { "date": "Jun 5", "tenant1": 0.82, "tenant2": 0.39, "tenant4": 0.15, "tenant5": 0.12 }
-                ],
+            //     /* ---- line: Token usage (input / output) ------------- */
+            //     tokenUsage: [
+            //         { date: "May 11", input: 273000, output: 155000 },
+            //         { date: "May 14", input: 310000, output: 170000 },
+            //         { date: "May 17", input: 330000, output: 185000 },
+            //         { date: "May 20", input: 362000, output: 201000 },
+            //         { date: "May 23", input: 345000, output: 196000 },
+            //         { date: "May 26", input: 390000, output: 220000 },
+            //         { date: "May 29", input: 410000, output: 235000 },
+            //         { date: "Jun 2", input: 455000, output: 260000 },
+            //         { date: "Jun 5", input: 490000, output: 290000 }
+            //     ],
 
 
-                hanaStorageConfig: {
-                    labels: {
-                        tenant1: "IRA Schema",
-                        tenant2: "Practice_March",
-                        tenant3: "DataBridge",
-                        tenant4: "FlowSync",
-                        tenant5: "NexusCore",
-                        // tenant6: "PulseOps"
-                    },
+            //     /* ---- stacked column: HANA storage (GB by schema) ---- */
+            //     // hanaStorage: [
+            //     //     { "date": "May 11", "tenant1": 0.38, "tenant2": 0.14, "tenant3": 0.06, "tenant4": 0.05, "tenant5": 0.04, "tenant6": 0.03 },
+            //     //     { "date": "May 14", "tenant1": 0.42, "tenant2": 0.15, "tenant3": 0.07, "tenant4": 0.06, "tenant5": 0.05, "tenant6": 0.04 },
+            //     //     { "date": "May 17", "tenant1": 0.45, "tenant2": 0.18, "tenant3": 0.08, "tenant4": 0.07, "tenant5": 0.06, "tenant6": 0.04 },
+            //     //     { "date": "May 20", "tenant1": 0.49, "tenant2": 0.19, "tenant3": 0.09, "tenant4": 0.08, "tenant5": 0.06, "tenant6": 0.05 },
+            //     //     { "date": "May 23", "tenant1": 0.53, "tenant2": 0.21, "tenant3": 0.10, "tenant4": 0.09, "tenant5": 0.07, "tenant6": 0.06 },
+            //     //     { "date": "May 26", "tenant1": 0.58, "tenant2": 0.22, "tenant3": 0.11, "tenant4": 0.10, "tenant5": 0.08, "tenant6": 0.06 },
+            //     //     { "date": "May 29", "tenant1": 0.63, "tenant2": 0.25, "tenant3": 0.12, "tenant4": 0.11, "tenant5": 0.09, "tenant6": 0.07 },
+            //     //     { "date": "Jun 2", "tenant1": 0.70, "tenant2": 0.27, "tenant3": 0.14, "tenant4": 0.13, "tenant5": 0.10, "tenant6": 0.08 },
+            //     //     { "date": "Jun 5", "tenant1": 0.82, "tenant2": 0.39, "tenant3": 0.17, "tenant4": 0.15, "tenant5": 0.12, "tenant6": 0.09 }
+            //     // ],
 
-                },
+            //     hanaStorage: [
+            //         { "date": "May 11" },
+            //         { "date": "May 14", "tenant1": 0.42, "tenant2": 0.15, "tenant3": 0.07, "tenant4": 0.06, "tenant5": 0.05 },
+            //         { "date": "May 17", "tenant1": 0.45, "tenant2": 0.18, "tenant3": 0.08, "tenant4": 0.07, "tenant5": 0.06 },
+            //         { "date": "May 20", "tenant1": 0.49, "tenant2": 0.19, "tenant3": 0.09, "tenant5": 0.06 },
+            //         { "date": "May 23", "tenant1": 0.53, "tenant2": 0.21, "tenant3": 0.10, "tenant4": 0.09, "tenant5": 0.07 },
+            //         { "date": "May 26", "tenant1": 0.58, "tenant3": 0.11, "tenant4": 0.10, "tenant5": 0.08 },
+            //         { "date": "May 29", "tenant2": 0.25, "tenant3": 0.12, "tenant4": 0.11, "tenant5": 0.09 },
+            //         { "date": "Jun 2", "tenant1": 0.70, "tenant2": 0.27, "tenant3": 0.14, "tenant4": 0.13, "tenant5": 0.10 },
+            //         { "date": "Jun 5", "tenant1": 0.82, "tenant2": 0.39, "tenant4": 0.15, "tenant5": 0.12 }
+            //     ],
 
-                topConsumers: [
-                    {
-                        name: "Subrahmanyam Raghunathan",
-                        roles: ["PaymentSync", "iFlow tuning", "Error handling"],
-                        amount: "104000203004"
-                    },
-                    {
-                        name: "Al Wu",
-                        roles: ["EDI flows", "SAP IS"],
-                        amount: "82000020300"
-                    },
-                    {
-                        name: "Raj",
-                        roles: ["Incident analysis", "Monitoring"],
-                        amount: "47000020300"
-                    },
-                    {
-                        name: "Venkatanarasimharajuvaripeta Thyagarajan",
-                        roles: ["General monitoring", "Alerting", "Token audits"],
-                        amount: "3200002030000000000000000000000"
-                    },
-                    {
-                        name: "Subrahmanyam Raghunathan",
-                        roles: ["PaymentSync", "iFlow tuning", "Error handling"],
-                        amount: "104000203004"
-                    },
-                    {
-                        name: "Al Wu",
-                        roles: ["EDI flows", "SAP IS"],
-                        amount: "82000020300"
-                    },
-                    {
-                        name: "Raj",
-                        roles: ["Incident analysis", "Monitoring"],
-                        amount: "47000020300"
-                    },
-                    {
-                        name: "Venkatanarasimharajuvaripeta Thyagarajan",
-                        roles: ["General monitoring", "Alerting", "Token audits"],
-                        amount: "3200002030000000000000000000000"
-                    },
-                ],
-            };
+
+            //     hanaStorageConfig: {
+            //         labels: {
+            //             tenant1: "IRA Schema",
+            //             tenant2: "Practice_March",
+            //             tenant3: "DataBridge",
+            //             tenant4: "FlowSync",
+            //             tenant5: "NexusCore",
+            //             // tenant6: "PulseOps"
+            //         },
+
+            //     },
+
+            //     topConsumers: [
+            //         {
+            //             name: "Subrahmanyam Raghunathan",
+            //             roles: ["PaymentSync", "iFlow tuning", "Error handling"],
+            //             amount: "104000203004"
+            //         },
+            //         {
+            //             name: "Al Wu",
+            //             roles: ["EDI flows", "SAP IS"],
+            //             amount: "82000020300"
+            //         },
+            //         {
+            //             name: "Raj",
+            //             roles: ["Incident analysis", "Monitoring"],
+            //             amount: "47000020300"
+            //         },
+            //         {
+            //             name: "Venkatanarasimharajuvaripeta Thyagarajan",
+            //             roles: ["General monitoring", "Alerting", "Token audits"],
+            //             amount: "3200002030000000000000000000000"
+            //         },
+            //         {
+            //             name: "Subrahmanyam Raghunathan",
+            //             roles: ["PaymentSync", "iFlow tuning", "Error handling"],
+            //             amount: "104000203004"
+            //         },
+            //         {
+            //             name: "Al Wu",
+            //             roles: ["EDI flows", "SAP IS"],
+            //             amount: "82000020300"
+            //         },
+            //         {
+            //             name: "Raj",
+            //             roles: ["Incident analysis", "Monitoring"],
+            //             amount: "47000020300"
+            //         },
+            //         {
+            //             name: "Venkatanarasimharajuvaripeta Thyagarajan",
+            //             roles: ["General monitoring", "Alerting", "Token audits"],
+            //             amount: "3200002030000000000000000000000"
+            //         },
+            //     ],
+            // };
         },
 
         /* =========================================================== */

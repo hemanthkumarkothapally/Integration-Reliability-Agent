@@ -9,16 +9,22 @@
         <VBox class="sapUiMediumMargin">
 
             <Label text="Tenant Name" required="true"/>
-            <Input id="tenantNameInput"/>
+            <Input id="tenantNameInput" value="{globalModel>/TenantDetails/tenantName}"/>
 
             <Label text="Tenant ID" required="true"/>
-            <Input id="tenantIdInput"/>
+            <Input id="tenantIdInput" value="{globalModel>/TenantDetails/tenantId}"/>
 
             <Label text="Destination Name" required="true"/>
-            <Input id="destinationInput"/>
+            <ComboBox id="destinationInput" selectedKey="{globalModel>/TenantDetails/destinationName}" change=".onDestinationChange" width="100%" items="{globalModel>/destinations}">
+            <items>
+            <core:Item text="{globalModel>Name}" key="{globalModel>Name}" ></core:Item>
+            </items>
+            </ComboBox>
 
-            <Label text="Region" required="true"/>
-            <Input id="regionInput"/>
+            <Label text="URL" required="true"/>
+            <Input id="urlInput" value="{globalModel>/TenantDetails/url}" editable="false"/>
+            <Label text="Active" required="true"/>
+            <Switch id="activeSwitch" state="{globalModel>/TenantDetails/isActive}"/>
 
         </VBox>
 
