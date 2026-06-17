@@ -23,13 +23,13 @@
 
         <f:content>
         
-<layout:Grid hSpacing="1">
-                            <!-- ============================================ -->
+<layout:Grid
+    defaultSpan="L6 M6 S12"
+    hSpacing="1"
+    vSpacing="1">                            <!-- ============================================ -->
                             <!-- 1. TENANT CONFIGURATION                      -->
                             <!-- ============================================ -->
-                            <!-- <f:GridList >
-                            <f:items>
-                            <f:GridListItem > -->
+                            
                             <f:Card height="100%" class="sapUiMediumMarginEnd sapUiMediumMarginBottom">
                                 <f:header>
                                     <cards:Header
@@ -119,8 +119,7 @@
                                                 </VBox>
                                 </f:content>
                             </f:Card>
-<!-- </f:GridListItem>
-<f:GridListItem> -->
+
 
                             <!-- ============================================ -->
                             <!-- 2. AI CONFIGURATION                          -->
@@ -165,13 +164,12 @@
                                     </VBox>
                                 </f:content>
                             </f:Card>
-<!-- </f:GridListItem>
-<f:GridListItem> -->
+
 
                             <!-- ============================================ -->
                             <!-- 3. POLLING CONFIGURATION                     -->
                             <!-- ============================================ -->
-                            <f:Card height="100%" class="sapUiMediumMarginBottom">
+                            <f:Card  class="sapUiMediumMarginBottom">
                                 <f:header>
                                     <cards:Header
                                         iconSrc="sap-icon://refresh"
@@ -207,170 +205,50 @@
                                     </form:SimpleForm>
 
                                         <!-- Poll Now -->
-                                        <HBox
-    justifyContent="SpaceBetween"
-    alignItems="Center"
-    class="sapUiMediumMarginTop">
+
 
     <Button
         text="Poll Now"
         icon="sap-icon://play"
         press=".onPollNow"/>
 
-    <VBox alignItems="End">
-
-        <Text
-            text="{= 'Last Poll: ' + ${globalModel>/lastPollAt} }"/>
-
-        <ObjectStatus
-            text="{globalModel>/lastPollStatus}"
-            state="{=
-                ${globalModel>/lastPollStatus} === 'SUCCESS'
-                ? 'Success'
-                : ${globalModel>/lastPollStatus} === 'FAILED'
-                ? 'Error'
-                : 'None'
-            }"/>
-
-    </VBox>
-
-</HBox>
+    
                                     </VBox>
                                 </f:content>
                             </f:Card>
-<!-- </f:GridListItem>
-<f:GridListItem> -->
+                            <f:Card class="sapUiMediumMarginBottom">
+    <f:header>
+        <cards:Header
+            iconSrc="sap-icon://activity-items"
+            title="Tenant Poll Status"
+            subtitle="Latest polling status for each tenant"/>
+    </f:header>
 
-                            <!-- ============================================ -->
-                            <!-- 4. CHAT & HISTORY CONFIGURATION              -->
-                            <!-- ============================================ -->
-                            <!-- <f:Card height="100%" class="sapUiMediumMarginEnd sapUiMediumMarginBottom">
-                                <f:header>
-                                    <cards:Header
-                                        iconSrc="sap-icon://discussion"
-                                        title="4. Chat &amp; History Configuration"
-                                        subtitle="Conversation Settings"/>
-                                </f:header>
-                                <f:content>
-                                    <VBox class="sapUiMediumMargin">
-                                    <form:SimpleForm layout="ColumnLayout" editable="true">
-                                    <form:content>
-                                  
-                                            <Label text="Enable Chat History"/>
-                                            <Switch
-                                                state="{settingsModel>/CHAT_HISTORY_ENABLED/settingValue}"
-                                                enabled="{globalModel>/editMode}"/>
-                                            <Label text="Retain Chat History (Days)"/>
-                                            <StepInput
-                                               width="100%"
-                                                description="Count"
-                                                textAlign="Center"
-                                                min="1"
-                                                max="365"
-                                                value="{settingsModel>/CHAT_RETENTION_DAYS/settingValue}"
-                                                enabled="{globalModel>/editMode}"/>
-                                            <Label text="Max Messages Per Session"/>
-                                            <StepInput
-                                               width="100%"
-                                                description="Count"
-                                                textAlign="Center"
-                                                min="10"
-                                                max="1000"
-                                                value="{settingsModel>/MAX_MESSAGES_PER_SESSION/settingValue}"
-                                                enabled="{globalModel>/editMode}"/>
-                                            <Label text="Max Context Messages Sent to AI"/>
-                                            <StepInput
-                                              width="100%"
-                                                description="Count"
-                                                textAlign="Center"
-                                                min="1"
-                                                max="100"
-                                                value="{settingsModel>/MAX_CONTEXT_MESSAGES/settingValue}"
-                                                enabled="{globalModel>/editMode}"/>
-                                            <Label text="Include Cluster Context in Chat"/>
-                                            <Switch
-                                                state="{settingsModel>/INCLUDE_CLUSTER_CONTEXT/settingValue}"
-                                                enabled="{globalModel>/editMode}"/>
-                                          </form:content>
-                                    </form:SimpleForm>
-                                    </VBox>
-                                </f:content>
-                            </f:Card> -->
+    <f:content>
 
-                            <!-- ============================================ -->
-                            <!-- 5. TOKEN USAGE & COST CONTROL                -->
-                            <!-- ============================================ -->
-                            <!-- <f:Card height="100%" class="sapUiMediumMarginEnd sapUiMediumMarginBottom">
-                                <f:header>
-                                    <cards:Header
-                                        iconSrc="sap-icon://money-bills"
-                                        title="5. Token Usage &amp; Cost Control"
-                                        subtitle="Budget and Limits"/>
-                                </f:header>
-                                <f:content>
-                                    <VBox class="sapUiMediumMargin">
+    <List items="{globalModel>/tenantPollStatus}">
+    <ObjectListItem
+        title="{globalModel>tenantName}"
+        number="{globalModel>lastPollStatus} "
+        numberState="{=
+            ${globalModel>lastPollStatus} === 'SUCCESS'
+            ? 'Success'
+            : 'Error'
+        }">
 
-                                        <HBox justifyContent="SpaceBetween" alignItems="Center">
-                                            <Label text="Daily Token Limit"/>
-                                            <StepInput
-                                                width="45%"
-                                                min="1000"
-                                                max="10000000"
-                                                step="1000"
-                                                value="{settingsModel>/DAILY_TOKEN_LIMIT/settingValue}"
-                                                enabled="{globalModel>/editMode}"/>
-                                        </HBox>
+        <firstStatus>
+            <ObjectStatus
+                text="{
+                    path:'globalModel>lastPollAt',
+                    formatter:'.formatter.formatDateTime'
+                }"/>
+        </firstStatus>
 
-                                        <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiMediumMarginTop">
-                                            <Label text="Monthly Token Limit"/>
-                                            <StepInput
-                                                width="45%"
-                                                min="10000"
-                                                max="100000000"
-                                                step="10000"
-                                                value="{settingsModel>/MONTHLY_TOKEN_LIMIT/settingValue}"
-                                                enabled="{globalModel>/editMode}"/>
-                                        </HBox>
+    </ObjectListItem>
+</List>
 
-                                        <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiMediumMarginTop">
-                                            <Label text="Alert Threshold (%)"/>
-                                            <StepInput
-                                                width="45%"
-                                                min="1"
-                                                max="100"
-                                                value="{settingsModel>/TOKEN_ALERT_THRESHOLD/settingValue}"
-                                                enabled="{globalModel>/editMode}"/>
-                                        </HBox>
-
-                                        <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiMediumMarginTop">
-                                            <Label text="Block AI When Limit Exceeded"/>
-                                            <Switch
-                                                state="{settingsModel>/BLOCK_AI_WHEN_LIMIT_EXCEEDED/settingValue}"
-                                                enabled="{globalModel>/editMode}"/>
-                                        </HBox>
-
-                                        <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiMediumMarginTop">
-                                            <Label text="Monthly Cost Budget (USD)"/>
-                                            <StepInput
-                                                width="45%"
-                                                min="1"
-                                                max="100000"
-                                                value="{settingsModel>/MONTHLY_COST_BUDGET_USD/settingValue}"
-                                                enabled="{globalModel>/editMode}"/>
-                                        </HBox>
-
-                                        <MessageStrip
-                                            class="sapUiMediumMarginTop"
-                                            type="Information"
-                                            showIcon="true"
-                                            text="You will be notified when token usage reaches the alert threshold."/>
-                                    </VBox>
-                                </f:content>
-                            </f:Card> -->
-
-                            <!-- ============================================ -->
-                            <!-- 6. DATA RETENTION                            -->
-                            <!-- ============================================ -->
+    </f:content>
+</f:Card>
                             <f:Card height="100%" width="100%" class="sapUiMediumMarginBottom">
                                 <f:header>
                                     <cards:Header
@@ -425,9 +303,6 @@
                                 </f:content>
                             </f:Card>
 
-<!-- </f:GridListItem>
-                            </f:items>
-                            </f:GridList> -->
                             </layout:Grid>
                       
                     

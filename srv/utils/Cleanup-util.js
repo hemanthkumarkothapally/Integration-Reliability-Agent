@@ -5,7 +5,7 @@ async function getSetting(key, defaultValue, ApplicationSettings) {
 
     return setting?.settingValue ?? defaultValue;
 }
-export async function cleanupData( Incidents, Clusters, Recommendations,ApplicationSettings) {
+export async function cleanupData( Incidents, Clusters, MonitoredArtifacts,ApplicationSettings) {
 
     const incidentRetentionDays = Number(
         await getSetting(
@@ -22,6 +22,14 @@ export async function cleanupData( Incidents, Clusters, Recommendations,Applicat
             ApplicationSettings
         )
     );
+
+     const monitoringRetentionDays = Number(
+        await getSetting(
+            "MONITORING_RETENTION_DAYS",
+            1,
+            ApplicationSettings
+        )
+    );
     const incidentCutoff = new Date();
     incidentCutoff.setDate(
         incidentCutoff.getDate() -
@@ -34,7 +42,11 @@ export async function cleanupData( Incidents, Clusters, Recommendations,Applicat
         clusterRetentionDays
     );
 
-   ;
+        const monitoringCutoff = new Date();
+    monitoringCutoff.setDate(
+        monitoringCutoff.getDate() -
+        monitoringRetentionDays
+    );
 
     const deletedIncidents =
         await DELETE.from(Incidents)
@@ -53,10 +65,19 @@ export async function cleanupData( Incidents, Clusters, Recommendations,Applicat
                 },
                 globalStatus: "RESOLVED"
             });
+    const deletedIflowMonitoring =
+        await DELETE.from(MonitoredArtifacts)
+            .where({
+                lastPollTimestamp: {
+                    "<": monitoringCutoff.toISOString()
+                },
+                overallSeverity:"HEALTHY"
+            });
     console.log(
         `Retention cleanup completed:
          Incidents=${deletedIncidents},
-         Clusters=${deletedClusters}`
+         Clusters=${deletedClusters},
+         Monitoring=${deletedIflowMonitoring}`
     );
-    return `Deleted Incidents: ${deletedIncidents}, Deleted Clusters: ${deletedClusters}`;
+    return `Deleted Incidents: ${deletedIncidents}, Deleted Clusters: ${deletedClusters}, Deleted Monitoring: ${deletedIflowMonitoring}`;
 }
