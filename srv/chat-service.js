@@ -199,9 +199,6 @@ export default cds.service.impl(async function () {
                     systemPrompt += `
                         [IFLOW CONTEXT]
                         iFlow Technical Name: ${iflowData.iFlowName}
-                        iFlow ID: ${iflowData.iFlowId}
-                        Package: ${iflowData.PackageName}
-                        Is Active: ${iflowData.isActive}
                         Current Severity State: ${iflowData.overallSeverity}
                         Open Clusters Count: ${iflowData.openClusterCount}
 

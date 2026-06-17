@@ -22,7 +22,7 @@
                     <!-- <Label text="Token usage · HANA storage · Incidents · Clusters" wrapping="true" /> -->
                 </f:expandedContent>
                 <f:actions>
-                    <DynamicDateRange id="idAnalyticsDateRangeFilter" width="auto" showClearIcon="true" placeholder="Select Date Range" change=".onFilterChange" />
+                    <DateRangeSelection id="idAnalyticsDateRangeFilter" width="14rem" placeholder="Select Date Range" change=".onFilterChange" />
                     <!-- <Button id="exportBtn" text="Export" icon="sap-icon://download" press=".onExport" type="Ghost" /> -->
                 </f:actions>
             </f:DynamicPageTitle>
@@ -82,10 +82,14 @@
                                     <Avatar src="sap-icon://database" displayShape="Circle" backgroundColor="Accent1" />
                                     <VBox class="sapUiSmallMarginBegin">
                                         <Title text="HANA usage" level="H5" wrapping="true" />
-                                        <ObjectNumber number="{
+
+                                        <HBox alignItems="Center" justifyContent="Start">
+                                            <ObjectNumber number="{
                                                 parts: [{ path: 'chart>/summary/hanaStorage' }],
                                                 formatter: '.formatter.formatLargeNumber'
                                             }" emphasized="true" state="Warning" class="sapMObjectNumberLarge"/>
+                                            <Label text="GB" class="sapUiTinyMarginBegin sapUiTinyMarginTop"/>
+                                        </HBox>
                                     </VBox>
                                 </HBox>
                             </Panel>
@@ -174,33 +178,49 @@
                     <f:GridListItem type="Active" class="clickableCardItem">
                         <f:Card width="100%" height="100%">
                             <f:content>
-                                <viz:VizFrame id="idHanaStorage" class="noBorderVizFrame" vizType="stacked_column" uiConfig="{applicationSet:'fiori'}" width="100%" height="18rem" vizProperties="{
-                    'title': { 'visible': true, 'text': 'HANA Storage' },
-                    'legend': { 'visible': true, 'position': 'top', 'alignment': 'start' },
-                    'plotArea': {
-                        'dataLabel': { 'visible': false },
-'colorPalette': ['#60A5FA','#3B82F6','#6366F1','#8B5CF6','#A855F7','#C026D3']                 },
-                    'valueAxis': { 'title': { 'visible': false } },
-                    'categoryAxis': { 'title': { 'visible': false } }
-                }">
+                                <viz:VizFrame id="idHanaUsage" class="noBorderVizFrame" vizType="column" uiConfig="{applicationSet:'fiori'}" width="100%" height="18rem" vizProperties="{
+        'title': {
+            'visible': true,
+            'text': 'HANA Storage Usage (GB)'
+        },
+        'legend': {
+            'visible': false
+        },
+        'plotArea': {
+            'dataLabel': {
+                'visible': true
+            },
+            'colorPalette': ['#5899DA']
+        },
+        'valueAxis': {
+            'title': {
+                'visible': false
+            }
+        },
+        'categoryAxis': {
+            'title': {
+                'visible': false
+            }
+        }
+    }">
 
                                     <viz:dataset>
-                                        <viz.data:FlattenedDataset data="{chart>/hanaStorage}">
+                                        <viz.data:FlattenedDataset data="{chart>/hanaUsage}">
                                             <viz.data:dimensions>
                                                 <viz.data:DimensionDefinition name="Date" value="{chart>date}" />
                                             </viz.data:dimensions>
+
                                             <viz.data:measures>
-                                                <viz.data:MeasureDefinition name="{chart>/hanaStorageConfig/labels/tenant1}" value="{chart>tenant1}" />
-                                                <viz.data:MeasureDefinition name="{chart>/hanaStorageConfig/labels/tenant2}" value="{chart>tenant2}" />
-                                                <viz.data:MeasureDefinition name="{chart>/hanaStorageConfig/labels/tenant3}" value="{chart>tenant3}" />
-                                                <viz.data:MeasureDefinition name="{chart>/hanaStorageConfig/labels/tenant4}" value="{chart>tenant4}" />
-                                                <viz.data:MeasureDefinition name="{chart>/hanaStorageConfig/labels/tenant5}" value="{chart>tenant5}" />
-                                                <viz.data:MeasureDefinition name="{chart>/hanaStorageConfig/labels/tenant6}" value="{chart>tenant6}" />
+                                                <viz.data:MeasureDefinition name="Storage (GB)" value="{chart>storage}" />
                                             </viz.data:measures>
                                         </viz.data:FlattenedDataset>
                                     </viz:dataset>
 
-                                    <!-- feeds are added programmatically in _initVizFrames() -->
+                                    <viz:feeds>
+                                        <viz.feeds:FeedItem uid="valueAxis" type="Measure" values="Storage (GB)" />
+
+                                        <viz.feeds:FeedItem uid="categoryAxis" type="Dimension" values="Date" />
+                                    </viz:feeds>
 
                                 </viz:VizFrame>
                             </f:content>
@@ -239,13 +259,13 @@
                                                         <HBox alignItems="Center">
                                                             <Avatar initials="{ path: 'chart>name', formatter: '.formatter.formatInitials'}" backgroundColor="Random" displaySize="XS" class="sapUiSmallMarginEnd" />
                                                             <VBox>
-                                                                <Title text="{chart>name}" wrapping="true" />
-                                                                <Label text="{ path: 'chart>roles',  formatter: '.formatter.formatRoles'  }" design="Standard" wrapping="true" />
+                                                                <Title text="{= ${chart>name} || 'other' }" wrapping="true" />
+                                                                <!-- <Label text="{ path: 'chart>roles', formatter: '.formatter.formatRoles' }" design="Standard" wrapping="true" /> -->
                                                             </VBox>
                                                         </HBox>
                                                         <HBox alignItems="Center" justifyContent="Center" class="sapUiMediumMarginEnd">
                                                             <ObjectNumber number="{
-                                        parts: [{ path: 'chart>amount' }],
+                                        parts: [{ path: 'chart>totalTokens' }],
                                         formatter: '.formatter.formatLargeNumber'
                                     }" emphasized="true" class="sapMObjectNumberLarge" />
                                                             <Label text="tokens" design="Standard" wrapping="true" class="sapUiTinyMarginBegin sapUiTinyMarginTop"/>
@@ -310,12 +330,12 @@
                                                 <f:GridListItem type="Inactive">
                                                     <Panel class="noBorderPanel" height="100%">
                                                         <HBox height="100%" width="100%" alignItems="Center" justifyContent="Start" class="sapUiContentPadding">
-                                                            <Avatar src="sap-icon://chain-link" displayShape="Circle" backgroundColor="Accent7" />
+                                                            <Avatar src="sap-icon://ai" displayShape="Circle" backgroundColor="Accent7" />
                                                             <VBox class="sapUiSmallMarginBegin" justifyContent="Center">
-                                                                <Title text="Avg tokens / cluster" wrapping="true" />
+                                                                <Title text="Ai Cluster Analysis" wrapping="true" />
                                                                 <HBox alignItems="Center" justifyContent="Start">
-                                                                    <ObjectNumber number="{ parts: [{ path: 'chart>/supportingMetrics/AverageTokensPerCluster' }],    formatter: '.formatter.formatLargeNumber'    }" emphasized="true" state="Success" class="sapMObjectNumberLarge" />
-                                                                    <Label text="tokens" class="sapUiTinyMarginBegin sapUiTinyMarginTop"/>
+                                                                    <ObjectNumber number="{ parts: [{ path: 'chart>/supportingMetrics/aiRecommendations' }],    formatter: '.formatter.formatLargeNumber'    }" emphasized="true" state="Success" class="sapMObjectNumberLarge" />
+                                                                    <Label text="Recommendations" class="sapUiTinyMarginBegin sapUiTinyMarginTop"/>
                                                                 </HBox>
                                                             </VBox>
                                                         </HBox>
@@ -361,14 +381,19 @@
                                                         <HBox width="100%" alignItems="Center" justifyContent="Start" class="sapUiContentPadding">
                                                             <Avatar src="sap-icon://fob-watch" displayShape="Circle" backgroundColor="Accent7" />
                                                             <VBox class="sapUiSmallMarginBegin">
-                                                                <Title text="Avg cluster resolution" wrapping="true" />
+                                                                <Title text="User Messages / Ai Responses" wrapping="true" />
 
                                                                 <HBox alignItems="Center" justifyContent="Start">
                                                                     <ObjectNumber number="{
-                                                parts: [{ path: 'chart>/supportingMetrics/AverageClusterResolution' }],
+                                                parts: [{ path: 'chart>/supportingMetrics/totalUserMessages' }],
                                                 formatter: '.formatter.formatLargeNumber'
                                             }" emphasized="true" state="Success" class="sapMObjectNumberLarge" />
-                                                                    <Label text="Hours" class="sapUiTinyMarginBegin sapUiTinyMarginTop"/>
+                                                                    <Title text="/" class="sapUiTinyMarginBegin sapUiTinyMarginTop sapUiTinyMarginEnd"/>
+                                                                    <ObjectNumber number="{
+                                                parts: [{ path: 'chart>/supportingMetrics/totalAIMessages' }],
+                                                formatter: '.formatter.formatLargeNumber'
+                                            }" emphasized="true" state="Success" class="sapMObjectNumberLarge" />
+
                                                                 </HBox>
                                                             </VBox>
                                                         </HBox>

@@ -130,6 +130,7 @@ sap.ui.define([
       await oContext.execute(); 
 
       const aData = oContext.getBoundContext().getObject().value;
+      console.log("Top Critical iFlows Data:", aData);
       this.getView().setModel(new JSONModel({ topIflows: aData }), "topIflows");
     },
 

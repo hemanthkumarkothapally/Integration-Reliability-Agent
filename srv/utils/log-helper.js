@@ -9,6 +9,7 @@ import {
   ApiCall,
   upsertMonitoredArtifacts
 } from './log-utils.js';
+import { updateDailyMetrics ,updateDailyAIMetrics} from './daily-metrics.js';
 
 import {
   upsertClusters
