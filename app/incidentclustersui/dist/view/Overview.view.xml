@@ -54,7 +54,7 @@
                                         </f:header> -->
 
                             <!-- <f:content> -->
-                            <HBox width="100%" height="10vh" alignItems="Center" justifyContent="Start" class="sapUiSmallMargin">
+                            <HBox width="100%"  alignItems="Center" justifyContent="Start" class="sapUiSmallMargin">
 
                                 <!-- Icon Circle -->
                                 <VBox class="iconCircle blueIconBg" justifyContent="Center" alignItems="Center">
@@ -83,7 +83,7 @@
                                         </f:header>
                                     </f:Card> -->
 
-                            <HBox width="100%" height="10vh" alignItems="Center" class="sapUiSmallMargin">
+                            <HBox width="100%"  alignItems="Center" class="sapUiSmallMargin">
 
                                 <VBox class="iconCircle orangeIconBg" justifyContent="Center" alignItems="Center">
 
@@ -106,7 +106,7 @@
                                         </f:header>
                                     </f:Card> -->
 
-                            <HBox width="100%" height="10vh" alignItems="Center" class="sapUiSmallMargin">
+                            <HBox width="100%"  alignItems="Center" class="sapUiSmallMargin">
 
                                 <VBox class="iconCircle yellowIconBg" justifyContent="Center" alignItems="Center">
 
@@ -129,7 +129,7 @@
                                         </f:header>
                                     </f:Card> -->
 
-                            <HBox width="100%" height="10vh" alignItems="Center" class="sapUiSmallMargin">
+                            <HBox width="100%"  alignItems="Center" class="sapUiSmallMargin">
 
                                 <VBox class="iconCircle redIconBg" justifyContent="Center" alignItems="Center">
 
@@ -150,7 +150,7 @@
                                             <card:NumericHeader title="Clusters Resolved Today" number="{chart>/resolvedToday}" state="Good" iconSrc="sap-icon://complete" />
                                         </f:header>
                                     </f:Card> -->
-                            <HBox width="100%" height="10vh" alignItems="Center" class="sapUiSmallMargin">
+                            <HBox width="100%"  alignItems="Center" class="sapUiSmallMargin">
 
                                 <VBox class="iconCircle greenIconBg" justifyContent="Center" alignItems="Center">
 
@@ -417,7 +417,7 @@
 
                                         <!-- <ObjectNumber number="{topIflows>totalIncidents}" emphasized="true" /> -->
 
-                                        <Text text="{path: 'topIflows>lastPollTimestamp', formatter: '.formatter.formatDateTime'}" />
+                                        <Text text="{path: 'topIflows>lastErrorAt', formatter: '.formatter.formatDateTime'}" />
 
                                     </cells>
 

@@ -417,7 +417,7 @@
 
                                         <!-- <ObjectNumber number="{topIflows>totalIncidents}" emphasized="true" /> -->
 
-                                        <Text text="{path: 'topIflows>lastPollTimestamp', formatter: '.formatter.formatDateTime'}" />
+                                        <Text text="{path: 'topIflows>lastErrorAt', formatter: '.formatter.formatDateTime'}" />
 
                                     </cells>
 

@@ -4,6 +4,9 @@ import { executeHttpRequest } from '@sap-cloud-sdk/http-client';
 import { runPoll } from './utils/log-helper.js';
 import JobSchedulerClient from "@sap/jobs-client";
 import xsenv from "@sap/xsenv";
+import { updateDailyMetrics, updateDailyAIMetrics } from './utils/daily-metrics.js';
+import { DELETE, SELECT } from '@sap/cds/lib/ql/cds-ql.js';
+
 export default cds.service.impl(async function () {
     const db = await cds.connect.to('db');
 
@@ -42,23 +45,7 @@ export default cds.service.impl(async function () {
             })
             .orderBy("metricDate");
 
-        const db = await cds.connect.to('db');
 
-        const storageTables = await db.run(`
-    SELECT
-        TABLE_NAME,
-        ROUND(TABLE_SIZE / 1024 / 1024 / 1024, 3) AS SIZE_GB
-    FROM M_TABLES
-    WHERE SCHEMA_NAME = CURRENT_SCHEMA
-      AND TABLE_SIZE > 0
-    ORDER BY TABLE_SIZE DESC
-`);
-
-        const totalStorageGB =
-            storageTables.reduce(
-                (sum, t) => sum + Number(t.SIZE_GB || 0),
-                0
-            );
         const summary = {
 
             TokenConsumption:
@@ -67,8 +54,7 @@ export default cds.service.impl(async function () {
                     0
                 ),
 
-            hanaStorage:
-                Number(totalStorageGB.toFixed(3)),
+            hanaStorage: Number(metrics[metrics.length - 1]?.hanaStorage || 0),
 
             totalIncidents:
                 metrics.reduce(
@@ -92,6 +78,102 @@ export default cds.service.impl(async function () {
         const days =
             Math.max(metrics.length, 1);
 
+
+
+
+        const tokenMap = aiMetrics.reduce((acc, metric) => {
+            acc[metric.metricDate] = {
+                input: metric.totalInputTokens || 0,
+                output: metric.totalOutputTokens || 0
+            };
+            return acc;
+        }, {});
+
+        const tokenUsage = [];
+
+        for (
+            let d = new Date(fromDate);
+            d <= new Date(toDate);
+            d.setDate(d.getDate() + 1)
+        ) {
+            const dateKey = d.toISOString().split("T")[0];
+
+            tokenUsage.push({
+                date: d.toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric"
+                }),
+                input: tokenMap[dateKey]?.input || 0,
+                output: tokenMap[dateKey]?.output || 0
+            });
+        }
+console.log("fromDate:", fromDate, "toDate:", toDate);
+        const topConsumers = await SELECT(
+            'createdBy as name',
+            'sum(tokenCount) as totalTokens'
+        )
+            .from('com.cytechies.integration.reliability.Messages')
+            .where({ tokenCount: { '>': 0 }})
+            .groupBy('createdBy')
+            .orderBy('totalTokens desc');
+
+        console.log(topConsumers);
+
+
+
+        // 3. Sort the consumers descending by amount
+        topConsumers.sort((a, b) => parseInt(b.amount) - parseInt(a.amount));
+
+
+
+        const hanaMap = metrics.reduce((acc, metric) => {
+            const date = metric.metricDate;
+
+            if (!acc[date]) {
+                acc[date] = Number(metric.hanaStorage || 0);
+            }
+
+            return acc;
+        }, {});
+
+        const hanaUsage = [];
+
+        for (
+            let d = new Date(fromDate);
+            d <= new Date(toDate);
+            d.setDate(d.getDate() + 1)
+        ) {
+            const dateKey = d.toISOString().split("T")[0];
+
+            hanaUsage.push({
+                date: d.toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric"
+                }),
+                storage: hanaMap[dateKey] || 0
+            });
+        }
+        const growths = [];
+
+        for (let i = 1; i < hanaUsage.length; i++) {
+            const diff =
+                hanaUsage[i].storage -
+                hanaUsage[i - 1].storage;
+
+            if (diff > 0) {
+                growths.push(diff);
+            }
+        }
+
+        const averageHANAGrowthPerDay =
+            growths.length
+                ? Number(
+                    (
+                        growths.reduce((a, b) => a + b, 0) /
+                        growths.length
+                    ).toFixed(4)
+                )
+                : 0;
         const supportingMetrics = {
 
             AverageTokensPerChatSession:
@@ -110,7 +192,7 @@ export default cds.service.impl(async function () {
                     )
                     : 0,
 
-            AverageHANAGrowthPerDay: 0,
+            AverageHANAGrowthPerDay: averageHANAGrowthPerDay,
 
             AverageTokensPerDay:
                 Math.round(
@@ -124,143 +206,35 @@ export default cds.service.impl(async function () {
                     days
                 ),
 
-            AverageClusterResolution:
-                metrics.length
-                    ? Number(
-                        (
-                            metrics.reduce(
-                                (s, r) =>
-                                    s +
-                                    Number(
-                                        r.averageResolutionHours || 0
-                                    ),
-                                0
-                            ) / metrics.length
-                        ).toFixed(2)
-                    )
-                    : 0
-        };
 
-        const tokenUsage = aiMetrics.map(metric => ({
-
-            date:
-                new Date(metric.metricDate)
-                    .toLocaleDateString(
-                        "en-US",
-                        {
-                            month: "short",
-                            day: "numeric"
-                        }
-                    ),
-
-            input:
-                metric.totalInputTokens || 0,
-
-            output:
-                metric.totalOutputTokens || 0
-
-        }));
-
-        const hanaStorage = [{
-            date: new Date().toLocaleDateString(
-                "en-US",
-                {
-                    month: "short",
-                    day: "numeric"
-                }
+            totalChatSessions,
+            totalUserMessages: aiMetrics.reduce(
+                (s, r) =>
+                    s +
+                    (r.totalUserMessages || 0),
+                0
+            ),
+            totalAIMessages: aiMetrics.reduce(
+                (s, r) =>
+                    s +
+                    (r.totalAIMessages || 0),
+                0
+            ),
+            aiRecommendations: aiMetrics.reduce(
+                (s, r) =>
+                    s +
+                    (r.recommendationsGenerated || 0),
+                0
             )
-        }];
 
-        const hanaStorageConfig = {
-            labels: {}
+
         };
-
-        storageTables.forEach((table, index) => {
-
-            const key = `table${index + 1}`;
-
-            hanaStorage[0][key] =
-                Number(table.SIZE_GB);
-
-            hanaStorageConfig.labels[key] =
-                table.TABLE_NAME
-                    .replace(
-                        "COM_CYTECHIES_INTEGRATION_RELIABILITY_",
-                        ""
-                    );
-        });
-
-        const topConsumers = [
-
-            {
-                name: "AI Recommendations",
-                roles: [
-                    "Cluster Recommendations"
-                ],
-                amount: String(
-                    aiMetrics.reduce(
-                        (s, r) =>
-                            s +
-                            (r.recommendationsGenerated || 0),
-                        0
-                    )
-                )
-            },
-
-            {
-                name: "Chat Sessions",
-                roles: [
-                    "AI Chat"
-                ],
-                amount: String(
-                    totalChatSessions
-                )
-            },
-
-            {
-                name: "User Messages",
-                roles: [
-                    "Prompt Requests"
-                ],
-                amount: String(
-                    aiMetrics.reduce(
-                        (s, r) =>
-                            s +
-                            (r.totalUserMessages || 0),
-                        0
-                    )
-                )
-            },
-
-            {
-                name: "AI Messages",
-                roles: [
-                    "Responses"
-                ],
-                amount: String(
-                    aiMetrics.reduce(
-                        (s, r) =>
-                            s +
-                            (r.totalAIMessages || 0),
-                        0
-                    )
-                )
-            }
-
-        ];
-
         return {
 
             summary,
-
             supportingMetrics,
-
             tokenUsage,
-
-            hanaStorage,
-
-            hanaStorageConfig,
-
+            hanaUsage,
             topConsumers
 
         };
@@ -373,57 +347,23 @@ export default cds.service.impl(async function () {
         }
     });
     this.on('testHanaStorage', async () => {
+        // Get total tokens used by each user across all individual messages
+        const topConsumers = await SELECT(
+            'createdBy as name',
+            'sum(tokenCount) as totalTokens'
+        )
+            .from('com.cytechies.integration.reliability.Messages')
+            .where({ tokenCount: { '>': 0 } })
+            .groupBy('createdBy')
+            .orderBy('totalTokens desc');
 
-       const db = await cds.connect.to('db');
-
-const storageTables = await db.run(`
-    SELECT
-        TABLE_NAME,
-        ROUND(TABLE_SIZE / 1024 / 1024 / 1024, 3) AS SIZE_GB
-    FROM M_TABLES
-    WHERE SCHEMA_NAME = CURRENT_SCHEMA
-      AND TABLE_SIZE > 0
-    ORDER BY TABLE_SIZE DESC
-`);
-
-const totalStorageGB =
-    storageTables.reduce(
-        (sum, t) => sum + Number(t.SIZE_GB || 0),
-        0
-    );const hanaStorage = [{
-    date: new Date().toLocaleDateString(
-        "en-US",
-        {
-            month: "short",
-            day: "numeric"
-        }
-    )
-}];
-
-const hanaStorageConfig = {
-    labels: {}
-};
-
-storageTables.forEach((table, index) => {
-
-    const key = `table${index + 1}`;
-
-    hanaStorage[0][key] =
-        Number(table.SIZE_GB);
-
-    hanaStorageConfig.labels[key] =
-        table.TABLE_NAME
-            .replace(
-                "COM_CYTECHIES_INTEGRATION_RELIABILITY_",
-                ""
-            );
-});
+        console.log(topConsumers);
 
 
-        return JSON.stringify({
-             totalStorageGB: Number(totalStorageGB.toFixed(3)),
-    hanaStorage,
-    hanaStorageConfig
-        });
+
+        // 3. Sort the consumers descending by amount
+        topConsumers.sort((a, b) => parseInt(b.amount) - parseInt(a.amount));
+
+        return JSON.stringify(topConsumers);
     });
 });

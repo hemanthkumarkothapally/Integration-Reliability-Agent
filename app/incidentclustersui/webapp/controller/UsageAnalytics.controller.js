@@ -12,44 +12,43 @@ sap.ui.define([
         formatter: formatter,
 
         onInit: function () {
-            this.getView().setBusy(true);
             Format.numericFormatter(ChartFormatter.getInstance());
-
-            // set empty model first; fill it after the async call resolves
             this.getView().setModel(new JSONModel({}), "chart");
 
+            var oToday = new Date();
+            oToday.setHours(0, 0, 0, 0);
+            this.byId("idAnalyticsDateRangeFilter").setMaxDate(oToday);
+
             var oRouter = this.getOwnerComponent().getRouter();
-            oRouter.getRoute("RouteUsageAnalytics").attachPatternMatched(
-                this._onRouteMatched,
-                this
-            );
+            oRouter.getRoute("RouteUsageAnalytics").attachPatternMatched(this._onRouteMatched, this);
+        },
+
+        // Helper to prevent code duplication
+        _formatDate: function (d) {
+            var m = String(d.getMonth() + 1).padStart(2, "0");
+            var day = String(d.getDate()).padStart(2, "0");
+            return d.getFullYear() + "-" + m + "-" + day;
         },
 
         _getCurrentMonthRange: function () {
             var oNow = new Date();
             var oFrom = new Date(oNow.getFullYear(), oNow.getMonth(), 1);
-            var oTo = oNow; // "this month so far"; use new Date(y, m+1, 0) for full month
-            var fmt = function (d) {
-                var m = String(d.getMonth() + 1).padStart(2, "0");
-                var day = String(d.getDate()).padStart(2, "0");
-                return d.getFullYear() + "-" + m + "-" + day;
+            return {
+                from: this._formatDate(oFrom),
+                to: this._formatDate(oNow),
+                fromDate: oFrom,
+                toDate: oNow
             };
-            return { from: fmt(oFrom), to: fmt(oTo), fromDate: oFrom, toDate: oTo };
         },
 
-        /**
-         * Normalize HANA storage rows so every active tenant key exists on every
-         * row as a Number. Sparse/missing keys break the stacked_column VizFrame,
-         * so we backfill them with 0.
-         */
         _normalizeHanaStorage: function (oData) {
-            if (!oData) { return oData; }
+            if (!oData || !oData.hanaStorageConfig || !Array.isArray(oData.hanaStorage)) {
+                return oData;
+            }
 
-            var oLabels = oData.hanaStorageConfig && oData.hanaStorageConfig.labels;
+            var oLabels = oData.hanaStorageConfig.labels;
             var aRows = oData.hanaStorage;
-            if (!oLabels || !Array.isArray(aRows)) { return oData; }
 
-            // Only the tenant keys that actually have a (non-empty) label are charted.
             var aTenantKeys = Object.keys(oLabels).filter(function (sKey) {
                 return !!oLabels[sKey];
             });
@@ -68,111 +67,84 @@ sap.ui.define([
             var oView = this.getView();
             var oChartModel = oView.getModel("chart");
 
-            ["idSeverityDonut", "idIncidentTrend", "idTokenUsage", "idHanaStorage"]
-                .forEach(function (sId) {
-                    var oVizFrame = oView.byId(sId);
-                    if (!oVizFrame) { return; }
+            // Fixed ID array to match your XML View (idHanaUsage instead of idHanaStorage)
+            ["idSeverityDonut", "idIncidentTrend", "idTokenUsage", "idHanaUsage"].forEach(function (sId) {
+                var oVizFrame = oView.byId(sId);
+                if (!oVizFrame) { return; }
 
-                    var oPopover = new sap.viz.ui5.controls.Popover();
-                    oPopover.connect(oVizFrame.getVizUid());
+                var oPopover = new sap.viz.ui5.controls.Popover();
+                oPopover.connect(oVizFrame.getVizUid());
 
-                    oVizFrame.setVizProperties({
-                        valueAxis: {
-                            label: { formatString: ChartFormatter.DefaultPattern.SHORTFLOAT }
-                        }
-                    });
+                oVizFrame.setVizProperties({
+                    valueAxis: {
+                        label: { formatString: ChartFormatter.DefaultPattern.SHORTFLOAT }
+                    }
                 });
+            });
 
-            // HANA stacked column feeds — only build if we actually have labels + rows
             try {
-                var oHana = oView.byId("idHanaStorage");
+                // Fixed Reference here to match XML
+                var oHana = oView.byId("idHanaUsage");
                 var oLabels = oChartModel.getProperty("/hanaStorageConfig/labels");
                 var aRows = oChartModel.getProperty("/hanaStorage");
 
-                // Feed values MUST match the MeasureDefinition names in the view,
-                // which are the label strings (e.g. "IRA Schema").
-                var aValueFeeds = oLabels ? Object.keys(oLabels)
-                    .map(function (k) { return oLabels[k]; })
-                    .filter(Boolean) : [];
+                var aValueFeeds = oLabels ? Object.keys(oLabels).map(function (k) { return oLabels[k]; }).filter(Boolean) : [];
 
                 if (oHana && aValueFeeds.length && aRows && aRows.length) {
-                    // clear any feeds added on a previous run to avoid duplicates
                     oHana.removeAllFeeds();
-
-                    oHana.addFeed(new FeedItem({
-                        uid: "valueAxis",
-                        type: "Measure",
-                        values: aValueFeeds
-                    }));
-                    oHana.addFeed(new FeedItem({
-                        uid: "categoryAxis",
-                        type: "Dimension",
-                        values: ["Date"]
-                    }));
+                    oHana.addFeed(new FeedItem({ uid: "valueAxis", type: "Measure", values: aValueFeeds }));
+                    oHana.addFeed(new FeedItem({ uid: "categoryAxis", type: "Dimension", values: ["Date"] }));
                 }
-            }
-            catch (oError) {
+            } catch (oError) {
                 console.error("Error initializing HANA storage chart feeds:", oError);
             }
         },
 
-        _onRouteMatched: async function (oEvent) {
+        _onRouteMatched: async function () {
             this.getOwnerComponent().getModel("globalModel").setProperty("/selectedKey", "UsageAnalytics");
 
             var oRange = this._getCurrentMonthRange();
-
-            // default the DynamicDateRange control to this month.
-            // Control id in the view is "idAnalyticsDateRangeFilter".
             var oDDR = this.byId("idAnalyticsDateRangeFilter");
+
             if (oDDR) {
-                oDDR.setValue({
-                    operator: "DATERANGE",
-                    values: [oRange.fromDate, oRange.toDate]
-                });
+                // Correct API for DateRangeSelection
+                oDDR.setDateValue(oRange.fromDate);
+                oDDR.setSecondDateValue(oRange.toDate);
             }
 
             await this._loadChartData(oRange.from, oRange.to);
 
-            this.getSettingsData().catch(function (err) { /* log */ });
+            if (typeof this.getSettingsData === "function") {
+                this.getSettingsData().catch(function (err) { /* silent log */ });
+            }
         },
 
-        /**
-         * Loads chart data for the given range, normalizes it, pushes it to the
-         * "chart" model and (re)builds the VizFrame feeds.
-         */
         _loadChartData: async function (sFrom, sTo) {
             try {
                 this.getView().setBusy(true);
                 var oData = await this._getChartData(sFrom, sTo);
                 oData = this._normalizeHanaStorage(oData);
                 this.getView().getModel("chart").setData(oData || {});
-                this._initVizFrames();          // build feeds AFTER data is present
+                this._initVizFrames();
             } catch (err) {
-                jQuery.sap.log.error("Usage analytics load failed", err);
+                // Removed deprecated jQuery.sap.log.error
+                console.error("Usage analytics load failed", err);
             } finally {
                 this.getView().setBusy(false);
             }
         },
 
-        /* =========================================================== */
-        /* data                                                        */
-        /* =========================================================== */
-
         _getChartData: async function (sFrom, sTo) {
             var oRange = this._getCurrentMonthRange();
             var oModel = this.getOwnerComponent().getModel("AdminModel");
             var oContext = oModel.bindContext("/getUsageAnalytics(...)");
+
             oContext.setParameter("fromDate", sFrom || oRange.from);
             oContext.setParameter("toDate", sTo || oRange.to);
-            await oContext.execute();
-            var oData = oContext.getBoundContext().getObject();
-            console.log("Usage analytics data: ", oData);
-            return oData;
-        },
 
-        /* =========================================================== */
-        /* filter                                                      */
-        /* =========================================================== */
+            await oContext.execute();
+            return oContext.getBoundContext().getObject();
+        },
 
         onFilterChange: function (oEvent) {
             var oParams = oEvent.getParameters();
@@ -182,28 +154,32 @@ sap.ui.define([
                 return;
             }
 
-            var oValue = oParams.value;
+            var oDateRangeSelection = oEvent.getSource();
+            var oFromDate = oDateRangeSelection.getDateValue();
+            var oToDate = oDateRangeSelection.getSecondDateValue();
 
-            if (!oValue) {
-                // cleared -> fall back to current month
+            if (!oFromDate) {
+                // Cleared -> fall back to current month
                 console.log("Date range cleared, reverting to current month");
                 var oRange = this._getCurrentMonthRange();
                 this._loadChartData(oRange.from, oRange.to);
                 return;
             }
 
-            var aDates = sap.m.DynamicDateRange.toDates(oValue);
-            var oFromDate = aDates[0];
-            var oToDate = aDates[1];
+            // If the user selects a single day, the second date might be null
+            if (!oToDate) {
+                oToDate = oFromDate;
+            }
 
-            var fmt = function (d) {
-                var m = String(d.getMonth() + 1).padStart(2, "0");
-                var day = String(d.getDate()).padStart(2, "0");
-                return d.getFullYear() + "-" + m + "-" + day;
-            };
+            // Prevent future dates
+            var oToday = new Date();
+            oToday.setHours(0, 0, 0, 0);
 
-            this._loadChartData(fmt(oFromDate), fmt(oToDate));
+            if (oToDate > oToday) {
+                oToDate = new Date(oToday);
+            }
+
+            this._loadChartData(this._formatDate(oFromDate), this._formatDate(oToDate));
         }
-
     });
 });

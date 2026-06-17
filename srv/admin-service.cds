@@ -36,7 +36,10 @@ type TokenUsage {
     input  : Integer;
     output : Integer;
 }
-
+type HanaUsage {
+    date   : String;
+    storage  : Decimal(15,4);
+}
 type TopConsumer {
     name   : String;
     roles  : array of String;
@@ -47,6 +50,7 @@ type UsageAnalytics {
     summary            : Summary;
     supportingMetrics  : SupportingMetrics;
     tokenUsage         : many TokenUsage;
+    hanaUsage          : many HanaUsage;
     topConsumers       : many TopConsumer;
 }
 

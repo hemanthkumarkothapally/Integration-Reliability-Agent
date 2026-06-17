@@ -114,6 +114,7 @@
                         <m:ObjectStatus id="_IDGenObjectStatus2" title="Severity" text="{overallSeverity}" state="{= ${overallSeverity} === 'CRITICAL' ? 'Error' : ${overallSeverity} === 'HIGH' ? 'Warning' : ${overallSeverity} === 'MEDIUM' ? 'Information' : ${overallSeverity} === 'LOW' ? 'Success' : 'None' }" />
                         <m:ObjectStatus id="_IDGenObjectStatus1" title="iFlow Status" text="{= ${isActive} === 'Yes' ? 'ACTIVE' : 'INACTIVE' }" state="{= ${isActive} === 'Yes' ? 'Success' : 'Error' }" />
                         <m:ObjectAttribute id="_IDGenObjectStatus4" title="Last Polled" text="{lastPollTimestamp}" />
+                        <m:ObjectAttribute id="_IDGenObjectStatus" title="Last Error" text="{lastErrorAt}" />
                         <m:ObjectAttribute id="_IDGenObjectStatus5" title="Package Name" text="{PackageName}" />
 
                     </layout:VerticalLayout>

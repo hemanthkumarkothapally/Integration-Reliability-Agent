@@ -93,8 +93,9 @@ entity Messages : cuid{
    role  :LargeString;
    content  : LargeString;
    createdAt : Timestamp @cds.on.insert : $now;
+   createdBy : String(255) @cds.on.insert :$user;
    tokenCount : Integer;    
-   reference : String;
+   reference : String(255);
 }
 entity AccessLogs : cuid, managed {
     action     : String(255);
@@ -142,9 +143,10 @@ entity DailyMetrics : cuid, managed {
     recommendationsGenerated : Integer default 0;
     // Monitoring
     monitoredArtifacts      : Integer default 0;
-    healthyArtifacts      : Integer default 0;
+    healthyArtifacts        : Integer default 0;
     criticalArtifacts       : Integer default 0;
-    
+    //Hana Storage
+    hanaStorage             : Decimal(15,4) default 0;
     // Polling
     pollRuns                : Integer default 0;
     pollFailures            : Integer default 0;
