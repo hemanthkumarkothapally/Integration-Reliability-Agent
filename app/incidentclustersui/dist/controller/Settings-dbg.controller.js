@@ -1,15 +1,18 @@
 sap.ui.define([
   "./BaseController",
+    "../model/formatter",
   "sap/ui/model/json/JSONModel",
   "sap/m/Popover",
   "sap/m/List",
   "sap/m/StandardListItem",
   "sap/m/MessageToast",
-  "sap/ui/core/Fragment"
-], (BaseController, JSONModel, Popover, List, StandardListItem, MessageToast, Fragment) => {
+  "sap/ui/core/Fragment",
+  "sap/m/MessageBox"
+], (BaseController, formatter,JSONModel, Popover, List, StandardListItem, MessageToast, Fragment, MessageBox) => {
   "use strict";
-
+  
   return BaseController.extend("com.cytechies.integration.reliability.incidentclustersui.controller.Settings", {
+        formatter: formatter,
     async onInit() {
       const oGlobalModel = this.getOwnerComponent().getModel("globalModel");
       oGlobalModel.setProperty("/editMode", false);
@@ -44,31 +47,36 @@ sap.ui.define([
     },
     async onSave() {
 
-      try {
+    const oModel = this.getOwnerComponent()
+        .getModel("AdminModel");
 
-        const oModel =
-          this.getOwnerComponent()
-            .getModel("AdminModel");
+    try {
 
         await oModel.submitBatch("$auto");
 
+        const bHasPendingChanges = oModel.hasPendingChanges();
+
+        if (bHasPendingChanges) {
+            throw new Error("Some changes could not be saved");
+        }
+
         this.getOwnerComponent()
-          .getModel("globalModel")
-          .setProperty("/editMode", false);
+            .getModel("globalModel")
+            .setProperty("/editMode", false);
 
         MessageToast.show(
-          "Settings saved successfully"
+            "Settings saved successfully"
         );
 
-      } catch (err) {
+    } catch (err) {
 
         console.error(err);
 
         MessageBox.error(
-          "Failed to save settings"
+            err.message || "Failed to save settings"
         );
-      }
-    },
+    }
+},
     async onCancel() {
 
       await this._loadSettings();
@@ -119,7 +127,7 @@ sap.ui.define([
       this.byId("iflowRetention")
         .setBindingContext(this._settings.MONITORING_RETENTION_DAYS, "AdminModel");
 
-      await this.loadLastPollInfo();
+      await this.loadTenantPollInfo();
     },
     async onAddTenant() {
       let oGlobalModel = this.getOwnerComponent().getModel("globalModel");
@@ -174,6 +182,24 @@ sap.ui.define([
         this.getOwnerComponent()
           .getModel("globalModel")
           .getProperty("/TenantDetails");
+      const aRequiredFields = [
+        "tenantName",
+        "tenantId",
+        "destinationName",
+         "url",
+        "isActive"
+    ];
+
+    const aMissingFields = aRequiredFields.filter(
+        field => !oPayload[field] || !oPayload[field].toString().trim()
+    );
+
+    if (aMissingFields.length > 0) {
+        sap.m.MessageBox.error(
+            `Please fill all required fields.\n\nMissing: ${aMissingFields.join(", ")}`
+        );
+        return;
+    }
 
       try {
 
@@ -308,7 +334,7 @@ console.log("Polling Result: ", oResult.value[0].processedLogs);
     } finally {
 
         oView.setBusy(false);
-
+        oModel.refresh();
     }
 },
 onPollingModeChange: function (oEvent) {
@@ -326,44 +352,57 @@ onPollingModeChange: function (oEvent) {
         );
 
 },
-async loadLastPollInfo() {
+async loadTenantPollInfo() {
 
-    const oModel =
-        this.getOwnerComponent()
-            .getModel("AdminModel");
+    const oModel = this.getOwnerComponent()
+        .getModel("AdminModel");
 
-    const aContexts = await oModel
-        .bindList(
-            "/DailyMetrics",
-            undefined,
-            [
-                new sap.ui.model.Sorter(
-                    "lastPollAt",
-                    true // descending
-                )
-            ]
-        )
-        .requestContexts(0, 1);
-
-    if (aContexts.length) {
-
-        const oMetric =
-            aContexts[0].getObject();
-
-        const oGlobalModel =
-            this.getOwnerComponent()
-                .getModel("globalModel");
-
-        oGlobalModel.setProperty(
-            "/lastPollAt",
-            oMetric.lastPollAt
-        );
-
-        oGlobalModel.setProperty(
-            "/lastPollStatus",
-            oMetric.lastPollStatus
-        );
+   const aContexts = await oModel.bindList(
+    "/DailyMetrics",
+    undefined,
+    [
+        new sap.ui.model.Sorter("lastPollAt", true)
+    ],
+    [],
+    {
+        $expand: "tenant"
     }
+).requestContexts(0, 500);
+
+console.log("Tenant Poll Info Contexts: ", aContexts);
+    const aMetrics = aContexts.map(
+        oContext => oContext.getObject()
+    );
+
+    // Keep latest record per tenant
+    const mTenantMap = {};
+
+    aMetrics.forEach(oMetric => {
+
+        const sTenantId = oMetric.tenant_ID;
+
+        if (!mTenantMap[sTenantId]) {
+
+            mTenantMap[sTenantId] = {
+                tenantId: sTenantId,
+                tenantName: oMetric.tenant?.tenantName,
+                lastPollAt: oMetric.lastPollAt,
+                lastPollStatus: oMetric.lastPollStatus,
+                pollRuns: oMetric.pollRuns,
+                pollFailures: oMetric.pollFailures
+            };
+        }
+    });
+
+    const aTenantPollStatus =
+        Object.values(mTenantMap);
+console.log("Tenant Poll Status: ", aTenantPollStatus);
+    this.getOwnerComponent()
+        .getModel("globalModel")
+        .setProperty(
+            "/tenantPollStatus",
+            aTenantPollStatus
+        );
 }
   });
 });

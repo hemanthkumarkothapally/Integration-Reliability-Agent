@@ -132,15 +132,6 @@ modules:
       build-result: resources
 
       requires:
-
-        - artifacts:
-
-            - comcytechiesintegrationreliabilityincidentclusters.zip
-
-          name: comcytechiesintegrationreliabilityincidentclusters
-
-          target-path: resources/
-
         - artifacts:
 
             - comcytechiesintegrationreliabilityincidentclustersui.zip

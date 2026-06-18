@@ -756,6 +756,64 @@ export async function ApiCall(tenant, path) {
     throw err;
   }
 }
+export async function ApiCallLogs(tenant, path) {
+
+  try {
+
+    const destination = await getDestination({
+      destinationName: tenant.destinationName
+    });
+
+    if (!destination) {
+      throw new Error(`Destination "${tenant.destinationName}" not found`);
+    }
+
+    let allResults = [];
+    let nextUrl = path;
+
+    while (nextUrl) {
+
+      const res = await executeHttpRequest(destination, {
+        method: 'GET',
+        url: nextUrl
+      });
+
+      const data = res.data;
+
+      // Non-collection APIs
+      if (!data?.d?.results) {
+        return data;
+      }
+
+      allResults.push(...data.d.results);
+
+      if (data.d.__next) {
+
+        // Extract relative CPI path
+        const url = new URL(data.d.__next);
+
+        nextUrl =
+          url.pathname +
+          url.search;
+
+      } else {
+
+        nextUrl = null;
+      }
+    }
+
+    return {
+      d: {
+        results: allResults
+      }
+    };
+
+  } catch (err) {
+
+    console.error('API Error:', err.message);
+    throw err;
+  }
+}
 
 /* UPSERT MONITORED ARTIFACTS
  */

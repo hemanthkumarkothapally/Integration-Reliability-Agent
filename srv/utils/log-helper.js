@@ -7,6 +7,7 @@ import {
   processInBatches,
   extractAdapter,
   ApiCall,
+  ApiCallLogs,
   upsertMonitoredArtifacts
 } from './log-utils.js';
 import { updateDailyMetrics ,updateDailyAIMetrics} from './daily-metrics.js';
@@ -58,7 +59,7 @@ export async function runPoll({
       console.log("CPI API Path:", path);
       console.log("Calling CPI MessageProcessingLogs API...");
        
-      const response = await ApiCall(tenant, path);
+      const response = await ApiCallLogs(tenant, path);
 
       console.log("CPI Response:");
       console.log(JSON.stringify(response, null, 2));
@@ -197,7 +198,12 @@ export async function runPoll({
         await INSERT.into(Incidents).entries(newLogs);
         console.log(`✅ Inserted ${newLogs.length} incidents`);
       }
-
+      await updateDailyMetrics(
+        tenant.ID,
+        {
+          newIncidents: newLogs.length
+        }
+      );
       /* UPDATE MONITORED ARTIFACTS */
 
       console.log("Updating MonitoredArtifacts...");

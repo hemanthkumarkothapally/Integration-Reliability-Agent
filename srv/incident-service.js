@@ -2,7 +2,7 @@ import cds from '@sap/cds';
 import { generateClusterRecommendation } from './utils/ai-recommendation-util.js';
 import { runPoll } from './utils/log-helper.js';
 import { refreshArtifactDashboard } from './utils/clustering-util.js';
-import { updateDailyMetrics ,updateDailyAIMetrics} from './utils/daily-metrics.js';
+import { updateDailyMetrics, updateDailyAIMetrics } from './utils/daily-metrics.js';
 
 import { getIncidentTrend, getClusterSeverityChart, getIflowSeverityChart } from './utils/dashboard-charts.js';
 export default cds.service.impl(async function () {
@@ -474,7 +474,7 @@ export default cds.service.impl(async function () {
                 ID: relation.ID
             });
 
-         await updateDailyMetrics(
+        await updateDailyMetrics(
             tenant.ID,
             {
                 resolvedIflowClusters: 1
@@ -516,7 +516,7 @@ export default cds.service.impl(async function () {
                     ID: clusterId
                 });
         }
-        
+
         if (artifact) {
             const resolvedCount = await SELECT.from(Incidents)
                 .where({
@@ -540,7 +540,7 @@ export default cds.service.impl(async function () {
                 }
             );
         }
-        
+
         await refreshArtifactDashboard(
             MonitoredArtifacts,
             ClusterArtifacts,
@@ -563,11 +563,17 @@ export default cds.service.impl(async function () {
         const incidentFilter = {
             status: { '!=': 'RESOLVED' }
         };
+        const resolvedTodayFilter = {
+            resolutionStatus: 'RESOLVED'
+        };
 
         if (tenantId) {
             artifactFilter.tenant_ID = tenantId;
             clusterFilter.tenant_ID = tenantId;
             incidentFilter.tenant_ID = tenantId;
+            resolvedTodayFilter.artifact = {
+                tenant_ID: tenantId
+            };
         }
 
         const monitoredIflows =
@@ -600,14 +606,34 @@ export default cds.service.impl(async function () {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
-        const resolvedToday =
-            await SELECT.one
+        let resolvedToday = { count: 0 };
+
+        if (tenantId) {
+
+            const artifactIds = await SELECT.from(MonitoredArtifacts)
+                .columns('ID')
+                .where({ tenant_ID: tenantId });
+
+            resolvedToday = await SELECT.one
                 .from(ClusterArtifacts)
                 .columns`count(*) as count`
                 .where({
                     resolutionStatus: 'RESOLVED',
-                    modifiedAt: { '>=': today }
+                    artifact_ID: {
+                        in: artifactIds.map(a => a.ID)
+                    }
                 });
+
+        } else {
+
+            resolvedToday = await SELECT.one
+                .from(ClusterArtifacts)
+                .columns`count(*) as count`
+                .where({
+                    resolutionStatus: 'RESOLVED'
+                });
+
+        }
 
         return {
             monitoredIflows:
@@ -666,7 +692,7 @@ export default cds.service.impl(async function () {
                         'openClusterCount',
                         'severityScore',
                         'severityZScore',
-                        'lastPollTimestamp'
+                        'lastErrorAt'
                     )
                     .where(artifactFilter);
 

@@ -16,7 +16,7 @@ export default cds.service.impl(async function () {
         IncidentClusters,
         Playbooks,
         MonitoredArtifacts,
-        ClusterArtifacts, DailyMetrics, DailyAIMetrics
+        ClusterArtifacts, DailyMetrics, DailyAIMetrics,ApplicationSettings
     } = db.entities('com.cytechies.integration.reliability');
     const srv = this;
     this.on("getUsageAnalytics", async (req) => {
@@ -314,7 +314,7 @@ console.log("fromDate:", fromDate, "toDate:", toDate);
         console.log('UPDATE FIRED');
         console.log(data);
         const { ID, settingValue } = data;
-        if (ID !== 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb') return;
+        if (ID === 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'){
         console.log(`Updating polling schedule to every ${settingValue} minutes...`);
         const minutes = parseInt(settingValue, 10);
         if (!Number.isInteger(minutes) || minutes < 5 || minutes > 180) {
@@ -345,7 +345,90 @@ console.log("fromDate:", fromDate, "toDate:", toDate);
             // JSS failed → fail the request so DB and scheduler don't drift apart
             req.error(502, `Failed to update polling schedule: ${e.message}`);
         }
+        }
+        if (ID === 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'){
+            console.log(`Updating AI Polling schedule to ${settingValue}`);
+            if (settingValue === 'AUTOMATIC') {
+                active = true;
+            }else{
+                active = false;
+            }
+
+        }
     });
+    this.before('UPDATE', 'ApplicationSettings', async (req) => {
+
+    const { ID, settingValue } = req.data;
+
+    const schedulerSettings = [
+        'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', // POLLING_MODE
+        'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'  // POLLING_INTERVAL
+    ];
+
+    if (!schedulerSettings.includes(ID)) {
+        return;
+    }
+
+    // Read current settings
+    const settings = await SELECT.from(ApplicationSettings)
+        .columns('ID', 'settingValue')
+        .where({
+            ID: {
+                in: schedulerSettings
+            }
+        });
+
+    let pollingMode = settings.find(
+        s => s.ID === 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'
+    )?.settingValue;
+
+    let pollingInterval = settings.find(
+        s => s.ID === 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'
+    )?.settingValue;
+
+    // Apply the incoming change before updating scheduler
+    if (ID === 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa') {
+        pollingMode = settingValue;
+    }
+
+    if (ID === 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb') {
+        pollingInterval = settingValue;
+    }
+
+    const active = pollingMode === 'AUTOMATIC';
+
+    const minutes = parseInt(pollingInterval, 10);
+
+    if (!Number.isInteger(minutes) || minutes < 5 || minutes > 180) {
+        req.error(400, `Invalid polling interval: ${pollingInterval}`);
+        return;
+    }
+
+    try {
+            const { jobscheduler } = xsenv.getServices({ jobscheduler: { label: 'jobscheduler' } });
+            console.log(`Connecting to Job Scheduler at ${jobscheduler.url}...`);
+            const scheduler = new JobSchedulerClient.Scheduler(jobscheduler);
+            const JOB_ID = process.env.JOB_ID;
+            const SCHEDULE_ID = process.env.JOB_SCHEDULE_ID;
+            const schedule = {
+                repeatInterval: `${minutes} minutes`,
+                active: active,
+                description: `Recurring Schedule (Repeat Interval) - ${minutes} mins`
+            };
+
+            await new Promise((resolve, reject) =>
+                scheduler.updateJobSchedule(
+                    { jobId: JOB_ID, scheduleId: SCHEDULE_ID, schedule },
+                    (err, res) => (err ? reject(err) : resolve(res))
+                )
+            );
+            console.log(`Polling schedule updated successfully to every ${minutes} minutes.`);
+            req.info(`Polling schedule updated to every ${minutes} minutes`);
+        } catch (e) {
+            // JSS failed → fail the request so DB and scheduler don't drift apart
+            req.error(502, `Failed to update polling schedule: ${e.message}`);
+        }
+});
     this.on('testHanaStorage', async () => {
         // Get total tokens used by each user across all individual messages
         const topConsumers = await SELECT(
