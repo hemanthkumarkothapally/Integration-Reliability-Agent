@@ -221,6 +221,14 @@ sap.ui.define([
             // 2. Set UI to Busy
             this.getView().setBusy(true);
 
+            // 2a. If the binding was created suspended, resume it so filter() can fire a request.
+            //     We intentionally do NOT call refresh() after filter() — calling refresh()
+            //     immediately after filter() aborts the filter request mid-flight on a growing
+            //     list and causes the popover list to render blank/duplicated.
+            if (oBinding.isSuspended && oBinding.isSuspended()) {
+                oBinding.resume();
+            }
+
             // 3. Create a SAFE Promise with a Timeout Fallback
             let oDataLoadPromise = new Promise(function (resolve) {
                 // Option A: The network request fires and succeeds
@@ -230,7 +238,7 @@ sap.ui.define([
                 oBinding.attachEventOnce("dataReceived", fnDataReceived);
 
                 // Option B: The timeout catches the cache/no-network scenario.
-                // 500ms is usually enough time for UI5 to decide if it needs to make a network call.
+                // 800ms is usually enough time for UI5 to decide if it needs to make a network call.
                 setTimeout(function () {
                     // Detach the event just in case it fires way later
                     oBinding.detachEvent("dataReceived", fnDataReceived);
@@ -238,20 +246,10 @@ sap.ui.define([
                 }, 800);
             });
 
-            // 4. Apply Filters via your central method
+            // 4. Apply Filters via your central method (this triggers the data load on its own)
             this.applyCentralBindingFilter("clusterList", "items", aFilters);
 
-            // 5. Force the refresh as requested
-            // Note: Calling refresh() immediately after filter() might abort the filter request
-            // in some OData V4 implementations. We wrap it in a micro-delay to ensure the filter registers first.
-            setTimeout(function () {
-                if (oBinding.isSuspended && oBinding.isSuspended()) {
-                    oBinding.resume();
-                }
-                oBinding.refresh();
-            }, 50);
-
-            // 6. Handle the Promise Resolution
+            // 5. Handle the Promise Resolution
             oDataLoadPromise.then(function (sStatus) {
                 // console.log("Promise resolved via:", sStatus);
                 this.getView().setBusy(false);
@@ -296,6 +294,14 @@ sap.ui.define([
             // 2. Set UI to Busy
             this.getView().setBusy(true);
 
+            // 2a. If the binding was created suspended, resume it so filter() can fire a request.
+            //     We intentionally do NOT call refresh() after filter() — calling refresh()
+            //     immediately after filter() aborts the filter request mid-flight on a growing
+            //     list and causes the popover list to render blank/duplicated.
+            if (oBinding.isSuspended && oBinding.isSuspended()) {
+                oBinding.resume();
+            }
+
             // 3. Create a SAFE Promise with a Timeout Fallback (Prevents the Promise Trap)
             let oDataLoadPromise = new Promise(function (resolve) {
                 let fnDataReceived = function () {
@@ -310,18 +316,10 @@ sap.ui.define([
                 }, 800);
             });
 
-            // 4. Apply Filters via your central method (replaces applyListSearch)
+            // 4. Apply Filters via your central method (this triggers the data load on its own)
             this.applyCentralBindingFilter("iFlowList", "items", aFilters);
 
-            // 5. Force the refresh as requested
-            setTimeout(function () {
-                if (oBinding.isSuspended && oBinding.isSuspended()) {
-                    oBinding.resume();
-                }
-                oBinding.refresh();
-            }, 50);
-
-            // 6. Handle the Promise Resolution
+            // 5. Handle the Promise Resolution
             oDataLoadPromise.then(function (sStatus) {
                 this.getView().setBusy(false);
                 oPopover.openBy(oSource);
@@ -357,7 +355,6 @@ sap.ui.define([
         },
 
         onConversationSelect: function (oEvent) {
-            debugger
             this.showBusy();
             let oListItem = oEvent.getParameter("listItem");
             let oCtx = oListItem.getBindingContext("chatModel");
@@ -562,7 +559,7 @@ sap.ui.define([
             let oModel = this.getView().getModel("chatModel");
             let sConversationId = oJsonModel.getProperty("/currentConversationId");
 
-            let sPath = "/ChatSessions(" + sConversationId + ")";
+            let sPath = "/ChatSessions('" + sConversationId + "')";
             let oSessionContextBinding = oModel.bindContext(sPath);
 
             oSessionContextBinding.requestObject().then(function (oSession) {
@@ -598,7 +595,6 @@ sap.ui.define([
             this.hideBusy();
         },
         _loadMessageBatch: function (sConversationId, bPrepend) {
-            debugger
             if (this._bLoadingMessages) return;
             this._bLoadingMessages = true;
 
@@ -616,7 +612,6 @@ sap.ui.define([
             });
 
             oListBinding.requestContexts(nSkip, PAGE_SIZE).then(function (aContexts) {
-                debugger
                 // ✅ Stale check: if conversation changed or reset happened, discard results
                 let sActiveId = oJsonModel.getProperty("/currentConversationId");
                 if (sActiveId !== sConversationId) {
@@ -796,7 +791,7 @@ sap.ui.define([
                             items: [
                                 // Wrapped Text inside layout panel container to retain structural width
                                 new VBox({
-                                    items: [...aBubbleItems, oUserText, oUserTokenInfo.addStyleClass("sapUiTinyMarginTop")]
+                                    items: [...aBubbleItems]
                                 }).addStyleClass("userChatBubbleNew sapUiSmallMarginEnd"),
                                 oUserAvatar
                             ]

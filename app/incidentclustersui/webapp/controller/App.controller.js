@@ -1,50 +1,44 @@
 sap.ui.define([
   "./BaseController",
   "sap/ui/model/json/JSONModel",
-  "sap/m/Popover",            // 6th dependency
-  "sap/m/List",               // 7th dependency
+  "sap/m/Popover",
+  "sap/m/List",
   "sap/m/StandardListItem",
   "com/cytechies/integration/reliability/incidentclustersui/controller/IRALogo"
 ], (BaseController, JSONModel, Popover, List, StandardListItem, IRALogo) => {
   "use strict";
 
   return BaseController.extend("com.cytechies.integration.reliability.incidentclustersui.controller.App", {
-  onInit: function () { // Removed 'async'
-    this.getView().setBusy(true);
 
-    const oToolPage = this.byId("toolPage1");
-    const oHeader = oToolPage.getHeader();
-    
-    // Instantiate and attach the new standard 'press' event
-    const oLogo = new IRALogo({ size: 50 });
-    oLogo.attachPress(this.onSideNavButtonPress, this);
-    
-    oHeader.insertContent(oLogo, 0);
-    this.getOwnerComponent().getModel("globalModel").setProperty("/selectedKey","overview");
-    console.log("selectedKey:", this.getOwnerComponent().getModel("globalModel").getProperty("/selectedKey"));
-    
-    this.getView().setBusy(false);
-    
-    const oRouter = this.getOwnerComponent().getRouter();
+    onInit: function () {
+      this.getView().setBusy(true);
 
-    oRouter.getRoute("RouteOverview")
-        .attachPatternMatched(
-            this._onRouteMatched,
-            this
-        );
-  },
-_onRouteMatched: async function (oEvent) {
-      await this.getSettingsData();
-},
-    onSideNavButtonPress: function () {
+      const oToolPage = this.byId("toolPage1");
+      const oHeader = oToolPage.getHeader();
 
-      const oSideNav = this.byId("sideNavigation");
+      // Instantiate and attach the new standard 'press' event
+      const oLogo = new IRALogo({ size: 50 });
+      oLogo.attachPress(this.onSideNavButtonPress, this);
 
-      oSideNav.setVisible(
-        !oSideNav.getVisible()
-      );
+      oHeader.insertContent(oLogo, 0);
+      this.getOwnerComponent().getModel("globalModel").setProperty("/selectedKey", "overview");
 
+      this.getView().setBusy(false);
+
+      const oRouter = this.getOwnerComponent().getRouter();
+      oRouter.getRoute("RouteOverview")
+        .attachPatternMatched(this._onRouteMatched, this);
     },
+
+    _onRouteMatched: async function (oEvent) {
+      await this.getSettingsData();
+    },
+
+    onSideNavButtonPress: function () {
+      const oSideNav = this.byId("sideNavigation");
+      oSideNav.setVisible(!oSideNav.getVisible());
+    },
+
     onSideNavigationSelect: function (oEvent) {
       this.showBusy();
       const sKey = oEvent.getParameter("item").getKey();
@@ -69,7 +63,7 @@ _onRouteMatched: async function (oEvent) {
           break;
 
         case "ai":
-          this.getView().getModel("globalModel").setProperty("/iflowId",null);
+          this.getView().getModel("globalModel").setProperty("/iflowId", null);
           oRouter.navTo("RouteAIAssistant");
           break;
 
@@ -81,20 +75,10 @@ _onRouteMatched: async function (oEvent) {
           // future route
           break;
       }
+
       this.hideBusy();
-      console.log("selectedKey:", this.getOwnerComponent().getModel("globalModel").getProperty("/selectedKey"));
-
     },
-    // onSideNavigationSetting: function (oEvent) {
-    //   let oItem = oEvent.getParameter("item");
-    //   let sKey = oItem.getKey();
 
-    //   if (sKey === "settings") {
-    //     // Prevent navigation/selection state if you just want a popup
-    //     // Open the tenant popover anchoring it to the clicked setting item
-    //     this._showTenantPopover(oItem);
-    //   }
-    // },
     _showTenantPopover: function (oAnchor) {
       if (!this._oTenantPopover) {
         // Create the popover lazily
@@ -129,16 +113,17 @@ _onRouteMatched: async function (oEvent) {
      * Event handler when a tenant from the list is clicked
      */
     onTenantSelect: function (oEvent) {
-      var oSelectedItem = oEvent.getSource();
-      var oContext = oSelectedItem.getBindingContext("tenants");
-      var oSelectedTenantData = oContext.getObject();
+      const oSelectedItem = oEvent.getSource();
+      const oContext = oSelectedItem.getBindingContext("tenants");
+      const oSelectedTenantData = oContext.getObject();
 
-      sap.m.MessageToast.show("Selected Tenant: " + oSelectedTenantData.name);
+      this.showToast("Selected Tenant: " + oSelectedTenantData.name);
 
       // TODO: Add your logic here to filter main table or update backend destination
 
       // Close the popover after selection
       this._oTenantPopover.close();
-    },
+    }
+
   });
 });

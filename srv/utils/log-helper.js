@@ -40,7 +40,7 @@ export async function runPoll({
 
       // 2. CRITICAL FIX: Ensure rawTimestamp is evaluated as a Date instance
       const rawTimestamp = latestArtifact ? new Date(latestArtifact.lastPollTimestamp) : dateFiveMinAgo;
-
+      
       console.log("Raw Timestamp:", rawTimestamp);
 
       // 3. Strip out milliseconds/Z characters to satisfy SAP CPI's OData parser

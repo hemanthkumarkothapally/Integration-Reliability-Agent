@@ -12,8 +12,6 @@
     xmlns:grid="sap.ui.layout.cssgrid"
     xmlns:card="sap.f.cards">
 
-
-
     <f:DynamicPage id="dynamicPage" fitContent="false" toggleHeaderOnTitleClick="false">
 
         <f:title>
@@ -26,17 +24,18 @@
                 </f:expandedHeading>
             </f:DynamicPageTitle>
         </f:title>
+
         <!-- ===================================================== -->
         <!-- PAGE CONTENT -->
         <!-- ===================================================== -->
 
-        <f:content >
-
-            <!-- ===================================================== -->
-            <!-- KPI CARDS -->
-            <!-- ===================================================== -->
+        <f:content>
 
             <VBox class="sapUiNoMargin">
+
+                <!-- ===================================================== -->
+                <!-- KPI CARDS -->
+                <!-- ===================================================== -->
 
                 <f:GridList id="kpiGridList" class="sapUiTinyMarginBottom" width="100%" growing="false">
 
@@ -46,127 +45,78 @@
 
                     <f:items>
 
-                        <!-- Total Incidents -->
+                        <!-- Monitored iFlows -->
                         <f:GridListItem>
-                            <!-- <f:Card width="100%" semanticRole="ListItem"> -->
-                            <!-- <f:header>
-                                            <card:NumericHeader title="Monitored iFlows" number="{chart>/monitoredIflows}" state="Neutral" iconSrc="sap-icon://process" />
-                                        </f:header> -->
-
-                            <!-- <f:content> -->
-                            <HBox width="100%"  alignItems="Center" justifyContent="Start" class="sapUiSmallMargin">
-
-                                <!-- Icon Circle -->
+                            <HBox width="100%" alignItems="Center" justifyContent="Start" class="sapUiSmallMargin">
                                 <VBox class="iconCircle blueIconBg" justifyContent="Center" alignItems="Center">
-
                                     <core:Icon src="sap-icon://process" size="1.4rem" color="#2563EB"/>
                                 </VBox>
-
-                                <!-- KPI Content -->
                                 <VBox class="sapUiSmallMarginBegin">
                                     <Title text="Monitored iFlows" level="H5" class="kpiTitle"/>
-
                                     <Text text="{chart>/monitoredIflows}" class="kpiValueBlue"/>
                                 </VBox>
-
                             </HBox>
-                            <!-- </f:content> -->
-                            <!-- </f:Card> -->
-
                         </f:GridListItem>
 
-                        <!-- Active Clusters -->
+                        <!-- Open Clusters -->
                         <f:GridListItem>
-                            <!-- <f:Card width="100%" semanticRole="ListItem">
-                                        <f:header>
-                                            <card:NumericHeader title="Open Clusters" number="{chart>/openClusters}" state="Critical" iconSrc="sap-icon://group-2" />
-                                        </f:header>
-                                    </f:Card> -->
-
-                            <HBox width="100%"  alignItems="Center" class="sapUiSmallMargin">
-
+                            <HBox width="100%" alignItems="Center" class="sapUiSmallMargin">
                                 <VBox class="iconCircle orangeIconBg" justifyContent="Center" alignItems="Center">
-
                                     <core:Icon src="sap-icon://group-2" size="1.4rem" color="#EA580C"/>
                                 </VBox>
-
                                 <VBox class="sapUiSmallMarginBegin">
                                     <Title text="Open Clusters" level="H5" class="kpiTitle"/>
                                     <Text text="{chart>/openClusters}" class="kpiValueOrange"/>
                                 </VBox>
-
                             </HBox>
                         </f:GridListItem>
 
-                        <!-- Critical -->
+                        <!-- Open Incidents -->
                         <f:GridListItem>
-                            <!-- <f:Card width="100%" semanticRole="ListItem">
-                                        <f:header>
-                                            <card:NumericHeader title="Open Incidents" number="{chart>/openIncidents}" state="None" iconSrc="sap-icon://message-warning" />
-                                        </f:header>
-                                    </f:Card> -->
-
-                            <HBox width="100%"  alignItems="Center" class="sapUiSmallMargin">
-
+                            <HBox width="100%" alignItems="Center" class="sapUiSmallMargin">
                                 <VBox class="iconCircle yellowIconBg" justifyContent="Center" alignItems="Center">
-
                                     <core:Icon src="sap-icon://message-warning" size="1.4rem" color="#D97706"/>
                                 </VBox>
-
                                 <VBox class="sapUiSmallMarginBegin">
                                     <Title text="Open Incidents" level="H5" class="kpiTitle"/>
                                     <Text text="{chart>/openIncidents}" class="kpiValueYellow"/>
                                 </VBox>
-
                             </HBox>
                         </f:GridListItem>
 
-                        <!-- Critical Iflows -->
+                        <!-- Critical iFlows -->
                         <f:GridListItem>
-                            <!-- <f:Card width="100%" semanticRole="ListItem">
-                                        <f:header>
-                                            <card:NumericHeader title="Critical Iflows" number="{chart>/criticalIflows}" state="Error" iconSrc="sap-icon://status-critical" />
-                                        </f:header>
-                                    </f:Card> -->
-
-                            <HBox width="100%"  alignItems="Center" class="sapUiSmallMargin">
-
+                            <HBox width="100%" alignItems="Center" class="sapUiSmallMargin">
                                 <VBox class="iconCircle redIconBg" justifyContent="Center" alignItems="Center">
-
                                     <core:Icon src="sap-icon://status-critical" size="1.4rem" color="#DC2626"/>
                                 </VBox>
-
                                 <VBox class="sapUiSmallMarginBegin">
                                     <Title text="Critical iFlows" level="H5" class="kpiTitle"/>
                                     <Text text="{chart>/criticalIflows}" class="kpiValueRed"/>
                                 </VBox>
-
                             </HBox>
                         </f:GridListItem>
 
+                        <!-- Resolved Clusters -->
                         <f:GridListItem>
-                            <!-- <f:Card width="100%" semanticRole="ListItem">
-                                        <f:header>
-                                            <card:NumericHeader title="Clusters Resolved Today" number="{chart>/resolvedToday}" state="Good" iconSrc="sap-icon://complete" />
-                                        </f:header>
-                                    </f:Card> -->
-                            <HBox width="100%"  alignItems="Center" class="sapUiSmallMargin">
-
+                            <HBox width="100%" alignItems="Center" class="sapUiSmallMargin">
                                 <VBox class="iconCircle greenIconBg" justifyContent="Center" alignItems="Center">
-
                                     <core:Icon src="sap-icon://complete" size="1.4rem" color="#16A34A"/>
                                 </VBox>
-
                                 <VBox wrap="Wrap" class="sapUiSmallMarginBegin">
                                     <Title text="Resolved Clusters" level="H5" wrapping="true" class="kpiTitle"/>
                                     <Text text="{chart>/resolvedToday}" class="kpiValueGreen"/>
                                 </VBox>
-
                             </HBox>
                         </f:GridListItem>
+
                     </f:items>
 
                 </f:GridList>
+
+                <!-- ===================================================== -->
+                <!-- CHARTS -->
+                <!-- ===================================================== -->
 
                 <f:GridList class="sapUiTinyMarginBottom" width="100%">
 
@@ -176,14 +126,10 @@
 
                     <f:items>
 
-                        <!-- Top Error Types -->
+                        <!-- Clusters by Severity -->
                         <f:GridListItem type="Active" class="clickableCardItem">
                             <f:Card width="100%" semanticRole="ListItem" height="100%">
-                                <!-- <f:header>
-                                            <card:Header title="Incidents by Error Type" subtitle="Top 5 Clusters in the last 24 hours" iconSrc="sap-icon://donut-chart" />
-                                        </f:header> -->
-
-                                <f:content >
+                                <f:content>
                                     <viz:VizFrame class="noBorderVizFrame" id="topErrorTypesChart" uiConfig="{applicationSet:'fiori'}" vizType="donut" vizProperties="{
                                                     'title': {
                                                         'visible': true,
@@ -206,25 +152,19 @@
                                                     }
                                                 }" width="100%" height="18rem">
 
-                                        <viz:dataset >
-
+                                        <viz:dataset>
                                             <viz.data:FlattenedDataset data="{chart>/clusterSeverity}">
-
                                                 <viz.data:dimensions>
                                                     <viz.data:DimensionDefinition name="Severity" value="{chart>severity}" />
                                                 </viz.data:dimensions>
-
                                                 <viz.data:measures>
                                                     <viz.data:MeasureDefinition name="Count" value="{chart>count}" />
                                                 </viz.data:measures>
-
                                             </viz.data:FlattenedDataset>
                                         </viz:dataset>
 
-
                                         <viz:feeds>
                                             <viz.feeds:FeedItem uid="size" type="Measure" values="Count" />
-
                                             <viz.feeds:FeedItem uid="color" type="Dimension" values="Severity" />
                                         </viz:feeds>
 
@@ -233,13 +173,9 @@
                             </f:Card>
                         </f:GridListItem>
 
-                        <!-- Incident Trend -->
+                        <!-- Incidents Over Time -->
                         <f:GridListItem type="Active" class="clickableCardItem">
                             <f:Card width="100%" semanticRole="ListItem" height="100%">
-                                <!-- <f:header>
-                                            <card:Header title="Incidents Trend" subtitle="Last 7 Days" iconSrc="sap-icon://line-chart" />
-                                        </f:header> -->
-
                                 <f:content>
                                     <viz:VizFrame class="noBorderVizFrame" id="idLineChart" vizType="column" uiConfig="{applicationSet:'fiori'}" width="100%" height="18rem" vizProperties="{
         'title': {
@@ -292,12 +228,9 @@
                             </f:Card>
                         </f:GridListItem>
 
+                        <!-- iFlows by Severity -->
                         <f:GridListItem type="Active" class="clickableCardItem">
                             <f:Card width="100%" semanticRole="ListItem" height="100%">
-                                <!-- <f:header>
-                                            <card:Header title="Severity Distribution" subtitle="Current Open Clusters" iconSrc="sap-icon://pie-chart" />
-                                        </f:header> -->
-
                                 <f:content>
                                     <viz:VizFrame class="noBorderVizFrame" id="severityChart" vizType="donut" width="100%" height="18rem" uiConfig="{applicationSet:'fiori'}" vizProperties="{
                                                 'title': {
@@ -324,23 +257,17 @@
 
                                         <viz:dataset>
                                             <viz.data:FlattenedDataset data="{chart>/iflowSeverity}">
-
                                                 <viz.data:dimensions>
                                                     <viz.data:DimensionDefinition name="Severity" value="{chart>severity}" />
                                                 </viz.data:dimensions>
-
                                                 <viz.data:measures>
                                                     <viz.data:MeasureDefinition name="Count" value="{chart>count}" />
                                                 </viz.data:measures>
-
-
-
                                             </viz.data:FlattenedDataset>
                                         </viz:dataset>
 
                                         <viz:feeds>
                                             <viz.feeds:FeedItem uid="size" type="Measure" values="Count" />
-
                                             <viz.feeds:FeedItem uid="color" type="Dimension" values="Severity" />
                                         </viz:feeds>
 
@@ -360,10 +287,6 @@
                 <!-- ===================================================== -->
 
                 <f:Card semanticRole="ListItem" width="100%">
-
-                    <!-- <f:header>
-                                <card:Header title="Top 5 Critical iFlows" level="H1"/>
-                            </f:header> -->
 
                     <f:content>
 
@@ -388,10 +311,6 @@
                                     <Text text="Active Clusters" />
                                 </Column>
 
-                                <!-- <Column minScreenWidth="Tablet" width="15%" hAlign="Center">
-                                            <Text text="Open Incidents" />
-                                        </Column> -->
-
                                 <Column hAlign="End">
                                     <Text text="Last Failure" />
                                 </Column>
@@ -400,7 +319,7 @@
 
                             <items>
 
-                                <ColumnListItem type="Navigation" press="onTopIflowPress">
+                                <ColumnListItem type="Navigation" press=".onTopIflowPress">
 
                                     <cells>
                                         <core:Icon src="sap-icon://process" size="1.25rem" color="{path: 'topIflows>overallSeverity', formatter: '.formatter.severityIconColor'}"/>
@@ -415,8 +334,6 @@
 
                                         <ObjectNumber number="{topIflows>openClusterCount}" />
 
-                                        <!-- <ObjectNumber number="{topIflows>totalIncidents}" emphasized="true" /> -->
-
                                         <Text text="{path: 'topIflows>lastErrorAt', formatter: '.formatter.formatDateTime'}" />
 
                                     </cells>
@@ -430,20 +347,11 @@
                     </f:content>
 
                 </f:Card>
-            </VBox >
-            <!-- ===================================================== -->
-            <!-- INCIDENT TABLE SECTION -->
-            <!-- ===================================================== -->
 
-
-
-
-
+            </VBox>
 
         </f:content>
 
     </f:DynamicPage>
-
-
 
 </mvc:View>
