@@ -5,79 +5,44 @@ async function getSetting(key, defaultValue, ApplicationSettings) {
 
     return setting?.settingValue ?? defaultValue;
 }
-export async function cleanupData( Incidents, Clusters, MonitoredArtifacts,ApplicationSettings) {
 
-    const incidentRetentionDays = Number(
-        await getSetting(
-            "INCIDENT_RETENTION_DAYS",
-            1,
-            ApplicationSettings
-        )
-    );
+async function getRetentionDays(key, ApplicationSettings, fallback = 1) {
+    const days = Number(await getSetting(key, fallback, ApplicationSettings));
+    return Number.isFinite(days) && days >= 0 ? days : fallback;
+}
 
-    const clusterRetentionDays = Number(
-        await getSetting(
-            "CLUSTER_RETENTION_DAYS",
-            1,
-            ApplicationSettings
-        )
-    );
+function cutoffISO(days) {
+    const date = new Date();
+    date.setDate(date.getDate() - days);
+    return date.toISOString();
+}
 
-     const monitoringRetentionDays = Number(
-        await getSetting(
-            "MONITORING_RETENTION_DAYS",
-            1,
-            ApplicationSettings
-        )
-    );
-    const incidentCutoff = new Date();
-    incidentCutoff.setDate(
-        incidentCutoff.getDate() -
-        incidentRetentionDays
-    );
+export async function cleanupData(Incidents, Clusters, MonitoredArtifacts, ApplicationSettings) {
+    const incidentRetentionDays = await getRetentionDays('INCIDENT_RETENTION_DAYS', ApplicationSettings);
+    const clusterRetentionDays = await getRetentionDays('CLUSTER_RETENTION_DAYS', ApplicationSettings);
+    const monitoringRetentionDays = await getRetentionDays('MONITORING_RETENTION_DAYS', ApplicationSettings);
 
-    const clusterCutoff = new Date();
-    clusterCutoff.setDate(
-        clusterCutoff.getDate() -
-        clusterRetentionDays
-    );
+    const deletedIncidents = await DELETE.from(Incidents).where({
+        modifiedAt: { '<': cutoffISO(incidentRetentionDays) },
+        status: 'RESOLVED'
+    });
 
-        const monitoringCutoff = new Date();
-    monitoringCutoff.setDate(
-        monitoringCutoff.getDate() -
-        monitoringRetentionDays
-    );
+    const deletedClusters = await DELETE.from(Clusters).where({
+        modifiedAt: { '<': cutoffISO(clusterRetentionDays) },
+        globalStatus: 'RESOLVED'
+    });
 
-    const deletedIncidents =
-        await DELETE.from(Incidents)
-            .where({
-                modifiedAt: {
-                    "<": incidentCutoff.toISOString()
-                },
-                status: "RESOLVED"
-            });
+    const deletedIflowMonitoring = await DELETE.from(MonitoredArtifacts).where({
+        lastPollTimestamp: { '<': cutoffISO(monitoringRetentionDays) },
+        overallSeverity: 'HEALTHY'
+    });
 
-    const deletedClusters =
-        await DELETE.from(Clusters)
-            .where({
-                modifiedAt: {
-                    "<": clusterCutoff.toISOString()
-                },
-                globalStatus: "RESOLVED"
-            });
-    const deletedIflowMonitoring =
-        await DELETE.from(MonitoredArtifacts)
-            .where({
-                lastPollTimestamp: {
-                    "<": monitoringCutoff.toISOString()
-                },
-                overallSeverity:"HEALTHY"
-            });
     console.log(
-        `Retention cleanup completed:
-         Incidents=${deletedIncidents},
-         Clusters=${deletedClusters},
-         Monitoring=${deletedIflowMonitoring}`
+        `Retention cleanup completed: Incidents=${deletedIncidents}, ` +
+        `Clusters=${deletedClusters}, Monitoring=${deletedIflowMonitoring}`
     );
-    return `Deleted Incidents: ${deletedIncidents}, Deleted Clusters: ${deletedClusters}, Deleted Monitoring: ${deletedIflowMonitoring}`;
+
+    return `Deleted Incidents: ${deletedIncidents}, ` +
+        `Deleted Clusters: ${deletedClusters}, ` +
+        `Deleted Monitoring: ${deletedIflowMonitoring}`;
 }

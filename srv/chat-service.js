@@ -10,9 +10,10 @@ async function callAI(destination, messages, system = null, maxTokens = 256) {
     console.log("chat system prompt:", system);
     if (system) payload.system = system;
     console.log("Sending AI Request with payload:", JSON.stringify(payload, null, 2));
+    const definitionId = process.env.AI_RECOMMENDATION_DEFINITION_ID;
     const response = await destination.send({
         method: 'POST',
-        path: '/inference/deployments/d2f31ccfd2765c35/invoke',
+        path: `/inference/deployments/${definitionId}/invoke`,
         headers: {
             'Content-Type': 'application/json',
             'AI-Resource-Group': 'default'

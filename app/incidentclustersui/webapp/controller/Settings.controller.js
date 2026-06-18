@@ -52,7 +52,7 @@ sap.ui.define([
 
     try {
 
-        await oModel.submitBatch("$auto");
+        await oModel.submitBatch("settingsGroup");
 
         const bHasPendingChanges = oModel.hasPendingChanges();
 
