@@ -107,13 +107,13 @@ export default cds.service.impl(async function () {
                 output: tokenMap[dateKey]?.output || 0
             });
         }
-console.log("fromDate:", fromDate, "toDate:", toDate);
+        console.log("fromDate:", fromDate, "toDate:", toDate);
         const topConsumers = await SELECT(
             'createdBy as name',
             'sum(tokenCount) as totalTokens'
         )
             .from('com.cytechies.integration.reliability.Messages')
-            .where({ tokenCount: { '>': 0 }})
+            .where({ tokenCount: { '>': 0 } })
             .groupBy('createdBy')
             .orderBy('totalTokens desc');
 
@@ -347,23 +347,7 @@ console.log("fromDate:", fromDate, "toDate:", toDate);
         }
     });
     this.on('testHanaStorage', async () => {
-        // Get total tokens used by each user across all individual messages
-        const topConsumers = await SELECT(
-            'createdBy as name',
-            'sum(tokenCount) as totalTokens'
-        )
-            .from('com.cytechies.integration.reliability.Messages')
-            .where({ tokenCount: { '>': 0 } })
-            .groupBy('createdBy')
-            .orderBy('totalTokens desc');
-
-        console.log(topConsumers);
-
-
-
-        // 3. Sort the consumers descending by amount
-        topConsumers.sort((a, b) => parseInt(b.amount) - parseInt(a.amount));
-
-        return JSON.stringify(topConsumers);
-    });
+    await DELETE.from('com.cytechies.integration.reliability.DailyAIMetrics');
+    return 'All records deleted successfully';
+});
 });

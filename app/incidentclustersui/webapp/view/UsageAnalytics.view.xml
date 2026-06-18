@@ -31,9 +31,6 @@
         <f:content>
             <VBox class="sapUiNoMargin">
 
-                <!-- ═══════════════════════════════════════════ -->
-                <!-- SUMMARY KPI CARDS                           -->
-                <!-- ═══════════════════════════════════════════ -->
                 <Title text="SUMMARY" level="H6" class="sapUiSmallMarginBegin sapUiTinyMarginBottom" />
 
                 <f:GridList class="sapUiTinyMarginBottom" width="100%" growing="false">
@@ -130,12 +127,7 @@
                     </f:items>
                 </f:GridList>
 
-                <!-- ═══════════════════════════════════════════ -->
-                <!-- CONSUMPTION PATTERNS                                      -->
-                <!-- ═══════════════════════════════════════════ -->
                 <Title text="CONSUMPTION PATTERNS" level="H6" class="sapUiSmallMarginBegin sapUiTinyMarginBottom" />
-
-                <!-- Token usage : input vs output -->
                 <f:GridList class="sapUiTinyMarginBottom" width="100%" growing="false">
                     <f:customLayout>
                         <grid:GridBasicLayout gridTemplateColumns="repeat(auto-fit, minmax(20rem, 1fr))" gridGap="1rem" />
@@ -174,7 +166,6 @@
                         </f:Card>
                     </f:GridListItem>
 
-                    <!-- HANA storage : GB used by schema (stacked) -->
                     <f:GridListItem type="Active" class="clickableCardItem">
                         <f:Card width="100%" height="100%">
                             <f:content>
@@ -228,9 +219,6 @@
                     </f:GridListItem>
                 </f:GridList>
 
-                <!-- ═══════════════════════════════════════════ -->
-                <!-- SEGMENTED INSIGHTS                                  -->
-                <!-- ═══════════════════════════════════════════ -->
                 <Title text="SEGMENTED INSIGHTS" level="H6" class="sapUiSmallMarginBegin sapUiTinyMarginBottom" />
 
                 <f:GridList class="sapUiTinyMarginBottom" width="100%" growing="false">
