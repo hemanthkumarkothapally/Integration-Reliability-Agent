@@ -82,11 +82,11 @@
                             <IconTabFilter id="allTab" key="ALL" text="All" icon="sap-icon://list" iconColor="Neutral" />
                             <IconTabFilter id="criticalTab" key="CRITICAL" text="Critical" icon="sap-icon://error" iconColor="Negative" />
                             <IconTabFilter id="highTab" key="HIGH" text="High" icon="sap-icon://alert" iconColor="Critical" />
-                            <IconTabFilter id="mediumTab" key="MEDIUM" text="Medium" icon="sap-icon://information" iconColor="Default" />
-                            <IconTabFilter id="lowTab" key="LOW" text="Low" icon="sap-icon://sys-help-2" iconColor="Positive" />
+                            <IconTabFilter id="mediumTab" key="MEDIUM" text="Medium" icon="sap-icon://information" />
+                            <IconTabFilter id="lowTab" key="LOW" text="Low" icon="sap-icon://sys-help-2" iconColor="Default" />
+                            <IconTabFilter id="healthyTab" key="HEALTHY" text="Healthy" icon="sap-icon://sys-enter-2" iconColor="Positive" />
                         </items>
                     </IconTabHeader>
-
                     <!-- Monitored Artifacts Table -->
                     <Table id="idMonitoredArtifacts" updateFinished=".onTableUpdateFinished" growing="true" sticky="HeaderToolbar,ColumnHeaders" growingThreshold="20" growingScrollToLoad="true" mode="SingleSelectMaster" itemPress=".onRowPress" items="{
                     path: '/MonitoredArtifacts',
@@ -145,11 +145,11 @@
 
                                     <Text text="{PackageName}"/>
 
-                                    <Button text="{path:'overallSeverity', formatter:'.formatter.formatButtonText'}" type="{path:'overallSeverity', formatter:'.formatter.formatButtonState'}" icon="{path:'overallSeverity', formatter:'.formatter.formatSeverityIcon'}" class="unclickableTag">
+                                    <ObjectStatus text="{path:'overallSeverity', formatter:'.formatter.formatButtonText'}" icon="{path:'overallSeverity', formatter:'.formatter.formatSeverityIcon'}" state="{path:'overallSeverity', formatter:'.formatter.formatSeverityState'}">
                                         <customData>
                                             <core:CustomData key="severity" value="{overallSeverity}" />
                                         </customData>
-                                    </Button>
+                                    </ObjectStatus>
 
                                     <ObjectNumber number="{openClusterCount}" emphasized="true" state="{path:'overallSeverity', formatter:'.formatter.formatSeverityState'}"/>
 

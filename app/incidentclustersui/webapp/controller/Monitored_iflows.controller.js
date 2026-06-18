@@ -128,12 +128,14 @@ sap.ui.define([
                 const iHigh = aData.filter(o => o.overallSeverity === "HIGH").length;
                 const iMedium = aData.filter(o => o.overallSeverity === "MEDIUM").length;
                 const iLow = aData.filter(o => o.overallSeverity === "LOW").length;
+                const iHealthy = aData.filter(o => o.overallSeverity === "HEALTHY").length;
 
                 this.byId("allTab")?.setCount(iAll);
                 this.byId("criticalTab")?.setCount(iCritical);
                 this.byId("highTab")?.setCount(iHigh);
                 this.byId("mediumTab")?.setCount(iMedium);
                 this.byId("lowTab")?.setCount(iLow);
+                this.byId("healthyTab")?.setCount(iHealthy);
 
             } catch (e) {
                 console.error("Count calculation failed", e);

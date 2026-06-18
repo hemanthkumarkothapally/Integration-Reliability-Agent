@@ -143,6 +143,7 @@ sap.ui.define([
             oContext.setParameter("toDate", sTo || oRange.to);
 
             await oContext.execute();
+            console.log(oContext.getBoundContext().getObject());
             return oContext.getBoundContext().getObject();
         },
 
