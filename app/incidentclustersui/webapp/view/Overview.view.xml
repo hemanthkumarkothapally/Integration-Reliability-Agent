@@ -53,7 +53,10 @@
                                 </VBox>
                                 <VBox class="sapUiSmallMarginBegin">
                                     <Title text="Monitored iFlows" level="H5" class="kpiTitle"/>
-                                    <Text text="{chart>/monitoredIflows}" class="kpiValueBlue"/>
+                                    <HBox alignItems="Center" justifyContent="Start">
+                                        <Text text="{path:'chart>/monitoredIflows', formatter:'.formatter.formatLargeNumber'}" class="kpiValueBlue"/>
+                                        <Label text="IFlows" class="sapUiTinyMarginBegin sapUiTinyMarginTop"/>
+                                    </HBox>
                                 </VBox>
                             </HBox>
                         </f:GridListItem>
@@ -62,11 +65,14 @@
                         <f:GridListItem>
                             <HBox width="100%" alignItems="Center" class="sapUiSmallMargin">
                                 <VBox class="iconCircle orangeIconBg" justifyContent="Center" alignItems="Center">
-                                    <core:Icon src="sap-icon://group-2" size="1.4rem" color="#EA580C"/>
+                                    <core:Icon src="sap-icon://chain-link" size="1.4rem" color="#EA580C"/>
                                 </VBox>
                                 <VBox class="sapUiSmallMarginBegin">
                                     <Title text="Open Clusters" level="H5" class="kpiTitle"/>
-                                    <Text text="{chart>/openClusters}" class="kpiValueOrange"/>
+                                    <HBox alignItems="Center" justifyContent="Start">
+                                        <Text text="{path:'chart>/openClusters', formatter:'.formatter.formatLargeNumber'}" class="kpiValueOrange"/>
+                                        <Label text="Error types" class="sapUiTinyMarginBegin sapUiTinyMarginTop"/>
+                                    </HBox>
                                 </VBox>
                             </HBox>
                         </f:GridListItem>
@@ -79,7 +85,10 @@
                                 </VBox>
                                 <VBox class="sapUiSmallMarginBegin">
                                     <Title text="Open Incidents" level="H5" class="kpiTitle"/>
-                                    <Text text="{chart>/openIncidents}" class="kpiValueYellow"/>
+                                    <HBox alignItems="Center" justifyContent="Start">
+                                        <Text text="{path:'chart>/openIncidents', formatter:'.formatter.formatLargeNumber'}" class="kpiValueYellow"/>
+                                        <Label text="Error logs" class="sapUiTinyMarginBegin sapUiTinyMarginTop"/>
+                                    </HBox>
                                 </VBox>
                             </HBox>
                         </f:GridListItem>
@@ -92,7 +101,10 @@
                                 </VBox>
                                 <VBox class="sapUiSmallMarginBegin">
                                     <Title text="Critical iFlows" level="H5" class="kpiTitle"/>
-                                    <Text text="{chart>/criticalIflows}" class="kpiValueRed"/>
+                                    <HBox alignItems="Center" justifyContent="Start">
+                                        <Text text="{path:'chart>/criticalIflows', formatter:'.formatter.formatLargeNumber'}" class="kpiValueRed"/>
+                                        <Label text="IFlows" class="sapUiTinyMarginBegin sapUiTinyMarginTop"/>
+                                    </HBox>
                                 </VBox>
                             </HBox>
                         </f:GridListItem>
@@ -105,7 +117,10 @@
                                 </VBox>
                                 <VBox wrap="Wrap" class="sapUiSmallMarginBegin">
                                     <Title text="Resolved Clusters" level="H5" wrapping="true" class="kpiTitle"/>
-                                    <Text text="{chart>/resolvedToday}" class="kpiValueGreen"/>
+                                    <HBox alignItems="Center" justifyContent="Start">
+                                        <Text text="{path:'chart>/resolvedToday', formatter:'.formatter.formatLargeNumber'}" class="kpiValueGreen"/>
+                                        <Label text="Error types" class="sapUiTinyMarginBegin sapUiTinyMarginTop"/>
+                                    </HBox>
                                 </VBox>
                             </HBox>
                         </f:GridListItem>
@@ -247,9 +262,9 @@
                                                      'colorPalette': [
                 '#bb0000',
                 '#e9730c',
+                '#481cff',
                 '#0a6ed1',
-                '#16bd5b',
-                'rgb(241, 76, 213)'
+                '#16bd5b'
             ],
             'drawingEffect': 'glossy'
                                                 }
@@ -325,12 +340,13 @@
                                         <core:Icon src="sap-icon://process" size="1.25rem" color="{path: 'topIflows>overallSeverity', formatter: '.formatter.severityIconColor'}"/>
                                         <Title titleStyle="H6" wrapping="true" text="{topIflows>iFlowName}" />
                                         <Text text="{topIflows>PackageName}" />
+                                        <ObjectStatus text="{path:'topIflows>overallSeverity', formatter:'.formatter.formatButtonText'}" icon="{path:'topIflows>overallSeverity', formatter:'.formatter.formatSeverityIcon'}" state="{path:'topIflows>overallSeverity', formatter:'.formatter.formatSeverityState'}">
+                                        <customData>
+                                            <core:CustomData key="severity" value="{topIflows>overallSeverity}" />
+                                        </customData>
+                                    </ObjectStatus>
 
-                                        <Button text="{path: 'topIflows>overallSeverity', formatter: '.formatter.formatButtonText'}" type="{path: 'topIflows>overallSeverity', formatter: '.formatter.formatButtonState'}" icon="{path: 'topIflows>overallSeverity', formatter: '.formatter.formatSeverityIcon'}" class="unclickableTag">
-                                            <customData>
-                                                <core:CustomData key="severity" value="{topIflows>overallSeverity}" />
-                                            </customData>
-                                        </Button>
+                                        
 
                                         <ObjectNumber number="{topIflows>openClusterCount}" />
 

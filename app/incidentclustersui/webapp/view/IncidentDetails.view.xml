@@ -14,16 +14,8 @@
 
                 <expandedHeading>
                     <m:HBox width="100%" alignItems="Start">
-                        <m:Button
-                            icon="sap-icon://nav-back"
-                            type="Transparent"
-                            press=".onNavBack"
-                            class="sapUiTinyMarginEnd" />
-                        <m:Text
-                            text="{iFlowName}"
-                            wrapping="true"
-                            width="100%"
-                            class="iflowHeaderText"/>
+                        <m:Button icon="sap-icon://nav-back" type="Transparent" press=".onNavBack" class="sapUiTinyMarginEnd" />
+                        <m:Text text="{iFlowName}" wrapping="true" width="100%" class="iflowHeaderText"/>
                     </m:HBox>
                 </expandedHeading>
 
@@ -54,20 +46,20 @@
             <m:FlexBox id="_IDGenFlexBox2" wrap="Wrap" justifyContent="SpaceBetween" alignItems="Start" width="100%">
                 <m:FlexBox id="_IDGenInnerFlexBox" wrap="Wrap">
                     <layout:VerticalLayout id="_IDGenVerticalLayout" class="sapUiSmallMarginBeginEnd">
-
-                        <m:ObjectStatus id="_IDGenObjectStatus2" title="Severity" text="{overallSeverity}" state="{= ${overallSeverity} === 'CRITICAL' ? 'Error' : ${overallSeverity} === 'HIGH' ? 'Warning' : ${overallSeverity} === 'MEDIUM' ? 'Information' : ${overallSeverity} === 'LOW' ? 'Success' : 'None' }" />
-                        <m:ObjectStatus id="_IDGenObjectStatus1"  title="iFlow Status" text="{= ${isActive} === 'Yes' ? 'ACTIVE' : 'INACTIVE' }" state="{= ${isActive} === 'Yes' ? 'Success' : 'Error' }" />
+                        <m:ObjectStatus title="Severity" text="{path:'overallSeverity', formatter:'.formatter.formatButtonText'}" icon="{path:'overallSeverity', formatter:'.formatter.formatSeverityIcon'}" state="{path:'overallSeverity', formatter:'.formatter.formatSeverityState'}">
+                        </m:ObjectStatus>
+                        <m:ObjectStatus id="_IDGenObjectStatus1" title="iFlow Status" text="{= ${isActive} === 'Yes' ? 'ACTIVE' : 'INACTIVE' }" state="{= ${isActive} === 'Yes' ? 'Success' : 'Error' }" />
                         <m:ObjectStatus id="_IDGenObjectStatus5" title="Package Name" text="{PackageName}" />
 
                     </layout:VerticalLayout>
                 </m:FlexBox>
-                
-                <m:FlexBox  wrap="Wrap">
+
+                <m:FlexBox wrap="Wrap">
                     <layout:VerticalLayout class="sapUiSmallMarginBeginEnd">
 
-                        <m:ObjectStatus  title="Last Polled" text="{lastPollTimestamp}" />
-                        <m:ObjectStatus  title="Last Error" text="{lastErrorAt}" />
-                       
+                        <m:ObjectStatus title="Last Polled" text="{lastPollTimestamp}" />
+                        <m:ObjectStatus title="Last Error" text="{lastErrorAt}" />
+
                     </layout:VerticalLayout>
                 </m:FlexBox>
 
@@ -175,8 +167,7 @@
                                                             <m:Title text="Remediation Steps" wrapping="true" level="H6" />
                                                         </m:HBox>
 
-                                                        <suite:Timeline showIcons="false" showHeaderBar="false" enableScroll="false"
-                                                            content="{ path: 'view>cluster/recommendations/parsedSteps', templateShareable: false }">
+                                                        <suite:Timeline showIcons="false" showHeaderBar="false" enableScroll="false" content="{ path: 'view>cluster/recommendations/parsedSteps', templateShareable: false }">
                                                             <suite:TimelineItem userName="{view>title}" text="{view>text}" userNameClickable="false" />
                                                         </suite:Timeline>
                                                     </m:VBox>

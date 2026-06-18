@@ -208,6 +208,19 @@ export default cds.service.impl(async function () {
 
 
             totalChatSessions,
+            pollings: metrics.reduce(
+                (s, r) =>
+                    s +
+                    (r.pollRuns || 0),
+                0
+            ),
+            AveragePollsPerDay: metrics.reduce(
+                (s, r) =>
+                    s +
+                    (r.pollFailures + r.pollRuns  || 0)/
+                    days,
+                0
+            ),
             totalUserMessages: aiMetrics.reduce(
                 (s, r) =>
                     s +
@@ -309,52 +322,6 @@ export default cds.service.impl(async function () {
             URL: d.URL,
             Description: d.Description || ''
         }));
-    });
-    this.after('UPDATE', 'ApplicationSettings', async (data, req) => {
-        console.log('UPDATE FIRED');
-        console.log(data);
-        const { ID, settingValue } = data;
-        if (ID === 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'){
-        console.log(`Updating polling schedule to every ${settingValue} minutes...`);
-        const minutes = parseInt(settingValue, 10);
-        if (!Number.isInteger(minutes) || minutes < 5 || minutes > 180) {
-            return req.error(400, `Invalid polling interval: ${settingValue}`);
-        }
-
-        try {
-            const { jobscheduler } = xsenv.getServices({ jobscheduler: { label: 'jobscheduler' } });
-            console.log(`Connecting to Job Scheduler at ${jobscheduler.url}...`);
-            const scheduler = new JobSchedulerClient.Scheduler(jobscheduler);
-            const JOB_ID = process.env.JOB_ID;
-            const SCHEDULE_ID = process.env.JOB_SCHEDULE_ID;
-            const schedule = {
-                repeatInterval: `${minutes} minutes`,
-                active: true,
-                description: `Recurring Schedule (Repeat Interval) - ${minutes} mins`
-            };
-
-            await new Promise((resolve, reject) =>
-                scheduler.updateJobSchedule(
-                    { jobId: JOB_ID, scheduleId: SCHEDULE_ID, schedule },
-                    (err, res) => (err ? reject(err) : resolve(res))
-                )
-            );
-            console.log(`Polling schedule updated successfully to every ${minutes} minutes.`);
-            req.info(`Polling schedule updated to every ${minutes} minutes`);
-        } catch (e) {
-            // JSS failed → fail the request so DB and scheduler don't drift apart
-            req.error(502, `Failed to update polling schedule: ${e.message}`);
-        }
-        }
-        if (ID === 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'){
-            console.log(`Updating AI Polling schedule to ${settingValue}`);
-            if (settingValue === 'AUTOMATIC') {
-                active = true;
-            }else{
-                active = false;
-            }
-
-        }
     });
     this.before('UPDATE', 'ApplicationSettings', async (req) => {
 
