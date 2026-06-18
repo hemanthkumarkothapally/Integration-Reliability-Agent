@@ -139,10 +139,11 @@
         "dataSource": "AdminService",
         "preload": true,
         "settings": {
-          "operationMode": "Server",
-          "autoExpandSelect": true,
-          "earlyRequests": true
-        }
+        "synchronizationMode": "None",
+        "operationMode": "Server",
+        "autoExpandSelect": true,
+        "updateGroupId": "settingsGroup"
+      }
       },
       "chart": {
         "type": "sap.ui.model.json.JSONModel",

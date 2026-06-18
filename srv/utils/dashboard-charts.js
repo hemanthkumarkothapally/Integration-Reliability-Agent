@@ -2,8 +2,6 @@ export async function getIncidentTrend(Incidents, tenantId) {
     const IST_OFFSET = 5.5 * 60 * 60 * 1000;
     const now = new Date();
 
-    // ── FIX: ceil "now" to the next full hour so partial hours get their bucket ──
-    // e.g. 12:18 IST → ceiling → 13:00 IST
     const nowIST = new Date(now.getTime() + IST_OFFSET);
     const ceilIST = new Date(nowIST);
     if (ceilIST.getUTCMinutes() > 0 || ceilIST.getUTCSeconds() > 0) {
@@ -24,8 +22,6 @@ export async function getIncidentTrend(Incidents, tenantId) {
         const hourLabel = istDate.getUTCHours().toString().padStart(2, '0') + ':00';
         buckets[hourLabel] = { hour: hourLabel, totalIncidents: 0, openIncidents: 0 };
     }
-
-    // 2. Query UTC range — upper bound is ceilUTC (not now) so we capture the full partial hour
     const where = [
         { ref: ['createdAt'] }, '>=', { val: fiveHoursAgo.toISOString() },
         'and',
@@ -37,7 +33,6 @@ export async function getIncidentTrend(Incidents, tenantId) {
 
     const incidentData = await SELECT.from(Incidents).where(where);
 
-    // 3. Map incidents to IST buckets (unchanged)
     incidentData.forEach(i => {
         const dateUTC = new Date(i.createdAt);
         const dateIST = new Date(dateUTC.getTime() + IST_OFFSET);

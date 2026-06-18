@@ -1,13 +1,9 @@
-// utils/log-utils.js
+import cds from '@sap/cds';
 import { getDestination } from '@sap-cloud-sdk/connectivity';
 import { executeHttpRequest } from '@sap-cloud-sdk/http-client';
-import { updateDailyMetrics ,updateDailyAIMetrics} from './daily-metrics.js';
+import { updateDailyMetrics } from './daily-metrics.js';
 
-/**
- * -------------------------------------------------------
- * BASIC MESSAGE NORMALIZATION
- * -------------------------------------------------------
- */
+
 export function cleanRawError(s) {
   if (!s) return '';
   let raw = String(s).trim();
@@ -24,10 +20,6 @@ export function cleanRawError(s) {
 
   return raw;
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// STEP 2 — STRIP volatile fragments
-// ─────────────────────────────────────────────────────────────────────────────
 
 export function stripVolatileFragments(s) {
   return s
@@ -90,225 +82,46 @@ export function stripVolatileFragments(s) {
     .replace(/\s+/g, ' ')
     .trim();
 }
+
 export function normalizeCpiError(errorMessage) {
   if (!errorMessage) return '';
 
-  let normalized = errorMessage;
+  let normalized = errorMessage
+    .replace(/https?:\/\/[^\s]+/gi, '')                                                           // URLs
+    .replace(/\b[A-Za-z0-9_-]{20,}\b/g, '')                                                       // MPL IDs / GUID-like values
+    .replace(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?/g, '')                              // timestamps
+    .replace(/\b\d+(\.\d+)?\s?(KB|MB|GB)\b/gi, '')                                                // file sizes
+    .replace(/\b(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)\s(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s\d{1,2}\s\d{2}:\d{2}:\d{2}\sUTC\s\d{4}/gi, '')  // dates
+    .replace(/'[^']*'/g, '');                                                                     // quoted values
 
-  // Remove URLs
-  normalized = normalized.replace(/https?:\/\/[^\s]+/gi, '');
+  normalized = normalized
+    .replace(/\s*The MPL ID for the failed message is\s*:.*$/gi, '')
+    .trim()
+    .replace(/\s+/g, ' ')
+    .trim();
 
-  // Remove MPL IDs / GUID-like values
-  normalized = normalized.replace(
-    /\b[A-Za-z0-9_-]{20,}\b/g,
-    ''
-  );
-
-  // Remove timestamps
-  normalized = normalized.replace(
-    /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?/g,
-    ''
-  );
-
-  // Remove file sizes
-  normalized = normalized.replace(
-    /\b\d+(\.\d+)?\s?(KB|MB|GB)\b/gi,
-    ''
-  );
-
-
-
-  // Remove dates
-  normalized = normalized.replace(
-    /\b(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)\s(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s\d{1,2}\s\d{2}:\d{2}:\d{2}\sUTC\s\d{4}/gi,
-    ''
-  );
-
-  // Remove artifact/token names
-  // normalized = normalized.replace(
-  //   /artifactName\s+\S+/gi,
-  //   ''
-  // );
-
-  // Remove quoted values
-  normalized = normalized.replace(
-    /'[^']*'/g,
-    ''
-  );
-  normalized = normalized.replace(
-    /\s*The MPL ID for the failed message is\s*:.*$/gi,
-    ''
-  ).trim();
-  normalized = normalized.replace(/\s+/g, ' ').trim();
   return normalized;
-
-  // let RawError = cleanRawError(errorMessage);
-  // let strippedError = stripVolatileFragments(RawError);
-  // return strippedError;
 }
 
 const STRIP_PATTERNS = [
-
-  /*
-   * GUIDs
-   */
-
-  {
-    pattern:
-      /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi,
-
-    replace: '<GUID>'
-  },
-
-  /*
-   * MPL IDs
-   */
-
-  {
-    pattern:
-      /\bAG[A-Za-z0-9_-]{10,}\b/g,
-
-    replace: '<MPL_ID>'
-  },
-
-  /*
-   * Exchange IDs
-   */
-
-  {
-    pattern:
-      /Exchange\[[^\]]+\]/g,
-
-    replace: 'Exchange[<ID>]'
-  },
-
-  /*
-   * Hex strings
-   */
-
-  {
-    pattern:
-      /\b[0-9A-F]{10,}\b/g,
-
-    replace: '<HEX>'
-  },
-
-  /*
-   * File paths
-   */
-
-  {
-    pattern:
-      /\/xsd\/[^\s,]+/g,
-
-    replace: '/xsd/<FILE>'
-  },
-
-  /*
-   * Line numbers
-   */
-
-  {
-    pattern:
-      /Line\s*:\s*-?\d+,?\s*(Column\s*:\s*-?\d+)?/gi,
-
-    replace: 'Line:<N>'
-  },
-
-  /*
-   * Sizes
-   */
-
-  {
-    pattern:
-      /\d+\.\d+\s*MB/gi,
-
-    replace: '<SIZE>MB'
-  },
-
-  /*
-   * Quoted values
-   */
-
-  {
-    pattern:
-      /"[^"]{0,80}"/g,
-
-    replace: '"<VALUE>"'
-  },
-
-  /*
-   * Script lines
-   */
-
-  {
-    pattern:
-      /@\s*line\s*\d+\s*in\s*\S+/gi,
-
-    replace: '@<LINE>'
-  },
-
-  /*
-   * Script class names
-   */
-
-  {
-    pattern:
-      /script\d+__Script/gi,
-
-    replace: '<SCRIPT_CLASS>'
-  },
-
-  /*
-   * Numeric IDs
-   */
-
-  {
-    pattern:
-      /\b\d{5,}\b/g,
-
-    replace: '<ID>'
-  },
-
-  /*
-   * Timestamps
-   */
-
-  {
-    pattern:
-      /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z?/g,
-
-    replace: '<TS>'
-  },
-
-  /*
-   * MPL Sentence
-   */
-
-  {
-    pattern:
-      /The MPL ID for the failed message is\s*:\s*\S+/gi,
-
-    replace: ''
-  },
-
-  /*
-   * Whitespace
-   */
-
-  {
-    pattern:
-      /\s{2,}/g,
-
-    replace: ' '
-  }
+  { pattern: /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi, replace: '<GUID>' },   // GUIDs
+  { pattern: /\bAG[A-Za-z0-9_-]{10,}\b/g, replace: '<MPL_ID>' },                                      // MPL IDs
+  { pattern: /Exchange\[[^\]]+\]/g, replace: 'Exchange[<ID>]' },                                      // Exchange IDs
+  { pattern: /\b[0-9A-F]{10,}\b/g, replace: '<HEX>' },                                                // Hex strings
+  { pattern: /\/xsd\/[^\s,]+/g, replace: '/xsd/<FILE>' },                                             // File paths
+  { pattern: /Line\s*:\s*-?\d+,?\s*(Column\s*:\s*-?\d+)?/gi, replace: 'Line:<N>' },                   // Line numbers
+  { pattern: /\d+\.\d+\s*MB/gi, replace: '<SIZE>MB' },                                                // Sizes
+  { pattern: /"[^"]{0,80}"/g, replace: '"<VALUE>"' },                                                 // Quoted values
+  { pattern: /@\s*line\s*\d+\s*in\s*\S+/gi, replace: '@<LINE>' },                                     // Script lines
+  { pattern: /script\d+__Script/gi, replace: '<SCRIPT_CLASS>' },                                      // Script class names
+  { pattern: /\b\d{5,}\b/g, replace: '<ID>' },                                                        // Numeric IDs
+  { pattern: /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z?/g, replace: '<TS>' },                     // Timestamps
+  { pattern: /artifactName\s+\S+/gi, replace: 'artifactName <NAME>' },                                // Artifact names
+  { pattern: /The MPL ID for the failed message is\s*:\s*\S+/gi, replace: '' },                       // MPL sentence
+  { pattern: /\s{2,}/g, replace: ' ' }                                                                // Whitespace
 ];
 
-/**
- * -------------------------------------------------------
- * SIGNATURE RULES
- * -------------------------------------------------------
- */
+// ── SIGNATURE RULES ──────────────────────────────────────────────────────────
 
 const SIGNATURE_RULES = [
 
@@ -567,16 +380,9 @@ const SIGNATURE_RULES = [
   { code: 'UNKNOWN_ERROR', match: /.*/ }
 ];
 
-/**
- * -------------------------------------------------------
- * NORMALISE SINGLE LOG
- * -------------------------------------------------------
- */
-
-
+// ── NORMALISE SINGLE LOG ─────────────────────────────────────────────────────
 
 export function normaliseLog(inc = {}) {
-
   const raw = inc.errorMessage || inc.errorSignature || '';
 
   // Step 1 — strip dynamic values
@@ -592,195 +398,83 @@ export function normaliseLog(inc = {}) {
 
   return {
     ...inc,
-    errorMessage: cleaned,    // stripped of noise
+    errorMessage: cleaned,      // stripped of noise
     errorSignature: signature   // derived from raw
   };
 }
 
-/**
- * -------------------------------------------------------
- * NORMALISE ALL LOGS
- * -------------------------------------------------------
- */
+// ── NORMALISE ALL LOGS ───────────────────────────────────────────────────────
 
 export function normaliseLogs(logs = []) {
   return logs.map(normaliseLog);
 }
 
-/**
- * -------------------------------------------------------
- * SAP DATE CONVERSION
- * -------------------------------------------------------
- */
+// ── SAP DATE CONVERSION ──────────────────────────────────────────────────────
 
 export function convertDate(sapDate) {
+  if (!sapDate) return null;
 
-  if (!sapDate)
-    return null;
-
-  const match =
-    /\/Date\((\d+)\)\//
-      .exec(sapDate);
-
-  return match
-    ? new Date(
-      Number(match[1])
-    ).toISOString()
-    : null;
+  const match = /\/Date\((\d+)\)\//.exec(sapDate);
+  return match ? new Date(Number(match[1])).toISOString() : null;
 }
 
-/**
- * -------------------------------------------------------
- * BATCH PROCESSOR
- * -------------------------------------------------------
- */
+// ── BATCH PROCESSOR ──────────────────────────────────────────────────────────
 
-export async function processInBatches(
-  items,
-  handler,
-  batchSize = 20
-) {
-
+export async function processInBatches(items, handler, batchSize = 20) {
   const results = [];
 
-  for (
-    let i = 0;
-    i < items.length;
-    i += batchSize
-  ) {
-
-    const batch =
-      items.slice(
-        i,
-        i + batchSize
-      );
-
+  for (let i = 0; i < items.length; i += batchSize) {
+    const batch = items.slice(i, i + batchSize);
     try {
-
-      const res =
-        await Promise.all(
-          batch.map(handler)
-        );
-
+      const res = await Promise.all(batch.map(handler));
       results.push(...res);
-
     } catch (err) {
-
-      console.error(
-        'Batch failed:',
-        err.message
-      );
+      console.error('Batch failed:', err.message);
     }
   }
 
   return results;
 }
 
-/**
- * -------------------------------------------------------
- * EXTRACT ADAPTER
- * -------------------------------------------------------
- */
+// ── EXTRACT ADAPTER ──────────────────────────────────────────────────────────
 
 export function extractAdapter(adapterRes) {
-
-  const attrs =
-    adapterRes?.d?.results || [];
-
-  const adapter =
-    attrs.find(a =>
-      a.Name
-        ?.toLowerCase()
-        .includes('adapter')
-    );
-
+  const attrs = adapterRes?.d?.results || [];
+  const adapter = attrs.find(a => a.Name?.toLowerCase().includes('adapter'));
   return adapter?.Value || 'UNKNOWN';
 }
 
-/**
- * -------------------------------------------------------
- * SAFE API CALL
- * -------------------------------------------------------
- */
+// ── API CALLS ────────────────────────────────────────────────────────────────
 
-// export async function ApiCall(
-//   api,
-//   options,
-//   retries = 2
-// ) {
-
-//   try {
-
-//     return await api.send(options);
-
-//   } catch (err) {
-
-//     console.error(
-//       `API Error (${options.path}):`,
-//       err.message
-//     );
-
-//     if (retries > 0) {
-
-//       console.warn(
-//         `Retrying: ${options.path}`
-//       );
-
-//       return ApiCall(
-//         api,
-//         options,
-//         retries - 1
-//       );
-//     }
-
-//     throw err;
-//   }
-// }
 export async function ApiCall(tenant, path) {
-
   try {
     const destination = await getDestination({ destinationName: tenant.destinationName });
-      if (!destination) throw new Error(`Destination "${tenant.destinationName}" not found`);
-    const res = await executeHttpRequest(destination, {
-        method: 'get',
-        url: path,
-      });
-    console.log("CPI raw body:", JSON.stringify(res.data));
+    if (!destination) throw new Error(`Destination "${tenant.destinationName}" not found`);
+
+    const res = await executeHttpRequest(destination, { method: 'get', url: path });
+    console.log('CPI raw body:', JSON.stringify(res.data));
     return res.data;
   } catch (err) {
-
-    console.error(
-      `API Error:`,
-      err.message
-    );
+    console.error('API Error:', err.message);
     throw err;
   }
 }
+
 export async function ApiCallLogs(tenant, path) {
-
   try {
-
-    const destination = await getDestination({
-      destinationName: tenant.destinationName
-    });
-
+    const destination = await getDestination({ destinationName: tenant.destinationName });
     if (!destination) {
       throw new Error(`Destination "${tenant.destinationName}" not found`);
     }
 
-    let allResults = [];
+    const allResults = [];
     let nextUrl = path;
 
     while (nextUrl) {
-
-      const res = await executeHttpRequest(destination, {
-        method: 'GET',
-        url: nextUrl
-      });
-
+      const res = await executeHttpRequest(destination, { method: 'GET', url: nextUrl });
       const data = res.data;
 
-      // Non-collection APIs
+      // Non-collection APIs: return the payload as-is.
       if (!data?.d?.results) {
         return data;
       }
@@ -788,236 +482,89 @@ export async function ApiCallLogs(tenant, path) {
       allResults.push(...data.d.results);
 
       if (data.d.__next) {
-
-        // Extract relative CPI path
+        // Extract the relative CPI path from the absolute __next URL.
         const url = new URL(data.d.__next);
-
-        nextUrl =
-          url.pathname +
-          url.search;
-
+        nextUrl = url.pathname + url.search;
       } else {
-
         nextUrl = null;
       }
     }
 
-    return {
-      d: {
-        results: allResults
-      }
-    };
-
+    return { d: { results: allResults } };
   } catch (err) {
-
     console.error('API Error:', err.message);
     throw err;
   }
 }
 
-/* UPSERT MONITORED ARTIFACTS
- */
+// ── UPSERT MONITORED ARTIFACTS ───────────────────────────────────────────────
 
-export async function upsertMonitoredArtifacts(
-  entity,
-  logs,
-  tenant
-) {
-  /*
-   * ----------------------------------------
-   * EMPTY LOGS
-   * ----------------------------------------
-   */
-  if (!logs.length)
-    return;
-  /*
-   * ----------------------------------------
-   * BUILD LATEST MAP
-   * ----------------------------------------
-   */
+export async function upsertMonitoredArtifacts(entity, logs, tenant) {
+  if (!logs.length) return;
+
+  // For each iFlow, track the latest log timestamp and its package name.
   const latestMap = {};
-  for (const log of logs) {
-    const current =
-      latestMap[
-      log.iFlowName
-      ];
-    if (
-      !current ||
-      new Date(log.logEnd) >
-      new Date(current)
-    ) {
-      latestMap[
-        log.iFlowName
-      ] = log.logEnd;
-    }
-  }
   const packageMap = {};
   for (const log of logs) {
-
-    packageMap[log.iFlowName] =
-      log.PackageName || 'UNKNOWN_PACKAGE';
+    const current = latestMap[log.iFlowName];
+    if (!current || new Date(log.logEnd) > new Date(current)) {
+      latestMap[log.iFlowName] = log.logEnd;
+    }
+    packageMap[log.iFlowName] = log.PackageName || 'UNKNOWN_PACKAGE';
   }
-  /*
-   * ----------------------------------------
-   * EXISTING ARTIFACTS
-   * ----------------------------------------
-   */
 
-  const existingArtifacts =
-    await SELECT
-      .from(entity)
-      .where({
-        tenant_ID: tenant.ID
-      });
+  const existingArtifacts = await SELECT.from(entity).where({ tenant_ID: tenant.ID });
+  const existingMap = new Map(existingArtifacts.map(a => [a.iFlowName, a]));
 
-  const existingMap =
-    new Map(
-      existingArtifacts.map(a => [
-        a.iFlowName,
-        a
-      ])
-    );
-  // console.log(
-  //   "latestMap:",
-  //   latestMap
-  // );
-  // console.log(
-  //   "existingMap:",
-  //   existingMap
-  // );
-  /*
-   * ----------------------------------------
-   * UPSERT ARTIFACTS
-   * ----------------------------------------
-   */
-  for (const [
-    iFlowName,
-    latestTimestamp
-  ] of Object.entries(latestMap)) {
-    /*
-     * ----------------------------------------
-     * FETCH IFLOW DETAILS
-     * ----------------------------------------
-     */
-    const packageName =
-      packageMap[iFlowName] ||
-      'UNKNOWN_PACKAGE';
+  for (const [iFlowName, latestTimestamp] of Object.entries(latestMap)) {
+    const packageName = packageMap[iFlowName] || 'UNKNOWN_PACKAGE';
+
+    // Fetch iFlow runtime details (best effort — failures fall back to defaults).
     let iflowDetails = null;
     try {
-      iflowDetails =
-        await ApiCall(tenant, `/api/v1/IntegrationRuntimeArtifacts('${iFlowName}')`);
+      iflowDetails = await ApiCall(tenant, `/api/v1/IntegrationRuntimeArtifacts('${iFlowName}')`);
     } catch (err) {
-      console.error(
-        `Failed to fetch iFlow details: ${iFlowName}`
-      );
+      console.error(`Failed to fetch iFlow details: ${iFlowName}`);
       console.error(err);
     }
-    const results =
-      iflowDetails?.d || {};
-    console.log(
-      "Fetched iFlow details:",
-      iFlowName,
-      results
-    );
-    /*
-     * ----------------------------------------
-     * EXISTING ARTIFACT
-     * ----------------------------------------
-     */
-    const existing =
-      existingMap.get(
-        iFlowName
-      );
-    /*
-     * ----------------------------------------
-     * UPDATE EXISTING
-     * ----------------------------------------
-     */
+
+    const results = iflowDetails?.d || {};
+    console.log('Fetched iFlow details:', iFlowName, results);
+
+    const existing = existingMap.get(iFlowName);
 
     if (existing) {
       await UPDATE(entity)
         .set({
-          /*
-           * ----------------------------------------
-           * BASIC INFO
-           * ----------------------------------------
-           */
-          lastPollTimestamp:
-            latestTimestamp,
+          lastPollTimestamp: latestTimestamp,
           lastErrorAt: latestTimestamp,
-          isActive:
-            results.Status ===
-            'STARTED',
-          Type:
-            results.Type ||
-            existing.Type ||
-            'UNKNOWN',
-          PackageName:
-            packageName,
-          overallSeverity:
-            existing.openClusterCount === 0
-              ? 'HEALTHY'
-              : existing.overallSeverity
+          isActive: results.Status === 'STARTED',
+          Type: results.Type || existing.Type || 'UNKNOWN',
+          PackageName: packageName,
+          overallSeverity: existing.openClusterCount === 0 ? 'HEALTHY' : existing.overallSeverity
         })
-        .where({
-          ID: existing.ID,
-          tenant_ID: tenant.ID
-        });
+        .where({ ID: existing.ID, tenant_ID: tenant.ID });
+    } else {
+      await INSERT.into(entity).entries({
+        ID: cds.utils.uuid(),
+        tenant_ID: tenant.ID,
+        iFlowName,
+        iFlowId: iFlowName,
+        Type: results.Type || 'UNKNOWN',
+        PackageName: packageName,
+        isActive: results.Status === 'STARTED',
+        lastPollTimestamp: latestTimestamp,
+        lastErrorAt: latestTimestamp,
+        overallSeverity: 'HEALTHY',
+        severityScore: 0,
+        severityZScore: 0,
+        openClusterCount: 0,
+        resolvedClusterCount: 0,
+        totalBusinessImpactEUR: 0
+      });
 
-      // console.log(
-      //   `Updated artifact: ${iFlowName}`
-      // );
-    }
-
-    /*
-     * ----------------------------------------
-     * INSERT NEW
-     * ----------------------------------------
-     */
-
-    else {
-      await INSERT
-        .into(entity)
-        .entries({
-          ID:
-            cds.utils.uuid(),
-          tenant_ID: tenant.ID,
-          iFlowName,
-          iFlowId:
-            iFlowName,
-          Type:
-            results.Type ||
-            'UNKNOWN',
-          PackageName:
-            packageName,
-          isActive:
-            results.Status ===
-            'STARTED',
-          lastPollTimestamp:
-            latestTimestamp,
-          lastErrorAt: latestTimestamp,
-          overallSeverity:
-            'HEALTHY',
-          severityScore:
-            0,
-          severityZScore:
-            0,
-          openClusterCount:
-            0,
-          resolvedClusterCount:
-            0,
-          totalBusinessImpactEUR:
-            0
-        });
-         await updateDailyMetrics(
-            tenant.ID,
-            {
-                monitoredArtifacts: 1
-            }
-        );
-      console.log(
-        `Inserted new artifact: ${iFlowName}`
-      );
+      await updateDailyMetrics(tenant.ID, { monitoredArtifacts: 1 });
+      console.log(`Inserted new artifact: ${iFlowName}`);
     }
   }
 }

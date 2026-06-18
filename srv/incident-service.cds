@@ -51,21 +51,6 @@ service IncidentService {
     entity Playbook           as projection on IRA.Playbooks;
     entity Tenants as projection on IRA.Tenants;
     entity ApplicationSettings as projection on IRA.ApplicationSettings;
-    function onReDiagnoseIncidentCluster(
-    cluster_ID : UUID
-    ) returns {
-        ID                   : UUID;
-        cluster_ID           : UUID;
-        rootCause            : LargeString;
-        businessImpact       : LargeString;
-        remediationSteps     : LargeString;
-        affectedAdapter      : String(120);
-        confidenceScore      : Integer;
-        recommendationSource : String(40);
-        modelName            : String(100);
-        generatedAt          : Timestamp;
-    };
-
 function resolveClusterForArtifact(
         clusterId  : UUID,
         artifactId : UUID,

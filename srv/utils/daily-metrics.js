@@ -16,21 +16,21 @@ export async function updateDailyMetrics(
         await SELECT.one.from(DailyMetrics)
             .where({
                 metricDate: today,
-                // tenant_ID: tenantId
+                tenant_ID: tenantId
             });
 
     if (!metric) {
 
         await INSERT.into(DailyMetrics).entries({
             metricDate: today,
-            // tenant_ID: tenantId
+            tenant_ID: tenantId
         });
 
         metric =
             await SELECT.one.from(DailyMetrics)
                 .where({
                     metricDate: today,
-                    // tenant_ID: tenantId
+                    tenant_ID: tenantId
                 });
     }
 
@@ -47,33 +47,32 @@ export async function updateDailyMetrics(
         }
     });
     const startDate = new Date(new Date().setHours(0, 0, 0, 0));
-const endDate = new Date(new Date().setHours(23, 59, 59, 999));
+    const endDate = new Date(new Date().setHours(23, 59, 59, 999));
 
-const healthyArtifacts = await SELECT.from(MonitoredArtifacts)
-    .where({
-        // tenant_ID: tenantId,
-        overallSeverity: 'HEALTHY',
-        modifiedAt: {
-            between: startDate.toISOString(),
-            and: endDate.toISOString()
-        }
-    });
+    const healthyArtifacts = await SELECT.from(MonitoredArtifacts)
+        .where({
+            tenant_ID: tenantId,
+            overallSeverity: 'HEALTHY',
+            modifiedAt: {
+                between: startDate.toISOString(),
+                and: endDate.toISOString()
+            }
+        });
 
-const criticalArtifacts = await SELECT.from(MonitoredArtifacts)
-    .where({
-        // tenant_ID: tenantId,
-        overallSeverity: 'CRITICAL',
-        modifiedAt: {
-            between: startDate.toISOString(),
-            and: endDate.toISOString()
-        }
-    });
+    const criticalArtifacts = await SELECT.from(MonitoredArtifacts)
+        .where({
+            tenant_ID: tenantId,
+            overallSeverity: 'CRITICAL',
+            modifiedAt: {
+                between: startDate.toISOString(),
+                and: endDate.toISOString()
+            }
+        });
 
 
     updatePayload.healthyArtifacts = healthyArtifacts.length;
     updatePayload.criticalArtifacts = criticalArtifacts.length;
     const db = await cds.connect.to('db');
-
     const storageTables =
         await db.run(`
     SELECT
@@ -83,15 +82,15 @@ const criticalArtifacts = await SELECT.from(MonitoredArtifacts)
 
  
 `);
-const totalUsedSize = parseFloat(storageTables[0].SIZE_GB || 0);
+    const totalUsedSize = parseFloat(storageTables[0].SIZE_GB || 0);
 
-console.log("SIZE_GB:", storageTables[0].SIZE_GB);
-console.log("totalUsedSize:", totalUsedSize);
-console.log("typeof:", typeof totalUsedSize);
+    console.log("SIZE_GB:", storageTables[0].SIZE_GB);
+    console.log("totalUsedSize:", totalUsedSize);
+    console.log("typeof:", typeof totalUsedSize);
 
-updatePayload.hanaStorage = totalUsedSize;
+    updatePayload.hanaStorage = totalUsedSize;
 
-console.log("updatePayload:", JSON.stringify(updatePayload, null, 2));
+    console.log("updatePayload:", JSON.stringify(updatePayload, null, 2));
     await UPDATE(DailyMetrics)
         .set(updatePayload)
         .where({ ID: metric.ID });
