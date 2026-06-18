@@ -107,7 +107,12 @@ export default cds.service.impl(async function () {
     const averageHANAGrowthPerDay = growths.length
       ? Number((growths.reduce((a, b) => a + b, 0) / growths.length).toFixed(4))
       : 0;
-
+    const averagePollsPerDay = metrics.reduce(
+      (s, r) =>
+        s +
+        (r.pollFailures + r.pollRuns || 0),
+      0
+    ) / days;
     const supportingMetrics = {
       AverageTokensPerChatSession: totalChatSessions > 0
         ? Math.round(summary.TokenConsumption / totalChatSessions)
@@ -118,6 +123,7 @@ export default cds.service.impl(async function () {
       AverageHANAGrowthPerDay: averageHANAGrowthPerDay,
       AverageTokensPerDay: Math.round(summary.TokenConsumption / days),
       AverageIncidentsPerDay: Math.round(summary.totalIncidents / days),
+      AveragePollsPerDay: Math.round(averagePollsPerDay),
       totalChatSessions,
       totalUserMessages: aiMetrics.reduce((s, r) => s + (r.totalUserMessages || 0), 0),
       totalAIMessages: aiMetrics.reduce((s, r) => s + (r.totalAIMessages || 0), 0),
