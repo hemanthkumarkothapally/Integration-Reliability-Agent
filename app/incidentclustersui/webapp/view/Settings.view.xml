@@ -143,7 +143,7 @@
                                         subtitle="Recommendation Engine Settings"/>
                                 </f:header>
                                 <f:content>
-                                    <VBox class="sapUiMediumMargin">
+                                    <VBox class="sapUiMediumMarginBeginEnd">
                                     <form:SimpleForm layout="ColumnLayout" editable="true">
                                     <form:content>
                                                 <Label text="AI Provider"/>
@@ -188,7 +188,7 @@
                                         subtitle="Monitoring Schedule"/>
                                 </f:header>
                                 <f:content>
-                                    <VBox class="sapUiMediumMargin">
+                                    <VBox class="sapUiMediumMarginBeginEnd">
                                          <form:SimpleForm layout="ColumnLayout" editable="true">
                                     <form:content>
                                     <Label text="Polling Mode"></Label>
@@ -268,7 +268,7 @@
                                         subtitle="Automatic Cleanup Configuration"/>
                                 </f:header>
                                 <f:content>
-                                    <VBox class="sapUiMediumMargin">
+                                    <VBox class="sapUiMediumMarginBeginEnd"> 
                                 <form:SimpleForm layout="ColumnLayout" editable="true">
                                     <form:content>
                                             <Label text="Incident Retention Days"/>
@@ -305,7 +305,6 @@
                                     </form:SimpleForm>
 
                                         <MessageStrip
-                                            class="sapUiMediumMarginTop"
                                             type="Warning"
                                             showIcon="true"
                                             text="Records older than the configured retention period will be automatically deleted by scheduled cleanup jobs."/>
