@@ -41,6 +41,7 @@ export async function upsertClusters(
     let cluster = await SELECT.one
       .from(IncidentClusters)
       .where({ tenant_ID: tenant.ID, errorSignature: clusterData.signatureKey });
+        const pollerSrv = cds.services.PollerService;
 
     if (!cluster) {
       const playbook = await SELECT.one
@@ -48,8 +49,8 @@ export async function upsertClusters(
         .where({ errorType: clusterData.errorType });
 
       const clusterId = cds.utils.uuid();
-
-      await srv.run(INSERT.into(IncidentClusters).entries({
+      
+      await INSERT.into('IncidentClusters').entries({
         ID: clusterId,
         tenant_ID: tenant.ID,
         errorSignature: clusterData.signatureKey,
@@ -61,14 +62,14 @@ export async function upsertClusters(
         severityCriticality: mapSeverityCriticality(clusterData.incidentCount),
         globalStatus: 'OPEN',
         playbook_ID: playbook?.ID || null
-      }));
+      });
 
       cluster = await SELECT.one.from(IncidentClusters).where({ ID: clusterId });
       await updateDailyMetrics(tenant.ID, { newClusters: 1 });
     } else {
       const updatedCount = cluster.incidentCount + clusterData.incidentCount;
 
-      await srv.run(UPDATE(IncidentClusters)
+      await UPDATE('IncidentClusters')
         .set({
           incidentCount: updatedCount,
           lastSeen: clusterData.lastSeen,
@@ -76,7 +77,7 @@ export async function upsertClusters(
           severityCriticality: mapSeverityCriticality(updatedCount),
           globalStatus: 'OPEN'
         })
-        .where({ ID: cluster.ID }));
+        .where({ ID: cluster.ID });
     }
 
      for (const log of clusterData.logs) {

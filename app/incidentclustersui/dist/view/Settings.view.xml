@@ -24,13 +24,18 @@
         <f:content>
         
 <layout:Grid
-    defaultSpan="L6 M6 S12"
+    defaultSpan="XL6 L6 M12 S12"
     hSpacing="1"
-    vSpacing="1">                            <!-- ============================================ -->
+    vSpacing="1">                         <!-- ============================================ -->
                             <!-- 1. TENANT CONFIGURATION                      -->
                             <!-- ============================================ -->
                             
-                            <f:Card height="100%" class="sapUiMediumMarginEnd sapUiMediumMarginBottom">
+                            <f:Card height="380px" class="sapUiMediumMarginEnd sapUiMediumMarginBottom">
+                                <f:layoutData>
+                                
+                                     <layout:GridData span="{= ${globalModel>/editMode} ? 'XL12 L12 M12 S12' : 'XL6 L6 M12 S12' }"/>
+    
+                                </f:layoutData>
                                 <f:header>
                                     <cards:Header
                                         iconSrc="sap-icon://building"
@@ -38,7 +43,8 @@
                                         subtitle="Default Dashboard Tenant"/>
                                 </f:header>
                                 <f:content>
-                                    <VBox class="sapUiMediumMargin">
+                                <HBox>
+                                    <VBox class="sapUiMediumMargin" >
                                         <Label text="Default Dashboard Tenant"/>
                                         <Select
                                             width="100%"
@@ -55,9 +61,11 @@
                                             type="Information"
                                             showIcon="true"
                                             text="This tenant will be selected automatically when users open the dashboard."/>
+                                                                                            </VBox>
+
                                             <VBox
                                         visible="{globalModel>/editMode}"
-                                        class="sapUiMediumMarginTop">
+                                        class="sapUiMediumMarginTop" width="60%">
 
                                         <Toolbar>
                                             <Title text="Tenant Management" level="H5"/>
@@ -68,7 +76,9 @@
                                                 type="Emphasized"
                                                 press=".onAddTenant"/>
                                         </Toolbar>
-
+                                        <ScrollContainer
+    height="180px"
+    vertical="true">
                                         <Table
                                         id="tenantTable"
                                             items="{path: '/Tenants'}"
@@ -115,8 +125,9 @@
                                                 </ColumnListItem>
                                             </items>
                                         </Table>
+                                        </ScrollContainer>
                                     </VBox>
-                                                </VBox>
+                                    </HBox>
                                 </f:content>
                             </f:Card>
 
@@ -124,7 +135,7 @@
                             <!-- ============================================ -->
                             <!-- 2. AI CONFIGURATION                          -->
                             <!-- ============================================ -->
-                            <f:Card height="100%" class="sapUiMediumMarginEnd sapUiMediumMarginBottom">
+                            <f:Card height="380px" class="sapUiMediumMarginEnd sapUiMediumMarginBottom">
                                 <f:header>
                                     <cards:Header
                                         iconSrc="sap-icon://artificial-intelligence"
@@ -169,7 +180,7 @@
                             <!-- ============================================ -->
                             <!-- 3. POLLING CONFIGURATION                     -->
                             <!-- ============================================ -->
-                            <f:Card  class="sapUiMediumMarginBottom">
+                            <f:Card height="380px" class="sapUiMediumMarginBottom">
                                 <f:header>
                                     <cards:Header
                                         iconSrc="sap-icon://refresh"
@@ -216,7 +227,7 @@
                                     </VBox>
                                 </f:content>
                             </f:Card>
-                            <f:Card class="sapUiMediumMarginBottom">
+                            <f:Card width="100%" height="380px" class="sapUiMediumMarginBottom">
     <f:header>
         <cards:Header
             iconSrc="sap-icon://activity-items"
@@ -249,7 +260,7 @@
 
     </f:content>
 </f:Card>
-                            <f:Card height="100%" width="100%" class="sapUiMediumMarginBottom">
+                            <f:Card height="380px" width="100%" class="sapUiMediumMarginBottom">
                                 <f:header>
                                     <cards:Header
                                         iconSrc="sap-icon://database"

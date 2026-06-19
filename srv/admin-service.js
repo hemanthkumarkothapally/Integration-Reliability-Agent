@@ -13,13 +13,13 @@ export default cds.service.impl(async function () {
   const {
     Tenants,
     Incidents,
-    IncidentClusters,
     Playbooks,
     MonitoredArtifacts,
     ClusterArtifacts,
     DailyMetrics,
     DailyAIMetrics,
-    ApplicationSettings
+    ApplicationSettings,
+    IncidentClusters
   } = db.entities('com.cytechies.integration.reliability');
 
   const POLLING_MODE_ID = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa';
@@ -137,7 +137,6 @@ export default cds.service.impl(async function () {
     try {
       const tenants = await SELECT.from(Tenants).where({ isActive: true });
       console.log(`Active Tenants Found: ${tenants.length}`);
-
       const allResults = [];
 
       for (const tenant of tenants) {
@@ -248,7 +247,13 @@ export default cds.service.impl(async function () {
   });
 
   this.on('testHanaStorage', async () => {
-    const topConsumers = await getTopTokenConsumers();
-    return JSON.stringify(topConsumers);
+    const pollerSrv = cds.services.PollerService;
+    const incidents = await SELECT.from(Incidents)
+      .orderBy({ logEnd: 'desc' })
+      .limit(3);
+     const incidentSummary = incidents.map((i, index) => ({
+        errorMessage: i.errorMessage
+    }));
+    return  {incidentSummary} ;
   });
 });

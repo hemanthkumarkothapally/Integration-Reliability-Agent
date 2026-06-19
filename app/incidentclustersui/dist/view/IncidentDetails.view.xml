@@ -12,47 +12,11 @@
         <headerTitle>
             <ObjectPageDynamicHeaderTitle id="_IDGenObjectPageDynamicHeaderTitle">
 
-
-                <!-- EXPANDED -->
-                <expandedContent>
-                    <!-- <m:FlexBox alignItems="Center">
-                        <m:Title id="_IDGenTitle4" text="{headerDetails>/errorType}" level="H1" titleStyle="H1" wrapping="true" />
-                    </m:FlexBox> -->
-                    <!-- <m:HBox wrap="Wrap" alignItems="Center">
-
-                        <m:Button icon="sap-icon://nav-back" type="Transparent" press=".onNavBack" class="sapUiTinyMarginEnd" />
-
-                        <m:Title text="{iFlowName}" level="H2" titleStyle="H2" wrapping="true" />
-
-                    </m:HBox> -->
-                </expandedContent>
                 <expandedHeading>
-
                     <m:HBox width="100%" alignItems="Start">
-
-    <m:Button
-        icon="sap-icon://nav-back"
-        type="Transparent"
-        press=".onNavBack"
-        class="sapUiTinyMarginEnd" />
-
-    <m:Text
-        text="{iFlowName}"
-        wrapping="true"
-        width="100%"
-        class="iflowHeaderText"/>
-
-</m:HBox>
-
-                    <!-- <m:HBox width="100%" wrap="Wrap" alignItems="Center">
-
-                        <m:Button icon="sap-icon://nav-back"  type="Transparent" press=".onNavBack" class="sapUiTinyMarginEnd" tooltip="{i18n>backButton.tooltip}" />
-
-                        <m:Title text="{iFlowName}" level="H1" titleStyle="H1" wrapping="true" />
-                        <m:ToolbarSpacer ></m:ToolbarSpacer>
-
-                    </m:HBox> -->
-
+                        <m:Button icon="sap-icon://nav-back" type="Transparent" press=".onNavBack" class="sapUiTinyMarginEnd" />
+                        <m:Text text="{iFlowName}" wrapping="true" width="100%" class="iflowHeaderText"/>
+                    </m:HBox>
                 </expandedHeading>
 
                 <actions>
@@ -63,45 +27,17 @@
                     </m:Button>
                 </actions>
 
-                <!-- SNAPPED -->
                 <snappedHeading>
-
-                    <!-- <m:FlexBox id="_IDGenFlexBox1" fitContainer="true" alignItems="Center">
-
-                        <m:Button id="_IDGenButton11" icon="sap-icon://nav-back" type="Ghost" press=".onNavBack" class="sapUiTinyMarginEnd" />
-
-                         <m:Title text="{headerDetails>/errorType}" level="H2" titleStyle="H2" wrapping="true" />
-
-
-
-                    </m:FlexBox> -->
-
                     <m:HBox wrap="Wrap" alignItems="Center">
-
                         <m:Button icon="sap-icon://nav-back" type="Transparent" press=".onNavBack" class="sapUiTinyMarginEnd" />
-
                         <m:Title text="{iFlowName}" level="H2" titleStyle="H2" wrapping="true" />
-
                     </m:HBox>
-
                 </snappedHeading>
-                <snappedContent>
-
-                    <m:FlexBox fitContainer="true" alignItems="Center">
-
-
-                        <!-- <m:Title text="{iFlowName}" level="H2" titleStyle="H2" wrapping="true" /> -->
-
-
-
-                    </m:FlexBox>
-
-                </snappedContent>
 
                 <snappedTitleOnMobile>
                     <m:Title text="{iFlowName}" level="H3" titleStyle="H3" wrapping="true" />
-
                 </snappedTitleOnMobile>
+
             </ObjectPageDynamicHeaderTitle>
         </headerTitle>
 
@@ -110,22 +46,23 @@
             <m:FlexBox id="_IDGenFlexBox2" wrap="Wrap" justifyContent="SpaceBetween" alignItems="Start" width="100%">
                 <m:FlexBox id="_IDGenInnerFlexBox" wrap="Wrap">
                     <layout:VerticalLayout id="_IDGenVerticalLayout" class="sapUiSmallMarginBeginEnd">
-
-                        <m:ObjectStatus id="_IDGenObjectStatus2" title="Severity" text="{overallSeverity}" state="{= ${overallSeverity} === 'CRITICAL' ? 'Error' : ${overallSeverity} === 'HIGH' ? 'Warning' : ${overallSeverity} === 'MEDIUM' ? 'Information' : ${overallSeverity} === 'LOW' ? 'Success' : 'None' }" />
+                        <m:ObjectStatus title="Severity" text="{path:'overallSeverity', formatter:'.formatter.formatButtonText'}" icon="{path:'overallSeverity', formatter:'.formatter.formatSeverityIcon'}" state="{path:'overallSeverity', formatter:'.formatter.formatSeverityState'}">
+                        </m:ObjectStatus>
                         <m:ObjectStatus id="_IDGenObjectStatus1" title="iFlow Status" text="{= ${isActive} === 'Yes' ? 'ACTIVE' : 'INACTIVE' }" state="{= ${isActive} === 'Yes' ? 'Success' : 'Error' }" />
-                        <m:ObjectAttribute id="_IDGenObjectStatus4" title="Last Polled" text="{lastPollTimestamp}" />
-                        <m:ObjectAttribute id="_IDGenObjectStatus" title="Last Error" text="{lastErrorAt}" />
-                        <m:ObjectAttribute id="_IDGenObjectStatus5" title="Package Name" text="{PackageName}" />
+                        <m:ObjectStatus id="_IDGenObjectStatus5" title="Package Name" text="{PackageName}" />
 
                     </layout:VerticalLayout>
-
-
-
-
                 </m:FlexBox>
-                <!-- <layout:VerticalLayout id="_IDGenVerticalLayout3" class="sapUiSmallMarginBeginEnd">
-                    <m:ObjectNumber id="_IDGenObjectNumber" number="{= ${headerDetails>/totalTokenUsage} ? ${headerDetails>/totalTokenUsage} : 0 }" unit="Tokens used" emphasized="true" state="Information" class="sapMObjectNumberLarge"/>
-                </layout:VerticalLayout> -->
+
+                <m:FlexBox wrap="Wrap">
+                    <layout:VerticalLayout class="sapUiSmallMarginBeginEnd">
+
+                        <m:ObjectStatus title="Last Polled" text="{lastPollTimestamp}" />
+                        <m:ObjectStatus title="Last Error" text="{lastErrorAt}" />
+
+                    </layout:VerticalLayout>
+                </m:FlexBox>
+
                 <m:FlexBox alignItems="Center" justifyContent="End" class="sapUiSmallMarginEnd sapUiMediumMarginBottom">
 
                     <!-- Open Clusters -->
@@ -150,33 +87,26 @@
 
             </m:FlexBox>
 
-
-
         </headerContent>
 
         <sections>
 
-            <!-- ROOT CAUSE -->
             <ObjectPageSection id="_IDGenSectionClusters" title="Clusters" showTitle="false">
                 <subSections>
                     <ObjectPageSubSection id="_IDGenSubSectionClusters" class="sapUiNoBackgroundColor">
                         <blocks>
                             <m:ScrollContainer id="_IDGenScrollContainer1" height="100%" width="100%" vertical="true" horizontal="false" class="sapUiContentPadding">
 
-                                <m:HBox >
+                                <m:HBox>
                                     <m:Title text="{= 'Associated Error Clusters (' + ${view>/clusters}.length + ')' }" wrapping="true" level="H1" titleStyle="H4" class="sapUiTinyMarginBeginEnd"/>
                                 </m:HBox>
 
-                                <m:ToolbarSpacer ></m:ToolbarSpacer>
+                                <m:ToolbarSpacer/>
 
                                 <m:HBox justifyContent="End" class="sapUiSmallMarginBottom">
-
-
-                                    <m:Link text="Expand All" press="onExpandAll" class="sapUiTinyMarginEnd" />
-
+                                    <m:Link text="Expand All" press=".onExpandAll" class="sapUiTinyMarginEnd" />
                                     <m:Text text=" | " class="sapUiTinyMarginBeginEnd"/>
-
-                                    <m:Link text="Collapse All" press="onCollapseAll" />
+                                    <m:Link text="Collapse All" press=".onCollapseAll" />
                                 </m:HBox>
 
                                 <m:VBox id="_IDGenVBoxClusters" items="{view>/clusters}" class="sapUiContentPadding">
@@ -184,7 +114,6 @@
                                     <f:Card class="sapUiSmallMarginBottom">
                                         <f:content>
                                             <m:Panel expandable="true" expanded="{view>expanded}" width="100%" expandAnimation="false" class="sapUiNoBackgroundColor">
-
 
                                                 <m:headerToolbar>
                                                     <m:OverflowToolbar height="auto" class="sapUiSmallMarginTopBottom sapUiContentPadding">
@@ -194,21 +123,14 @@
 
                                                         <m:ToolbarSpacer />
 
-                                                        <!-- Severity -->
-                                                        <!-- <m:GenericTag design="StatusIconHidden" text="{view>cluster/severity}" status="{= ${view>cluster/severity} === 'CRITICAL' ? 'Error' :
-                     ${view>cluster/severity} === 'HIGH' ? 'Warning' :
-                     ${view>cluster/severity} === 'MEDIUM' ? 'Information' :
-                     'Success' }" class="sapUiTinyMarginEnd" /> -->
-
                                                         <!-- Resolution Status -->
                                                         <m:ObjectStatus text="{view>resolutionStatus}" state="{= ${view>resolutionStatus} === 'OPEN' ? 'Information' : 'Success' }" inverted="true" class="sapUiTinyMarginEnd sapUiSmallMarginBegin" />
 
                                                         <!-- Resolve Button -->
-                                                        <m:Button text="Resolve" icon="sap-icon://complete" type="Emphasized" press="onResolve" enabled="{= ${view>resolutionStatus} === 'OPEN' }" />
+                                                        <m:Button text="Resolve" icon="sap-icon://complete" type="Emphasized" press=".onResolve" enabled="{= ${view>resolutionStatus} === 'OPEN' }" />
 
                                                     </m:OverflowToolbar>
                                                 </m:headerToolbar>
-
 
                                                 <m:VBox class="sapUiSmallMargin">
 
@@ -219,16 +141,13 @@
                                                             <m:Title text="Root Cause Analysis" wrapping="true" level="H6" />
                                                         </m:HBox>
                                                         <m:Text text="{view>cluster/recommendations/rootCause}" wrapping="true" />
-                                                        <m:ToolbarSpacer ></m:ToolbarSpacer>
+                                                        <m:ToolbarSpacer/>
                                                         <m:VBox class="sapUiSmallMarginTop sapUiSmallMarginBottom">
                                                             <m:HBox alignItems="Center" class="sapUiTinyMarginBottom">
                                                                 <m:Avatar src="sap-icon://error" displaySize="XS" class="sapUiTinyMarginEnd" />
                                                                 <m:Title text="Raw Error" wrapping="true" level="H6" />
                                                             </m:HBox>
-                                                            <!-- <m:Title text="Raw Error" level="H6" class="sapUiTinyMarginBottom sapUiLargeMarginBegin" /> -->
-
                                                             <m:MessageStrip type="Error" showIcon="false" enableFormattedText="true" text="{view>cluster/errorSignature}" />
-
                                                         </m:VBox>
                                                     </m:VBox>
 
@@ -242,50 +161,16 @@
                                                     </m:VBox>
 
                                                     <!-- Remediation Steps as Timeline -->
-                                                    <m:VBox class="sapUiSmallMarginBottom  vboxborderclass">
+                                                    <m:VBox class="sapUiSmallMarginBottom vboxborderclass">
                                                         <m:HBox alignItems="Center" class="sapUiTinyMarginBottom">
                                                             <m:Avatar src="sap-icon://activity-items" displaySize="XS" class="sapUiTinyMarginEnd" />
                                                             <m:Title text="Remediation Steps" wrapping="true" level="H6" />
                                                         </m:HBox>
 
-                                                        <suite:Timeline showIcons="false" showHeaderBar="false" enableScroll="false" content="{view>cluster/recommendations/parsedSteps}">
-
+                                                        <suite:Timeline showIcons="false" showHeaderBar="false" enableScroll="false" content="{ path: 'view>cluster/recommendations/parsedSteps', templateShareable: false }">
                                                             <suite:TimelineItem userName="{view>title}" text="{view>text}" userNameClickable="false" />
-
                                                         </suite:Timeline>
                                                     </m:VBox>
-                                                    <!-- <m:VBox class="sapUiSmallMarginBottom vboxborderclass">
-
-                                                        <m:HBox alignItems="Center" class="sapUiTinyMarginBottom">
-                                                            <m:Avatar src="sap-icon://process" displaySize="XS" class="sapUiTinyMarginEnd" />
-
-                                                            <m:Title text="Associated iFlows" level="H6" />
-                                                        </m:HBox>
-
-                                                        <m:List items="{view>cluster/monitoredArtifacts}" showSeparators="Inner" backgroundDesign="Transparent">
-
-                                                            <m:CustomListItem >
-
-                                                                <m:HBox justifyContent="SpaceBetween" alignItems="Center" width="100%">
-
-                                                                    <m:VBox>
-                                                                        <m:Title text="{view>artifact/iFlowName}" level="H6" />
-
-                                                                        <m:Text text="{view>artifact/PackageName}" />
-                                                                    </m:VBox>
-
-                                                                    <m:ObjectStatus text="{view>artifact/overallSeverity}" state="{= ${view>artifact/overallSeverity} === 'CRITICAL' ? 'Error' :
-                             ${view>artifact/overallSeverity} === 'HIGH' ? 'Warning' :
-                             ${view>artifact/overallSeverity} === 'MEDIUM' ? 'Information' :
-                             'Success'}" />
-
-                                                                </m:HBox>
-
-                                                            </m:CustomListItem>
-
-                                                        </m:List>
-
-                                                    </m:VBox> -->
 
                                                 </m:VBox>
 
@@ -300,27 +185,7 @@
                 </subSections>
             </ObjectPageSection>
 
-
-            <!-- BUSINESS IMPACT -->
-
-
         </sections>
 
-
-        <!-- <footer>
-
-            <m:OverflowToolbar id="_IDGenOverflowToolbar1">
-
-                <m:ToolbarSpacer id="_IDGenToolbarSpacer3" />
-
-                <m:Button id="_IDGenButton12" visible="false" text="Re-diagnose" type="Attention" icon="sap-icon://ai" press="Rediagnose" />
-
-                <m:Button id="_IDGenButton13" text="Resolve" type="Accept" icon="sap-icon://complete" press="onResolve" enabled="{= ${headerDetails>/status} === 'OPEN' }" />
-
-            </m:OverflowToolbar>
-
-        </footer> -->
     </ObjectPageLayout>
 </mvc:View>
- 
- 

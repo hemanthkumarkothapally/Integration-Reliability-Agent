@@ -25,25 +25,25 @@ sap.ui.define([], function () {
                     return "sap-icon://process";     // Fallback icon
             }
         },
-
         severityIconColor: function (sSeverity) {
             if (!sSeverity) {
-                return sap.ui.core.IconColor.Positive; // Green
+                return "#107e3e"; // Green (Healthy)
             }
 
             switch (sSeverity.toUpperCase()) {
                 case "CRITICAL":
-                    return "#b6121f"; // Red
+                    return "#b6121f"; // Red    (~Indication02)
                 case "HIGH":
-                    return sap.ui.core.IconColor.Critical; // Orange
+                    return "#e9730c"; // Orange (~Indication03)
                 case "MEDIUM":
-                    return "#0066cc";  // Blue (Theme Neutral)
+                    return "#481cff"; // Purple (~Indication07)
+
                 case "LOW":
-                    return sap.ui.core.IconColor.Positive; // Green
+                    return "#0a6ed1"; // Blue   (~Indication05)
                 case "HEALTHY":
-                    return "#6A6D70"; // Gray (Custom color for Healthy)
+                    return "#107e3e"; // Green  (~Indication04)
                 default:
-                    return sap.ui.core.IconColor.Positive; // Green
+                    return "#107e3e"; // Green
             }
         },
 
@@ -52,17 +52,22 @@ sap.ui.define([], function () {
             switch (sSeverity) {
 
                 case "CRITICAL":
-                    return "Error";
+                    return "Indication02"; // red
 
                 case "HIGH":
-                    return "Warning";
+                    return "Indication03"; // orange
 
                 case "MEDIUM":
-                    return "Information";
+                    return "Indication07"; // purple
 
                 case "LOW":
-                    return "Success";
+                    return "Information"; // blue
 
+                case "HEALTHY":
+                    return "Indication04"; // green
+
+                default:
+                    return "None";
 
             }
 
@@ -108,25 +113,45 @@ sap.ui.define([], function () {
             return sName.substring(0, 2).toUpperCase();
         },
         formatLargeNumber: function (iNum) {
-            if (!iNum) {
+            // Treat null/undefined/empty as zero, but keep a real 0 and negatives working
+            if (iNum === null || iNum === undefined || iNum === "") {
                 return "0";
             }
-            // For Billions
-            if (iNum >= 1000000000) {
-                return (iNum / 1000000000).toFixed(0) + "B";
-            }
-            // For Millions
-            if (iNum >= 1000000) {
-                return (iNum / 1000000).toFixed(0) + "M";
-            }
-            // For Thousands
-            if (iNum >= 1000) {
-                return (iNum / 1000).toFixed(0) + "k";
+
+            let fNum = parseFloat(iNum);
+            if (isNaN(fNum)) {
+                return "0";
             }
 
-            return iNum.toString();
+            let sSign = fNum < 0 ? "-" : "";
+            let fAbs = Math.abs(fNum);
+
+            // Values below 1 (but not exactly 0): show the full value, no suffix
+            if (fAbs > 0 && fAbs < 1) {
+                return sSign + fAbs.toString();
+            }
+
+            // Largest first; extend the list to go further (Q = quadrillion, etc.)
+            let aTiers = [
+                { value: 1e12, suffix: "T" },
+                { value: 1e9, suffix: "B" },
+                { value: 1e6, suffix: "M" },
+                { value: 1e3, suffix: "k" }
+            ];
+
+            for (let i = 0; i < aTiers.length; i++) {
+                if (fAbs >= aTiers[i].value) {
+                    // Round to 2 decimals, then drop only trailing zeros: 1.50 -> 1.5, 2.00 -> 2
+                    let sScaled = String(parseFloat((fAbs / aTiers[i].value).toFixed(2)));
+                    return sSign + sScaled + aTiers[i].suffix;
+                }
+            }
+
+            // Between 1 and 999 — keep meaningful decimals, drop trailing zeros
+            return sSign + String(parseFloat(fAbs.toFixed(2)));
         },
 
+        // Between 1 and
 
         formatButtonText: function (sSeverity) {
 

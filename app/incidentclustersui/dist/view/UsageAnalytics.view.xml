@@ -31,9 +31,6 @@
         <f:content>
             <VBox class="sapUiNoMargin">
 
-                <!-- ═══════════════════════════════════════════ -->
-                <!-- SUMMARY KPI CARDS                           -->
-                <!-- ═══════════════════════════════════════════ -->
                 <Title text="SUMMARY" level="H6" class="sapUiSmallMarginBegin sapUiTinyMarginBottom" />
 
                 <f:GridList class="sapUiTinyMarginBottom" width="100%" growing="false">
@@ -68,7 +65,7 @@
                                                 parts: [{ path: 'chart>/summary/TokenConsumption' }],
                                                 formatter: '.formatter.formatLargeNumber'
                                             }" emphasized="true" state="Information" class="sapMObjectNumberLarge"/>
-                                            <Label text="tokens" class="sapUiTinyMarginBegin sapUiTinyMarginTop"/>
+                                            <Label text="Tokens" class="sapUiTinyMarginBegin sapUiTinyMarginTop"/>
                                         </HBox>
                                     </VBox>
                                 </HBox>
@@ -81,7 +78,7 @@
                                 <HBox width="100%" alignItems="Center" justifyContent="Start" class="sapUiContentPadding">
                                     <Avatar src="sap-icon://database" displayShape="Circle" backgroundColor="Accent1" />
                                     <VBox class="sapUiSmallMarginBegin">
-                                        <Title text="HANA usage" level="H5" wrapping="true" />
+                                        <Title text="Total HANA usage" level="H5" wrapping="true" />
 
                                         <HBox alignItems="Center" justifyContent="Start">
                                             <ObjectNumber number="{
@@ -102,48 +99,50 @@
                                     <Avatar src="sap-icon://sys-cancel" displayShape="Circle" backgroundColor="Accent2" />
                                     <VBox class="sapUiSmallMarginBegin">
                                         <Title text="Total incidents" level="H5" wrapping="true" />
-                                        <ObjectNumber number="{
+                                        <HBox alignItems="Center" justifyContent="Start">
+
+                                            <ObjectNumber number="{
                                                 parts: [{ path: 'chart>/summary/totalIncidents' }],
                                                 formatter: '.formatter.formatLargeNumber'
                                             }" emphasized="true" state="Error" class="sapMObjectNumberLarge"/>
-                                    </VBox>
-                                </HBox>
-                            </Panel>
-                        </f:GridListItem>
+                                            <Label text="Error logs" class="sapUiTinyMarginBegin sapUiTinyMarginTop"/>
+                                        </HBox>
+                                        </VBox>
+                                    </HBox>
+                                </Panel>
+                            </f:GridListItem>
 
-                        <!-- Total Clusters -->
-                        <f:GridListItem type="Inactive">
-                            <Panel class="noBorderPanel">
-                                <HBox width="100%" alignItems="Center" justifyContent="Start" class="sapUiContentPadding">
-                                    <Avatar src="sap-icon://chain-link" displayShape="Circle" backgroundColor="Accent7" />
-                                    <VBox class="sapUiSmallMarginBegin">
-                                        <Title text="Total clusters" level="H5" wrapping="true" />
-                                        <ObjectNumber number="{
+                            <!-- Total Clusters -->
+                            <f:GridListItem type="Inactive">
+                                <Panel class="noBorderPanel">
+                                    <HBox width="100%" alignItems="Center" justifyContent="Start" class="sapUiContentPadding">
+                                        <Avatar src="sap-icon://chain-link" displayShape="Circle" backgroundColor="Accent7" />
+                                        <VBox class="sapUiSmallMarginBegin">
+                                            <Title text="Total clusters" level="H5" wrapping="true" />
+                                            <HBox alignItems="Center" justifyContent="Start">
+                                            <ObjectNumber number="{
                                                 parts: [{ path: 'chart>/summary/totalClusters' }],
                                                 formatter: '.formatter.formatLargeNumber'
                                             }" emphasized="true" state="Success" class="sapMObjectNumberLarge"/>
-                                    </VBox>
-                                </HBox>
-                            </Panel>
-                        </f:GridListItem>
+                                            <Label text="Error types" class="sapUiTinyMarginBegin sapUiTinyMarginTop"/>
+                                            </HBox>
+                                        </VBox>
+                                    </HBox>
+                                </Panel>
+                            </f:GridListItem>
 
-                    </f:items>
-                </f:GridList>
+                        </f:items>
+                    </f:GridList>
 
-                <!-- ═══════════════════════════════════════════ -->
-                <!-- CONSUMPTION PATTERNS                                      -->
-                <!-- ═══════════════════════════════════════════ -->
-                <Title text="CONSUMPTION PATTERNS" level="H6" class="sapUiSmallMarginBegin sapUiTinyMarginBottom" />
-
-                <!-- Token usage : input vs output -->
-                <f:GridList class="sapUiTinyMarginBottom" width="100%" growing="false">
-                    <f:customLayout>
-                        <grid:GridBasicLayout gridTemplateColumns="repeat(auto-fit, minmax(20rem, 1fr))" gridGap="1rem" />
-                    </f:customLayout>
-                    <f:GridListItem type="Active" class="clickableCardItem">
-                        <f:Card width="100%" height="100%">
-                            <f:content>
-                                <viz:VizFrame id="idTokenUsage" class="noBorderVizFrame" vizType="line" uiConfig="{applicationSet:'fiori'}" width="100%" height="18rem" vizProperties="{
+                    <Title text="CONSUMPTION PATTERNS" level="H6" class="sapUiSmallMarginBegin sapUiTinyMarginBottom" />
+                    <f:GridList class="sapUiTinyMarginBottom" width="100%" growing="false">
+                        <f:customLayout>
+                            <grid:GridBasicLayout gridTemplateColumns="repeat(auto-fit, minmax(20rem, 1fr))" gridGap="1rem" />
+                        </f:customLayout>
+                        <f:GridListItem type="Active" class="clickableCardItem">
+                            <f:Card width="100%" height="100%">
+                                <f:content>
+                                    <viz:VizFrame id="idTokenUsage" class="noBorderVizFrame" vizType="line" uiConfig="{applicationSet:'fiori'}" width="100%" height="18rem" vizProperties="{
                     'title': { 'visible': true, 'text': 'Token usage' },
                     'legend': { 'visible': true, 'position': 'top', 'alignment': 'start' },
                     'plotArea': {
@@ -154,31 +153,30 @@
                     'valueAxis': { 'title': { 'visible': false } },
                     'categoryAxis': { 'title': { 'visible': false } }
                 }">
-                                    <viz:dataset>
-                                        <viz.data:FlattenedDataset data="{chart>/tokenUsage}">
-                                            <viz.data:dimensions>
-                                                <viz.data:DimensionDefinition name="Date" value="{chart>date}" />
-                                            </viz.data:dimensions>
-                                            <viz.data:measures>
-                                                <viz.data:MeasureDefinition name="Input" value="{chart>input}" />
-                                                <viz.data:MeasureDefinition name="Output" value="{chart>output}" />
-                                            </viz.data:measures>
-                                        </viz.data:FlattenedDataset>
-                                    </viz:dataset>
-                                    <viz:feeds>
-                                        <viz.feeds:FeedItem uid="valueAxis" type="Measure" values="Input,Output" />
-                                        <viz.feeds:FeedItem uid="categoryAxis" type="Dimension" values="Date" />
-                                    </viz:feeds>
-                                </viz:VizFrame>
-                            </f:content>
-                        </f:Card>
-                    </f:GridListItem>
+                                        <viz:dataset>
+                                            <viz.data:FlattenedDataset data="{chart>/tokenUsage}">
+                                                <viz.data:dimensions>
+                                                    <viz.data:DimensionDefinition name="Date" value="{chart>date}" />
+                                                </viz.data:dimensions>
+                                                <viz.data:measures>
+                                                    <viz.data:MeasureDefinition name="Input" value="{chart>input}" />
+                                                    <viz.data:MeasureDefinition name="Output" value="{chart>output}" />
+                                                </viz.data:measures>
+                                            </viz.data:FlattenedDataset>
+                                        </viz:dataset>
+                                        <viz:feeds>
+                                            <viz.feeds:FeedItem uid="valueAxis" type="Measure" values="Input,Output" />
+                                            <viz.feeds:FeedItem uid="categoryAxis" type="Dimension" values="Date" />
+                                        </viz:feeds>
+                                    </viz:VizFrame>
+                                </f:content>
+                            </f:Card>
+                        </f:GridListItem>
 
-                    <!-- HANA storage : GB used by schema (stacked) -->
-                    <f:GridListItem type="Active" class="clickableCardItem">
-                        <f:Card width="100%" height="100%">
-                            <f:content>
-                                <viz:VizFrame id="idHanaUsage" class="noBorderVizFrame" vizType="column" uiConfig="{applicationSet:'fiori'}" width="100%" height="18rem" vizProperties="{
+                        <f:GridListItem type="Active" class="clickableCardItem">
+                            <f:Card width="100%" height="100%">
+                                <f:content>
+                                    <viz:VizFrame id="idHanaUsage" class="noBorderVizFrame" vizType="column" uiConfig="{applicationSet:'fiori'}" width="100%" height="18rem" vizProperties="{
         'title': {
             'visible': true,
             'text': 'HANA Storage Usage (GB)'
@@ -204,227 +202,226 @@
         }
     }">
 
-                                    <viz:dataset>
-                                        <viz.data:FlattenedDataset data="{chart>/hanaUsage}">
-                                            <viz.data:dimensions>
-                                                <viz.data:DimensionDefinition name="Date" value="{chart>date}" />
-                                            </viz.data:dimensions>
+                                        <viz:dataset>
+                                            <viz.data:FlattenedDataset data="{chart>/hanaUsage}">
+                                                <viz.data:dimensions>
+                                                    <viz.data:DimensionDefinition name="Date" value="{chart>date}" />
+                                                </viz.data:dimensions>
 
-                                            <viz.data:measures>
-                                                <viz.data:MeasureDefinition name="Storage (GB)" value="{chart>storage}" />
-                                            </viz.data:measures>
-                                        </viz.data:FlattenedDataset>
-                                    </viz:dataset>
+                                                <viz.data:measures>
+                                                    <viz.data:MeasureDefinition name="Storage (GB)" value="{chart>storage}" />
+                                                </viz.data:measures>
+                                            </viz.data:FlattenedDataset>
+                                        </viz:dataset>
 
-                                    <viz:feeds>
-                                        <viz.feeds:FeedItem uid="valueAxis" type="Measure" values="Storage (GB)" />
+                                        <viz:feeds>
+                                            <viz.feeds:FeedItem uid="valueAxis" type="Measure" values="Storage (GB)" />
 
-                                        <viz.feeds:FeedItem uid="categoryAxis" type="Dimension" values="Date" />
-                                    </viz:feeds>
+                                            <viz.feeds:FeedItem uid="categoryAxis" type="Dimension" values="Date" />
+                                        </viz:feeds>
 
-                                </viz:VizFrame>
-                            </f:content>
-                        </f:Card>
-                    </f:GridListItem>
-                </f:GridList>
+                                    </viz:VizFrame>
+                                </f:content>
+                            </f:Card>
+                        </f:GridListItem>
+                    </f:GridList>
 
-                <!-- ═══════════════════════════════════════════ -->
-                <!-- SEGMENTED INSIGHTS                                  -->
-                <!-- ═══════════════════════════════════════════ -->
-                <Title text="SEGMENTED INSIGHTS" level="H6" class="sapUiSmallMarginBegin sapUiTinyMarginBottom" />
+                    <Title text="SEGMENTED INSIGHTS" level="H6" class="sapUiSmallMarginBegin sapUiTinyMarginBottom" />
 
-                <f:GridList class="sapUiTinyMarginBottom" width="100%" growing="false">
-                    <f:customLayout>
-                        <grid:GridBasicLayout gridTemplateColumns="repeat(auto-fit, minmax(20rem, 1fr))" gridGap="1rem" />
-                    </f:customLayout>
+                    <f:GridList class="sapUiTinyMarginBottom" width="100%" growing="false">
+                        <f:customLayout>
+                            <grid:GridBasicLayout gridTemplateColumns="repeat(auto-fit, minmax(20rem, 1fr))" gridGap="1rem" />
+                        </f:customLayout>
 
-                    <f:items>
+                        <f:items>
 
-                        <!-- Top Token Consumers -->
-                        <f:GridListItem type="Inactive">
-                            <f:Card width="100%" height="100%" class="clickableCardItem stretchCardContainer">
+                            <!-- Top Token Consumers -->
+                            <f:GridListItem type="Inactive">
+                                <f:Card width="100%" height="100%" class="clickableCardItem stretchCardContainer">
 
-                                <f:header>
-                                    <card:Header title="Top token consumers"/>
-                                </f:header>
+                                    <f:header>
+                                        <card:Header title="Top token consumers"/>
+                                    </f:header>
 
-                                <f:content>
-                                    <ScrollContainer vertical="true" horizontal="false" width="100%" class="stretchScrollArea">
+                                    <f:content>
+                                        <ScrollContainer vertical="true" horizontal="false" width="100%" class="stretchScrollArea">
 
-                                        <List items="{chart>/topConsumers}" growing="true" growingThreshold="5" growingScrollToLoad="true" showSeparators="Inner" backgroundDesign="Transparent">
+                                            <List items="{chart>/topConsumers}" growing="true" growingThreshold="5" growingScrollToLoad="true" showSeparators="Inner" backgroundDesign="Transparent">
 
-                                            <items>
-                                                <CustomListItem>
-                                                    <HBox alignItems="Center" justifyContent="SpaceBetween" width="100%" height="100%" class="sapUiSmallMarginBeginEnd sapUiSmallMarginTopBottom">
-                                                        <HBox alignItems="Center">
-                                                            <Avatar initials="{ path: 'chart>name', formatter: '.formatter.formatInitials'}" backgroundColor="Random" displaySize="XS" class="sapUiSmallMarginEnd" />
-                                                            <VBox>
-                                                                <Title text="{= ${chart>name} || 'other' }" wrapping="true" />
-                                                                <!-- <Label text="{ path: 'chart>roles', formatter: '.formatter.formatRoles' }" design="Standard" wrapping="true" /> -->
-                                                            </VBox>
-                                                        </HBox>
-                                                        <HBox alignItems="Center" justifyContent="Center" class="sapUiMediumMarginEnd">
-                                                            <ObjectNumber number="{
+                                                <items>
+                                                    <CustomListItem>
+                                                        <HBox alignItems="Center" justifyContent="SpaceBetween" width="100%" height="100%" class="sapUiSmallMarginBeginEnd sapUiSmallMarginTopBottom">
+                                                            <HBox alignItems="Center">
+                                                                <Avatar initials="{ path: 'chart>name', formatter: '.formatter.formatInitials'}" backgroundColor="Random" displaySize="XS" class="sapUiSmallMarginEnd" />
+                                                                <VBox>
+                                                                    <Title text="{= ${chart>name} || 'other' }" wrapping="true" />
+                                                                    <!-- <Label text="{ path: 'chart>roles', formatter: '.formatter.formatRoles' }" design="Standard" wrapping="true" /> -->
+                                                                </VBox>
+                                                            </HBox>
+                                                            <HBox alignItems="Center" justifyContent="Center" class="sapUiMediumMarginEnd">
+                                                                <ObjectNumber number="{
                                         parts: [{ path: 'chart>totalTokens' }],
                                         formatter: '.formatter.formatLargeNumber'
                                     }" emphasized="true" class="sapMObjectNumberLarge" />
-                                                            <Label text="tokens" design="Standard" wrapping="true" class="sapUiTinyMarginBegin sapUiTinyMarginTop"/>
+                                                                <Label text="Tokens" design="Standard" wrapping="true" class="sapUiTinyMarginBegin sapUiTinyMarginTop"/>
+                                                            </HBox>
                                                         </HBox>
-                                                    </HBox>
-                                                </CustomListItem>
-                                            </items>
+                                                    </CustomListItem>
+                                                </items>
 
-                                        </List>
-                                    </ScrollContainer>
-                                </f:content>
-                            </f:Card>
-                        </f:GridListItem>
+                                            </List>
+                                        </ScrollContainer>
+                                    </f:content>
+                                </f:Card>
+                            </f:GridListItem>
 
-                        <!-- Supporting Metrics + HANA by Schema -->
-                        <f:GridListItem type="Inactive">
-                            <f:Card width="100%" height="100%" class="clickableCardItem">
-                                <f:header>
-                                    <card:Header title="Supporting metrics"/>
-                                </f:header>
-                                <f:content>
-                                    <VBox class="sapUiSmallMargin" width="100%">
-                                        <f:GridList growing="false" width="100%" class="sapUiTinyMarginBottom">
-                                            <f:customLayout>
-                                                <grid:GridResponsiveLayout>
-                                                    <grid:layoutXL>
-                                                        <grid:GridSettings gridTemplateColumns="repeat(2, 1fr)" gridGap="1rem" />
-                                                    </grid:layoutXL>
-                                                    <grid:layoutL>
-                                                        <grid:GridSettings gridTemplateColumns="repeat(2, 1fr)" gridGap="1rem" />
-                                                    </grid:layoutL>
-                                                    <grid:layoutM>
-                                                        <grid:GridSettings gridTemplateColumns="repeat(2, 1fr)" gridGap="1rem" />
-                                                    </grid:layoutM>
-                                                    <grid:layoutS>
-                                                        <grid:GridSettings gridTemplateColumns="repeat(2, 1fr)" gridGap="1rem" />
-                                                    </grid:layoutS>
-                                                </grid:GridResponsiveLayout>
-                                            </f:customLayout>
+                            <!-- Supporting Metrics + HANA by Schema -->
+                            <f:GridListItem type="Inactive">
+                                <f:Card width="100%" height="100%" class="clickableCardItem">
+                                    <f:header>
+                                        <card:Header title="Supporting metrics"/>
+                                    </f:header>
+                                    <f:content>
+                                        <VBox class="sapUiSmallMargin" width="100%">
+                                            <f:GridList growing="false" width="100%" class="sapUiTinyMarginBottom">
+                                                <f:customLayout>
+                                                    <grid:GridResponsiveLayout>
+                                                        <grid:layoutXL>
+                                                            <grid:GridSettings gridTemplateColumns="repeat(2, 1fr)" gridGap="1rem" />
+                                                        </grid:layoutXL>
+                                                        <grid:layoutL>
+                                                            <grid:GridSettings gridTemplateColumns="repeat(2, 1fr)" gridGap="1rem" />
+                                                        </grid:layoutL>
+                                                        <grid:layoutM>
+                                                            <grid:GridSettings gridTemplateColumns="repeat(2, 1fr)" gridGap="1rem" />
+                                                        </grid:layoutM>
+                                                        <grid:layoutS>
+                                                            <grid:GridSettings gridTemplateColumns="repeat(2, 1fr)" gridGap="1rem" />
+                                                        </grid:layoutS>
+                                                    </grid:GridResponsiveLayout>
+                                                </f:customLayout>
 
-                                            <f:items>
-                                                <f:GridListItem type="Inactive">
-                                                    <Panel class="noBorderPanel" height="100%">
-                                                        <HBox height="100%" width="100%" alignItems="Center" justifyContent="Start" class="sapUiContentPadding">
-                                                            <Avatar src="sap-icon://receipt" displayShape="Circle" backgroundColor="Accent6" />
-                                                            <VBox class="sapUiSmallMarginBegin" height="100%" justifyContent="Center" width="100%">
-                                                                <Title text="Avg tokens / chatSession" wrapping="true" />
+                                                <f:items>
+                                                    <f:GridListItem type="Inactive">
+                                                        <Panel class="noBorderPanel" height="100%">
+                                                            <HBox height="100%" width="100%" alignItems="Center" justifyContent="Start" class="sapUiContentPadding">
+                                                                <Avatar src="sap-icon://receipt" displayShape="Circle" backgroundColor="Accent6" />
+                                                                <VBox class="sapUiSmallMarginBegin" height="100%" justifyContent="Center" width="100%">
+                                                                    <Title text="Avg tokens / chatSession" wrapping="true" />
 
-                                                                <HBox alignItems="Center" justifyContent="Start" width="100%" class ="sapUiSmallMarginEnd">
-                                                                    <ObjectNumber number="{
+                                                                    <HBox alignItems="Center" justifyContent="Start" width="100%" class ="sapUiSmallMarginEnd">
+                                                                        <ObjectNumber number="{
                                                 parts: [{ path: 'chart>/supportingMetrics/AverageTokensPerChatSession' }],
                                                 formatter: '.formatter.formatLargeNumber'
                                             }" emphasized="true" state="Information" class="sapMObjectNumberLarge" />
-                                                                    <Label text="tokens" class="sapUiTinyMarginBegin sapUiTinyMarginTop"/>
-                                                                </HBox>
+                                                                        <Label text="Tokens" class="sapUiTinyMarginBegin sapUiTinyMarginTop"/>
+                                                                    </HBox>
 
-                                                            </VBox>
-                                                        </HBox>
-                                                    </Panel>
-                                                </f:GridListItem>
+                                                                </VBox>
+                                                            </HBox>
+                                                        </Panel>
+                                                    </f:GridListItem>
 
-                                                <f:GridListItem type="Inactive">
-                                                    <Panel class="noBorderPanel" height="100%">
-                                                        <HBox height="100%" width="100%" alignItems="Center" justifyContent="Start" class="sapUiContentPadding">
-                                                            <Avatar src="sap-icon://ai" displayShape="Circle" backgroundColor="Accent7" />
-                                                            <VBox class="sapUiSmallMarginBegin" justifyContent="Center">
-                                                                <Title text="Ai Cluster Analysis" wrapping="true" />
-                                                                <HBox alignItems="Center" justifyContent="Start">
-                                                                    <ObjectNumber number="{ parts: [{ path: 'chart>/supportingMetrics/aiRecommendations' }],    formatter: '.formatter.formatLargeNumber'    }" emphasized="true" state="Success" class="sapMObjectNumberLarge" />
-                                                                    <Label text="Recommendations" class="sapUiTinyMarginBegin sapUiTinyMarginTop"/>
-                                                                </HBox>
-                                                            </VBox>
-                                                        </HBox>
-                                                    </Panel>
-                                                </f:GridListItem>
+                                                    <f:GridListItem type="Inactive">
+                                                        <Panel class="noBorderPanel" height="100%">
+                                                            <HBox height="100%" width="100%" alignItems="Center" justifyContent="Start" class="sapUiContentPadding">
+                                                                <Avatar src="sap-icon://ai" displayShape="Circle" backgroundColor="Accent7" />
+                                                                <VBox class="sapUiSmallMarginBegin" justifyContent="Center">
+                                                                    <Title text="Ai Cluster Diagnosis" wrapping="true" />
+                                                                    <HBox alignItems="Center" justifyContent="Start">
+                                                                        <ObjectNumber number="{ parts: [{ path: 'chart>/supportingMetrics/aiRecommendations' }],    formatter: '.formatter.formatLargeNumber'    }" emphasized="true" state="Success" class="sapMObjectNumberLarge" />
+                                                                        <Label text="Recommendations" class="sapUiTinyMarginBegin sapUiTinyMarginTop"/>
+                                                                    </HBox>
+                                                                </VBox>
+                                                            </HBox>
+                                                        </Panel>
+                                                    </f:GridListItem>
 
-                                                <f:GridListItem type="Inactive">
-                                                    <Panel class="noBorderPanel" height="100%">
-                                                        <HBox width="100%" alignItems="Center" justifyContent="Start" class="sapUiContentPadding">
-                                                            <Avatar src="sap-icon://database" displayShape="Circle" backgroundColor="Accent1" />
-                                                            <VBox class="sapUiSmallMarginBegin">
-                                                                <Title text="Avg HANA growth / day" wrapping="true" />
-                                                                <ObjectNumber number="{
+                                                    <f:GridListItem type="Inactive">
+                                                        <Panel class="noBorderPanel" height="100%">
+                                                            <HBox width="100%" alignItems="Center" justifyContent="Start" class="sapUiContentPadding">
+                                                                <Avatar src="sap-icon://database" displayShape="Circle" backgroundColor="Accent1" />
+                                                                <VBox class="sapUiSmallMarginBegin">
+                                                                    <Title text="Avg HANA growth / day" wrapping="true" />
+
+                                                                    <HBox alignItems="Center" justifyContent="Start">
+                                                                        <ObjectNumber number="{
                                                 parts: [{ path: 'chart>/supportingMetrics/AverageHANAGrowthPerDay' }],
                                                 formatter: '.formatter.formatLargeNumber'
                                             }" emphasized="true" state="Warning" class="sapMObjectNumberLarge" />
-                                                            </VBox>
-                                                        </HBox>
-                                                    </Panel>
-                                                </f:GridListItem>
+                                                                        <Label text="GB" class="sapUiTinyMarginBegin sapUiTinyMarginTop"/>
+                                                                    </HBox>
+                                                                </VBox>
+                                                            </HBox>
+                                                        </Panel>
+                                                    </f:GridListItem>
 
-                                                <f:GridListItem type="Inactive">
-                                                    <Panel class="noBorderPanel">
-                                                        <HBox width="100%" alignItems="Center" justifyContent="Start" class="sapUiContentPadding">
-                                                            <Avatar src="sap-icon://it-system" displayShape="Circle" backgroundColor="Accent5" />
-                                                            <VBox class="sapUiSmallMarginBegin">
-                                                                <Title text="Avg Tokens / day" wrapping="true" class = "sap"/>
+                                                    <f:GridListItem type="Inactive">
+                                                        <Panel class="noBorderPanel">
+                                                            <HBox width="100%" alignItems="Center" justifyContent="Start" class="sapUiContentPadding">
+                                                                <Avatar src="sap-icon://it-system" displayShape="Circle" backgroundColor="Accent5" />
+                                                                <VBox class="sapUiSmallMarginBegin">
+                                                                    <Title text="Avg Tokens / day" wrapping="true" class = "sap"/>
 
-                                                                <HBox alignItems="Center" justifyContent="Start">
-                                                                    <ObjectNumber number="{
+                                                                    <HBox alignItems="Center" justifyContent="Start">
+                                                                        <ObjectNumber number="{
                                                 parts: [{ path: 'chart>/supportingMetrics/AverageTokensPerDay' }],
                                                 formatter: '.formatter.formatLargeNumber'
                                             }" emphasized="true" class="sapMObjectNumberLarge" />
-                                                                    <Label text="tokens" class="sapUiTinyMarginBegin sapUiTinyMarginTop"/>
-                                                                </HBox>
-                                                            </VBox>
-                                                        </HBox>
-                                                    </Panel>
-                                                </f:GridListItem>
+                                                                        <Label text="Tokens" class="sapUiTinyMarginBegin sapUiTinyMarginTop"/>
+                                                                    </HBox>
+                                                                </VBox>
+                                                            </HBox>
+                                                        </Panel>
+                                                    </f:GridListItem>
 
-                                                <f:GridListItem type="Inactive">
-                                                    <Panel class="noBorderPanel">
-                                                        <HBox width="100%" alignItems="Center" justifyContent="Start" class="sapUiContentPadding">
-                                                            <Avatar src="sap-icon://fob-watch" displayShape="Circle" backgroundColor="Accent7" />
-                                                            <VBox class="sapUiSmallMarginBegin">
-                                                                <Title text="User Messages / Ai Responses" wrapping="true" />
+                                                    <f:GridListItem type="Inactive">
+                                                        <Panel class="noBorderPanel">
+                                                            <HBox width="100%" alignItems="Center" justifyContent="Start" class="sapUiContentPadding">
+                                                                <Avatar src="sap-icon://fob-watch" displayShape="Circle" backgroundColor="Accent7" />
+                                                                <VBox class="sapUiSmallMarginBegin">
+                                                                    <Title text="Average Polls / day" wrapping="true" />
 
-                                                                <HBox alignItems="Center" justifyContent="Start">
-                                                                    <ObjectNumber number="{
-                                                parts: [{ path: 'chart>/supportingMetrics/totalUserMessages' }],
+                                                                    <HBox alignItems="Center" justifyContent="Start">
+                                                                        <ObjectNumber number="{
+                                                parts: [{ path: 'chart>/supportingMetrics/AveragePollsPerDay' }],
                                                 formatter: '.formatter.formatLargeNumber'
                                             }" emphasized="true" state="Success" class="sapMObjectNumberLarge" />
-                                                                    <Title text="/" class="sapUiTinyMarginBegin sapUiTinyMarginTop sapUiTinyMarginEnd"/>
+                                                                        <Label text="Polls" class="sapUiTinyMarginBegin sapUiTinyMarginTop"/>
+
+                                                                    </HBox>
+                                                                </VBox>
+                                                            </HBox>
+                                                        </Panel>
+                                                    </f:GridListItem>
+
+                                                    <f:GridListItem type="Inactive">
+                                                        <Panel class="noBorderPanel">
+                                                            <HBox width="100%" alignItems="Center" justifyContent="Start" class="sapUiContentPadding">
+                                                                <Avatar src="sap-icon://alert" displayShape="Circle" backgroundColor="Accent2" />
+                                                                <VBox class="sapUiSmallMarginBegin">
+                                                                    <Title text="Avg Incidents / day" wrapping="true" />
+                                                                    <HBox alignItems="Center" justifyContent="Start">
                                                                     <ObjectNumber number="{
-                                                parts: [{ path: 'chart>/supportingMetrics/totalAIMessages' }],
-                                                formatter: '.formatter.formatLargeNumber'
-                                            }" emphasized="true" state="Success" class="sapMObjectNumberLarge" />
-
-                                                                </HBox>
-                                                            </VBox>
-                                                        </HBox>
-                                                    </Panel>
-                                                </f:GridListItem>
-
-                                                <f:GridListItem type="Inactive">
-                                                    <Panel class="noBorderPanel">
-                                                        <HBox width="100%" alignItems="Center" justifyContent="Start" class="sapUiContentPadding">
-                                                            <Avatar src="sap-icon://alert" displayShape="Circle" backgroundColor="Accent2" />
-                                                            <VBox class="sapUiSmallMarginBegin">
-                                                                <Title text="Avg Incidents / day" wrapping="true" />
-                                                                <ObjectNumber number="{
                                                 parts: [{ path: 'chart>/supportingMetrics/AverageIncidentsPerDay' }],
                                                 formatter: '.formatter.formatLargeNumber'
                                             }" emphasized="true" state="Error" class="sapMObjectNumberLarge" />
+                                                                    <Label text="Error logs" class="sapUiTinyMarginBegin sapUiTinyMarginTop"/>
+                                                                    </HBox>
+                                                                </VBox>
+                                                            </HBox>
+                                                        </Panel>
+                                                    </f:GridListItem>
+                                                </f:items>
+                                            </f:GridList>
+                                        </VBox>
+                                    </f:content>
+                                </f:Card>
+                            </f:GridListItem>
+                        </f:items>
+                    </f:GridList>
+                </VBox>
+            </f:content>
+        </f:DynamicPage>
 
-                                                            </VBox>
-                                                        </HBox>
-                                                    </Panel>
-                                                </f:GridListItem>
-                                            </f:items>
-                                        </f:GridList>
-                                    </VBox>
-                                </f:content>
-                            </f:Card>
-                        </f:GridListItem>
-                    </f:items>
-                </f:GridList>
-            </VBox>
-        </f:content>
-    </f:DynamicPage>
-
-</mvc:View>
+    </mvc:View>

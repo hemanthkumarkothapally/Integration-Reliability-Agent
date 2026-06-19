@@ -147,9 +147,10 @@
 				"dataSource": "AdminService",
 				"preload": true,
 				"settings": {
+					"synchronizationMode": "None",
 					"operationMode": "Server",
 					"autoExpandSelect": true,
-					"earlyRequests": true
+					"updateGroupId": "settingsGroup"
 				}
 			},
 			"chart": {

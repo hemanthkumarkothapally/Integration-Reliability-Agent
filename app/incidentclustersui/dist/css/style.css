@@ -291,6 +291,28 @@ li.clickableCardItem .sapVizFrame svg {
     overflow-y: auto;
 }
 
+/* MEDIUM tab — override iconColor to Indication07 (indigo) */
+/* 1. Base State (Unselected): Indigo border, transparent background */
+div[id$="mediumTab"] .sapMITBFilterIcon {
+    border-color: var(--sapIndicationColor_7) !important;
+    background-color: transparent !important; 
+}
+
+/* 2. Base State (Unselected): Indigo icon */
+div[id$="mediumTab"] .sapUiIcon {
+    color: var(--sapIndicationColor_7) !important;
+}
+
+/* 3. Selected State (Clicked): Solid Indigo background fill */
+div[id$="mediumTab"].sapMITBSelected .sapMITBFilterIcon {
+    background-color: var(--sapIndicationColor_7) !important;
+}
+
+/* 4. Selected State (Clicked): White icon so it contrasts perfectly with the fill */
+div[id$="mediumTab"].sapMITBSelected .sapUiIcon {
+    color: #ffffff !important;
+}
+
 
 
 

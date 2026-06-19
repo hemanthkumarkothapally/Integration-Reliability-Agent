@@ -1,64 +1,69 @@
 import cds from '@sap/cds';
 
+const MAX_INCIDENT_SAMPLES = 3;   // clustered incidents are near-identical; a few suffice
+const MAX_MSG_LEN = 500;          // cap each error message length
+
+// Send only the fields the model needs for root-cause analysis.
+function slimCluster(cluster) {
+    const slim = {
+        errorSignature: cluster.errorSignature,
+        errorType: cluster.errorType,
+        iFlowName: cluster.iFlowName,
+        adapter: cluster.adapter,
+        incidentCount: cluster.incidentCount,
+        severity: cluster.severity,
+        firstSeen: cluster.firstSeen,
+        lastSeen: cluster.lastSeen
+    };
+    for (const k of Object.keys(slim)) {
+        if (slim[k] === undefined || slim[k] === null) delete slim[k];
+    }
+    return slim;
+}
+
+// De-duplicate, cap and truncate incident error messages.
+function sampleIncidents(incidents) {
+    const seen = new Set();
+    const samples = [];
+    for (const i of incidents) {
+        const msg = (i.errorMessage || '').trim().slice(0, MAX_MSG_LEN);
+        if (!msg || seen.has(msg)) continue;
+        seen.add(msg);
+        samples.push(msg);
+        if (samples.length >= MAX_INCIDENT_SAMPLES) break;
+    }
+    return samples;
+}
+
+// Resolve the matching playbook in code (match is a plain errorType lookup),
+// so no playbook data is ever sent to the model.
+async function resolvePlaybookId(cluster, errorType) {
+    if (cluster.playbook_ID) return cluster.playbook_ID;
+    const errType = errorType || cluster.errorType;
+    if (!errType) return null;
+    const pb = await SELECT.one.from('Playbooks').columns('ID').where({ errorType: errType });
+    return pb?.ID || null;
+}
+
 export async function generateClusterRecommendation(payload) {
     console.log('AI recommendation started');
 
     const { cluster, incidents } = payload;
     const destination = await cds.connect.to('GenAIHubDestination');
 
-    const incidentSummary = incidents.map((i, index) => ({
-        index: index + 1,
-        errorMessage: i.errorMessage,
-        adapter: i.adapter,
-        logEnd: i.logEnd
-    }));
+    // Compact data, trimmed fields, concise instructions. No playbook payload.
+    const prompt = `You are an SAP Integration Suite reliability expert. Analyze this SAP CPI incident cluster and return ONLY valid JSON in exactly this shape:
+{"rootCause":"","businessImpact":"","remediationSteps":["","",""],"affectedAdapter":"","confidenceScore":0,"errorType":""}
 
-    let prompt = `
-You are an SAP Integration Suite reliability expert.
-
-Analyze this SAP CPI incident cluster.
-
-Return ONLY valid JSON.
-
-Required JSON structure:
-
-{
-  "rootCause": "",
-  "businessImpact": "",
-  "remediationSteps": ["", "", "",...],
-  "affectedAdapter": "",
-  "confidenceScore": 0,
-  "playbookId": "" // optional, can be null if no relevant playbook found,
-  "errorType": "" 
-}
-
-Cluster:
-${JSON.stringify(cluster, null, 2)}
-
-Recent Incidents:
-${JSON.stringify(incidentSummary, null, 2)}
+Cluster: ${JSON.stringify(slimCluster(cluster))}
+Recent error messages: ${JSON.stringify(sampleIncidents(incidents))}
 
 Rules:
-- Keep remediation steps concise
-- try to give max 3 remediation steps
-- If there is no adapter, try to analyse the adapter from error and send.
-- Confidence score must be 0-100
-- if playbook is not there in cluster, try to go throgh the playbooks entity and find the relevant playbook based on the error signature and iflow name and use that to give more accurate recommendation.
-- if not able to find relevant playbook, then give null in playbook id field in the response.
-- Give the Error type by analysing the error signature and error type field in the cluster and also from the error message in the incidents. If not able to find the error type then give UNKNOWN_ERROR in the error type field.
-- Output JSON only
-`;
-
-    if (!cluster.playbook_ID) {
-        const playbooks = await SELECT.from('Playbooks');
-        prompt += `
-
-Available Playbooks:
-${JSON.stringify(playbooks, null, 2)}
-
-- Match the most relevant playbook by errorType or errorSignature and return its ID in playbookId field.
-`;
-    }
+- Max 3 concise remediation steps.
+- If no adapter is given, infer it from the error.
+- confidenceScore is an integer 0-100.
+- Derive errorType from the cluster and error messages; use UNKNOWN_ERROR if unclear.
+- Output JSON only, no markdown, no commentary.`;
 
     try {
         const definitionId = process.env.AI_RECOMMENDATION_DEFINITION_ID;
@@ -99,6 +104,9 @@ ${JSON.stringify(playbooks, null, 2)}
         const inputTokens = usage.input_tokens || 0;
         const outputTokens = usage.output_tokens || 0;
 
+        const errorType = parsed.errorType || null;
+        const playbook_ID = await resolvePlaybookId(cluster, errorType);
+
         return {
             recommendation: {
                 rootCause: parsed.rootCause || 'Unknown root cause',
@@ -115,8 +123,8 @@ ${JSON.stringify(playbooks, null, 2)}
                 calledAt: new Date(),
                 purpose: 'CLUSTER_RCA'
             },
-            playbook_ID: parsed.playbookId || null,
-            errorType: parsed.errorType || null
+            playbook_ID,
+            errorType
         };
     } catch (err) {
         console.error('AI recommendation failed:', err.message || err);

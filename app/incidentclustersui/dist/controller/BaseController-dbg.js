@@ -7,8 +7,8 @@ sap.ui.define([
     "sap/ui/model/FilterOperator",
     "sap/f/library",
     "../model/formatter",
-    "sap/m/MessageBox" // 1. Added to the end of the array
-], function (Controller, MessageToast, BusyIndicator, JSONModel, Filter, FilterOperator, fioriLibrary, formatter,MessageBox) {
+    "sap/m/MessageBox"
+], function (Controller, MessageToast, BusyIndicator, JSONModel, Filter, FilterOperator, fioriLibrary, formatter, MessageBox) {
     "use strict";
 
     return Controller.extend("com.cytechies.integration.reliability.incidentclustersui.controller.BaseController", {
@@ -26,17 +26,10 @@ sap.ui.define([
         },
 
         navTo: function (sRoute, oParameters) {
-            this.getRouter().navTo(
-                sRoute,
-                oParameters
-            );
+            this.getRouter().navTo(sRoute, oParameters);
         },
 
         showBusy: function (iDelay = 0) {
-            BusyIndicator.show(iDelay);
-        },
-
-        showBusyTime: function (iDelay) {
             BusyIndicator.show(iDelay);
         },
 
@@ -47,8 +40,6 @@ sap.ui.define([
         showToast: function (sMessage) {
             MessageToast.show(sMessage);
         },
-
-
 
         onListSearch: function (oEvent) {
             let oSource = oEvent.getSource();
@@ -67,7 +58,6 @@ sap.ui.define([
             this.applyListSearch(sListId, sQuery, aFields);
         },
 
-
         applyCentralBindingFilter: function (sControlId, sAggregation, aFilters) {
             sAggregation = sAggregation || "items";
             let oControl = this.byId(sControlId);
@@ -83,10 +73,9 @@ sap.ui.define([
                 return;
             }
 
-            // Executes the filter updates on your OData V4 Model
+            // Executes the filter updates on the OData V4 Model
             oBinding.filter(aFilters);
         },
-
 
         applyListSearch: function (sListId, sQuery, aFields, sAggregation) {
             sAggregation = sAggregation || "items";
@@ -109,7 +98,7 @@ sap.ui.define([
                         path: sField,
                         operator: FilterOperator.Contains,
                         value1: sQuery,
-                        caseSensitive: false   // ← case-insensitive
+                        caseSensitive: false   // case-insensitive
                     });
                 });
 
@@ -123,7 +112,6 @@ sap.ui.define([
                 oBinding.filter([]);
             }
         },
-
 
         applyFilterBarSearch: function (sTargetControlId, sAggregationName, aFilterConfigs) {
             let oTargetControl = this.byId(sTargetControlId);
@@ -155,89 +143,68 @@ sap.ui.define([
                 oBinding.filter([]); // Clear all filters if nothing is selected
             }
         },
-        async getSettingsData() {
 
-      const oODataModel = this.getOwnerComponent().getModel();
-      const oGlobalModel = this.getOwnerComponent().getModel("globalModel");
+        getSettingsData: function () {
+            const oODataModel = this.getOwnerComponent().getModel();
+            const oGlobalModel = this.getOwnerComponent().getModel("globalModel");
 
-      // Load Tenants
-      const aTenants = [{
-        ID: "ALL",
-        tenantName: "All Tenants"
-      }];
+            // Load Tenants
+            const aTenants = [{
+                ID: "ALL",
+                tenantName: "All Tenants"
+            }];
 
-      const aBackendTenants = await oODataModel
-        .bindList("/Tenants")
-        .requestContexts();
+            return oODataModel
+                .bindList("/Tenants")
+                .requestContexts()
+                .then(function (aBackendTenants) {
+                    aBackendTenants.forEach(function (oContext) {
+                        aTenants.push(oContext.getObject());
+                    });
+                    oGlobalModel.setProperty("/tenants", aTenants);
+                });
+        },
 
-      aBackendTenants.forEach(oContext => {
-        aTenants.push(oContext.getObject());
-      });
-
-      oGlobalModel.setProperty("/tenants", aTenants);
-    },
-    getSelectedTenantId: function () {
- 
+        getSelectedTenantId: function () {
             return this.getOwnerComponent()
                 .getModel("globalModel")
                 .getProperty("/settings/DEFAULT_TENANT");
         },
- 
+
         getSelectedTenantName: function () {
- 
             return this.getOwnerComponent()
                 .getModel("globalModel")
                 .getProperty("/selectedTenantName");
         },
- 
+
         setSelectedTenant: function (sTenantId, sTenantName) {
- 
-            const oGlobalModel =
-                this.getOwnerComponent().getModel("globalModel");
- 
- 
-            oGlobalModel.setProperty(
-                "/selectedTenant",
-                sTenantId
-            );
- 
-            oGlobalModel.setProperty(
-                "/settings/DEFAULT_TENANT",
-                sTenantId
-            );
- 
-            oGlobalModel.setProperty(
-                "/selectedTenantName",
-                sTenantName
-            );
- 
-            console.log("Tenant Changed");
-            console.log("Tenant ID:", sTenantId);
-            console.log("Tenant Name:", sTenantName);
+            const oGlobalModel = this.getOwnerComponent().getModel("globalModel");
+
+            oGlobalModel.setProperty("/selectedTenant", sTenantId);
+            oGlobalModel.setProperty("/settings/DEFAULT_TENANT", sTenantId);
+            oGlobalModel.setProperty("/selectedTenantName", sTenantName);
+
+            console.log("Tenant Changed", { id: sTenantId, name: sTenantName });
         },
+
         getGlobalTenantFilter: function () {
- 
             const sTenantId = this.getSelectedTenantId();
- 
+
             if (!sTenantId || sTenantId === "ALL") {
                 return [];
             }
- 
+
             return [
-                new Filter(
-                    "tenant_ID",
-                    FilterOperator.EQ,
-                    sTenantId
-                )
+                new Filter("tenant_ID", FilterOperator.EQ, sTenantId)
             ];
         },
 
         showErrorDialog: function (oError, sCustomTitle) {
-            if (!oError) return;
+            if (!oError) { return; }
 
             let oClassified = this.classifyError(oError);
             let sTitle = sCustomTitle || (oClassified.service + " Error Detected");
-            
+
             MessageBox.error(oClassified.message, {
                 title: sTitle,
                 details: oError.message || JSON.stringify(oError),

@@ -73,9 +73,6 @@ export default cds.service.impl(async function () {
         return newConv;
     });
 
-
-
-
     this.on('chat', async (req) => {
         const { conversationId, referiFlowID, referClusterID, userMessage } = req.data;
         const maxInputLimit = 1524;

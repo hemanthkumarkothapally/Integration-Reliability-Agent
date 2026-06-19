@@ -31,6 +31,11 @@
                             <!-- ============================================ -->
                             
                             <f:Card height="380px" class="sapUiMediumMarginEnd sapUiMediumMarginBottom">
+                                <f:layoutData>
+                                
+                                     <layout:GridData span="{= ${globalModel>/editMode} ? 'XL12 L12 M12 S12' : 'XL6 L6 M12 S12' }"/>
+    
+                                </f:layoutData>
                                 <f:header>
                                     <cards:Header
                                         iconSrc="sap-icon://building"
@@ -38,7 +43,8 @@
                                         subtitle="Default Dashboard Tenant"/>
                                 </f:header>
                                 <f:content>
-                                    <VBox class="sapUiMediumMargin">
+                                <HBox>
+                                    <VBox class="sapUiMediumMargin" >
                                         <Label text="Default Dashboard Tenant"/>
                                         <Select
                                             width="100%"
@@ -55,9 +61,11 @@
                                             type="Information"
                                             showIcon="true"
                                             text="This tenant will be selected automatically when users open the dashboard."/>
+                                                                                            </VBox>
+
                                             <VBox
                                         visible="{globalModel>/editMode}"
-                                        class="sapUiMediumMarginTop">
+                                        class="sapUiMediumMarginTop" width="60%">
 
                                         <Toolbar>
                                             <Title text="Tenant Management" level="H5"/>
@@ -119,7 +127,7 @@
                                         </Table>
                                         </ScrollContainer>
                                     </VBox>
-                                                </VBox>
+                                    </HBox>
                                 </f:content>
                             </f:Card>
 
