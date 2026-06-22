@@ -175,6 +175,7 @@
                         $count: true,
                         $expand: {
                             'monitoredArtifacts': {
+                                $expand:'artifact',
                                 '$count': true
                             }
                         }
@@ -225,7 +226,8 @@
 
                                     <Title text="{errorType}" titleStyle="H6" wrapping="true"/>
 
-                                    <ObjectNumber number="{monitoredArtifacts/$count}"/>
+                                    <!-- <ObjectNumber number="{monitoredArtifacts/$count}"/> -->
+                                    <Link emphasized="true" text="{monitoredArtifacts/$count}" press=".onArtifactsPress"/>
 
                                     <Button text="{path:'severity', formatter:'.formatter.formatButtonText'}" type="{path:'severity', formatter:'.formatter.formatButtonState'}" icon="{path:'severity', formatter:'.formatter.formatSeverityIcon'}" class="unclickableTag">
 
@@ -235,7 +237,8 @@
 
                                     </Button>
 
-                                    <Text text="{incidentCount}"/>
+                                    <!-- <Text text="{incidentCount}"/> -->
+                                    <Link emphasized="true" text="{incidentCount}" press=".onIncidentsPress"/>
 
                                     <ObjectStatus text="{path:'globalStatus', formatter:'.formatter.formatStatusText'}" state="{path:'globalStatus', formatter:'.formatter.formatStatusState'}"/>
 

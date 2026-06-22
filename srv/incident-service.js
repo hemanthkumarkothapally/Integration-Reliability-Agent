@@ -47,7 +47,7 @@ export default cds.service.impl(async function () {
       await updateDailyMetrics(tenant.ID, { resolvedClusters: 1 });
     } else {
       await UPDATE(IncidentClusters)
-        .set({ globalStatus: 'PARTIALLY_RESOLVED' })
+        .set({ globalStatus: 'RESOLVING' })
         .where({ ID: clusterId });
     }
 
