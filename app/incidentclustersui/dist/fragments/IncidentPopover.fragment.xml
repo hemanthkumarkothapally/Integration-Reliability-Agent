@@ -1,0 +1,36 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+
+   <Popover
+    id="incidentPopover"
+    title="Latest 5 Incidents"
+    contentWidth="700px">
+
+    <List items="{incidents>/}">
+
+        <CustomListItem
+            >
+
+            <VBox class="sapUiSmallMargin">
+
+                <HBox justifyContent="SpaceBetween">
+                    <Text text="{incidents>iFlowName}" />
+                    <Title text="{path:'incidents>logEnd', formatter:'.formatter.formatDateTime'}" level="H5"/>
+                </HBox>
+
+                <Text text="Guid: {incidents>messageGuid}" />
+
+                <Text
+                    text="{incidents>errorMessage}"
+                    maxLines="3"/>
+
+            </VBox>
+
+        </CustomListItem>
+
+    </List>
+
+</Popover>
+
+</core:FragmentDefinition>

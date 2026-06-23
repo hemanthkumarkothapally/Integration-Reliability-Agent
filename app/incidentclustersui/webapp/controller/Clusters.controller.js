@@ -502,7 +502,6 @@ sap.ui.define([
             this._oArtifactPopover.setBindingContext(
                 oSource.getBindingContext()
             );
-
             this._oArtifactPopover.openBy(oSource);
         },
         onArtifactNav: function (oEvent) {
@@ -521,9 +520,7 @@ sap.ui.define([
             const oSource = oEvent.getSource();
             const oContext = oSource.getBindingContext();
             const sClusterId = oContext.getProperty("ID");
-
             const oModel = this.getView().getModel();
-
             const aContexts = await oModel.bindList(
                 `/IncidentClusters(${sClusterId})/incidents`,
                 undefined,
@@ -531,9 +528,7 @@ sap.ui.define([
                     new sap.ui.model.Sorter("logEnd", true)
                 ]
             ).requestContexts(0, 5);
-
             const aIncidents = aContexts.map(oCtx => oCtx.getObject());
-
             if (!this._oIncidentPopover) {
                 this._oIncidentPopover = await sap.ui.core.Fragment.load({
                     name: "com.cytechies.integration.reliability.incidentclustersui.fragments.IncidentPopover",
@@ -542,12 +537,10 @@ sap.ui.define([
 
                 this.getView().addDependent(this._oIncidentPopover);
             }
-
             this._oIncidentPopover.setModel(
                 new sap.ui.model.json.JSONModel(aIncidents),
                 "incidents"
             );
-
             this._oIncidentPopover.openBy(oSource);
         }
 
